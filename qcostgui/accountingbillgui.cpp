@@ -68,7 +68,10 @@ public:
     }
     QSize sizeHint() const{
         QSize s = ppuGUI->sizeHint();
-        return s.expandedTo( billGUI->sizeHint() );
+        s = s.expandedTo( billGUI->sizeHint() );
+        s = s.expandedTo( lsGUI->sizeHint() );
+        s = s.expandedTo( tamGUI->sizeHint() );
+        return s.expandedTo( commentGUI->sizeHint() );
     }
 };
 
@@ -90,7 +93,7 @@ public:
         accountingItemLSGUI( new AccountingItemLSGUI( prj->priceFieldModel(), parent ) ),
         accountingItemTAMGUI( new AccountingItemTAMGUI( prj->priceFieldModel(), parent ) ),
         accountingItemCommentGUI( new AccountingItemCommentGUI( parent ) ),
-        accountingMeasureWidget( new AccountingItemWidget(accountingItemBillGUI, accountingItemPPUGUI, accountingItemLSGUI, accountingItemTAMGUI, accountingItemCommentGUI, mainSplitter ) ) {
+        accountingItemWidget( new AccountingItemWidget(accountingItemBillGUI, accountingItemPPUGUI, accountingItemLSGUI, accountingItemTAMGUI, accountingItemCommentGUI, mainSplitter ) ) {
         accountingItemBillGUI->hide();
         accountingItemPPUGUI->hide();
         accountingItemLSGUI->hide();
@@ -112,7 +115,7 @@ public:
     AccountingItemLSGUI * accountingItemLSGUI;
     AccountingItemTAMGUI * accountingItemTAMGUI;
     AccountingItemCommentGUI * accountingItemCommentGUI;
-    AccountingItemWidget * accountingMeasureWidget;
+    AccountingItemWidget * accountingItemWidget;
 };
 
 AccountingBillGUI::AccountingBillGUI( QMap<PriceListDBWidget::ImportOptions, bool> *EPAImpOptions,

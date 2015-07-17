@@ -19,12 +19,9 @@
 #include "accountinglsbillgui.h"
 
 #include "accountinglsbilldatagui.h"
-#include "accountingtreegui.h"
-#include "accountingitemppugui.h"
-#include "accountingitembillgui.h"
-#include "accountingitemlsgui.h"
-#include "accountingitemtamgui.h"
-#include "accountingitemcommentgui.h"
+#include "accountinglstreegui.h"
+#include "accountinglsbillitemgui.h"
+#include "accountinglsbillitemtitlegui.h"
 
 #include "project.h"
 #include "accountingbill.h"
@@ -39,36 +36,24 @@
 
 class AccountingItemWidget : public QWidget {
 private:
-    AccountingItemBillGUI * billGUI;
-    AccountingItemPPUGUI * ppuGUI;
-    AccountingItemLSGUI * lsGUI;
-    AccountingItemTAMGUI * tamGUI;
-    AccountingItemCommentGUI * commentGUI;
+    AccountingLSBillItemGUI * itemGUI;
+    AccountingLSBillItemTitleGUI * itemTitleGUI;
 public:
-    AccountingItemWidget( AccountingItemBillGUI * _wipGUI,
-                          AccountingItemPPUGUI * _ppuGUI,
-                          AccountingItemLSGUI * _lsGUI,
-                          AccountingItemTAMGUI * _tamGUI,
-                          AccountingItemCommentGUI * _commentGUI,
+    AccountingItemWidget( AccountingLSBillItemGUI * _itemGUI,
+                          AccountingLSBillItemTitleGUI * _titleGUI,
                           QWidget * parent = 0 ):
         QWidget(parent),
-        billGUI(_wipGUI),
-        ppuGUI(_ppuGUI),
-        lsGUI(_lsGUI),
-        tamGUI(_tamGUI),
-        commentGUI(_commentGUI){
+        itemGUI(_itemGUI),
+        itemTitleGUI(_titleGUI){
         QGridLayout * layout = new QGridLayout( this );
-        ppuGUI->setParent( this );
-        billGUI->setParent( this );
-        layout->addWidget( billGUI, 0, 0);
-        layout->addWidget( ppuGUI, 0, 1);
-        layout->addWidget( lsGUI, 0, 2);
-        layout->addWidget( tamGUI, 0, 3);
-        layout->addWidget( commentGUI, 0, 4);
+        itemGUI->setParent( this );
+        itemTitleGUI->setParent( this );
+        layout->addWidget( itemGUI, 0, 0);
+        layout->addWidget( itemTitleGUI, 0, 1);
     }
     QSize sizeHint() const{
-        QSize s = ppuGUI->sizeHint();
-        return s.expandedTo( billGUI->sizeHint() );
+        QSize s = itemGUI->sizeHint();
+        return s.expandedTo( itemTitleGUI->sizeHint() );
     }
 };
 
@@ -84,10 +69,10 @@ public:
         accountingItemEditingPrice(NULL),
         accountingDataGUI( new AccountingLSBillDataGUI( prj->priceFieldModel(), prs, NULL, prj, wpf, parent ) ),
         mainSplitter( new QSplitter(Qt::Horizontal, parent ) ),
-        accountingTreeGUI( new AccountingTreeGUI( EPAImpOptions, EPAFileName, b, prs, prj, mainSplitter ) ),
-        accountingItemBillGUI( new AccountingItemBillGUI( prj->priceFieldModel(), parent ) ),
-        accountingLSBillItemGUI( new AccountingItemPPUGUI( EPAImpOptions, EPAFileName, prs, prj, parent ) ),
-        accountingMeasureWidget( new AccountingItemWidget(accountingItemBillGUI, accountingItemPPUGUI, accountingItemLSGUI, accountingItemTAMGUI, accountingItemCommentGUI, mainSplitter ) ) {
+        accountingTreeGUI( new AccountingLSTreeGUI( EPAImpOptions, EPAFileName, b, prs, prj, mainSplitter ) ),
+        accountingLSBillItemGUI( new AccountingLSBillItemGUI( EPAImpOptions, EPAFileName, prs, prj, parent ) ),
+        AccountingLSBillItemTitleGUI( new AccountingLSBillItemTitleGUI( EPAImpOptions, EPAFileName, prs, prj, parent ) ),
+        accountingLSItemWidget( new AccountingItemWidget(accountingItemBillGUI, accountingItemPPUGUI, accountingItemLSGUI, accountingItemTAMGUI, accountingItemCommentGUI, mainSplitter ) ) {
         accountingItemBillGUI->hide();
         accountingItemPPUGUI->hide();
         accountingItemLSGUI->hide();
@@ -103,13 +88,10 @@ public:
 
     AccountingLSBillDataGUI * accountingDataGUI;
     QSplitter * mainSplitter;
-    AccountingTreeGUI * accountingTreeGUI;
-    AccountingItemBillGUI * accountingItemBillGUI;
-    AccountingItemPPUGUI * accountingItemPPUGUI;
-    AccountingItemLSGUI * accountingItemLSGUI;
-    AccountingItemTAMGUI * accountingItemTAMGUI;
-    AccountingItemCommentGUI * accountingItemCommentGUI;
-    AccountingItemWidget * accountingMeasureWidget;
+    AccountingLSTreeGUI * accountingTreeGUI;
+    AccountingLSBillItemGUI * accountingBillItemGUI;
+    AccountingLSBillItemTitleGUI * accountingBillItemTitleGUI;
+    AccountingItemWidget * accountingLSItemWidget;
 };
 
 AccountingLSBillGUI::AccountingLSBillGUI(QMap<PriceListDBWidget::ImportOptions, bool> *EPAImpOptions,

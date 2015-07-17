@@ -80,7 +80,9 @@ SOURCES += \
     accountingitemtamgui.cpp \
     accountinglsbilldatagui.cpp \
     accountinglsbillgui.cpp \
-    accountinglsbillitemgui.cpp
+    accountinglsbillitemgui.cpp \
+    accountinglstreegui.cpp \
+    accountinglsbillitemtitlegui.cpp
 
 HEADERS  += \
     projectitemsview.h \
@@ -134,7 +136,9 @@ HEADERS  += \
     accountingitemtamgui.h \
     accountinglsbilldatagui.h \
     accountinglsbillgui.h \
-    accountinglsbillitemgui.h
+    accountinglsbillitemgui.h \
+    accountinglstreegui.h \
+    accountinglsbillitemtitlegui.h
 
 FORMS += \
     generaldatagui.ui \
@@ -167,7 +171,9 @@ FORMS += \
     accountingitemlsgui.ui \
     accountingitemtamgui.ui \
     accountinglsbilldatagui.ui \
-    accountinglsbillitemgui.ui
+    accountinglsbillitemgui.ui \
+    accountinglstreegui.ui \
+    accountinglsbillitemtitlegui.ui
 
 OTHER_FILES += \
     ../LICENSE \
