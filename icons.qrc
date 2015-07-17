@@ -1,0 +1,15 @@
+<RCC>
+    <qresource prefix="/">
+        <file>icons/document-open.svg</file>
+        <file>icons/document-print.svg</file>
+        <file>icons/document-save-as.svg</file>
+        <file>icons/document-save.svg</file>
+        <file>icons/system-log-out.svg</file>
+        <file>icons/document-import-txt.svg</file>
+        <file>icons/document-import-db.svg</file>
+        <file>icons/document-new-empty.svg</file>
+        <file>icons/document-new-human-no-discount.svg</file>
+        <file>icons/document-new-simple.svg</file>
+        <file>icons/document-new.svg</file>
+    </qresource>
+</RCC>
