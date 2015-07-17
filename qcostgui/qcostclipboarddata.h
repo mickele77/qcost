@@ -2,6 +2,8 @@
 #define QCOSTCLIPBOARDDATA_H
 
 class QCostClipboardDataPrivate;
+class AccountingBill;
+class AccountingBillItem;
 class Bill;
 class BillItem;
 class PriceList;
@@ -21,6 +23,13 @@ public:
     ~QCostClipboardData();
 
     QCostClipboardData &operator =(const QCostClipboardData &cp);
+
+    QList<AccountingBill *> copiedAccountingMeasures();
+    QCostClipboardData::Mode copiedAccountingMeasuresMode() const;
+    void setCopiedAccountings( QList<AccountingBill *> cb, Mode m);
+
+    void setCopiedAccountingMeasures( QList<AccountingBillItem *> accountingItems, AccountingBill * acc, Mode m);
+    void getCopiedAccountingMeasures(QList<AccountingBillItem *> *accountingItems, AccountingBill * &acc, QCostClipboardData::Mode *mode) const;
 
     QList<Bill *> copiedBills();
     QCostClipboardData::Mode copiedBillsMode() const;

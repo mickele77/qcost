@@ -5,6 +5,8 @@
 #include "priceitemgui.h"
 
 #include "project.h"
+#include "accountingtambillitem.h"
+#include "accountingbillitem.h"
 #include "billitem.h"
 #include "pricelist.h"
 #include "priceitem.h"
@@ -15,9 +17,13 @@
 
 class EditPriceItemDialogPrivate{
 public:
-    EditPriceItemDialogPrivate( QMap<PriceListDBWidget::ImportOptions, bool> *EPAImpOptions, QString * EPAFileName, PriceList * pl, int pCol, BillItem * bItem, MathParser * prs, Project * prj, QWidget * parent ):
+    EditPriceItemDialogPrivate( QMap<PriceListDBWidget::ImportOptions, bool> *EPAImpOptions, QString * EPAFileName, PriceList * pl, int pCol,
+                                BillItem * bItem, AccountingBillItem * aItem, AccountingTAMBillItem * aTAMItem,
+                                MathParser * prs, Project * prj, QWidget * parent ):
         billItem(bItem),
-        priceCol(pCol),
+        accountingItem(aItem),
+        accountingTAMItem(aTAMItem),
+        priceDataSet(pCol),
         parser( prs ),
         unitMeasureModel( prj->unitMeasureModel() ),
         mainLayout( new QGridLayout( parent ) ),
@@ -31,7 +37,9 @@ public:
         QObject::connect( priceListTreeGUI, &PriceListTreeGUI::currentItemChanged, priceItemGUI, &PriceItemGUI::setPriceItem );
     }
     BillItem * billItem;
-    int priceCol;
+    AccountingBillItem * accountingItem;
+    AccountingTAMBillItem * accountingTAMItem;
+    int priceDataSet;
     MathParser * parser;
     UnitMeasureModel * unitMeasureModel;
     QGridLayout * mainLayout;
@@ -43,15 +51,48 @@ public:
 
 EditPriceItemDialog::EditPriceItemDialog( QMap<PriceListDBWidget::ImportOptions, bool> *EPAImpOptions,
                                           QString * EPAFileName,
-                                          PriceList * pl, int priceCol, BillItem * bItem, MathParser * prs, Project * prj,
+                                          PriceList * pl, int priceDataSet, BillItem * bItem, MathParser * prs, Project * prj,
                                           QWidget *parent):
     QDialog( parent ),
-    m_d( new EditPriceItemDialogPrivate( EPAImpOptions, EPAFileName, pl, priceCol, bItem, prs, prj, this ) ) {
+    m_d( new EditPriceItemDialogPrivate( EPAImpOptions, EPAFileName, pl, priceDataSet, bItem, NULL, NULL, prs, prj, this ) ) {
+    init(pl);
+}
+
+EditPriceItemDialog::EditPriceItemDialog( QMap<PriceListDBWidget::ImportOptions, bool> *EPAImpOptions,
+                                          QString * EPAFileName,
+                                          PriceList * pl, int priceDataSet, AccountingBillItem * aItem, MathParser * prs, Project * prj,
+                                          QWidget *parent):
+    QDialog( parent ),
+    m_d( new EditPriceItemDialogPrivate( EPAImpOptions, EPAFileName, pl, priceDataSet, NULL, aItem, NULL, prs, prj, this ) ) {
+    init(pl);
+}
+
+EditPriceItemDialog::EditPriceItemDialog( QMap<PriceListDBWidget::ImportOptions, bool> *EPAImpOptions,
+                                          QString * EPAFileName,
+                                          PriceList * pl, int priceDataSet, AccountingTAMBillItem * aItem,
+                                          MathParser * prs, Project * prj,
+                                          QWidget *parent):
+    QDialog( parent ),
+    m_d( new EditPriceItemDialogPrivate( EPAImpOptions, EPAFileName, pl, priceDataSet, NULL, NULL, aItem, prs, prj, this ) ) {
+    init(pl);
+}
+
+void EditPriceItemDialog::init(PriceList * pl){
     connect( m_d->buttonBox, &QDialogButtonBox::accepted, this, &EditPriceItemDialog::changePriceItemAndClose );
     connect( m_d->buttonBox, &QDialogButtonBox::rejected, this, &EditPriceItemDialog::reject );
 
-    m_d->priceListTreeGUI->setPriceList( pl, priceCol );
-    m_d->priceListTreeGUI->setCurrentPriceItem( bItem->priceItem() );
+    m_d->priceListTreeGUI->setPriceList( pl, m_d->priceDataSet );
+    if( m_d->billItem != NULL ){
+        m_d->priceListTreeGUI->setCurrentPriceItem( m_d->billItem->priceItem() );
+    } else if( m_d->accountingItem != NULL ){
+        if( m_d->accountingItem->itemType() == AccountingBillItem::PPU ){
+            m_d->priceListTreeGUI->setCurrentPriceItem( m_d->accountingItem->priceItem() );
+        }
+    } else if( m_d->accountingTAMItem != NULL ){
+        if( m_d->accountingTAMItem->itemType() == AccountingBillItem::PPU ){
+            m_d->priceListTreeGUI->setCurrentPriceItem( m_d->accountingTAMItem->priceItem() );
+        }
+    }
 
     setWindowTitle( trUtf8("Cambia articolo Elenco Prezzi - %1").arg( pl->name() ) );
 
@@ -70,7 +111,17 @@ void EditPriceItemDialog::changePriceItemAndClose(){
     if( m_d->priceListTreeGUI->currentPriceItem() ) {
         if( !m_d->priceListTreeGUI->currentPriceItem()->hasChildren() ){
             PriceItem * pItem = m_d->priceListTreeGUI->currentPriceItem();
-            m_d->billItem->setPriceItem( pItem );
+            if( m_d->billItem != NULL ){
+                m_d->billItem->setPriceItem( pItem );
+            } else if( m_d->accountingItem != NULL ){
+                if( m_d->accountingItem->itemType() == AccountingBillItem::PPU ){
+                    m_d->accountingItem->setPriceItem( pItem );
+                }
+            } else if( m_d->accountingTAMItem != NULL ){
+                if( m_d->accountingTAMItem->itemType() == AccountingTAMBillItem::PPU ){
+                    m_d->accountingTAMItem->setPriceItem( pItem );
+                }
+            }
         }
     }
     accept();

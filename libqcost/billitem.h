@@ -23,11 +23,11 @@
 
 class PriceList;
 class PriceItem;
-class BillItemMeasuresModel;
+class MeasuresModel;
 class PriceFieldModel;
 class MathParser;
-class BillAttributeModel;
-class BillAttribute;
+class AttributeModel;
+class Attribute;
 class UnitMeasure;
 
 class QTextCursor;
@@ -99,26 +99,26 @@ public:
     bool reset();
     int childNumber() const;
 
-    BillItemMeasuresModel * measuresModel();
-    BillItemMeasuresModel * generateMeasuresModel();
+    MeasuresModel * measuresModel();
+    MeasuresModel * generateMeasuresModel();
     void removeMeasuresModel();
 
     void writeXml( QXmlStreamWriter * writer );
-    void readXml(QXmlStreamReader *reader, PriceList *priceList, BillAttributeModel * billAttrModel);
+    void readXml(QXmlStreamReader *reader, PriceList *priceList, AttributeModel * billAttrModel);
     void readXmlTmp(QXmlStreamReader *reader);
-    void loadFromXml(const QXmlStreamAttributes &attrs, PriceList *priceList, BillAttributeModel * billAttrModel);
+    void loadFromXml(const QXmlStreamAttributes &attrs, PriceList *priceList, AttributeModel * billAttrModel);
     void loadFromXmlTmp(const QXmlStreamAttributes &attrs);
-    void loadTmpData(PriceList *priceList , BillAttributeModel *billAttrModel);
+    void loadTmpData(PriceList *priceList , AttributeModel *billAttrModel);
 
-    bool containsAttribute( BillAttribute * attr );
-    bool containsAttributeInherited( BillAttribute * attr );
-    bool containsAttributeDirect( BillAttribute * attr );
+    bool containsAttribute( Attribute * attr );
+    bool containsAttributeInherited( Attribute * attr );
+    bool containsAttributeDirect( Attribute * attr );
 
-    void addAttribute( BillAttribute * attr );
-    void removeAttribute( BillAttribute * attr );
+    void addAttribute( Attribute * attr );
+    void removeAttribute( Attribute * attr );
     void removeAllAttributes();
-    double amountAttribute( BillAttribute * attr, int field );
-    QString amountAttributeStr( BillAttribute * attr, int field );
+    double amountAttribute( Attribute * attr, int field );
+    QString amountAttributeStr( Attribute * attr, int field );
 
     void writeODTBillOnTable( QTextCursor * cursor,
                               BillPrinter::PrintBillItemsOption prItemsOption,
@@ -133,7 +133,7 @@ public:
                                        BillPrinter::AttributePrintOption prOption,
                                        BillPrinter::PrintBillItemsOption prItemsOption,
                                        const QList<int> &fieldsToPrint,
-                                       const QList<BillAttribute *> &attrsToPrint,
+                                       const QList<Attribute *> &attrsToPrint,
                                        bool groupPrAm = false );
 
 
@@ -196,7 +196,7 @@ private:
     void writeODTAttributeBillLineSimple( BillPrinter::PrintBillItemsOption prItemsOption,
                                           QList<double> * fieldsAmounts,
                                           const QList<int> &fieldsToPrint,
-                                          BillAttribute * attrsToPrint,
+                                          Attribute * attrsToPrint,
                                           bool groupPrAm,
                                           QTextCursor *cursor,
                                           QTextTable *table,
@@ -213,7 +213,7 @@ private:
     void writeODTAttributeBillLineIntersection( BillPrinter::PrintBillItemsOption prItemsOption,
                                                 QList<double> * fieldsAmounts,
                                                 const QList<int> &fieldsToPrint,
-                                                const QList<BillAttribute *> &attrsToPrint,
+                                                const QList<Attribute *> &attrsToPrint,
                                                 bool groupPrAm,
                                                 QTextCursor *cursor,
                                                 QTextTable *table,
@@ -230,7 +230,7 @@ private:
     void writeODTAttributeBillLineUnion( BillPrinter::PrintBillItemsOption prItemsOption,
                                          QList<double> * fieldsAmounts,
                                          const QList<int> &fieldsToPrint,
-                                         const QList<BillAttribute *> &attrsToPrint,
+                                         const QList<Attribute *> &attrsToPrint,
                                          bool groupPrAm,
                                          QTextCursor *cursor,
                                          QTextTable *table,
@@ -264,10 +264,10 @@ private:
     /** restituisce tutti gli attributi dell'elemento; se la var bool è false,
         vuol dire che l'attribute è ereditato, se è true vuol dire che è un
         attributo direttamente imposto */
-    QList< QPair<BillAttribute *, bool> > attributes();
-    QList<BillAttribute *> allAttributes();
-    QList<BillAttribute *> directAttributes();
-    QList<BillAttribute *> inheritedAttributes();
+    QList< QPair<Attribute *, bool> > attributes();
+    QList<Attribute *> allAttributes();
+    QList<Attribute *> directAttributes();
+    QList<Attribute *> inheritedAttributes();
 private slots:
     void emitPriceDataUpdated();
     void setUnitMeasure( UnitMeasure * ump );

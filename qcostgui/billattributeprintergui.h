@@ -3,8 +3,8 @@
 
 #include "billprinter.h"
 
-class BillAttribute;
-class BillAttributeModel;
+class Attribute;
+class AttributeModel;
 class PriceFieldModel;
 
 #include <QDialog>
@@ -17,12 +17,12 @@ public:
     explicit BillAttributePrinterGUI( BillPrinter::PrintBillItemsOption *prItemsOption,
                                       BillPrinter::AttributePrintOption * prOption,
                                       QList<int> * pFlds,
-                                      QList<BillAttribute *> * pAttrs,
+                                      QList<Attribute *> * pAttrs,
                                       double *pWidth, double *pHeight,
                                       Qt::Orientation *pOrient,
                                       bool * groupPrAm,
                                       PriceFieldModel * pfm,
-                                      BillAttributeModel * bam,
+                                      AttributeModel * bam,
                                       QWidget *parent = 0);
     ~BillAttributePrinterGUI();
 private slots:

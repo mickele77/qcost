@@ -77,7 +77,7 @@ bool BillPrinter::printODT( BillPrinter::PrintBillItemsOption prBillItemsOption,
 bool BillPrinter::printAttributeODT( BillPrinter::PrintBillItemsOption prItemsOption,
                                      BillPrinter::AttributePrintOption prOption,
                                      const QList<int> &fieldsToPrint,
-                                     const QList<BillAttribute *> &attrsToPrint,
+                                     const QList<Attribute *> &attrsToPrint,
                                      const QString &fileName,
                                      double paperWidth,
                                      double paperHeight,
@@ -149,13 +149,11 @@ bool BillPrinter::printAttributeODT( BillPrinter::PrintBillItemsOption prItemsOp
                     colWidths << QTextLength( QTextLength::FixedLength, colEqualWidth );
                 }
             } else { // fieldsToPrint.size() == 0
-                if( fieldsToPrint.size() > 1  ){
-                    double descWidth = tableWidth - (10.0 + 30.0 + 20.0 + 30.0);
-                    colWidths << QTextLength( QTextLength::FixedLength, 30.0 )
-                              << QTextLength( QTextLength::FixedLength, descWidth )
-                              << QTextLength( QTextLength::FixedLength, 20.0 )
-                              << QTextLength( QTextLength::FixedLength, 30.0 );
-                }
+                double descWidth = tableWidth - (10.0 + 30.0 + 20.0 + 30.0);
+                colWidths << QTextLength( QTextLength::FixedLength, 30.0 )
+                          << QTextLength( QTextLength::FixedLength, descWidth )
+                          << QTextLength( QTextLength::FixedLength, 20.0 )
+                          << QTextLength( QTextLength::FixedLength, 30.0 );
             }
         } else { // pageOrientation == Qt::Vertical
             if( fieldsToPrint.size() > 0 ){
@@ -275,14 +273,12 @@ bool BillPrinter::printBillODT( PrintBillItemsOption prItemsOption,
                     colWidths << QTextLength( QTextLength::FixedLength, colEqualWidth );
                 }
             } else { // fieldsToPrint.size() == 0
-                if( fieldsToPrint.size() > 1  ){
-                    double descWidth = tableWidth - (10.0 + 30.0 + 20.0 + 30.0);
-                    colWidths << QTextLength( QTextLength::FixedLength, 10.0 )
-                              << QTextLength( QTextLength::FixedLength, 30.0 )
-                              << QTextLength( QTextLength::FixedLength, descWidth )
-                              << QTextLength( QTextLength::FixedLength, 20.0 )
-                              << QTextLength( QTextLength::FixedLength, 30.0 );
-                }
+                double descWidth = tableWidth - (10.0 + 30.0 + 20.0 + 30.0);
+                colWidths << QTextLength( QTextLength::FixedLength, 10.0 )
+                          << QTextLength( QTextLength::FixedLength, 30.0 )
+                          << QTextLength( QTextLength::FixedLength, descWidth )
+                          << QTextLength( QTextLength::FixedLength, 20.0 )
+                          << QTextLength( QTextLength::FixedLength, 30.0 );
             }
         } else { // pageOrientation == Qt::Vertical
             if( fieldsToPrint.size() > 0 ){

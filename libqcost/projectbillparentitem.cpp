@@ -83,14 +83,14 @@ bool ProjectBillParentItem::insertChildren(int position, int count) {
     if (position < 0 || position > m_d->billContainer.size())
         return false;
 
-    emit beginInsertChildren( position, position+count-1);
+    emit beginInsertChildren( this, position, position+count-1);
 
     for (int row = 0; row < count; ++row) {
-        QString purposedBillName = trUtf8("Computo %1").arg(m_d->nextId++);
+        QString purposedBillName = QString("%1 %2").arg(trUtf8("Computo"), QString::number(m_d->nextId++));
         QList<Bill *>::iterator i = m_d->billContainer.begin();
         while( i != m_d->billContainer.end() ){
             if( (*i)->name().toUpper() == purposedBillName.toUpper() ){
-                purposedBillName = trUtf8("Computo %1").arg(m_d->nextId++);
+                purposedBillName = QString("%1 %2").arg(trUtf8("Computo"), QString::number(m_d->nextId++));
                 i = m_d->billContainer.begin();
             } else {
                 i++;
@@ -116,7 +116,7 @@ bool ProjectBillParentItem::removeChildren(int position, int count) {
             || count < 1 )
         return false;
 
-    emit beginRemoveChildren( position, position+count-1);
+    emit beginRemoveChildren( this, position, position+count-1);
 
     for (int row = 0; row < count; ++row){
         Bill * item = m_d->billContainer.at( position );

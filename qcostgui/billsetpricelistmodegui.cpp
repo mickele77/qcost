@@ -17,18 +17,18 @@
    Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 */
 #include "billsetpricelistmodegui.h"
-#include "ui_billsetpricelistmodegui.h"
+#include "ui_setpricelistmodegui.h"
 
 class BillSetPriceListModeGUIPrivate{
 public:
     BillSetPriceListModeGUIPrivate():
-        ui( new Ui::BillSetPriceListModeGUI() ) {
+        ui( new Ui::SetPriceListModeGUI() ) {
     };
     ~BillSetPriceListModeGUIPrivate(){
         delete ui;
     };
 
-    Ui::BillSetPriceListModeGUI * ui;
+    Ui::SetPriceListModeGUI * ui;
 };
 
 BillSetPriceListModeGUI::BillSetPriceListModeGUI(QWidget *parent) :
@@ -40,7 +40,7 @@ BillSetPriceListModeGUI::BillSetPriceListModeGUI(QWidget *parent) :
     m_d->ui->addRadioButton->setToolTip( trUtf8("Aggiunge i prezzo del vecchio EP al nuovo EP"));
     m_d->ui->searchRadioButton->setToolTip( trUtf8("Cerca i prezzi nel nuovo elenco prezzi in base al codice; imposta un prezzo nullo per le voci mancanti"));
     m_d->ui->nullPriceItemRadioButton->setToolTip( "Imposta un prezzo nullo per le voci di computo conservandone le quantità" );
-    m_d->ui->resetBillRadioButton->setToolTip( "Cancella tutte le righe del computo" );
+    m_d->ui->resetRadioButton->setToolTip( "Cancella tutte le righe del computo" );
 
     m_d->ui->searchAndAddRadioButton->setChecked( true );
 
@@ -63,7 +63,7 @@ Bill::SetPriceListMode BillSetPriceListModeGUI::returnValue() {
             return Bill::Search;
         } else if( m_d->ui->nullPriceItemRadioButton->isChecked() ){
             return Bill::NULLPriceItem;
-        } else if( m_d->ui->resetBillRadioButton->isChecked() ){
+        } else if( m_d->ui->resetRadioButton->isChecked() ){
             return Bill::ResetBill;
         }
     }

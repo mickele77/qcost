@@ -16,43 +16,26 @@
    along with this program; if not, write to the Free Software Foundation,
    Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 */
-#ifndef BILLATTRIBUTE_H
-#define BILLATTRIBUTE_H
+#ifndef ACCOUNTINGTAMBILLITEM_H
+#define ACCOUNTINGTAMBILLITEM_H
 
 #include "library_common.h"
 
-class Bill;
-class BillItem;
-class MathParser;
-class PriceFieldModel;
+#include "accountingbillitem.h"
 
-class QTextStream;
-class QXmlStreamAttributes;
-class QXmlStreamWriter;
-class QString;
+class AccountingTAMBillItemPrivate;
 
-class BillAttributePrivate;
-
-class EXPORT_LIB_OPT BillAttribute {
-
+class EXPORT_LIB_OPT AccountingTAMBillItem : public AccountingBillItem {
+    Q_OBJECT
 public:
-    friend class BillAttributeModel;
+    friend class AccountingTAMBill;
+    AccountingTAMBillItem( AccountingTAMBillItem * parentItem, AccountingBillItem::ItemType iType, PriceFieldModel * pfm, MathParser * parser = NULL );
+    ~AccountingTAMBillItem();
 
-    explicit BillAttribute(MathParser * prs , PriceFieldModel *pfm);
-    ~BillAttribute();
+    /** Nel caso di lista, il titolo della lista */
+    QString title() const;
 
-    QString name();
-    void setName( const QString & n );
-
-    unsigned int id();
-
-    void writeXml( QXmlStreamWriter * writer );
-    void loadFromXml(const QXmlStreamAttributes &attrs);
-
-private:
-    BillAttributePrivate * m_d;
-
-    void nextId();
+    bool insertChildren(ItemType iType, int position, int count=1);
 };
 
-#endif // BILLATTRIBUTE_H
+#endif // ACCOUNTINGTAMBILLITEM_H

@@ -20,7 +20,7 @@
 #define BILLITEMATTRIBUTEMODEL_H
 
 class BillItem;
-class BillAttributeModel;
+class AttributeModel;
 
 class BillItemAttributeModelPrivate;
 
@@ -29,7 +29,7 @@ class BillItemAttributeModelPrivate;
 class BillItemAttributeModel : public QAbstractTableModel {
     Q_OBJECT
 public:
-    explicit BillItemAttributeModel(BillItem * item, BillAttributeModel *attrModel, QObject *parent = 0);
+    explicit BillItemAttributeModel(BillItem * item, AttributeModel *attrModel, QObject *parent = 0);
     ~BillItemAttributeModel();
 
     int rowCount(const QModelIndex &parent = QModelIndex()) const;
@@ -45,7 +45,7 @@ public:
     bool removeRows(int row, int count=1);
     bool clear();
 
-    void setAttributeModel( BillAttributeModel *attrModel );
+    void setAttributeModel( AttributeModel *attrModel );
     void setBillItem(BillItem *item);
 
 private slots:

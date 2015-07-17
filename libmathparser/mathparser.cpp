@@ -18,8 +18,8 @@
 */
 #include "mathparser.h"
 
+#include <QDate>
 #include <QString>
-#include <QLocale>
 #include <QMap>
 #include <QCoreApplication>
 #include <cmath>
@@ -326,8 +326,16 @@ double MathParser::evaluate(const QString &exprInput, QString *errorMsg) {
     return m_d->evaluate( expr, errorMsg);
 }
 
+QDate MathParser::evaluateDate(const QString &date, QLocale::FormatType format) {
+    return m_d->locale.toDate(date, format );
+}
+
+QString MathParser::toString(const QDate &date, QLocale::FormatType format) const {
+    return m_d->locale.toString( date, format );
+}
+
 QString MathParser::toString(double i, char f, int prec) const {
-    return m_d->locale.toString( i, f, prec );
+    return m_d->locale.toString( i, f, prec);
 }
 
 QString MathParser::decimalSeparator() {

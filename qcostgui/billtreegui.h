@@ -59,7 +59,7 @@ private slots:
     void editBillItemPrice( const QModelIndex & index);
 
     void setPriceList();
-    void setPriceCol();
+    void setPriceDataSet();
 
     void clear();
     void billTreeViewCustomMenuRequested(QPoint pos);
@@ -83,7 +83,7 @@ private:
 
     void populatePriceListComboBox();
     void setPriceListComboBox();
-    void setPriceColSpinBox();
+    void setPriceDataSetSpinBox();
 };
 
 #endif // BILLTREEGUI_H

@@ -10,7 +10,8 @@ LIBS += \
     -L../bin \
     -lqcost \
     -lodtcreator \
-    -lmathparser
+    -lmathparser \
+    -lz
 
 DEPENDPATH += \
     ../libmatparser \
@@ -49,8 +50,6 @@ SOURCES += \
     importpriceitemdbdialog.cpp \
     qcostgui.cpp \
     pricelistdbviewer.cpp \
-    billattributechangedialog.cpp \
-    billitemattributemodel.cpp \
     billattributeselectmodel.cpp \
     qcostclipboarddata.cpp \
     pricefieldtabledelegate.cpp \
@@ -59,7 +58,29 @@ SOURCES += \
     billattributeprintergui.cpp \
     priceitemdatasetviewmodel.cpp \
     settingsdialog.cpp \
-    importbillitemmeasurestxt.cpp
+    importbillitemmeasurestxt.cpp \
+    accountingtreegui.cpp \
+    accountingsetpricelistmodegui.cpp \
+    accountingitemattributemodel.cpp \
+    accountingattributeprintergui.cpp \
+    qcalendardialog.cpp \
+    accountinggui.cpp \
+    attributechangedialog.cpp \
+    billitemattributemodel.cpp \
+    attributeselectmodel.cpp \
+    accountingtambillgui.cpp \
+    accountingtambilldatagui.cpp \
+    accountingitemcommentgui.cpp \
+    accountingitemppugui.cpp \
+    accountingitembillgui.cpp \
+    accountingbillsetpricelistmodegui.cpp \
+    accountingbillgui.cpp \
+    accountingbilldatagui.cpp \
+    accountingitemlsgui.cpp \
+    accountingitemtamgui.cpp \
+    accountinglsbilldatagui.cpp \
+    accountinglsbillgui.cpp \
+    accountinglsbillitemgui.cpp
 
 HEADERS  += \
     projectitemsview.h \
@@ -83,7 +104,6 @@ HEADERS  += \
     importpriceitemdbdialog.h \
     qcostgui.h \
     pricelistdbviewer.h \
-    billattributechangedialog.h \
     billitemattributemodel.h \
     billattributeselectmodel.h \
     qcostclipboarddata.h \
@@ -93,7 +113,28 @@ HEADERS  += \
     billattributeprintergui.h \
     priceitemdatasetviewmodel.h \
     settingsdialog.h \
-    importbillitemmeasurestxt.h
+    importbillitemmeasurestxt.h \
+    accountingtreegui.h \
+    accountingsetpricelistmodegui.h \
+    accountingitemattributemodel.h \
+    accountingattributeprintergui.h \
+    qcalendardialog.h \
+    accountinggui.h \
+    attributechangedialog.h \
+    attributeselectmodel.h \
+    accountingtambillgui.h \
+    accountingtambilldatagui.h \
+    accountingitemcommentgui.h \
+    accountingitemppugui.h \
+    accountingitembillgui.h \
+    accountingbillsetpricelistmodegui.h \
+    accountingbillgui.h \
+    accountingbilldatagui.h \
+    accountingitemlsgui.h \
+    accountingitemtamgui.h \
+    accountinglsbilldatagui.h \
+    accountinglsbillgui.h \
+    accountinglsbillitemgui.h
 
 FORMS += \
     generaldatagui.ui \
@@ -104,16 +145,36 @@ FORMS += \
     pricelistdatagui.ui \
     billtreegui.ui \
     billitemgui.ui \
-    billsetpricelistmodegui.ui \
     billitemtitlegui.ui \
     pricelistdbwidget.ui \
-    billattributechangedialog.ui \
     billprintergui.ui \
     pricelistprintergui.ui \
     billattributeprintergui.ui \
     settingsdialog.ui \
-    importbillitemmeasurestxt.ui
+    importbillitemmeasurestxt.ui \
+    accountingtreegui.ui \
+    accountingprintergui.ui \
+    accountingattributeprintergui.ui \
+    setpricelistmodegui.ui \
+    attributechangedialog.ui \
+    qcalendardialog.ui \
+    accountinggui.ui \
+    accountingtambilldatagui.ui \
+    accountingitemcommentgui.ui \
+    accountingitemppugui.ui \
+    accountingitembillgui.ui \
+    accountingbilldatagui.ui \
+    accountingitemlsgui.ui \
+    accountingitemtamgui.ui \
+    accountinglsbilldatagui.ui \
+    accountinglsbillitemgui.ui
 
 OTHER_FILES += \
     ../LICENSE \
-    ../LICENSE.GPLv3
+    ../LICENSE.GPLv3 \
+    ../README
+
+contains(DEFINES, BUILD_RELEASE) {
+    target.path = /usr/local/bin/
+    INSTALLS += target
+}

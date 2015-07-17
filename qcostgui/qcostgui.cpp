@@ -23,18 +23,23 @@
 #include "settingsdialog.h"
 #include "generaldatagui.h"
 #include "pricelistgui.h"
+#include "accountingbillgui.h"
 #include "billgui.h"
 #include "pricelistdbviewer.h"
 #include "projectitemsview.h"
+#include "accountinggui.h"
+#include "accountingtambillgui.h"
 
 #include "billprinter.h"
 #include "pricelistprinter.h"
 #include "qcostclipboarddata.h"
-#include "projectdataparentitem.h"
 #include "project.h"
+#include "projectdataparentitem.h"
+#include "projectaccountingparentitem.h"
+#include "accountingbill.h"
+#include "accountingtambill.h"
 #include "bill.h"
 #include "pricelist.h"
-
 #include "mathparser.h"
 
 #include <QLocale>
@@ -67,6 +72,9 @@ public:
         generalDataGUI(NULL),
         priceListGUI(NULL),
         billGUI(NULL),
+        accountingGUI(NULL),
+        accountingBillGUI(NULL),
+        accountingTAMBillGUI(NULL),
         EPAFileName(){
 
         projectItemsViewDock->setWidget( projectItemsView );
@@ -87,6 +95,9 @@ public:
     GeneralDataGUI * generalDataGUI;
     PriceListGUI * priceListGUI;
     BillGUI * billGUI;
+    AccountingGUI * accountingGUI;
+    AccountingBillGUI * accountingBillGUI;
+    AccountingTAMBillGUI * accountingTAMBillGUI;
 
     // *** GUI ***
     // file corrente
@@ -117,7 +128,9 @@ public:
     QAction * recentFileActions[QCostGUI::MaxRecentFiles];
 
     // Impostazioni
+#ifdef _WIN32
     QString settingsFile;
+#endif
     QString sWordProcessorFile;
 
     QMap<PriceListDBWidget::ImportOptions, bool> EPAImportOptions;
@@ -141,6 +154,15 @@ QCostGUI::QCostGUI(QWidget *parent) :
     m_d->generalDataGUI = new GeneralDataGUI( m_d->project );
     m_d->mainWidget->addWidget( m_d->generalDataGUI);
 
+    m_d->accountingGUI = new AccountingGUI( m_d->project->accounting(), this );
+    m_d->mainWidget->addWidget( m_d->accountingGUI );
+
+    m_d->accountingTAMBillGUI = new AccountingTAMBillGUI(  &(m_d->EPAImportOptions), &(m_d->EPAFileName), &(m_d->parser), NULL, m_d->project, &(m_d->sWordProcessorFile), this );
+    m_d->mainWidget->addWidget( m_d->accountingTAMBillGUI );
+
+    m_d->accountingBillGUI = new AccountingBillGUI( &(m_d->EPAImportOptions), &(m_d->EPAFileName), &(m_d->parser), NULL, m_d->project, &(m_d->sWordProcessorFile), this );
+    m_d->mainWidget->addWidget( m_d->accountingBillGUI );
+
     m_d->billGUI = new BillGUI( &(m_d->EPAImportOptions), &(m_d->EPAFileName), &(m_d->parser), NULL, m_d->project, &(m_d->sWordProcessorFile), this );
     m_d->mainWidget->addWidget( m_d->billGUI );
 
@@ -156,8 +178,12 @@ QCostGUI::QCostGUI(QWidget *parent) :
     connect( m_d->project, &Project::modelChanged, this, static_cast<void(QCostGUI::*)()>(&QCostGUI::setModified) );
     setModified( false );
 
+#ifdef _WIN32
     m_d->settingsFile = QApplication::applicationDirPath() + "/QCost.ini";
+#endif
     loadSettings();
+
+    setWindowIcon(QIcon(":/icons/qcost.svg"));
 }
 
 QCostGUI::~QCostGUI() {
@@ -165,15 +191,25 @@ QCostGUI::~QCostGUI() {
 }
 
 void QCostGUI::loadSettings() {
+#ifdef _WIN32
     if( QFileInfo(m_d->settingsFile).exists() ){
         QSettings settings( m_d->settingsFile, QSettings::IniFormat );
         m_d->sWordProcessorFile = settings.value("wordProcessorFile", "").toString();
         restoreGeometry(settings.value("geometry").toByteArray());
     }
+#else
+    QSettings settings(QSettings::NativeFormat, QSettings::UserScope, "QCost" );
+    m_d->sWordProcessorFile = settings.value("wordProcessorFile", "").toString();
+    restoreGeometry(settings.value("geometry").toByteArray());
+#endif
 }
 
 void QCostGUI::saveSettings() {
+#ifdef _WIN32
     QSettings settings( m_d->settingsFile, QSettings::IniFormat );
+#else
+    QSettings settings(QSettings::NativeFormat, QSettings::UserScope, "QCost" );
+#endif
 
     settings.setValue("geometry", saveGeometry());
     settings.setValue("wordProcessorFile", m_d->sWordProcessorFile);
@@ -181,12 +217,20 @@ void QCostGUI::saveSettings() {
 
 void QCostGUI::setCurrentItem(ProjectItem *item) {
     if( m_d->project ){
-        if( dynamic_cast<Bill *>(item)){
+        if( dynamic_cast<AccountingTAMBill *>(item)){
+            m_d->accountingTAMBillGUI->setAccountingTAMBill( dynamic_cast<AccountingTAMBill *>(item) );
+            m_d->mainWidget->setCurrentWidget( m_d->accountingTAMBillGUI );
+        } else if( dynamic_cast<AccountingBill *>(item)){
+            m_d->accountingBillGUI->setAccountingBill( dynamic_cast<AccountingBill *>(item) );
+            m_d->mainWidget->setCurrentWidget( m_d->accountingBillGUI );
+        } else if( dynamic_cast<Bill *>(item)){
             m_d->billGUI->setBill( dynamic_cast<Bill *>(item) );
             m_d->mainWidget->setCurrentWidget( m_d->billGUI );
         } else if( dynamic_cast<PriceList *>(item)){
             m_d->priceListGUI->setPriceList( dynamic_cast<PriceList *>(item) );
             m_d->mainWidget->setCurrentWidget( m_d->priceListGUI );
+        } else if( dynamic_cast<ProjectAccountingParentItem *>(item)){
+            m_d->mainWidget->setCurrentWidget( m_d->accountingGUI );
         } else if( dynamic_cast<ProjectDataParentItem *>(item)){
             m_d->mainWidget->setCurrentWidget( m_d->generalDataGUI );
         }
@@ -575,11 +619,11 @@ void QCostGUI::setOptions(){
 void QCostGUI::about() {
     QMessageBox::about(this, trUtf8("Informazioni su QCost"),
                        trUtf8("<h1>QCost</h1>"
-                              "<h2>v0.8.0</h2>"
+                              "<h2>v0.9.0</h2>"
                               "<p>QCost è un software per la redazione di computi metrici estimativi."
                               "<p>Questo programma è software libero; puoi ridistribuirlo e/o modificarlo nei termini della GNU General Public License cos' come pubblicata dalla Free Software Foundation; sia nei termini della versione 3 della licenza che (a tua scelta) nei termini di qualsiasi altra versione successiva."
                               "<p>Questo programma è distribuito nella speranza che sia utile, ma SENZA ALCUNA GARANZIA; neanche l'implicita garanzia di COMMERCIABILITÀ o di IDONEITÀ AD UN PARTICOLARE IMPIEGO. Consulta la GNU General Public License per maggiori dettagli. "
-                              "<p>Con il programma dovresti aver ricevuto una copia della GNU General Public License; qualora non l'avessi ricevuta, scrivi alla Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA"
+                              "<p>Con il programma dovresti aver ricevuto una copia della GNU General Public License; qualora non l'avessi ricevuta, scrivi alla Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA."
                               "<p>Se incontri problemi nell'uso del programma, lascia un post nel <a href=\"http://ingegnerialibera.altervista.org/forum/viewforum.php?f=3\">forum di QCost</a>.<p>Il sito di riferimento è <a href=\"http://ingegnerialibera.altervista.org/wiki/doku.php/qcost:indice\">ingegnerialibera.altervista.org/wiki/doku.php/qcost:indice</a>." ) );
 }
 

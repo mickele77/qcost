@@ -1,4 +1,4 @@
-#include "billitemmeasuresmodel.h"
+#include "measuresmodel.h"
 
 #include "billitemmeasure.h"
 #include "unitmeasure.h"
@@ -9,9 +9,9 @@
 #include <QList>
 #include <QLocale>
 
-class BillItemMeasuresModelPrivate{
+class MeasuresModelPrivate{
 public:
-    BillItemMeasuresModelPrivate( MathParser * p, UnitMeasure * ump ):
+    MeasuresModelPrivate( MathParser * p, UnitMeasure * ump ):
         parserWasCreated(false),
         unitMeasure(ump),
         quantity( 0.0 ){
@@ -22,7 +22,7 @@ public:
             parser = p;
         }
     };
-    ~BillItemMeasuresModelPrivate(){
+    ~MeasuresModelPrivate(){
         if( parserWasCreated ){
             delete parser;
         }
@@ -35,21 +35,21 @@ public:
     double quantity;
 };
 
-BillItemMeasuresModel::BillItemMeasuresModel(MathParser * p, UnitMeasure * ump, QObject *parent) :
+MeasuresModel::MeasuresModel(MathParser * p, UnitMeasure * ump, QObject *parent) :
     QAbstractTableModel(parent),
-    m_d(new BillItemMeasuresModelPrivate( p, ump )){
+    m_d(new MeasuresModelPrivate( p, ump )){
     insertRows(0);
 
     if( m_d->unitMeasure != NULL ){
-        connect( m_d->unitMeasure, &UnitMeasure::precisionChanged, this, &BillItemMeasuresModel::updateAllQuantities );
+        connect( m_d->unitMeasure, &UnitMeasure::precisionChanged, this, &MeasuresModel::updateAllQuantities );
     }
 }
 
-BillItemMeasuresModel::~BillItemMeasuresModel(){
+MeasuresModel::~MeasuresModel(){
     delete m_d;
 }
 
-BillItemMeasuresModel &BillItemMeasuresModel::operator=(const BillItemMeasuresModel &cp) {
+MeasuresModel &MeasuresModel::operator=(const MeasuresModel &cp) {
     if( &cp != this ){
         setUnitMeasure( cp.m_d->unitMeasure );
         if( m_d->linesContainer.size() > cp.m_d->linesContainer.size() ){
@@ -65,15 +65,15 @@ BillItemMeasuresModel &BillItemMeasuresModel::operator=(const BillItemMeasuresMo
     return *this;
 }
 
-int BillItemMeasuresModel::rowCount(const QModelIndex &) const {
+int MeasuresModel::rowCount(const QModelIndex &) const {
     return m_d->linesContainer.size();
 }
 
-int BillItemMeasuresModel::columnCount(const QModelIndex &) const {
+int MeasuresModel::columnCount(const QModelIndex &) const {
     return 3;
 }
 
-Qt::ItemFlags BillItemMeasuresModel::flags(const QModelIndex &index) const {
+Qt::ItemFlags MeasuresModel::flags(const QModelIndex &index) const {
     if( index.isValid() ){
         if( index.column() == 0 || index.column() == 1 ){
             return Qt::ItemIsEnabled | Qt::ItemIsEditable | Qt::ItemIsSelectable;
@@ -84,7 +84,7 @@ Qt::ItemFlags BillItemMeasuresModel::flags(const QModelIndex &index) const {
     return Qt::NoItemFlags;
 }
 
-QVariant BillItemMeasuresModel::data(const QModelIndex &index, int role) const {
+QVariant MeasuresModel::data(const QModelIndex &index, int role) const {
     if( index.isValid() ){
         if( index.row() >= 0 && index.row() < m_d->linesContainer.size() ){
             if( role == Qt::EditRole || role == Qt::DisplayRole ){
@@ -114,7 +114,7 @@ QVariant BillItemMeasuresModel::data(const QModelIndex &index, int role) const {
     return QVariant();
 }
 
-bool BillItemMeasuresModel::setData(const QModelIndex &index, const QVariant &value, int role) {
+bool MeasuresModel::setData(const QModelIndex &index, const QVariant &value, int role) {
     if( index.isValid() ){
         if( index.row() >= 0 && index.row() < m_d->linesContainer.size() ){
             if( role == Qt::EditRole  ){
@@ -138,7 +138,7 @@ bool BillItemMeasuresModel::setData(const QModelIndex &index, const QVariant &va
     return false;
 }
 
-QVariant BillItemMeasuresModel::headerData(int section, Qt::Orientation orientation, int role) const {
+QVariant MeasuresModel::headerData(int section, Qt::Orientation orientation, int role) const {
     if (role != Qt::DisplayRole)
         return QVariant();
 
@@ -158,7 +158,7 @@ QVariant BillItemMeasuresModel::headerData(int section, Qt::Orientation orientat
     return QVariant();
 }
 
-bool BillItemMeasuresModel::insertRows(int row, int count, const QModelIndex &parent) {
+bool MeasuresModel::insertRows(int row, int count, const QModelIndex &parent) {
     Q_UNUSED(parent);
     if( count < 1 ){
         return false;
@@ -172,7 +172,7 @@ bool BillItemMeasuresModel::insertRows(int row, int count, const QModelIndex &pa
     beginInsertRows(QModelIndex(), row, row+count-1 );
     for(int i=0; i < count; ++i){
         BillItemMeasure * itemLine = new BillItemMeasure( m_d->parser, m_d->unitMeasure );
-        connect( itemLine, &BillItemMeasure::quantityChanged, this, &BillItemMeasuresModel::updateQuantity );
+        connect( itemLine, &BillItemMeasure::quantityChanged, this, &MeasuresModel::updateQuantity );
         m_d->linesContainer.insert( row, itemLine );
     }
     endInsertRows();
@@ -180,7 +180,7 @@ bool BillItemMeasuresModel::insertRows(int row, int count, const QModelIndex &pa
     return true;
 }
 
-bool BillItemMeasuresModel::removeRows(int row, int count, const QModelIndex &parent) {
+bool MeasuresModel::removeRows(int row, int count, const QModelIndex &parent) {
     Q_UNUSED(parent);
 
     if( count < 1 || row < 0 || row > m_d->linesContainer.size() ){
@@ -211,11 +211,11 @@ bool BillItemMeasuresModel::removeRows(int row, int count, const QModelIndex &pa
     return true;
 }
 
-bool BillItemMeasuresModel::append( int count ){
+bool MeasuresModel::append( int count ){
     return insertRows( m_d->linesContainer.size(), count );
 }
 
-void BillItemMeasuresModel::updateQuantity() {
+void MeasuresModel::updateQuantity() {
     double ret = 0.0;
     for( QList<BillItemMeasure *>::iterator i = m_d->linesContainer.begin(); i != m_d->linesContainer.end(); ++i ){
         ret += (*i)->quantity();
@@ -226,22 +226,22 @@ void BillItemMeasuresModel::updateQuantity() {
     }
 }
 
-double BillItemMeasuresModel::quantity(){
+double MeasuresModel::quantity(){
     return m_d->quantity;
 }
 
-void BillItemMeasuresModel::updateAllQuantities() {
+void MeasuresModel::updateAllQuantities() {
     if( m_d->linesContainer.size() != 0 ){
         emit dataChanged( createIndex(0, 2), createIndex(m_d->linesContainer.size()-1, 2) );
     }
     updateQuantity();
 }
 
-void BillItemMeasuresModel::setUnitMeasure(UnitMeasure *ump) {
+void MeasuresModel::setUnitMeasure(UnitMeasure *ump) {
     if( m_d->unitMeasure != ump ){
         beginResetModel();
         if( m_d->unitMeasure != NULL ){
-            disconnect( m_d->unitMeasure, &UnitMeasure::precisionChanged, this, &BillItemMeasuresModel::updateAllQuantities );
+            disconnect( m_d->unitMeasure, &UnitMeasure::precisionChanged, this, &MeasuresModel::updateAllQuantities );
         }
         m_d->unitMeasure = ump;
         for( QList<BillItemMeasure *>::iterator i = m_d->linesContainer.begin(); i != m_d->linesContainer.end(); ++i ){
@@ -252,28 +252,28 @@ void BillItemMeasuresModel::setUnitMeasure(UnitMeasure *ump) {
         }
         updateQuantity();
         if( m_d->unitMeasure != NULL ){
-            connect( m_d->unitMeasure, &UnitMeasure::precisionChanged, this, &BillItemMeasuresModel::updateAllQuantities );
+            connect( m_d->unitMeasure, &UnitMeasure::precisionChanged, this, &MeasuresModel::updateAllQuantities );
         }
         endResetModel();
         emit modelChanged();
     }
 }
 
-void BillItemMeasuresModel::writeXml(QXmlStreamWriter *writer) {
-    writer->writeStartElement( "BillItemMeasuresModel" );
+void MeasuresModel::writeXml(QXmlStreamWriter *writer) {
+    writer->writeStartElement( "MeasuresModel" );
     for( QList<BillItemMeasure *>::iterator i = m_d->linesContainer.begin(); i != m_d->linesContainer.end(); ++i ){
         (*i)->writeXml( writer );
     }
     writer->writeEndElement();
 }
 
-void BillItemMeasuresModel::readXml(QXmlStreamReader *reader) {
+void MeasuresModel::readXml(QXmlStreamReader *reader) {
     bool firstLine = true;
     while( !reader->atEnd() &&
            !reader->hasError() &&
-           !(reader->isEndElement() && reader->name().toString().toUpper() == "BILLITEMMEASURESMODEL") ){
+           !(reader->isEndElement() && reader->name().toString().toUpper() == "MEASURESMODEL") ){
         reader->readNext();
-        if( reader->name().toString().toUpper() == "BILLITEMMEASURE" && reader->isStartElement()) {
+        if( reader->name().toString().toUpper() == "MEASURE" && reader->isStartElement()) {
             if( firstLine ){
                 m_d->linesContainer.last()->loadFromXml( reader->attributes() );
                 firstLine = false;
@@ -286,11 +286,11 @@ void BillItemMeasuresModel::readXml(QXmlStreamReader *reader) {
     }
 }
 
-int BillItemMeasuresModel::billItemMeasureCount() {
+int MeasuresModel::billItemMeasureCount() {
     return m_d->linesContainer.size();
 }
 
-BillItemMeasure * BillItemMeasuresModel::measure(int i) {
+BillItemMeasure * MeasuresModel::measure(int i) {
     if( i >= 0 && i < m_d->linesContainer.size() ){
         return m_d->linesContainer.at(i);
     }

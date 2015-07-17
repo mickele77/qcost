@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>BillAttributeChangeDialog</class>
- <widget class="QDialog" name="BillAttributeChangeDialog">
+ <class>AttributeChangeDialog</class>
+ <widget class="QDialog" name="AttributeChangeDialog">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -43,7 +43,7 @@
     </widget>
    </item>
    <item row="0" column="0" colspan="4">
-    <widget class="QTableView" name="billAttributeTableView"/>
+    <widget class="QTableView" name="attributesTableView"/>
    </item>
   </layout>
  </widget>

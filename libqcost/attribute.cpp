@@ -16,7 +16,7 @@
    along with this program; if not, write to the Free Software Foundation,
    Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 */
-#include "billattribute.h"
+#include "attribute.h"
 
 #include "bill.h"
 #include "billitem.h"
@@ -28,9 +28,9 @@
 #include <QString>
 #include <QList>
 
-class BillAttributePrivate{
+class AttributePrivate{
 public:
-    BillAttributePrivate(MathParser * prs, PriceFieldModel * pfm):
+    AttributePrivate(MathParser * prs, PriceFieldModel * pfm):
         parser(prs),
         priceFieldModel(pfm),
         name(QString()),
@@ -43,34 +43,34 @@ public:
     unsigned int id;
 };
 
-BillAttribute::BillAttribute(MathParser * prs, PriceFieldModel *pfm):
-    m_d(new BillAttributePrivate(prs, pfm) ){
+Attribute::Attribute(MathParser * prs, PriceFieldModel *pfm):
+    m_d(new AttributePrivate(prs, pfm) ){
 }
 
-BillAttribute::~BillAttribute(){
+Attribute::~Attribute(){
     delete m_d;
 }
 
-QString BillAttribute::name() {
+QString Attribute::name() {
     return m_d->name;
 }
 
-void BillAttribute::setName(const QString &n) {
+void Attribute::setName(const QString &n) {
     m_d->name = n;
 }
 
-unsigned int BillAttribute::id() {
+unsigned int Attribute::id() {
     return m_d->id;
 }
 
-void BillAttribute::writeXml(QXmlStreamWriter *writer) {
-    writer->writeStartElement( "BillAttribute" );
+void Attribute::writeXml(QXmlStreamWriter *writer) {
+    writer->writeStartElement( "Attribute" );
     writer->writeAttribute( "id", QString::number( m_d->id ) );
     writer->writeAttribute( "name", m_d->name );
     writer->writeEndElement();
 }
 
-void BillAttribute::loadFromXml(const QXmlStreamAttributes &attrs) {
+void Attribute::loadFromXml(const QXmlStreamAttributes &attrs) {
     if( attrs.hasAttribute( "id" ) ){
         m_d->id = attrs.value( "id").toUInt();
     }
@@ -79,6 +79,6 @@ void BillAttribute::loadFromXml(const QXmlStreamAttributes &attrs) {
     }
 }
 
-void BillAttribute::nextId() {
+void Attribute::nextId() {
     m_d->id++;
 }

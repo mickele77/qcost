@@ -68,9 +68,9 @@ signals:
     void removePriceItemSignal(PriceList * pl, int position, int count, const QModelIndex &parent );
     void removePriceListSignal(int position, int count);
 
-    void beginInsertChildren( int first, int last );
+    void beginInsertChildren( ProjectItem * item, int first, int last );
     void endInsertChildren();
-    void beginRemoveChildren( int first, int last );
+    void beginRemoveChildren( ProjectItem * item, int first, int last );
     void endRemoveChildren();
 
     void modelChanged();

@@ -28,8 +28,8 @@ public:
     QList<ProjectItem *> childrenContainer;
 };
 
-ProjectRootItem::ProjectRootItem():
-    ProjectItem(),
+ProjectRootItem::ProjectRootItem( ProjectItem *parent ):
+    ProjectItem(parent),
     m_d(new ProjectRootItemPrivate() ){
 }
 

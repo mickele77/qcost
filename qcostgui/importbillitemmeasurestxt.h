@@ -2,7 +2,7 @@
 #define IMPORTBILLITEMMEASURESTXT_H
 
 class ImportBillItemMeasuresTXTPrivate;
-class BillItemMeasuresModel;
+class MeasuresModel;
 class MathParser;
 
 #include <QDialog>
@@ -10,7 +10,7 @@ class MathParser;
 class ImportBillItemMeasuresTXT : public QDialog {
     Q_OBJECT
 public:
-    explicit ImportBillItemMeasuresTXT( BillItemMeasuresModel * mModel, int mPosition,
+    explicit ImportBillItemMeasuresTXT( MeasuresModel * mModel, int mPosition,
                                         MathParser * prs, QWidget *parent = 0);
     ~ImportBillItemMeasuresTXT();
 private slots:

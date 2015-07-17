@@ -1,0 +1,31 @@
+#ifndef ACCOUNTINGATTRIBUTEPRINTERGUI_H
+#define ACCOUNTINGATTRIBUTEPRINTERGUI_H
+
+#include "accountingprinter.h"
+
+class Attribute;
+class AttributeModel;
+
+#include <QDialog>
+
+class AccountingAttributePrinterGUIPrivate;
+
+class AccountingAttributePrinterGUI : public QDialog {
+    Q_OBJECT
+public:
+    explicit AccountingAttributePrinterGUI(AccountingPrinter::PrintAccountingBillOption *prItemsOption,
+                                           AccountingPrinter::AttributePrintOption * prOption,
+                                           QList<Attribute *> *pAttrs,
+                                           double *pWidth, double *pHeight,
+                                           Qt::Orientation *pOrient,
+                                           bool * printAmounts,
+                                           AttributeModel * bam,
+                                           QWidget *parent = 0);
+    ~AccountingAttributePrinterGUI();
+private slots:
+    void setPrintData();
+private:
+    AccountingAttributePrinterGUIPrivate * m_d;
+};
+
+#endif // ACCOUNTINGATTRIBUTEPRINTERGUI_H

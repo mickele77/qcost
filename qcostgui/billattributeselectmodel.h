@@ -1,8 +1,8 @@
 #ifndef BILLATTRIBUTESELECTMODEL_H
 #define BILLATTRIBUTESELECTMODEL_H
 
-class BillAttribute;
-class BillAttributeModel;
+class Attribute;
+class AttributeModel;
 class BillAttributeSelectModelPrivate;
 
 #include <QAbstractTableModel>
@@ -10,10 +10,10 @@ class BillAttributeSelectModelPrivate;
 class BillAttributeSelectModel : public QAbstractTableModel {
     Q_OBJECT
 public:
-    explicit BillAttributeSelectModel(BillAttributeModel * m, QObject *parent = 0);
+    explicit BillAttributeSelectModel(AttributeModel * m, QObject *parent = 0);
     ~BillAttributeSelectModel();
 
-    QList<BillAttribute *> selectedAttributes();
+    QList<Attribute *> selectedAttributes();
     int rowCount(const QModelIndex & parent = QModelIndex()) const;
     int columnCount(const QModelIndex & parent = QModelIndex())  const;
     Qt::ItemFlags flags(const QModelIndex & index) const;

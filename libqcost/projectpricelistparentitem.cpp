@@ -73,7 +73,7 @@ bool ProjectPriceListParentItem::insertChildren(int position, int count) {
     if (position < 0 || position > m_d->priceListContainer.size())
         return false;
 
-    emit beginInsertChildren( position, position+count-1);
+    emit beginInsertChildren( this, position, position+count-1);
 
     for (int row = 0; row < count; ++row) {
         QString purposedPLName = trUtf8("Prezzario %1").arg(m_d->nextId++);
@@ -118,7 +118,7 @@ bool ProjectPriceListParentItem::removeChildren(int position, int count) {
 bool ProjectPriceListParentItem::removeChildrenUnsecure(int position, int count) {
     if (position < 0 || position + count > m_d->priceListContainer.size())
         return false;
-    emit beginRemoveChildren(position, position+count-1);
+    emit beginRemoveChildren(this, position, position+count-1);
     for (int row = 0; row < count; ++row){
         PriceList * item = m_d->priceListContainer.at( position );
         disconnect( item, &PriceList::removePriceItemSignal, this, &ProjectPriceListParentItem::emitRemovePriceItemSignal );

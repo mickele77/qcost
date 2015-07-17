@@ -24,7 +24,7 @@
 
 #include "project.h"
 #include "bill.h"
-#include "billitemmeasuresmodel.h"
+#include "measuresmodel.h"
 #include "billitemattributemodel.h"
 #include "billitem.h"
 #include "priceitem.h"
@@ -72,6 +72,8 @@ BillItemGUI::BillItemGUI( QMap<PriceListDBWidget::ImportOptions, bool> * EPAImpO
     QWidget(parent),
     m_d(new BillItemGUIPrivate( EPAImpOptions, EPAFileName, prs, prj ) ) {
     m_d->ui->setupUi(this);
+    m_d->ui->priceGroupBox->setHidden( true );
+    m_d->ui->amountsGroupBox->setHidden( true );
     m_d->ui->priceTab->layout()->addWidget( m_d->priceItemGUI );
     m_d->ui->attributeTableView->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
     m_d->ui->attributeTableView->setModel( m_d->itemAttributeModel );

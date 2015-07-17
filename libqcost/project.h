@@ -21,6 +21,7 @@
 
 #include "library_common.h"
 
+class ProjectAccountingParentItem;
 class ProjectItem;
 class UnitMeasureModel;
 class PriceFieldModel;
@@ -50,7 +51,9 @@ public:
     UnitMeasureModel * unitMeasureModel();
     PriceFieldModel * priceFieldModel();
 
-    int priceListCount();
+    ProjectAccountingParentItem * accounting();
+
+     int priceListCount();
     PriceList * priceList( int i );
 
     int billCount();
@@ -88,15 +91,10 @@ private slots:
     void removePriceItem( PriceList* pl, int position,int count, const QModelIndex & parent);
     void removePriceList(int position, int count);
 
-    void beginInsertPriceLists(int first, int last);
-    void endInsertPriceLists();
-    void beginRemovePriceLists(int first, int last);
-    void endRemovePriceLists();
-
-    void beginInsertBills(int first, int last);
-    void endInsertBills();
-    void beginRemoveBills(int first, int last);
-    void endRemoveBills();
+    void beginInsertChildren(ProjectItem * item, int first, int last);
+    void endInsertChildren();
+    void beginRemoveChildren(ProjectItem * item,  int first, int last);
+    void endRemoveChildren();
 private:
     ProjectPrivate * m_d;
 };

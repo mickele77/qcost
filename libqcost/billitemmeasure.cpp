@@ -111,7 +111,7 @@ QString BillItemMeasure::quantityStr(){
 }
 
 void BillItemMeasure::writeXml( QXmlStreamWriter * writer ){
-    writer->writeStartElement( "BillItemMeasure" );
+    writer->writeStartElement( "Measure" );
     writer->writeAttribute( "comment", m_d->comment );
     QString f = m_d->formula;
     if( m_d->parser->decimalSeparator() != "." ){

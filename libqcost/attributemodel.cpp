@@ -17,9 +17,12 @@
    Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 */
 
-#include "billattributemodel.h"
+#include "attributemodel.h"
 
-#include "billattribute.h"
+#include "attribute.h"
+#include "accountinglsbill.h"
+#include "accountingtambill.h"
+#include "accountingbill.h"
 #include "bill.h"
 #include "pricefieldmodel.h"
 #include "mathparser.h"
@@ -28,72 +31,123 @@
 #include <QXmlStreamReader>
 #include <QList>
 
-class BillAttributeModelPrivate{
+class AttributeModelPrivate{
 public:
-    BillAttributeModelPrivate(Bill * b, MathParser *prs, PriceFieldModel * pfm):
+    AttributeModelPrivate(Bill * b, MathParser *prs, PriceFieldModel * pfm):
+        accountingLSBill(NULL),
+        accountingTAMBill(NULL),
+        accountingBill(NULL),
         bill(b),
         parser(prs),
         priceFieldModel(pfm) {
     }
-    ~BillAttributeModelPrivate(){
+    AttributeModelPrivate(AccountingBill * b, MathParser *prs, PriceFieldModel * pfm):
+        accountingLSBill(NULL),
+        accountingTAMBill(NULL),
+        accountingBill(b),
+        bill(NULL),
+        parser(prs),
+        priceFieldModel(pfm) {
+    }
+    AttributeModelPrivate(AccountingTAMBill * b, MathParser *prs, PriceFieldModel * pfm):
+        accountingLSBill(NULL),
+        accountingTAMBill(b),
+        accountingBill(NULL),
+        bill(NULL),
+        parser(prs),
+        priceFieldModel(pfm) {
+    }
+    AttributeModelPrivate(AccountingLSBill * b, MathParser *prs, PriceFieldModel * pfm):
+        accountingLSBill(b),
+        accountingTAMBill(NULL),
+        accountingBill(NULL),
+        bill(NULL),
+        parser(prs),
+        priceFieldModel(pfm) {
+    }
+    ~AttributeModelPrivate(){
         for( int i=0; i < attributeContainer.size(); ++i ){
             delete attributeContainer.takeAt(i);
         }
     }
-    void insert( int row, BillAttribute * attr ){
+    void insert( int row, Attribute * attr ){
         attributeContainer.insert( row, attr );
     }
     void removeAndDel( int row ){
         delete attributeContainer.at( row );
         attributeContainer.removeAt( row );
     }
-    BillAttribute * attribute( unsigned int id ){
-        for( QList<BillAttribute *>::iterator i = attributeContainer.begin(); i != attributeContainer.end(); ++i ){
+    Attribute * attribute( unsigned int id ){
+        for( QList<Attribute *>::iterator i = attributeContainer.begin(); i != attributeContainer.end(); ++i ){
             if( (*i)->id() == id ){
                 return *i;
             }
         }
         return NULL;
     }
-    QList<BillAttribute *> attributeContainer;
+    QList<Attribute *> attributeContainer;
+    AccountingLSBill * accountingLSBill;
+    AccountingTAMBill * accountingTAMBill;
+    AccountingBill * accountingBill;
     Bill * bill;
     MathParser * parser;
     PriceFieldModel * priceFieldModel;
 };
 
-BillAttributeModel::BillAttributeModel(Bill * myBill, MathParser *prs, PriceFieldModel * pfm, QObject *parent) :
+AttributeModel::AttributeModel(Bill * myBill, MathParser *prs, PriceFieldModel * pfm, QObject *parent) :
     QAbstractTableModel(parent),
-    m_d( new BillAttributeModelPrivate(myBill, prs, pfm) ){
+    m_d( new AttributeModelPrivate(myBill, prs, pfm) ){
 }
 
-BillAttributeModel::~BillAttributeModel() {
+AttributeModel::AttributeModel(AccountingBill * myBill, MathParser *prs, PriceFieldModel * pfm, QObject *parent) :
+    QAbstractTableModel(parent),
+    m_d( new AttributeModelPrivate(myBill, prs, pfm) ){
+}
+
+AttributeModel::AttributeModel(AccountingTAMBill * myBill, MathParser *prs, PriceFieldModel * pfm, QObject *parent) :
+    QAbstractTableModel(parent),
+    m_d( new AttributeModelPrivate(myBill, prs, pfm) ){
+}
+
+AttributeModel::AttributeModel(AccountingLSBill *myBill, MathParser *prs, PriceFieldModel *pfm, QObject *parent) :
+    QAbstractTableModel(parent),
+    m_d( new AttributeModelPrivate(myBill, prs, pfm) ){
+}
+
+AttributeModel::~AttributeModel() {
     emit aboutToBeDeleted();
     delete m_d;
 }
 
-void BillAttributeModel::insertStandardAttributes() {
-    if( insertRows( 0, 2) ){
-        setData( createIndex(0,0), QVariant( trUtf8("Sogg.ribasso")) );
-        setData( createIndex(1,0), QVariant( trUtf8("Non sogg.ribasso")) );
+void AttributeModel::insertStandardAttributes() {
+    if( m_d->bill != NULL ){
+        if( insertRows( 0, 2) ){
+            setData( createIndex(0,0), QVariant( trUtf8("Sogg.ribasso")) );
+            setData( createIndex(1,0), QVariant( trUtf8("Non sogg.ribasso")) );
+        }
     }
 }
 
 
-int BillAttributeModel::size() {
+int AttributeModel::size() {
     return m_d->attributeContainer.size();
 }
 
-int BillAttributeModel::rowCount(const QModelIndex &parent) const {
+int AttributeModel::rowCount(const QModelIndex &parent) const {
     Q_UNUSED( parent );
     return m_d->attributeContainer.size();
 }
 
-int BillAttributeModel::columnCount(const QModelIndex &parent) const {
+int AttributeModel::columnCount(const QModelIndex &parent) const {
     Q_UNUSED( parent );
-    return m_d->priceFieldModel->fieldCount()+1;
+    if( m_d->priceFieldModel != NULL ){
+        return m_d->priceFieldModel->fieldCount()+1;
+    } else {
+        return 2;
+    }
 }
 
-Qt::ItemFlags BillAttributeModel::flags(const QModelIndex &index) const {
+Qt::ItemFlags AttributeModel::flags(const QModelIndex &index) const {
     if (!index.isValid())
         return Qt::ItemIsEnabled;
 
@@ -104,7 +158,7 @@ Qt::ItemFlags BillAttributeModel::flags(const QModelIndex &index) const {
     }
 }
 
-QVariant BillAttributeModel::data(const QModelIndex &index, int role) const {
+QVariant AttributeModel::data(const QModelIndex &index, int role) const {
     if( !index.isValid() || !(index.row() < m_d->attributeContainer.size()) ){
         return QVariant();
     }
@@ -125,13 +179,24 @@ QVariant BillAttributeModel::data(const QModelIndex &index, int role) const {
             return QVariant( m_d->attributeContainer.at(index.row())->name() );
         }
         if( index.column() < m_d->priceFieldModel->fieldCount() + 1 ){
-            return QVariant( m_d->bill->amountAttributeStr( m_d->attributeContainer.at(index.row()), index.column() - 1) );
+            if( m_d->bill != NULL ){
+                return QVariant( m_d->bill->amountAttributeStr( m_d->attributeContainer.at(index.row()), index.column() - 1) );
+            }
+            if( m_d->accountingBill != NULL ){
+                return QVariant( m_d->accountingBill->totalAmountToBeDiscountedStr() );
+            }
+            if( m_d->accountingTAMBill != NULL ){
+                return QVariant( m_d->accountingTAMBill->totalAmountToBeDiscountedStr() );
+            }
+            if( m_d->accountingLSBill != NULL ){
+                return QVariant( m_d->accountingLSBill->totalAmountStr() );
+            }
         }
     }
     return QVariant();
 }
 
-bool BillAttributeModel::setData(const QModelIndex &index, const QVariant &value, int role) {
+bool AttributeModel::setData(const QModelIndex &index, const QVariant &value, int role) {
     if (index.isValid() && role == Qt::EditRole && index.row() < m_d->attributeContainer.size() ) {
         if( index.column() == 0 ){
             m_d->attributeContainer.at(index.row())->setName( value.toString() );
@@ -142,7 +207,7 @@ bool BillAttributeModel::setData(const QModelIndex &index, const QVariant &value
     return false;
 }
 
-QVariant BillAttributeModel::headerData(int section, Qt::Orientation orientation, int role) const {
+QVariant AttributeModel::headerData(int section, Qt::Orientation orientation, int role) const {
     if (role != Qt::DisplayRole)
         return QVariant();
 
@@ -159,7 +224,7 @@ QVariant BillAttributeModel::headerData(int section, Qt::Orientation orientation
     return QVariant();
 }
 
-bool BillAttributeModel::insertRows(int row, int count){
+bool AttributeModel::insertRows(int row, int count){
     if( count < 1 ){
         return false;
     }
@@ -171,7 +236,7 @@ bool BillAttributeModel::insertRows(int row, int count){
     }
     beginInsertRows(QModelIndex(), row, row+count-1 );
     for(int i=0; i < count; ++i){
-        BillAttribute * attr = new BillAttribute( m_d->parser, m_d->priceFieldModel );
+        Attribute * attr = new Attribute( m_d->parser, m_d->priceFieldModel );
         while( attributeId(attr->id()) != NULL ){
             attr->nextId();
         }
@@ -181,11 +246,11 @@ bool BillAttributeModel::insertRows(int row, int count){
     return true;
 }
 
-bool BillAttributeModel::append() {
+bool AttributeModel::append() {
     return insertRows( m_d->attributeContainer.size() );
 }
 
-bool BillAttributeModel::removeRows(int row, int count) {
+bool AttributeModel::removeRows(int row, int count) {
     if( count < 1 || row < 0 || row > m_d->attributeContainer.size() ){
         return false;
     }
@@ -202,19 +267,19 @@ bool BillAttributeModel::removeRows(int row, int count) {
     return true;
 }
 
-bool BillAttributeModel::clear() {
+bool AttributeModel::clear() {
     return removeRows( 0, m_d->attributeContainer.size() );
 }
 
-BillAttribute *BillAttributeModel::attribute(int i) {
+Attribute *AttributeModel::attribute(int i) {
     if( i >= 0 && i < m_d->attributeContainer.size()){
         return m_d->attributeContainer.value(i);
     }
     return NULL;
 }
 
-BillAttribute *BillAttributeModel::attributeId(unsigned int id) {
-    for( QList<BillAttribute *>::iterator i = m_d->attributeContainer.begin(); i != m_d->attributeContainer.end(); ++i ){
+Attribute *AttributeModel::attributeId(unsigned int id) {
+    for( QList<Attribute *>::iterator i = m_d->attributeContainer.begin(); i != m_d->attributeContainer.end(); ++i ){
         if( (*i)->id() == id ){
             return (*i);
         }
@@ -222,20 +287,20 @@ BillAttribute *BillAttributeModel::attributeId(unsigned int id) {
     return NULL;
 }
 
-void BillAttributeModel::writeXml(QXmlStreamWriter *writer) {
-    writer->writeStartElement( "BillAttributeModel" );
-    for( QList<BillAttribute *>::iterator i = m_d->attributeContainer.begin(); i != m_d->attributeContainer.end(); ++i ){
+void AttributeModel::writeXml(QXmlStreamWriter *writer) {
+    writer->writeStartElement( "AttributeModel" );
+    for( QList<Attribute *>::iterator i = m_d->attributeContainer.begin(); i != m_d->attributeContainer.end(); ++i ){
         (*i)->writeXml( writer );
     }
     writer->writeEndElement();
 }
 
-void BillAttributeModel::readXml(QXmlStreamReader *reader) {
+void AttributeModel::readXml(QXmlStreamReader *reader) {
     while( !reader->atEnd() &&
            !reader->hasError() &&
            !(reader->isEndElement() && reader->name().toString().toUpper() == "BILLATTRIBUTEMODEL") ){
         reader->readNext();
-        if( reader->name().toString().toUpper() == "BILLATTRIBUTE" && reader->isStartElement()) {
+        if( reader->name().toString().toUpper() == "ATTRIBUTE" && reader->isStartElement()) {
             if(append()){
                 m_d->attributeContainer.last()->loadFromXml( reader->attributes() );
             }

@@ -18,23 +18,23 @@
 */
 #include "billattributeselectmodel.h"
 
-#include "billattributemodel.h"
-#include "billattribute.h"
+#include "attributemodel.h"
+#include "attribute.h"
 
 class BillAttributeSelectModelPrivate{
 public:
-    BillAttributeSelectModelPrivate( BillAttributeModel * m ):
+    BillAttributeSelectModelPrivate( AttributeModel * m ):
         model(m){
         for( int i=0; i < model->size(); ++i){
             selected << false;
         }
-    };
-    BillAttributeModel * model;
+    }
+    AttributeModel * model;
     QList<bool> selected;
 };
 
 
-BillAttributeSelectModel::BillAttributeSelectModel(BillAttributeModel *m, QObject *parent) :
+BillAttributeSelectModel::BillAttributeSelectModel(AttributeModel *m, QObject *parent) :
     QAbstractTableModel(parent),
     m_d( new BillAttributeSelectModelPrivate(m) ){
 }
@@ -43,8 +43,8 @@ BillAttributeSelectModel::~BillAttributeSelectModel(){
     delete m_d;
 }
 
-QList<BillAttribute *> BillAttributeSelectModel::selectedAttributes(){
-    QList<BillAttribute *> ret;
+QList<Attribute *> BillAttributeSelectModel::selectedAttributes(){
+    QList<Attribute *> ret;
     for( int i=0; i < m_d->selected.size(); ++i){
         if( m_d->selected.at(i) && i < m_d->model->size() ){
             ret << m_d->model->attribute(i);

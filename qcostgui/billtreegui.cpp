@@ -21,7 +21,7 @@
 #include "ui_billtreegui.h"
 
 #include "billsetpricelistmodegui.h"
-#include "billattributechangedialog.h"
+#include "attributechangedialog.h"
 
 #include "qcostclipboarddata.h"
 #include "project.h"
@@ -66,6 +66,9 @@ BillTreeGUI::BillTreeGUI( QMap<PriceListDBWidget::ImportOptions, bool> *EPAImpOp
     m_d( new BillTreeGUIPrivate(EPAImpOptions, EPAFileName, prs, prj) ){
     m_d->ui->setupUi(this);
 
+    m_d->ui->amountsGroupBox->setHidden( true );
+    m_d->ui->priceListGroupBox->setHidden( true );
+
     populatePriceListComboBox();
 
     setBill( b );
@@ -73,7 +76,6 @@ BillTreeGUI::BillTreeGUI( QMap<PriceListDBWidget::ImportOptions, bool> *EPAImpOp
     connect( m_d->ui->addChildPushButton, &QPushButton::clicked, this, &BillTreeGUI::addChildItems );
     connect( m_d->ui->delPushButton, &QPushButton::clicked, this, &BillTreeGUI::removeItems );
     connect( m_d->ui->treeView, &QTreeView::doubleClicked, this, static_cast<void(BillTreeGUI::*)(const QModelIndex &)>(&BillTreeGUI::editBillItemPrice) );
-    connect( m_d->ui->currentPriceDataSetSpinBox, static_cast<void(QSpinBox::*)(int)>(&QSpinBox::valueChanged), this, &BillTreeGUI::setPriceCol );
 
     connect( prj->priceFieldModel(), &PriceFieldModel::endInsertPriceField, this, &BillTreeGUI::updateAmountsNameValue );
     connect( prj->priceFieldModel(), &PriceFieldModel::endRemovePriceField, this, &BillTreeGUI::updateAmountsNameValue );
@@ -244,7 +246,7 @@ void BillTreeGUI::editAttributes(){
                 itemsList << m_d->bill->billItem( selRows.at(i)) ;
             }
         }
-        BillAttributeChangeDialog dialog( &itemsList, m_d->bill->attributeModel(), this );
+        AttributeChangeDialog dialog( &itemsList, m_d->bill->attributeModel(), this );
         dialog.exec();
     }
 }
@@ -285,7 +287,8 @@ void BillTreeGUI::setBill(Bill *b ) {
     if( m_d->bill != b ){
         if( m_d->bill != NULL ){
             disconnect( m_d->bill, SIGNAL(amountChanged(int,QString)), this, SLOT(updateAmountValue(int,QString) ));
-            disconnect( m_d->ui->priceListComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(setPriceList()) );
+            disconnect( m_d->ui->priceListComboBox, static_cast<void(QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this, &BillTreeGUI::setPriceList );
+            disconnect( m_d->ui->currentPriceDataSetSpinBox, static_cast<void(QSpinBox::*)(int)>(&QSpinBox::valueChanged), this, &BillTreeGUI::setPriceDataSet );
             disconnect( m_d->bill, &Bill::aboutToBeDeleted, this, &BillTreeGUI::clear );
         }
         m_d->ui->priceListComboBox->setCurrentIndex( 0 );
@@ -312,8 +315,10 @@ void BillTreeGUI::setBill(Bill *b ) {
             connect( m_d->bill, SIGNAL(amountChanged(int,QString)), this, SLOT(updateAmountValue(int,QString) ));
 
             setPriceListComboBox();
-            connect( m_d->ui->priceListComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(setPriceList()) );
-            setPriceColSpinBox();
+            connect( m_d->ui->priceListComboBox, static_cast<void(QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this, &BillTreeGUI::setPriceList );
+            setPriceDataSetSpinBox();
+            connect( m_d->ui->currentPriceDataSetSpinBox, static_cast<void(QSpinBox::*)(int)>(&QSpinBox::valueChanged), this, &BillTreeGUI::setPriceDataSet );
+
             connect( m_d->bill, &Bill::aboutToBeDeleted, this, &BillTreeGUI::clear );
         }
         if( m_d->ui->treeView->selectionModel() ){
@@ -347,8 +352,18 @@ void BillTreeGUI::addItems(){
                     }
                 }
                 m_d->bill->insertBillItems( NULL, rowList.last().row()+1, rowList.size(), rowList.last().parent() );
+                if( m_d->ui->treeView->selectionModel() ){
+                    m_d->ui->treeView->selectionModel()->clearSelection();
+                    m_d->ui->treeView->selectionModel()->setCurrentIndex( m_d->bill->index( rowList.last().row()+rowList.size(), 0, rowList.last().parent() ),
+                                                                          QItemSelectionModel::Rows | QItemSelectionModel::SelectCurrent );
+                }
             } else {
                 m_d->bill->insertBillItems( NULL, 0 );
+                if( m_d->ui->treeView->selectionModel() ){
+                    m_d->ui->treeView->selectionModel()->clearSelection();
+                    m_d->ui->treeView->selectionModel()->setCurrentIndex( m_d->bill->index( 0, 0, QModelIndex() ),
+                                                                          QItemSelectionModel::Rows | QItemSelectionModel::SelectCurrent );
+                }
             }
         }
     }
@@ -360,6 +375,11 @@ void BillTreeGUI::addChildItems(){
             QModelIndexList rowListSel = m_d->ui->treeView->selectionModel()->selectedRows();
             for( int i=0; i < rowListSel.size(); ++i){
                 m_d->bill->insertBillItems( NULL, 0, 1, rowListSel.at(i) );
+            }
+            if( m_d->ui->treeView->selectionModel() ){
+                m_d->ui->treeView->selectionModel()->clearSelection();
+                m_d->ui->treeView->selectionModel()->setCurrentIndex( m_d->bill->index( 0, 0, rowListSel.last() ),
+                                                                      QItemSelectionModel::Rows | QItemSelectionModel::SelectCurrent );
             }
         }
     }
@@ -407,7 +427,7 @@ void BillTreeGUI::setPriceList() {
     }
 }
 
-void BillTreeGUI::setPriceCol() {
+void BillTreeGUI::setPriceDataSet() {
     if( m_d->bill ){
         if( m_d->bill->priceList() ){
             if( m_d->ui->currentPriceDataSetSpinBox->value() < 1 ){
@@ -415,7 +435,7 @@ void BillTreeGUI::setPriceCol() {
             } else if(  m_d->ui->currentPriceDataSetSpinBox->value() > m_d->bill->priceList()->priceDataSetCount() ){
                 m_d->ui->currentPriceDataSetSpinBox->setValue( m_d->bill->priceList()->priceDataSetCount() );
             } else {
-                m_d->bill->setPriceCol( m_d->ui->currentPriceDataSetSpinBox->value()-1 );
+                m_d->bill->setPriceDataSet( m_d->ui->currentPriceDataSetSpinBox->value()-1 );
             }
         }
     }
@@ -462,14 +482,14 @@ void BillTreeGUI::updateAmountName( int priceField, const QString & newName ){
 
 void BillTreeGUI::showEvent(QShowEvent *event) {
     if( event->type() == QEvent::Show ){
-        disconnect( m_d->ui->priceListComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(setPriceList()) );
+        disconnect( m_d->ui->priceListComboBox, static_cast<void(QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this, &BillTreeGUI::setPriceList );
         populatePriceListComboBox();
         setPriceListComboBox();
-        connect( m_d->ui->priceListComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(setPriceList()) );
+        connect( m_d->ui->priceListComboBox, static_cast<void(QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this, &BillTreeGUI::setPriceList );
 
-        disconnect( m_d->ui->currentPriceDataSetSpinBox, SIGNAL(valueChanged(int)), this, SLOT(setPriceCol()) );
-        setPriceColSpinBox();
-        connect( m_d->ui->currentPriceDataSetSpinBox, SIGNAL(valueChanged(int)), this, SLOT(setPriceCol()) );
+        disconnect( m_d->ui->currentPriceDataSetSpinBox, static_cast<void(QSpinBox::*)(int)>(&QSpinBox::valueChanged), this, &BillTreeGUI::setPriceDataSet );
+        setPriceDataSetSpinBox();
+        connect( m_d->ui->currentPriceDataSetSpinBox, static_cast<void(QSpinBox::*)(int)>(&QSpinBox::valueChanged), this, &BillTreeGUI::setPriceDataSet );
     }
     QWidget::showEvent( event );
 }
@@ -496,7 +516,7 @@ void BillTreeGUI::setPriceListComboBox() {
     }
 }
 
-void BillTreeGUI::setPriceColSpinBox() {
+void BillTreeGUI::setPriceDataSetSpinBox() {
     if( m_d->bill ){
         if( m_d->bill->priceList() ){
             m_d->ui->currentPriceDataSetSpinBox->setMaximum( m_d->bill->priceList()->priceDataSetCount() );

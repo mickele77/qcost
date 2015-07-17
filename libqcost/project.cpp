@@ -22,6 +22,9 @@
 #include "projectdataparentitem.h"
 #include "projectpricelistparentitem.h"
 #include "projectbillparentitem.h"
+#include "projectaccountingparentitem.h"
+#include "accountingbills.h"
+#include "accountingbill.h"
 #include "bill.h"
 #include "pricelist.h"
 #include "priceitem.h"
@@ -39,16 +42,19 @@ public:
         rootItem( new ProjectRootItem() ),
         priceListParentItem( new ProjectPriceListParentItem( rootItem, priceFieldModel, parser )),
         billParentItem(new ProjectBillParentItem( rootItem, priceFieldModel,  parser )),
+        accountingParentItem(new ProjectAccountingParentItem( rootItem, priceFieldModel,  parser )),
         lastXMLVersion(0.3){
         rootItem->insertChild( new ProjectDataParentItem(rootItem) );
         rootItem->insertChild( priceListParentItem );
         rootItem->insertChild( billParentItem );
+        rootItem->insertChild( accountingParentItem );
     };
     UnitMeasureModel * unitMeasureModel;
     PriceFieldModel * priceFieldModel;
     ProjectRootItem * rootItem;
     ProjectPriceListParentItem * priceListParentItem;
     ProjectBillParentItem * billParentItem;
+    ProjectAccountingParentItem * accountingParentItem;
     double lastXMLVersion;
 };
 
@@ -61,20 +67,26 @@ Project::Project( MathParser * p,QObject *parent) :
 
     connect( m_d->priceListParentItem, &ProjectPriceListParentItem::removePriceItemSignal, this, &Project::removePriceItem );
     connect( m_d->priceListParentItem, &ProjectPriceListParentItem::removePriceListSignal, this, &Project::removePriceList );
-    connect( m_d->priceListParentItem, &ProjectPriceListParentItem::beginInsertChildren, this, &Project::beginInsertPriceLists );
-    connect( m_d->priceListParentItem, &ProjectPriceListParentItem::endInsertChildren, this, &Project::endInsertPriceLists );
-    connect( m_d->priceListParentItem, &ProjectPriceListParentItem::beginRemoveChildren, this, &Project::beginRemovePriceLists );
-    connect( m_d->priceListParentItem, &ProjectPriceListParentItem::endRemoveChildren, this, &Project::endRemovePriceLists );
+    connect( m_d->priceListParentItem, &ProjectPriceListParentItem::beginInsertChildren, this, &Project::beginInsertChildren );
+    connect( m_d->priceListParentItem, &ProjectPriceListParentItem::endInsertChildren, this, &Project::endInsertChildren );
+    connect( m_d->priceListParentItem, &ProjectPriceListParentItem::beginRemoveChildren, this, &Project::beginRemoveChildren );
+    connect( m_d->priceListParentItem, &ProjectPriceListParentItem::endRemoveChildren, this, &Project::endRemoveChildren );
 
-    connect( m_d->billParentItem, &ProjectBillParentItem::beginInsertChildren, this, &Project::beginInsertBills );
-    connect( m_d->billParentItem, &ProjectBillParentItem::endInsertChildren, this, &Project::endInsertBills );
-    connect( m_d->billParentItem, &ProjectBillParentItem::beginRemoveChildren, this, &Project::beginRemoveBills );
-    connect( m_d->billParentItem, &ProjectBillParentItem::endRemoveChildren, this, &Project::endRemoveBills );
+    connect( m_d->billParentItem, &ProjectBillParentItem::beginInsertChildren, this, &Project::beginInsertChildren );
+    connect( m_d->billParentItem, &ProjectBillParentItem::endInsertChildren, this, &Project::endInsertChildren );
+    connect( m_d->billParentItem, &ProjectBillParentItem::beginRemoveChildren, this, &Project::beginRemoveChildren );
+    connect( m_d->billParentItem, &ProjectBillParentItem::endRemoveChildren, this, &Project::endRemoveChildren );
+
+    connect( m_d->accountingParentItem, &ProjectAccountingParentItem::beginInsertChildren, this, &Project::beginInsertChildren );
+    connect( m_d->accountingParentItem, &ProjectAccountingParentItem::endInsertChildren, this, &Project::endInsertChildren );
+    connect( m_d->accountingParentItem, &ProjectAccountingParentItem::beginRemoveChildren, this, &Project::beginRemoveChildren );
+    connect( m_d->accountingParentItem, &ProjectAccountingParentItem::endRemoveChildren, this, &Project::endRemoveChildren );
 
     connect( m_d->priceFieldModel, &PriceFieldModel::modelChanged, this, &Project::modelChanged );
     connect( m_d->unitMeasureModel, &UnitMeasureModel::modelChanged, this, &Project::modelChanged );
     connect( m_d->priceListParentItem, &ProjectPriceListParentItem::modelChanged, this, &Project::modelChanged );
     connect( m_d->billParentItem, &ProjectBillParentItem::modelChanged, this, &Project::modelChanged );
+    connect( m_d->accountingParentItem, &ProjectAccountingParentItem::modelChanged, this, &Project::modelChanged );
     connect( this, &Project::rowsMoved, this, &Project::modelChanged );
     connect( this, &Project::rowsRemoved, this, &Project::modelChanged );
     connect( this, &Project::modelReset, this, &Project::modelChanged );
@@ -95,6 +107,8 @@ void Project::createSimpleProject(SimpleProjectType projType){
         m_d->billParentItem->insertChildren( 0 );
         m_d->billParentItem->bill(0)->insertStandardAttributes();
         m_d->billParentItem->bill(0)->setPriceList( m_d->priceListParentItem->priceList(0) );
+        m_d->accountingParentItem->accountingBills()->insertChildren( 0 );
+        m_d->accountingParentItem->accountingBills()->bill(0)->setPriceList( m_d->priceListParentItem->priceList(0) );
     } else if( projType == ProjectHumanNetNoDiscount ){
         clear();
         m_d->unitMeasureModel->insertStandardUnits();
@@ -103,42 +117,26 @@ void Project::createSimpleProject(SimpleProjectType projType){
         m_d->billParentItem->insertChildren( 0 );
         m_d->billParentItem->bill(0)->insertStandardAttributes();
         m_d->billParentItem->bill(0)->setPriceList( m_d->priceListParentItem->priceList(0) );
+        m_d->accountingParentItem->accountingBills()->insertChildren( 0 );
+        m_d->accountingParentItem->accountingBills()->bill(0)->setPriceList( m_d->priceListParentItem->priceList(0) );
     }
 }
 
-void Project::beginInsertPriceLists(int first, int last){
-    beginInsertRows( index(0, m_d->priceListParentItem), first, last);
+void Project::beginInsertChildren(ProjectItem * item, int first, int last){
+    beginInsertRows( index(0, item), first, last);
 }
 
-void Project::endInsertPriceLists(){
+void Project::endInsertChildren(){
     endInsertRows();
 }
 
-void Project::beginRemovePriceLists(int first, int last){
+void Project::beginRemoveChildren(ProjectItem * item,int first, int last){
     if( last >= first ){
-        beginRemoveRows( index(0, m_d->priceListParentItem), first, last);
+        beginRemoveRows( index(0, item), first, last);
     }
 }
 
-void Project::endRemovePriceLists(){
-    endRemoveRows();
-}
-
-void Project::beginInsertBills(int first, int last){
-    beginInsertRows( index(0, m_d->billParentItem), first, last);
-}
-
-void Project::endInsertBills(){
-    endInsertRows();
-}
-
-void Project::beginRemoveBills(int first, int last){
-    if( last >= first ){
-        beginRemoveRows( index(0, m_d->billParentItem), first, last);
-    }
-}
-
-void Project::endRemoveBills(){
+void Project::endRemoveChildren(){
     endRemoveRows();
 }
 
@@ -148,6 +146,10 @@ UnitMeasureModel *Project::unitMeasureModel() {
 
 PriceFieldModel *Project::priceFieldModel() {
     return m_d->priceFieldModel;
+}
+
+ProjectAccountingParentItem *Project::accounting() {
+    return m_d->accountingParentItem;
 }
 
 int Project::priceListCount() {

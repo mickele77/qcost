@@ -1,5 +1,5 @@
-#ifndef BILLITEMMEASURESMODEL_H
-#define BILLITEMMEASURESMODEL_H
+#ifndef MEASURESMODEL_H
+#define MEASURESMODEL_H
 
 #include "library_common.h"
 
@@ -11,17 +11,17 @@ class UnitMeasure;
 
 #include <QAbstractTableModel>
 
-class BillItemMeasuresModelPrivate;
+class MeasuresModelPrivate;
 
-class EXPORT_LIB_OPT BillItemMeasuresModel : public QAbstractTableModel
+class EXPORT_LIB_OPT MeasuresModel : public QAbstractTableModel
 {
     Q_OBJECT
 public:
-    explicit BillItemMeasuresModel(MathParser *p = NULL, UnitMeasure *ump = NULL, QObject *parent = 0);
+    explicit MeasuresModel(MathParser *p = NULL, UnitMeasure *ump = NULL, QObject *parent = 0);
 
-    ~BillItemMeasuresModel();
+    ~MeasuresModel();
 
-    BillItemMeasuresModel &operator =(const BillItemMeasuresModel &cp);
+    MeasuresModel &operator =(const MeasuresModel &cp);
 
     int rowCount(const QModelIndex & parent = QModelIndex()) const;
     int columnCount(const QModelIndex & parent = QModelIndex())  const;
@@ -52,7 +52,7 @@ private slots:
     void updateQuantity();
     void updateAllQuantities();
 private:
-    BillItemMeasuresModelPrivate * m_d;
+    MeasuresModelPrivate * m_d;
 };
 
-#endif // BILLITEMMEASURESMODEL_H
+#endif // MEASURESMODEL_H

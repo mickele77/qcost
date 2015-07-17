@@ -73,7 +73,7 @@ public:
 
     Qt::ItemFlags flags(const QModelIndex &index) const;
     bool setData(const QModelIndex &index, const QVariant &value, int role = Qt::EditRole);
-    bool insertRows(int position = -1, int rows = 1, const QModelIndex &parent = QModelIndex() );
+    bool insertPriceItems(int position = -1, int rows = 1, const QModelIndex &parent = QModelIndex() );
     PriceItem *appendPriceItem();
     bool removeRows(int position = -1, int rows = 1, const QModelIndex &parent = QModelIndex() );
     bool moveRows(const QModelIndex &sourceParent, int sourceRow, int count, const QModelIndex &destinationParent, int destinationRow);

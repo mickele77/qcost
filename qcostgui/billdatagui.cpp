@@ -22,7 +22,7 @@
 
 #include "billattributeprintergui.h"
 #include "bill.h"
-#include "billattributemodel.h"
+#include "attributemodel.h"
 #include "pricefieldmodel.h"
 #include "mathparser.h"
 
@@ -38,7 +38,8 @@ public:
         parser(prs),
         wordProcessorFile(wpf),
         priceFieldModel(pfm),
-        amountSpacer(NULL){
+        amountVertSpacer(NULL),
+        amountHorSpacer(NULL){
     };
     Ui::BillDataGUI * ui;
     Bill * bill;
@@ -47,7 +48,8 @@ public:
     PriceFieldModel * priceFieldModel;
     QList<QLabel *> amountLabelList;
     QList<QLineEdit *> amountLEditList;
-    QSpacerItem * amountSpacer;
+    QSpacerItem * amountVertSpacer;
+    QSpacerItem * amountHorSpacer;
 };
 
 BillDataGUI::BillDataGUI(PriceFieldModel * pfm, MathParser * prs, Bill * b, QString * wordProcessorFile, QWidget *parent) :
@@ -132,10 +134,15 @@ void BillDataGUI::updateAmountsNameValue(){
         m_d->ui->amountsLayout->removeWidget( *i );
         delete *i;
     }
-    if( m_d->amountSpacer != NULL ){
-        m_d->ui->amountsLayout->removeItem( m_d->amountSpacer );
-        delete m_d->amountSpacer;
-        m_d->amountSpacer = NULL;
+    if( m_d->amountVertSpacer != NULL ){
+        m_d->ui->amountsLayout->removeItem( m_d->amountVertSpacer );
+        delete m_d->amountVertSpacer;
+        m_d->amountVertSpacer = NULL;
+    }
+    if( m_d->amountHorSpacer != NULL ){
+        m_d->ui->amountsLayout->removeItem( m_d->amountHorSpacer );
+        delete m_d->amountHorSpacer;
+        m_d->amountHorSpacer = NULL;
     }
     m_d->amountLEditList.clear();
 
@@ -150,12 +157,14 @@ void BillDataGUI::updateAmountsNameValue(){
         m_d->ui->amountsLayout->addWidget( label, i, 0 );
         m_d->ui->amountsLayout->addWidget( lEdit, i, 1 );
         if( i == 0 ){
-            m_d->amountSpacer = new QSpacerItem(20, 25, QSizePolicy::Expanding, QSizePolicy::Minimum );
-            m_d->ui->amountsLayout->addItem( m_d->amountSpacer, i, 2 );
+            m_d->amountVertSpacer = new QSpacerItem( 20, 25, QSizePolicy::Expanding, QSizePolicy::Minimum );
+            m_d->ui->amountsLayout->addItem( m_d->amountVertSpacer, i, 2 );
         }
         m_d->amountLabelList.append( label );
         m_d->amountLEditList.append( lEdit );
     }
+    m_d->amountHorSpacer = new QSpacerItem( 20, 25, QSizePolicy::Minimum, QSizePolicy::Expanding );
+    m_d->ui->amountsLayout->addItem( m_d->amountHorSpacer, m_d->priceFieldModel->fieldCount(), 0 );
 }
 
 void BillDataGUI::updateAmountValue(int priceField, const QString & newVal ){
@@ -215,7 +224,7 @@ bool BillDataGUI::printAttributeBillODT(){
         BillPrinter::PrintBillItemsOption prBillItemOption;
         BillPrinter::AttributePrintOption prOption;
         QList<int> prFields;
-        QList<BillAttribute *> prAttrs;
+        QList<Attribute *> prAttrs;
         double paperWidth = 210.0, paperHeight = 297.0;
         Qt::Orientation paperOrientation;
         bool groupPrAm = false;

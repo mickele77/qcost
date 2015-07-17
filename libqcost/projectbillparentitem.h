@@ -67,9 +67,9 @@ public:
     void readXml(QXmlStreamReader *reader, ProjectPriceListParentItem *priceLists);
 
 signals:
-    void beginInsertChildren( int first, int last );
+    void beginInsertChildren( ProjectItem * item, int first, int last );
     void endInsertChildren();
-    void beginRemoveChildren( int first, int last );
+    void beginRemoveChildren( ProjectItem * item, int first, int last );
     void endRemoveChildren();
     void modelChanged();
 

@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>500</width>
-    <height>501</height>
+    <height>547</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -24,10 +24,16 @@
        <string>Dati</string>
       </attribute>
       <layout class="QGridLayout" name="dataTabLayout">
-       <item row="0" column="0">
+       <item row="1" column="0">
         <widget class="QGroupBox" name="priceGroupBox">
          <property name="title">
           <string>Prezzo</string>
+         </property>
+         <property name="checkable">
+          <bool>true</bool>
+         </property>
+         <property name="checked">
+          <bool>false</bool>
          </property>
          <layout class="QGridLayout" name="priceDataLayout">
           <item row="0" column="1">
@@ -75,18 +81,17 @@
          </layout>
         </widget>
        </item>
-       <item row="1" column="0">
-        <widget class="QGroupBox" name="amountsGroupBox">
-         <property name="title">
+       <item row="2" column="0">
+        <widget class="QCheckBox" name="amountsCheckBox">
+         <property name="text">
           <string>Importi</string>
          </property>
-         <layout class="QGridLayout" name="amountsDataLayout"/>
         </widget>
        </item>
-       <item row="2" column="0">
+       <item row="4" column="0">
         <widget class="QGroupBox" name="valueDataGroupBox">
          <property name="title">
-          <string>Quantità</string>
+          <string>Misure</string>
          </property>
          <layout class="QGridLayout" name="valueDataLayout">
           <item row="0" column="1">
@@ -103,13 +108,6 @@
             </property>
            </widget>
           </item>
-          <item row="0" column="3">
-           <widget class="QCheckBox" name="associateLinesCheckBox">
-            <property name="text">
-             <string>Associa misure</string>
-            </property>
-           </widget>
-          </item>
           <item row="1" column="1" colspan="3">
            <widget class="QGroupBox" name="billItemLinesGroupBox">
             <property name="sizePolicy">
@@ -119,20 +117,13 @@
              </sizepolicy>
             </property>
             <property name="title">
-             <string>Misure</string>
+             <string>Dettaglio</string>
             </property>
             <layout class="QGridLayout" name="gridLayout_6">
              <item row="0" column="0">
               <widget class="QPushButton" name="addBillItemLinePushButton">
                <property name="text">
                 <string>+</string>
-               </property>
-              </widget>
-             </item>
-             <item row="0" column="1">
-              <widget class="QPushButton" name="delBillItemLinePushButton">
-               <property name="text">
-                <string>-</string>
                </property>
               </widget>
              </item>
@@ -146,10 +137,71 @@
              <item row="1" column="0" colspan="3">
               <widget class="QTableView" name="billItemLinesTableView"/>
              </item>
+             <item row="0" column="1">
+              <widget class="QPushButton" name="delBillItemLinePushButton">
+               <property name="text">
+                <string>-</string>
+               </property>
+              </widget>
+             </item>
+             <item row="2" column="0">
+              <spacer name="verticalSpacer">
+               <property name="orientation">
+                <enum>Qt::Vertical</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>20</width>
+                 <height>40</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
             </layout>
            </widget>
           </item>
+          <item row="2" column="1">
+           <spacer name="valueDataVertSpacer">
+            <property name="orientation">
+             <enum>Qt::Vertical</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>20</width>
+              <height>40</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item row="0" column="3">
+           <widget class="QCheckBox" name="associateLinesCheckBox">
+            <property name="text">
+             <string>Associa misure</string>
+            </property>
+           </widget>
+          </item>
          </layout>
+        </widget>
+       </item>
+       <item row="3" column="0">
+        <widget class="QGroupBox" name="amountsGroupBox">
+         <property name="title">
+          <string>I&amp;mporti</string>
+         </property>
+         <property name="checkable">
+          <bool>true</bool>
+         </property>
+         <property name="checked">
+          <bool>false</bool>
+         </property>
+         <layout class="QGridLayout" name="amountsDataLayout"/>
+        </widget>
+       </item>
+       <item row="0" column="0">
+        <widget class="QCheckBox" name="priceCheckBox">
+         <property name="text">
+          <string>Prezzo</string>
+         </property>
         </widget>
        </item>
       </layout>
@@ -189,5 +241,134 @@
   </layout>
  </widget>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>amountsCheckBox</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>amountsCheckBox</receiver>
+   <slot>setHidden(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>249</x>
+     <y>210</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>249</x>
+     <y>210</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>amountsCheckBox</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>amountsGroupBox</receiver>
+   <slot>setChecked(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>249</x>
+     <y>210</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>249</x>
+     <y>248</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>amountsGroupBox</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>amountsGroupBox</receiver>
+   <slot>setVisible(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>249</x>
+     <y>251</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>249</x>
+     <y>251</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>amountsGroupBox</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>amountsCheckBox</receiver>
+   <slot>setChecked(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>249</x>
+     <y>251</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>249</x>
+     <y>210</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>priceCheckBox</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>priceCheckBox</receiver>
+   <slot>setHidden(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>249</x>
+     <y>54</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>249</x>
+     <y>54</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>priceCheckBox</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>priceGroupBox</receiver>
+   <slot>setChecked(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>249</x>
+     <y>54</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>249</x>
+     <y>148</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>priceGroupBox</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>priceGroupBox</receiver>
+   <slot>setVisible(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>249</x>
+     <y>148</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>249</x>
+     <y>148</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>priceGroupBox</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>priceCheckBox</receiver>
+   <slot>setChecked(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>249</x>
+     <y>148</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>249</x>
+     <y>54</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>

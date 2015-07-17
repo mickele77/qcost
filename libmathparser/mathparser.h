@@ -20,17 +20,21 @@
 #define MATHPARSER_H
 
 class QString;
-class QLocale;
+class QDate;
 
 class MathParserPrivate;
+
+#include <QLocale>
 
 class MathParser{
 public:
     MathParser( const QLocale & loc );
 
     double evaluate(const QString & exprInput , QString *errorMsg = 0 );
+    QDate evaluateDate( const QString & date, QLocale::FormatType format = QLocale::NarrowFormat );
 
-    QString	toString(double i, char f = 'g', int prec = 6) const;
+    QString	toString( const QDate & date, QLocale::FormatType format = QLocale::NarrowFormat ) const;
+    QString	toString( double i, char f = 'g', int prec = 6 ) const;
 
     QString decimalSeparator();
 

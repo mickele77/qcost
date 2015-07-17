@@ -212,7 +212,7 @@ void PriceList::writeODTOnTable( QTextCursor *cursor, PriceListPrinter::PrintPri
     m_d->rootItem->writeODTOnTable( cursor, printOption, fieldsToPrint, priceColToPrint );
 }
 
-bool PriceList::insertRows(int inputPos, int count, const QModelIndex &parent) {
+bool PriceList::insertPriceItems(int inputPos, int count, const QModelIndex &parent) {
     PriceItem *parentItem = priceItem(parent);
 
     int position = inputPos;

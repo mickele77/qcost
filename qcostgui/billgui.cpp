@@ -97,7 +97,7 @@ BillGUI::BillGUI( QMap<PriceListDBWidget::ImportOptions, bool> *EPAImpOptions,
     m_d( new BillGUIPrivate( EPAImpOptions, EPAFileName, prs, b, p, wordProcessorFile, this ) ){
 
     addTab( m_d->billDataGUI, trUtf8("Computo - Dati generali"));
-    addTab( m_d->mainSplitter, trUtf8("Computo - Elenco"));
+    addTab( m_d->mainSplitter, trUtf8("Computo - Misure"));
 
     setCurrentIndex( 1 );
     setBill(b);

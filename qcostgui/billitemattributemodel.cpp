@@ -18,21 +18,21 @@
 */
 #include "billitemattributemodel.h"
 
-#include "billattributemodel.h"
-#include "billattribute.h"
+#include "attributemodel.h"
+#include "attribute.h"
 #include "billitem.h"
 
 class BillItemAttributeModelPrivate{
 public:
-    BillItemAttributeModelPrivate(BillItem * item, BillAttributeModel * attrModel):
+    BillItemAttributeModelPrivate(BillItem * item, AttributeModel * attrModel):
         billItem(item),
         attributeModel(attrModel){
     };
     BillItem * billItem;
-    BillAttributeModel * attributeModel;
+    AttributeModel * attributeModel;
 };
 
-BillItemAttributeModel::BillItemAttributeModel(BillItem * item, BillAttributeModel * attrModel, QObject *parent) :
+BillItemAttributeModel::BillItemAttributeModel(BillItem * item, AttributeModel * attrModel, QObject *parent) :
     QAbstractTableModel(parent),
     m_d( new BillItemAttributeModelPrivate(item, attrModel) ){
 }
@@ -59,7 +59,7 @@ Qt::ItemFlags BillItemAttributeModel::flags(const QModelIndex &index) const {
         return QAbstractTableModel::flags(index);
 
     if( m_d->billItem != NULL ){
-        BillAttribute * attr = m_d->attributeModel->attribute(index.row() );
+        Attribute * attr = m_d->attributeModel->attribute(index.row() );
         if( m_d->billItem->containsAttributeInherited( attr ) ){
             return Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsEditable;
         }
@@ -182,16 +182,16 @@ bool BillItemAttributeModel::clear() {
     return false;
 }
 
-void BillItemAttributeModel::setAttributeModel(BillAttributeModel *attrModel) {
+void BillItemAttributeModel::setAttributeModel(AttributeModel *attrModel) {
     if( m_d->attributeModel != NULL ){
-        disconnect( m_d->attributeModel, &BillAttributeModel::aboutToBeDeleted, this, &BillItemAttributeModel::setAttributeModelNULL );
+        disconnect( m_d->attributeModel, &AttributeModel::aboutToBeDeleted, this, &BillItemAttributeModel::setAttributeModelNULL );
     }
     beginResetModel();
     m_d->attributeModel = attrModel;
     m_d->billItem = NULL;
     endResetModel();
     if( m_d->attributeModel != NULL ){
-        connect( m_d->attributeModel, &BillAttributeModel::aboutToBeDeleted, this, &BillItemAttributeModel::setAttributeModelNULL );
+        connect( m_d->attributeModel, &AttributeModel::aboutToBeDeleted, this, &BillItemAttributeModel::setAttributeModelNULL );
     }
 }
 

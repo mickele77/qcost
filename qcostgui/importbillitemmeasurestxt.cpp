@@ -1,7 +1,7 @@
 #include "importbillitemmeasurestxt.h"
 #include "ui_importbillitemmeasurestxt.h"
 
-#include "billitemmeasuresmodel.h"
+#include "measuresmodel.h"
 #include "billitemmeasure.h"
 #include "mathparser.h"
 
@@ -10,7 +10,7 @@
 
 class ImportBillItemMeasuresTXTPrivate {
 public:
-    ImportBillItemMeasuresTXTPrivate( BillItemMeasuresModel * mModel, int mPosition, MathParser * prs ):
+    ImportBillItemMeasuresTXTPrivate( MeasuresModel * mModel, int mPosition, MathParser * prs ):
         ui(new Ui::ImportBillItemMeasuresTXT),
         measuresModel(mModel),
         insertPosition(mPosition),
@@ -31,13 +31,13 @@ public:
     QList<QComboBox *> fieldComboBoxList;
     QList<QString> fieldsNames;
     QList< QPair<QString, QString> > fieldsSeparator;
-    BillItemMeasuresModel * measuresModel;
+    MeasuresModel * measuresModel;
     int insertPosition;
     MathParser * parser;
     QString fileName;
 };
 
-ImportBillItemMeasuresTXT::ImportBillItemMeasuresTXT( BillItemMeasuresModel * mModel, int mPosition, MathParser * prs, QWidget *parent) :
+ImportBillItemMeasuresTXT::ImportBillItemMeasuresTXT( MeasuresModel * mModel, int mPosition, MathParser * prs, QWidget *parent) :
     QDialog(parent),
     m_d( new ImportBillItemMeasuresTXTPrivate( mModel, mPosition, prs ) ){
     m_d->ui->setupUi(this);

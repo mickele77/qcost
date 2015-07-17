@@ -16,13 +16,16 @@
    along with this program; if not, write to the Free Software Foundation,
    Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 */
-#ifndef BILLATTRIBUTEMODEL_H
-#define BILLATTRIBUTEMODEL_H
+#ifndef ATTRIBUTEMODEL_H
+#define ATTRIBUTEMODEL_H
 
 #include "library_common.h"
 
+class AccountingLSBill;
+class AccountingTAMBill;
+class AccountingBill;
 class Bill;
-class BillAttribute;
+class Attribute;
 class MathParser;
 class PriceFieldModel;
 
@@ -32,18 +35,21 @@ class QXmlStreamWriter;
 
 #include <QAbstractTableModel>
 
-class BillAttributeModelPrivate;
+class AttributeModelPrivate;
 
-class EXPORT_LIB_OPT BillAttributeModel : public QAbstractTableModel {
+class EXPORT_LIB_OPT AttributeModel : public QAbstractTableModel {
     Q_OBJECT
 public:
     friend class Project;
-    explicit BillAttributeModel( Bill * myBill, MathParser * prs, PriceFieldModel *pfm, QObject *parent = 0);
-    ~BillAttributeModel();
+    explicit AttributeModel( Bill * myBill, MathParser * prs, PriceFieldModel *pfm, QObject *parent = 0);
+    explicit AttributeModel( AccountingBill * myBill, MathParser * prs, PriceFieldModel *pfm, QObject *parent = 0);
+    explicit AttributeModel( AccountingTAMBill * myBill, MathParser * prs, PriceFieldModel *pfm, QObject *parent = 0);
+    explicit AttributeModel( AccountingLSBill * myBill, MathParser * prs, PriceFieldModel *pfm, QObject *parent = 0);
+    ~AttributeModel();
 
     int size();
-    BillAttribute * attribute( int i );
-    BillAttribute * attributeId( unsigned int id );
+    Attribute * attribute( int i );
+    Attribute * attributeId( unsigned int id );
 
     int rowCount(const QModelIndex & parent = QModelIndex()) const;
     int columnCount(const QModelIndex & parent = QModelIndex())  const;
@@ -67,7 +73,7 @@ signals:
     void aboutToBeDeleted();
 
 private:
-    BillAttributeModelPrivate * m_d;
+    AttributeModelPrivate * m_d;
 };
 
-#endif // BILLATTRIBUTEMODEL_H
+#endif // ATTRIBUTEMODEL_H

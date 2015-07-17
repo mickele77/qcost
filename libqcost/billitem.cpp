@@ -22,10 +22,10 @@
 #include "billprinter.h"
 #include "pricelist.h"
 #include "priceitem.h"
-#include "billitemmeasuresmodel.h"
+#include "measuresmodel.h"
 #include "billitemmeasure.h"
-#include "billattributemodel.h"
-#include "billattribute.h"
+#include "attributemodel.h"
+#include "attribute.h"
 #include "pricefieldmodel.h"
 #include "unitmeasure.h"
 #include "mathparser.h"
@@ -164,8 +164,8 @@ public:
 
     BillItem * parentItem;
     QList<BillItem *> childrenContainer;
-    QList<BillAttribute *> attributes;
-    BillItemMeasuresModel * measuresModel;
+    QList<Attribute *> attributes;
+    MeasuresModel * measuresModel;
     MathParser * parser;
     PriceFieldModel * priceFieldModel;
 
@@ -297,6 +297,9 @@ void BillItem::setParent(BillItem * newParent, int position ) {
 }
 
 void BillItem::addChild(BillItem * newChild, int position ) {
+    if( m_d->priceItem != NULL ){
+        m_d->priceItem = NULL;
+    }
     m_d->childrenContainer.insert( position, newChild );
 }
 
@@ -378,7 +381,7 @@ double BillItem::amount( int field ) const{
 }
 
 QString BillItem::amountStr(int field) const {
-    return m_d->toString( amount(field), 'f', m_d->priceFieldModel->precision(m_d->currentPriceDataSet) );
+    return m_d->toString( amount(field), 'f', m_d->priceFieldModel->precision(field) );
 }
 
 void BillItem::setPriceItem(PriceItem * p) {
@@ -403,7 +406,6 @@ void BillItem::setPriceItem(PriceItem * p) {
         }
 
         emit dataChanged( this, m_d->priceCodeCol );
-        emit dataChanged( this, m_d->currentPriceDataSet );
         emit dataChanged( this, m_d->priceUmCol );
         for( int i=0; i < m_d->priceFieldModel->fieldCount(); ++i ){
             emit dataChanged( this, m_d->firstPriceFieldCol + 2 * i );
@@ -576,11 +578,7 @@ bool BillItem::setData(int column, const QVariant &value) {
         }
     } else {
         if( column == m_d->quantityCol ){
-            if( m_d->parser ){
-                m_d->quantity = m_d->parser->evaluate( value.toString() );
-            } else {
-                m_d->quantity = value.toDouble();
-            }
+            setQuantity( value.toString() );
             for( int i=0; i < m_d->priceFieldModel->fieldCount(); ++i ){
                 emit dataChanged( this, m_d->firstPriceFieldCol + 1 + (i * 2) );
             }
@@ -618,7 +616,6 @@ void BillItem::emitPriceDataUpdated() {
     if( !hasChildren() ){
         updateAmounts();
         emit dataChanged( this, m_d->priceCodeCol );
-        emit dataChanged( this, m_d->currentPriceDataSet );
         emit dataChanged( this, m_d->priceUmCol );
         for( int i=0; i < m_d->priceFieldModel->fieldCount(); ++i){
             emit dataChanged( this, m_d->firstPriceFieldCol + 2 * i );
@@ -816,20 +813,20 @@ int BillItem::childNumber() const {
     return 0;
 }
 
-BillItemMeasuresModel *BillItem::measuresModel() {
+MeasuresModel *BillItem::measuresModel() {
     return m_d->measuresModel;
 }
 
-BillItemMeasuresModel *BillItem::generateMeasuresModel() {
+MeasuresModel *BillItem::generateMeasuresModel() {
     if( m_d->measuresModel == NULL ){
         UnitMeasure * ump = NULL;
         if( m_d->priceItem != NULL ){
             ump = m_d->priceItem->unitMeasure();
         }
-        m_d->measuresModel = new BillItemMeasuresModel( m_d->parser, ump );
+        m_d->measuresModel = new MeasuresModel( m_d->parser, ump );
         setQuantity( m_d->measuresModel->quantity() );
-        connect( m_d->measuresModel, &BillItemMeasuresModel::quantityChanged, this, &BillItem::setQuantityPrivate );
-        connect( m_d->measuresModel, &BillItemMeasuresModel::modelChanged, this, &BillItem::itemChanged );
+        connect( m_d->measuresModel, &MeasuresModel::quantityChanged, this, &BillItem::setQuantityPrivate );
+        connect( m_d->measuresModel, &MeasuresModel::modelChanged, this, &BillItem::itemChanged );
         emit itemChanged();
     }
     return m_d->measuresModel;
@@ -837,8 +834,8 @@ BillItemMeasuresModel *BillItem::generateMeasuresModel() {
 
 void BillItem::removeMeasuresModel() {
     if( m_d->measuresModel != NULL ){
-        disconnect( m_d->measuresModel, &BillItemMeasuresModel::quantityChanged, this, &BillItem::setQuantityPrivate );
-        disconnect( m_d->measuresModel, &BillItemMeasuresModel::modelChanged, this, &BillItem::itemChanged );
+        disconnect( m_d->measuresModel, &MeasuresModel::quantityChanged, this, &BillItem::setQuantityPrivate );
+        disconnect( m_d->measuresModel, &MeasuresModel::modelChanged, this, &BillItem::itemChanged );
         delete m_d->measuresModel;
         m_d->measuresModel = NULL;
         updateAmounts();
@@ -872,7 +869,7 @@ void BillItem::writeXml(QXmlStreamWriter *writer) {
         writer->writeAttribute( "id", QString::number(m_d->id) );
 
         QString attrs;
-        for( QList<BillAttribute *>::iterator i = m_d->attributes.begin(); i != m_d->attributes.end(); ++i ){
+        for( QList<Attribute *>::iterator i = m_d->attributes.begin(); i != m_d->attributes.end(); ++i ){
             if( attrs.isEmpty() ){
                 attrs = QString::number( (*i)->id() );
             } else {
@@ -909,7 +906,7 @@ void BillItem::writeXml(QXmlStreamWriter *writer) {
     }
 }
 
-void BillItem::readXml(QXmlStreamReader *reader, PriceList * priceList, BillAttributeModel * billAttrModel ) {
+void BillItem::readXml(QXmlStreamReader *reader, PriceList * priceList, AttributeModel * billAttrModel ) {
     if( m_d->parentItem != NULL ){
         if(reader->isStartElement() && reader->name().toString().toUpper() == "BILLITEM"){
             loadFromXml( reader->attributes(), priceList, billAttrModel );
@@ -953,7 +950,7 @@ void BillItem::readXmlTmp(QXmlStreamReader *reader) {
     }
 }
 
-void BillItem::loadFromXml(const QXmlStreamAttributes &attrs, PriceList * priceList, BillAttributeModel * billAttrModel) {
+void BillItem::loadFromXml(const QXmlStreamAttributes &attrs, PriceList * priceList, AttributeModel * billAttrModel) {
     if( attrs.hasAttribute( "id" ) ){
         m_d->id = attrs.value( "id").toUInt();
     }
@@ -989,7 +986,7 @@ void BillItem::loadFromXmlTmp(const QXmlStreamAttributes &attrs) {
     m_d->tmpAttributes = attrs;
 }
 
-void BillItem::loadTmpData( PriceList *priceList, BillAttributeModel * billAttrModel) {
+void BillItem::loadTmpData( PriceList *priceList, AttributeModel * billAttrModel) {
     if( !m_d->tmpAttributes.isEmpty() ){
         loadFromXml(m_d->tmpAttributes, priceList, billAttrModel );
         m_d->tmpAttributes.clear();
@@ -999,14 +996,14 @@ void BillItem::loadTmpData( PriceList *priceList, BillAttributeModel * billAttrM
     }
 }
 
-QList< QPair<BillAttribute *, bool> > BillItem::attributes() {
-    QList< QPair<BillAttribute *, bool> > ret;
-    QList<BillAttribute *> inherhitedAttrs = inheritedAttributes();
+QList< QPair<Attribute *, bool> > BillItem::attributes() {
+    QList< QPair<Attribute *, bool> > ret;
+    QList<Attribute *> inherhitedAttrs = inheritedAttributes();
 
-    for( QList<BillAttribute *>::iterator i = inherhitedAttrs.begin(); i != inherhitedAttrs.end(); ++i ){
+    for( QList<Attribute *>::iterator i = inherhitedAttrs.begin(); i != inherhitedAttrs.end(); ++i ){
         ret.append( qMakePair(*i, false) );
     }
-    for( QList<BillAttribute *>::iterator i = m_d->attributes.begin(); i != m_d->attributes.end(); ++i ){
+    for( QList<Attribute *>::iterator i = m_d->attributes.begin(); i != m_d->attributes.end(); ++i ){
         if( !inherhitedAttrs.contains( *i) ){
             ret.append( qMakePair(*i, true) );
         }
@@ -1014,9 +1011,9 @@ QList< QPair<BillAttribute *, bool> > BillItem::attributes() {
     return ret;
 }
 
-QList<BillAttribute *> BillItem::allAttributes() {
-    QList<BillAttribute *> attrs = inheritedAttributes();
-    for( QList<BillAttribute *>::iterator i = m_d->attributes.begin(); i != m_d->attributes.end(); ++i ){
+QList<Attribute *> BillItem::allAttributes() {
+    QList<Attribute *> attrs = inheritedAttributes();
+    for( QList<Attribute *>::iterator i = m_d->attributes.begin(); i != m_d->attributes.end(); ++i ){
         if( !attrs.contains( *i) ){
             attrs.append( *i );
         }
@@ -1024,18 +1021,18 @@ QList<BillAttribute *> BillItem::allAttributes() {
     return attrs;
 }
 
-QList<BillAttribute *> BillItem::directAttributes() {
-    return QList<BillAttribute *>( m_d->attributes );
+QList<Attribute *> BillItem::directAttributes() {
+    return QList<Attribute *>( m_d->attributes );
 }
 
-void BillItem::addAttribute( BillAttribute * attr ){
+void BillItem::addAttribute( Attribute * attr ){
     if( !(m_d->attributes.contains( attr )) ){
         m_d->attributes.append( attr );
         emit attributesChanged();
     }
 }
 
-void BillItem::removeAttribute( BillAttribute * attr ){
+void BillItem::removeAttribute( Attribute * attr ){
     if( m_d->attributes.removeAll( attr ) > 0 ){
         emit attributesChanged();
     }
@@ -1046,10 +1043,10 @@ void BillItem::removeAllAttributes() {
     emit attributesChanged();
 }
 
-double BillItem::amountAttribute(BillAttribute *attr, int field ) {
+double BillItem::amountAttribute(Attribute *attr, int field ) {
     if( m_d->childrenContainer.size() == 0 ){
-        QList<BillAttribute *> attrs = inheritedAttributes();
-        for( QList<BillAttribute *>::iterator i = m_d->attributes.begin(); i != m_d->attributes.end(); ++i ){
+        QList<Attribute *> attrs = inheritedAttributes();
+        for( QList<Attribute *>::iterator i = m_d->attributes.begin(); i != m_d->attributes.end(); ++i ){
             if( !attrs.contains( *i) ){
                 attrs.append( *i );
             }
@@ -1067,7 +1064,7 @@ double BillItem::amountAttribute(BillAttribute *attr, int field ) {
     return 0.0;
 }
 
-QString BillItem::amountAttributeStr(BillAttribute *attr, int field ) {
+QString BillItem::amountAttributeStr(Attribute *attr, int field ) {
     int prec = m_d->priceFieldModel->precision( field );
     QString ret;
     double v = amountAttribute( attr, field );
@@ -1079,12 +1076,12 @@ QString BillItem::amountAttributeStr(BillAttribute *attr, int field ) {
     return ret;
 }
 
-QList<BillAttribute *> BillItem::inheritedAttributes(){
-    QList<BillAttribute *> ret;
+QList<Attribute *> BillItem::inheritedAttributes(){
+    QList<Attribute *> ret;
     if( m_d->parentItem != NULL ){
         ret.append( m_d->parentItem->inheritedAttributes() );
     }
-    for( QList<BillAttribute *>::iterator i = m_d->attributes.begin(); i != m_d->attributes.end(); ++i ){
+    for( QList<Attribute *>::iterator i = m_d->attributes.begin(); i != m_d->attributes.end(); ++i ){
         if( !ret.contains( *i) ){
             ret.append( *i );
         }
@@ -1092,14 +1089,14 @@ QList<BillAttribute *> BillItem::inheritedAttributes(){
     return ret;
 }
 
-bool BillItem::containsAttribute(BillAttribute *attr) {
+bool BillItem::containsAttribute(Attribute *attr) {
     if( containsAttributeDirect(attr)){
         return true;
     }
     return containsAttributeInherited( attr );
 }
 
-bool BillItem::containsAttributeInherited(BillAttribute *attr) {
+bool BillItem::containsAttributeInherited(Attribute *attr) {
     if( m_d->parentItem != NULL ){
         if( m_d->parentItem->containsAttributeDirect( attr ) ){
             return true;
@@ -1110,7 +1107,7 @@ bool BillItem::containsAttributeInherited(BillAttribute *attr) {
     return false;
 }
 
-bool BillItem::containsAttributeDirect(BillAttribute *attr) {
+bool BillItem::containsAttributeDirect(Attribute *attr) {
     return m_d->attributes.contains( attr );
 }
 
@@ -1798,7 +1795,7 @@ void BillItem::writeODTSummaryLine(PriceItem * priceItem,
 void BillItem::writeODTAttributeBillOnTable(QTextCursor *cursor,
                                             BillPrinter::AttributePrintOption prOption, BillPrinter::PrintBillItemsOption prItemsOption,
                                             const QList<int> &fieldsToPrint,
-                                            const QList<BillAttribute *> &attrsToPrint,
+                                            const QList<Attribute *> &attrsToPrint,
                                             bool groupPrAm) {
     // spessore del bordo della tabella
     double borderWidth = 1.0f;
@@ -1950,7 +1947,7 @@ void BillItem::writeODTAttributeBillOnTable(QTextCursor *cursor,
 
     if( prOption == BillPrinter::AttributePrintSimple ){
         // *** Righe del computo suddivise per attributo ***
-        for( QList<BillAttribute *>::const_iterator i = attrsToPrint.begin(); i != attrsToPrint.end(); ++i){
+        for( QList<Attribute *>::const_iterator i = attrsToPrint.begin(); i != attrsToPrint.end(); ++i){
             for( QList<double>::iterator j = fieldsAmounts.begin(); j != fieldsAmounts.end(); ++j ){
                 *j = 0.0;
             }
@@ -2018,7 +2015,7 @@ void BillItem::writeODTAttributeBillOnTable(QTextCursor *cursor,
 
         BillItemPrivate::writeCell( cursor, table, leftHeaderFormat, headerBlockFormat );
         QString title(trUtf8("Unione"));
-        for( QList<BillAttribute *>::const_iterator i = attrsToPrint.begin(); i != attrsToPrint.end(); ++i){
+        for( QList<Attribute *>::const_iterator i = attrsToPrint.begin(); i != attrsToPrint.end(); ++i){
             title = QString("%1 %2").arg(title, (*i)->name() );
         }
         BillItemPrivate::writeCell( cursor, table, centralHeaderFormat, headerBlockFormat, title );
@@ -2069,7 +2066,7 @@ void BillItem::writeODTAttributeBillOnTable(QTextCursor *cursor,
 
         BillItemPrivate::writeCell( cursor, table, leftHeaderFormat, headerBlockFormat );
         QString title(trUtf8("Intersezione"));
-        for( QList<BillAttribute *>::const_iterator i = attrsToPrint.begin(); i != attrsToPrint.end(); ++i){
+        for( QList<Attribute *>::const_iterator i = attrsToPrint.begin(); i != attrsToPrint.end(); ++i){
             title = QString("%1 %2").arg(title, (*i)->name() );
         }
         BillItemPrivate::writeCell( cursor, table, centralHeaderFormat, headerBlockFormat, title );
@@ -2122,7 +2119,7 @@ void BillItem::writeODTAttributeBillOnTable(QTextCursor *cursor,
 void BillItem::writeODTAttributeBillLineSimple( BillPrinter::PrintBillItemsOption prItemsOption,
                                                 QList<double> * fieldsAmounts,
                                                 const QList<int> &fieldsToPrint,
-                                                BillAttribute *attrsToPrint,
+                                                Attribute *attrsToPrint,
                                                 bool groupPrAm,
                                                 QTextCursor *cursor,
                                                 QTextTable *table,
@@ -2169,7 +2166,7 @@ void BillItem::writeODTAttributeBillLineSimple( BillPrinter::PrintBillItemsOptio
 void BillItem::writeODTAttributeBillLineUnion( BillPrinter::PrintBillItemsOption prItemsOption,
                                                QList<double> * fieldsAmounts,
                                                const QList<int> &fieldsToPrint,
-                                               const QList<BillAttribute *> &attrsToPrint,
+                                               const QList<Attribute *> &attrsToPrint,
                                                bool groupPrAm,
                                                QTextCursor *cursor,
                                                QTextTable *table,
@@ -2185,7 +2182,7 @@ void BillItem::writeODTAttributeBillLineUnion( BillPrinter::PrintBillItemsOption
                                                QTextCharFormat &txtBoldCharFormat) {
     if( !hasChildren() ){
         bool unionOk = false;
-        QList<BillAttribute *>::const_iterator i = attrsToPrint.begin();
+        QList<Attribute *>::const_iterator i = attrsToPrint.begin();
         while( !unionOk && i != attrsToPrint.end() ){
             if( containsAttribute( *i) ){
                 unionOk = true;
@@ -2223,7 +2220,7 @@ void BillItem::writeODTAttributeBillLineUnion( BillPrinter::PrintBillItemsOption
 void BillItem::writeODTAttributeBillLineIntersection( BillPrinter::PrintBillItemsOption prItemsOption,
                                                       QList<double> * fieldsAmounts,
                                                       const QList<int> &fieldsToPrint,
-                                                      const QList<BillAttribute *> &attrsToPrint,
+                                                      const QList<Attribute *> &attrsToPrint,
                                                       bool groupPrAm,
                                                       QTextCursor *cursor,
                                                       QTextTable *table,
@@ -2239,7 +2236,7 @@ void BillItem::writeODTAttributeBillLineIntersection( BillPrinter::PrintBillItem
                                                       QTextCharFormat &txtBoldCharFormat ){
     if( !hasChildren() ){
         bool intersectionOk = true;
-        QList<BillAttribute *>::const_iterator i = attrsToPrint.begin();
+        QList<Attribute *>::const_iterator i = attrsToPrint.begin();
         while( intersectionOk && i != attrsToPrint.end() ){
             if( !containsAttribute( *i) ){
                 intersectionOk = false;

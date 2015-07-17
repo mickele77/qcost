@@ -11,5 +11,6 @@
         <file>icons/document-new-human-no-discount.svg</file>
         <file>icons/document-new-simple.svg</file>
         <file>icons/document-new.svg</file>
+        <file>icons/qcost.svg</file>
     </qresource>
 </RCC>

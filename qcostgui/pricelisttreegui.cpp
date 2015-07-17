@@ -191,9 +191,19 @@ void PriceListTreeGUI::addItems(){
                         }
                     }
                 }
-                m_d->priceList->insertRows( rowList.last().row()+1, rowList.size(), rowList.last().parent() );
+                m_d->priceList->insertPriceItems( rowList.last().row()+1, rowList.size(), rowList.last().parent() );
+                if( m_d->ui->treeView->selectionModel() ){
+                    m_d->ui->treeView->selectionModel()->clearSelection();
+                    m_d->ui->treeView->selectionModel()->setCurrentIndex( m_d->priceList->index( rowList.last().row()+rowList.size(), 0, rowList.last().parent() ),
+                                                                          QItemSelectionModel::Rows | QItemSelectionModel::SelectCurrent );
+                }
             } else {
-                m_d->priceList->insertRows( 0 );
+                m_d->priceList->insertPriceItems( 0 );
+                if( m_d->ui->treeView->selectionModel() ){
+                    m_d->ui->treeView->selectionModel()->clearSelection();
+                    m_d->ui->treeView->selectionModel()->setCurrentIndex( m_d->priceList->index( 0, 0, QModelIndex() ),
+                                                                          QItemSelectionModel::Rows | QItemSelectionModel::SelectCurrent );
+                }
             }
         }
     }
@@ -204,7 +214,12 @@ void PriceListTreeGUI::addChildItems(){
         if( m_d->ui->treeView->selectionModel() ){
             QModelIndexList rowListSel = m_d->ui->treeView->selectionModel()->selectedRows();
             for( int i=0; i < rowListSel.size(); ++i){
-                m_d->priceList->insertRows( 0, 1, rowListSel.at(i) );
+                m_d->priceList->insertPriceItems( 0, 1, rowListSel.at(i) );
+            }
+            if( m_d->ui->treeView->selectionModel() ){
+                m_d->ui->treeView->selectionModel()->clearSelection();
+                m_d->ui->treeView->selectionModel()->setCurrentIndex( m_d->priceList->index( 0, 0, rowListSel.last() ),
+                                                                      QItemSelectionModel::Rows | QItemSelectionModel::SelectCurrent );
             }
         }
     }

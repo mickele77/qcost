@@ -25,7 +25,7 @@ class Bill;
 class PriceFieldModel;
 class MathParser;
 class QString;
-class BillAttribute;
+class Attribute;
 template <typename T> class QList;
 
 #include <Qt>
@@ -67,7 +67,7 @@ public:
     bool printAttributeODT( PrintBillItemsOption prBillItemsOption,
                             BillPrinter::AttributePrintOption prOption,
                             const QList<int> & fieldsToPrint,
-                            const QList<BillAttribute *> & attrsToPrint,
+                            const QList<Attribute *> & attrsToPrint,
                             const QString &fileName,
                             double paperWidth = 210.0, double paperHeight = 297.0,
                             Qt::Orientation paperOrientation = Qt::Vertical,

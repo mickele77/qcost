@@ -25,8 +25,8 @@ class ProjectPriceListParentItem;
 class PriceList;
 class PriceItem;
 class BillItem;
-class BillAttribute;
-class BillAttributeModel;
+class Attribute;
+class AttributeModel;
 class PriceFieldModel;
 class MathParser;
 class QXmlStreamAttributes;
@@ -108,12 +108,10 @@ public:
 
     double amount( int field ) const ;
     QString amountStr( int field ) const ;
-    double amountTotal();
-    double amountHuman();
 
-    BillAttributeModel * attributeModel();
-    double amountAttribute( BillAttribute * attr, int field );
-    QString amountAttributeStr( BillAttribute * attr, int field );
+    AttributeModel * attributeModel();
+    double amountAttribute( Attribute * attr, int field );
+    QString amountAttributeStr( Attribute * attr, int field );
 
     bool isUsingPriceItem( PriceItem * p );
     bool isUsingPriceList( PriceList * pl );
@@ -147,14 +145,14 @@ public:
                                        BillPrinter::AttributePrintOption prOption,
                                        BillPrinter::PrintBillItemsOption prItemsOption,
                                        const QList<int> &fieldsToPrint,
-                                       const QList<BillAttribute *> &attrsToPrint,
+                                       const QList<Attribute *> &attrsToPrint,
                                        bool groupPrAm = false );
     void insertStandardAttributes();
 
 public slots:
     void setName( const QString & n);
     void setDescription( const QString & value );
-    void setPriceCol( int );
+    void setPriceDataSet( int );
 
 signals:
     void aboutToBeDeleted();
@@ -173,7 +171,6 @@ private slots:
     void removePriceField( int firstPFRemoved, int lastPFRemoved );
 private:
     BillPrivate * m_d;
-
 };
 
 #endif // BILL_H

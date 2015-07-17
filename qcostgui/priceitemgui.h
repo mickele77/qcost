@@ -34,7 +34,7 @@ class PriceItemGUIPrivate;
 class PriceItemGUI : public QWidget {
     Q_OBJECT
 public:
-    explicit PriceItemGUI(QMap<PriceListDBWidget::ImportOptions, bool> * EPAImpOptions,
+    explicit PriceItemGUI( QMap<PriceListDBWidget::ImportOptions, bool> * EPAImpOptions,
                            QString *EPAFileName,
                            PriceItem * pr, int curPriceDataSet,
                            MathParser * parser, Project *prj,
@@ -105,7 +105,6 @@ private:
     PriceItemGUIPrivate * m_d;
 
     bool eventFilter(QObject *object, QEvent *event);
-
 };
 
 #endif // PRICEGUI_H

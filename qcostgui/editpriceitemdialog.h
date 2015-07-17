@@ -5,8 +5,9 @@
 #include <QVariant>
 
 class Project;
-class Bill;
 class BillItem;
+class AccountingBillItem;
+class AccountingTAMBillItem;
 class PriceList;
 class MathParser;
 
@@ -19,7 +20,18 @@ class EditPriceItemDialog : public QDialog {
 public:
     EditPriceItemDialog( QMap<PriceListDBWidget::ImportOptions, bool> *EPAImpOptions,
                          QString * EPAFileName,
-                         PriceList * pl, int priceCol, BillItem *bItem, MathParser *prs, Project *prj,
+                         PriceList * pl, int priceDataSet, BillItem *bItem,
+                         MathParser *prs, Project *prj,
+                         QWidget *parent = 0);
+    EditPriceItemDialog(QMap<PriceListDBWidget::ImportOptions, bool> *EPAImpOptions,
+                         QString * EPAFileName,
+                         PriceList * pl, int priceDataSet, AccountingBillItem *bItem,
+                        MathParser *prs, Project *prj,
+                         QWidget *parent = 0);
+    EditPriceItemDialog(QMap<PriceListDBWidget::ImportOptions, bool> *EPAImpOptions,
+                         QString * EPAFileName,
+                         PriceList * pl, int priceDataSet, AccountingTAMBillItem *bItem,
+                        MathParser *prs, Project *prj,
                          QWidget *parent = 0);
     ~EditPriceItemDialog();
 private slots:
@@ -27,6 +39,7 @@ private slots:
 
 private:
     EditPriceItemDialogPrivate * m_d;
+    void init(PriceList *pl);
 };
 
 #endif // EDITPRICEITEMDIALOG_H

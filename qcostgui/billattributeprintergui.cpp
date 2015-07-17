@@ -19,7 +19,7 @@
 #include "billattributeprintergui.h"
 #include "ui_billattributeprintergui.h"
 
-#include "billattributemodel.h"
+#include "attributemodel.h"
 #include "pricefieldmodel.h"
 
 #include <QComboBox>
@@ -30,13 +30,13 @@ public:
     BillAttributePrinterGUIPrivate( BillPrinter::PrintBillItemsOption * prItemsOption,
                                     BillPrinter::AttributePrintOption *prOption,
                                     QList<int> * pFlds,
-                                    QList<BillAttribute *> * pAttrs,
+                                    QList<Attribute *> * pAttrs,
                                     double * pWidth,
                                     double * pHeight,
                                     Qt::Orientation * pOrient,
                                     bool *groupPrAm,
                                     PriceFieldModel * pfm,
-                                    BillAttributeModel * bam ):
+                                    AttributeModel * bam ):
         ui(new Ui::BillAttributePrinterGUI),
         printItemsOption(prItemsOption),
         printOption(prOption),
@@ -59,8 +59,8 @@ public:
     QList<QComboBox *> priceFieldComboBoxList;
     BillPrinter::AttributePrintOption *printOption;
     QList<int> * printFields;
-    QList<BillAttribute *> * printAttributes;
-    BillAttributeModel * billAttributeModel;
+    QList<Attribute *> * printAttributes;
+    AttributeModel * billAttributeModel;
     double *paperWidth;
     double *paperHeight;
     Qt::Orientation * paperOrientation;
@@ -72,13 +72,13 @@ public:
 BillAttributePrinterGUI::BillAttributePrinterGUI( BillPrinter::PrintBillItemsOption * prItemsOption,
                                                   BillPrinter::AttributePrintOption *prOption,
                                                   QList<int> * pFlds,
-                                                  QList<BillAttribute *> * pAttrs,
+                                                  QList<Attribute *> * pAttrs,
                                                   double * pWidth,
                                                   double * pHeight,
                                                   Qt::Orientation * pOrient,
                                                   bool *groupPrAm,
                                                   PriceFieldModel * pfm,
-                                                  BillAttributeModel * bam,
+                                                  AttributeModel * bam,
                                                   QWidget *parent ) :
     QDialog(parent),
     m_d( new BillAttributePrinterGUIPrivate( prItemsOption, prOption, pFlds, pAttrs, pWidth, pHeight, pOrient, groupPrAm, pfm, bam) ) {
@@ -133,7 +133,7 @@ void BillAttributePrinterGUI::setPrintData(){
     m_d->printAttributes->clear();
     QModelIndexList	selRows = m_d->ui->attributesTableView->selectionModel()->selectedRows();
     for( QModelIndexList::iterator i = selRows.begin(); i != selRows.end(); ++i ){
-        BillAttribute * attr = m_d->billAttributeModel->attribute((*i).row() );
+        Attribute * attr = m_d->billAttributeModel->attribute((*i).row() );
         if( !(m_d->printAttributes->contains(attr)) ){
             m_d->printAttributes->append( attr );
         }
