@@ -78,10 +78,16 @@ public:
 
     double quantity() const;
     QString quantityStr() const;
+    double quantityAccounted() const;
+    QString quantityAccountedStr() const;
     double PPUTotal() const;
     QString PPUTotalStr() const;
     double totalAmount() const;
     QString totalAmountStr() const;
+    double totalAmountAccounted() const;
+    QString totalAmountAccountedStr() const;
+    double percentageAccounted() const;
+    QString percentageAccountedStr() const;
 
     QList<int> totalAmountPriceFields();
     void setTotalAmountPriceFields(const QList<int> &newAmountFields);
@@ -161,6 +167,8 @@ signals:
     void quantityChanged( const QString &  );
     void PPUTotalChanged( const QString & );
     void totalAmountChanged( const QString & );
+    void totalAmountAccountedChanged( const QString & );
+    void percentageAccountedChanged( const QString & );
     void attributesChanged();
 
 private:
@@ -265,8 +273,10 @@ private:
 private slots:
     void emitPriceDataUpdated();
     void setUnitMeasure( UnitMeasure * ump );
-    void updateTotalAmount();
     void setQuantityPrivate(double v);
+    void updateTotalAmount();
+    void updateTotalAmountAccounted();
+    void updatePercentageAccounted();
 };
 
 #endif // ACCOUNTINGLSBILLITEM_H

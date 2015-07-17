@@ -86,3 +86,20 @@ AccountingTAMBill::SetPriceListMode AccountingBillSetPriceListModeGUI::returnVal
     }
     return AccountingTAMBill::None;
 }
+
+AccountingLSBill::SetPriceListMode AccountingBillSetPriceListModeGUI::returnValueLSBill() {
+    if( exec() == QDialog::Accepted ){
+        if( m_d->ui->searchAndAddRadioButton->isChecked() ){
+            return AccountingLSBill::SearchAndAdd;
+        } else if( m_d->ui->addRadioButton->isChecked() ){
+            return AccountingLSBill::Add;
+        } else if( m_d->ui->searchRadioButton->isChecked() ){
+            return AccountingLSBill::Search;
+        } else if( m_d->ui->nullPriceItemRadioButton->isChecked() ){
+            return AccountingLSBill::NULLPriceItem;
+        } else if( m_d->ui->resetRadioButton->isChecked() ){
+            return AccountingLSBill::ResetBill;
+        }
+    }
+    return AccountingLSBill::None;
+}

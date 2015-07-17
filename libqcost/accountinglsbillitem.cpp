@@ -50,8 +50,11 @@ public:
         priceItem( NULL ),
         currentPriceDataSet(0),
         quantity(0.0),
+        quantityAccounted(0.0),
         PPUTotal(0.0),
         totalAmount(0.0),
+        totalAmountAccounted(0.0),
+        percentageAccounted(0.0),
         totalAmountPriceFieldsList(QList<int>()),
         totalAmountPriceFieldModel( NULL ),
         priceFieldModel( pfm ) {
@@ -177,10 +180,16 @@ public:
     int currentPriceDataSet;
     // quantita'
     double quantity;
+    // quantita' contabilizzata
+    double quantityAccounted;
     // prezzo complessivo
     double PPUTotal;
     // Importo complessivo lordo
     double totalAmount;
+    // Importo complessivo contabilizzato
+    double totalAmountAccounted;
+    // Percentuale contabilizzata
+    double percentageAccounted;
     // lista dei pricedataset usati per importo totale
     QList<int> totalAmountPriceFieldsList;
     // modello degli importi totali
@@ -200,6 +209,7 @@ public:
     unsigned int id;
 
     static int amountPrecision;
+    static int percentagePrecision;
 
     QXmlStreamAttributes tmpAttributes;
 };
@@ -213,6 +223,7 @@ int AccountingLSBillItemPrivate::priceCol = 5;
 int AccountingLSBillItemPrivate::amountCol = 6;
 int AccountingLSBillItemPrivate::colCount = AccountingLSBillItemPrivate::amountCol + 1;
 int AccountingLSBillItemPrivate::amountPrecision = 2;
+int AccountingLSBillItemPrivate::percentagePrecision = 6;
 
 AccountingLSBillItem::AccountingLSBillItem( PriceItem * p, AccountingLSBillItem *parentItem, PriceFieldModel * pfm, MathParser * parser ):
     TreeItem(),
@@ -227,6 +238,8 @@ AccountingLSBillItem::AccountingLSBillItem( PriceItem * p, AccountingLSBillItem 
     connect( this, &AccountingLSBillItem::priceItemChanged, this, &AccountingLSBillItem::itemChanged );
     connect( this, &AccountingLSBillItem::currentPriceDataSetChanged, this, &AccountingLSBillItem::itemChanged );
     connect( this, &AccountingLSBillItem::quantityChanged, this, &AccountingLSBillItem::itemChanged );
+    connect( this, static_cast<void(AccountingLSBillItem::*)(const QString &)>(&AccountingLSBillItem::totalAmountAccountedChanged), this, &AccountingLSBillItem::itemChanged );
+    connect( this, static_cast<void(AccountingLSBillItem::*)(const QString &)>(&AccountingLSBillItem::percentageAccountedChanged), this, &AccountingLSBillItem::itemChanged );
     connect( this, static_cast<void(AccountingLSBillItem::*)(const QString &)>(&AccountingLSBillItem::totalAmountChanged), this, &AccountingLSBillItem::itemChanged );
     connect( this, &AccountingLSBillItem::attributesChanged, this, &AccountingLSBillItem::itemChanged );
 }
@@ -380,6 +393,20 @@ QString AccountingLSBillItem::quantityStr() const {
     return m_d->toString( m_d->quantity, 'f', prec );
 }
 
+double AccountingLSBillItem::quantityAccounted() const {
+    return m_d->quantityAccounted;
+}
+
+QString AccountingLSBillItem::quantityAccountedStr() const {
+    int prec = 2;
+    if( m_d->priceItem != NULL ){
+        if( m_d->priceItem->unitMeasure() != NULL ){
+            prec = m_d->priceItem->unitMeasure()->precision();
+        }
+    }
+    return m_d->toString( m_d->quantityAccounted, 'f', prec );
+}
+
 double AccountingLSBillItem::PPUTotal() const{
     return m_d->PPUTotal;
 }
@@ -394,6 +421,22 @@ double AccountingLSBillItem::totalAmount() const{
 
 QString AccountingLSBillItem::totalAmountStr() const {
     return m_d->toString( m_d->totalAmount, 'f', m_d->amountPrecision );
+}
+
+double AccountingLSBillItem::totalAmountAccounted() const{
+    return m_d->totalAmountAccounted;
+}
+
+QString AccountingLSBillItem::totalAmountAccountedStr() const {
+    return m_d->toString( m_d->totalAmountAccounted, 'f', m_d->amountPrecision );
+}
+
+double AccountingLSBillItem::percentageAccounted() const{
+    return m_d->percentageAccounted;
+}
+
+QString AccountingLSBillItem::percentageAccountedStr() const {
+    return m_d->toString( m_d->percentageAccounted * 100.0, 'f', m_d->percentagePrecision );
 }
 
 void AccountingLSBillItem::setPriceItem(PriceItem * p) {
@@ -653,6 +696,25 @@ void AccountingLSBillItem::updateTotalAmount() {
     if( v != m_d->totalAmount ){
         m_d->totalAmount = v;
         emit totalAmountChanged( totalAmountStr() );
+    }
+}
+
+void AccountingLSBillItem::updateTotalAmountAccounted() {
+    double v = UnitMeasure::applyPrecision( m_d->quantity * m_d->PPUTotal, m_d->amountPrecision );
+    if( v != m_d->totalAmount ){
+        m_d->totalAmount = v;
+        emit totalAmountChanged( totalAmountStr() );
+    }
+}
+
+void AccountingLSBillItem::updatePercentageAccounted() {
+    double v = 0.0;
+    if( m_d->totalAmount != 0.0 ){
+        v = m_d->totalAmountAccounted / m_d->totalAmount;
+    }
+    if( v != m_d->totalAmount ){
+        m_d->percentageAccounted = v;
+        emit percentageAccountedChanged( percentageAccountedStr() );
     }
 }
 

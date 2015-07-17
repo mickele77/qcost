@@ -462,6 +462,22 @@ QString AccountingLSBill::totalAmountStr() const {
     return m_d->rootItem->totalAmountStr();
 }
 
+double AccountingLSBill::totalAmountAccounted() const {
+    return m_d->rootItem->totalAmountAccounted();
+}
+
+QString AccountingLSBill::totalAmountAccountedStr() const {
+    return m_d->rootItem->totalAmountAccountedStr();
+}
+
+double AccountingLSBill::percentageAccounted() const {
+    return m_d->rootItem->percentageAccounted();
+}
+
+QString AccountingLSBill::percentageAccountedStr() const {
+    return m_d->rootItem->percentageAccountedStr();
+}
+
 AttributeModel *AccountingLSBill::attributeModel() {
     return m_d->attributeModel;
 }
@@ -606,8 +622,4 @@ void AccountingLSBill::writeODTSummaryOnTable(QTextCursor *cursor,
 void AccountingLSBill::loadTmpData(ProjectPriceListParentItem * priceLists) {
     m_d->priceList = priceLists->priceListId( m_d->priceListIdTmp );
     m_d->rootItem->loadTmpData( m_d->priceList, m_d->attributeModel );
-}
-
-void AccountingLSBill::insertStandardAttributes(){
-    m_d->attributeModel->insertStandardAttributes();
 }

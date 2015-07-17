@@ -23,7 +23,7 @@
 #include "accountingbillsetpricelistmodegui.h"
 
 #include "project.h"
-#include "accountingbill.h"
+#include "accountinglsbill.h"
 #include "attributemodel.h"
 #include "accountingpricefieldmodel.h"
 #include "pricelist.h"
@@ -47,7 +47,7 @@ public:
     }
     Ui::AccountingLSBillDataGUI * ui;
     Project * project;
-    AccountingBill * accounting;
+    AccountingLSBill * accounting;
     MathParser * parser;
     QString * wordProcessorFile;
     PriceFieldModel * priceFieldModel;
@@ -56,12 +56,11 @@ public:
     QSpacerItem * amountSpacer;
 };
 
-AccountingLSBillDataGUI::AccountingLSBillDataGUI(PriceFieldModel * pfm, MathParser * prs, AccountingBill * b, Project * prj, QString * wordProcessorFile, QWidget *parent) :
+AccountingLSBillDataGUI::AccountingLSBillDataGUI(PriceFieldModel * pfm, MathParser * prs, AccountingLSBill * b, Project * prj, QString * wordProcessorFile, QWidget *parent) :
     QWidget(parent),
     m_d( new AccountingLSBillDataGUIPrivate( pfm, prs, prj, wordProcessorFile ) ) {
     m_d->ui->setupUi( this );
     m_d->ui->totalPriceFieldTableView->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
-    m_d->ui->noDiscountPriceFieldTableView->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
 
     populatePriceListComboBox();
 
@@ -78,19 +77,17 @@ AccountingLSBillDataGUI::~AccountingLSBillDataGUI(){
     delete m_d;
 }
 
-void AccountingLSBillDataGUI::setAccountingBill(AccountingBill *b) {
+void AccountingLSBillDataGUI::setAccountingBill(AccountingLSBill *b) {
     if( m_d->accounting != b ){
         if( m_d->accounting != NULL ){
-            disconnect( m_d->ui->nameLineEdit, &QLineEdit::textEdited, m_d->accounting, &AccountingBill::setName );
+            disconnect( m_d->ui->nameLineEdit, &QLineEdit::textEdited, m_d->accounting, &AccountingLSBill::setName );
             disconnect( m_d->ui->descriptionTextEdit, &QPlainTextEdit::textChanged, this, &AccountingLSBillDataGUI::setDescription );
 
-            disconnect( m_d->accounting, &AccountingBill::totalAmountToBeDiscountedChanged, m_d->ui->totalAmountToBeDiscountedLineEdit, &QLineEdit::setText );
-            disconnect( m_d->accounting, &AccountingBill::amountNotToBeDiscountedChanged, m_d->ui->amountNotToBeDiscountedLineEdit, &QLineEdit::setText );
-            disconnect( m_d->accounting, &AccountingBill::amountToBeDiscountedChanged, m_d->ui->amountToBeDiscountedLineEdit, &QLineEdit::setText );
-            disconnect( m_d->accounting, &AccountingBill::amountDiscountedChanged, m_d->ui->amountDiscountedLineEdit, &QLineEdit::setText );
-            disconnect( m_d->accounting, &AccountingBill::totalAmountChanged, m_d->ui->totalAmountLineEdit, &QLineEdit::setText );
+            disconnect( m_d->accounting, &AccountingLSBill::totalAmountChanged, m_d->ui->totalAmountLineEdit, &QLineEdit::setText );
+            disconnect( m_d->accounting, &AccountingLSBill::totalAmountAccountedChanged, m_d->ui->totalAmountAccountedLineEdit, &QLineEdit::setText );
+            disconnect( m_d->accounting, &AccountingLSBill::percentageAccountedChanged, m_d->ui->percentageAccountedLineEdit, &QLineEdit::setText );
 
-            disconnect( m_d->accounting, &AccountingBill::aboutToBeDeleted, this, &AccountingLSBillDataGUI::setAccountingNULL );
+            disconnect( m_d->accounting, &AccountingLSBill::aboutToBeDeleted, this, &AccountingLSBillDataGUI::setAccountingNULL );
             disconnect( m_d->ui->priceListComboBox, static_cast<void(QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this, &AccountingLSBillDataGUI::setPriceList );
             disconnect( m_d->ui->currentPriceDataSetSpinBox, static_cast<void(QSpinBox::*)(int)>(&QSpinBox::valueChanged), this, &AccountingLSBillDataGUI::setPriceDataSet );
         }
@@ -98,41 +95,29 @@ void AccountingLSBillDataGUI::setAccountingBill(AccountingBill *b) {
         m_d->ui->currentPriceDataSetSpinBox->setMaximum(1);
         m_d->ui->currentPriceDataSetSpinBox->setValue(1);
 
-        m_d->ui->totalAmountToBeDiscountedLineEdit->clear();
-        m_d->ui->amountNotToBeDiscountedLineEdit->clear();
-        m_d->ui->amountToBeDiscountedLineEdit->clear();
-        m_d->ui->amountDiscountedLineEdit->clear();
-        m_d->ui->totalAmountLineEdit->clear();
 
         m_d->ui->nameLineEdit->clear();
         m_d->ui->descriptionTextEdit->clear();
-        for( int i=0; i < m_d->amountLEditList.size(); ++i){
-            if( i < m_d->priceFieldModel->fieldCount() ){
-                m_d->amountLEditList.at(i)->clear();
-            }
-        }
+        m_d->ui->totalAmountLineEdit->clear();
+        m_d->ui->totalAmountAccountedLineEdit->clear();
+        m_d->ui->percentageAccountedLineEdit->clear();
         m_d->ui->totalPriceFieldTableView->setModel( NULL );
-        m_d->ui->noDiscountPriceFieldTableView->setModel( NULL );
         m_d->ui->attributesTableView->setModel( NULL );
 
         m_d->accounting = b;
 
         if( m_d->accounting != NULL ){
             m_d->ui->nameLineEdit->setText( m_d->accounting->name() );
-            connect( m_d->ui->nameLineEdit, &QLineEdit::textEdited, m_d->accounting, &AccountingBill::setName );
+            connect( m_d->ui->nameLineEdit, &QLineEdit::textEdited, m_d->accounting, &AccountingLSBill::setName );
             m_d->ui->descriptionTextEdit->setPlainText( m_d->accounting->description() );
             connect( m_d->ui->descriptionTextEdit, &QPlainTextEdit::textChanged, this, &AccountingLSBillDataGUI::setDescription );
 
-            m_d->ui->totalAmountToBeDiscountedLineEdit->setText( m_d->accounting->totalAmountToBeDiscountedStr() );
-            connect( m_d->accounting, &AccountingBill::totalAmountToBeDiscountedChanged, m_d->ui->totalAmountToBeDiscountedLineEdit, &QLineEdit::setText );
-            m_d->ui->amountNotToBeDiscountedLineEdit->setText( m_d->accounting->amountNotToBeDiscountedStr() );
-            connect( m_d->accounting, &AccountingBill::amountNotToBeDiscountedChanged, m_d->ui->amountNotToBeDiscountedLineEdit, &QLineEdit::setText );
-            m_d->ui->amountToBeDiscountedLineEdit->setText( m_d->accounting->amountToBeDiscountedStr() );
-            connect( m_d->accounting, &AccountingBill::amountToBeDiscountedChanged, m_d->ui->amountToBeDiscountedLineEdit, &QLineEdit::setText );
-            m_d->ui->amountDiscountedLineEdit->setText( m_d->accounting->amountDiscountedStr() );
-            connect( m_d->accounting, &AccountingBill::amountDiscountedChanged, m_d->ui->amountDiscountedLineEdit, &QLineEdit::setText );
             m_d->ui->totalAmountLineEdit->setText( m_d->accounting->totalAmountStr() );
-            connect( m_d->accounting, &AccountingBill::totalAmountChanged, m_d->ui->totalAmountLineEdit, &QLineEdit::setText );
+            connect( m_d->accounting, &AccountingLSBill::totalAmountChanged, m_d->ui->totalAmountLineEdit, &QLineEdit::setText );
+            m_d->ui->totalAmountAccountedLineEdit->setText( m_d->accounting->totalAmountAccountedStr() );
+            connect( m_d->accounting, &AccountingLSBill::totalAmountAccountedChanged, m_d->ui->totalAmountAccountedLineEdit, &QLineEdit::setText );
+            m_d->ui->percentageAccountedLineEdit->setText( m_d->accounting->percentageAccountedStr() );
+            connect( m_d->accounting, &AccountingLSBill::percentageAccountedChanged, m_d->ui->percentageAccountedLineEdit, &QLineEdit::setText );
 
             setPriceListComboBox();
             connect( m_d->ui->priceListComboBox, static_cast<void(QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this, &AccountingLSBillDataGUI::setPriceList );
@@ -140,10 +125,9 @@ void AccountingLSBillDataGUI::setAccountingBill(AccountingBill *b) {
             connect( m_d->ui->currentPriceDataSetSpinBox, static_cast<void(QSpinBox::*)(int)>(&QSpinBox::valueChanged), this, &AccountingLSBillDataGUI::setPriceDataSet );
 
             m_d->ui->totalPriceFieldTableView->setModel( m_d->accounting->totalAmountPriceFieldModel() );
-            m_d->ui->noDiscountPriceFieldTableView->setModel( m_d->accounting->noDiscountAmountPriceFieldModel() );
             m_d->ui->attributesTableView->setModel( m_d->accounting->attributeModel() );
 
-            connect( m_d->accounting, &AccountingBill::aboutToBeDeleted, this, &AccountingLSBillDataGUI::setAccountingNULL );
+            connect( m_d->accounting, &AccountingLSBill::aboutToBeDeleted, this, &AccountingLSBillDataGUI::setAccountingNULL );
         }
     }
 }
@@ -230,7 +214,7 @@ bool AccountingLSBillDataGUI::printAttributeAccountingODT(){
                 if( suf != "odt"){
                     fileName.append( ".odt" );
                 }
-                AccountingPrinter printer( m_d->accounting, m_d->priceFieldModel, m_d->parser );
+                AccountingPrinter printer( m_d->accounting, m_d->parser );
                 bool ret = printer.printAttributeODT( prAccountingMeasureOption, prOption, prAttrs, fileName, paperWidth, paperHeight, paperOrientation, printAmounts );
                 if( m_d->wordProcessorFile != NULL ){
                     if( !m_d->wordProcessorFile->isEmpty() ){
@@ -338,7 +322,7 @@ void AccountingLSBillDataGUI::setPriceList() {
     if( m_d->accounting ){
         if( m_d->accounting->priceList() && m_d->accounting->rowCount() > 0 ){
             AccountingBillSetPriceListModeGUI modeGUI( this );
-            AccountingBill::SetPriceListMode plMode = modeGUI.returnValue();
+            AccountingLSBill::SetPriceListMode plMode = modeGUI.returnValueLSBill();
             m_d->accounting->setPriceList( currentPriceList, plMode );
         } else {
             m_d->accounting->setPriceList( currentPriceList );

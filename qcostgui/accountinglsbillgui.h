@@ -22,8 +22,8 @@
 #include "pricelistdbwidget.h"
 
 class Project;
-class AccountingBill;
-class AccountingBillItem;
+class AccountingLSBill;
+class AccountingLSBillItem;
 class PriceItem;
 class MathParser;
 class AccountingLSBillGUIPrivate;
@@ -35,15 +35,15 @@ class AccountingLSBillGUI : public QTabWidget {
 public:
     explicit AccountingLSBillGUI( QMap<PriceListDBWidget::ImportOptions, bool> *EPAImpOptions,
                       QString * EPAFileName,
-                      MathParser *prs, AccountingBill *b, Project *p,
+                      MathParser *prs, AccountingLSBill *b, Project *p,
                       QString *wordProcessorFile = NULL, QWidget *parent = 0);
 
     ~AccountingLSBillGUI();
 
-    void setAccountingBill(AccountingBill *);
+    void setAccountingBill(AccountingLSBill *);
 
 private slots:
-    void setAccountingItem( AccountingBillItem * );
+    void setAccountingItem( AccountingLSBillItem * );
     void setAccountingMeasureNULL();
     void updateAccountingMeasureGUI();
 private:

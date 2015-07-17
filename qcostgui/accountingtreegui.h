@@ -41,7 +41,7 @@ public:
     friend class AccountingGUI;
     friend class AccountingTAMBillGUI;
     explicit AccountingTreeGUI( QMap<PriceListDBWidget::ImportOptions, bool> *EPAImpOptions, QString *EPAFileName, AccountingBill * b, MathParser *prs, Project *prj, QWidget *parent = 0);
-    explicit AccountingTreeGUI(QMap<PriceListDBWidget::ImportOptions, bool> *EPAImpOptions, QString *EPAFileName, AccountingTAMBill *b, MathParser *prs, Project *prj, QWidget *parent);
+    explicit AccountingTreeGUI( QMap<PriceListDBWidget::ImportOptions, bool> *EPAImpOptions, QString *EPAFileName, AccountingTAMBill *b, MathParser *prs, Project *prj, QWidget *parent);
     ~AccountingTreeGUI();
     
     AccountingBillItem * currentAccountingBill();

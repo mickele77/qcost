@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>500</width>
-    <height>547</height>
+    <height>649</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -98,7 +98,7 @@
        <item row="2" column="0">
         <widget class="QCheckBox" name="amountsCheckBox">
          <property name="text">
-          <string>Importo</string>
+          <string>Importi</string>
          </property>
         </widget>
        </item>
@@ -200,7 +200,7 @@
        <item row="3" column="0">
         <widget class="QGroupBox" name="amountsGroupBox">
          <property name="title">
-          <string>I&amp;mporto</string>
+          <string>I&amp;mporti</string>
          </property>
          <property name="checkable">
           <bool>true</bool>
@@ -212,12 +212,40 @@
           <item row="0" column="0">
            <widget class="QLabel" name="totalAmountLabel">
             <property name="text">
-             <string>Importo</string>
+             <string>Importo progetto</string>
             </property>
            </widget>
           </item>
           <item row="0" column="1">
            <widget class="QLineEdit" name="totalAmountLineEdit">
+            <property name="readOnly">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <widget class="QLabel" name="totalAmountAccountedLabel">
+            <property name="text">
+             <string>Importo progetto</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="QLineEdit" name="totalAmountAccountedLineEdit">
+            <property name="readOnly">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="0">
+           <widget class="QLabel" name="percentageAccountedLabel">
+            <property name="text">
+             <string>% contabilizzata</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="1">
+           <widget class="QLineEdit" name="percentageAccountedLineEdit">
             <property name="readOnly">
              <bool>true</bool>
             </property>

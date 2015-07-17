@@ -20,6 +20,7 @@
 
 #include "accountingbill.h"
 #include "accountingtambill.h"
+#include "accountinglsbill.h"
 
 #include "odtwriter.h"
 
@@ -35,12 +36,21 @@ public:
     AccountingPrinterPrivate(AccountingBill * b, PriceFieldModel * pfm, MathParser * prs):
         accountingBill(b),
         accountingTAMBill(NULL),
+        accountingLSBill(NULL),
         priceFieldModel(pfm),
         parser(prs){
     }
     AccountingPrinterPrivate(AccountingTAMBill * b, MathParser * prs):
         accountingBill(NULL),
         accountingTAMBill(b),
+        accountingLSBill(NULL),
+        priceFieldModel(NULL),
+        parser(prs){
+    }
+    AccountingPrinterPrivate(AccountingLSBill * b, MathParser * prs):
+        accountingBill(NULL),
+        accountingTAMBill(NULL),
+        accountingLSBill(b),
         priceFieldModel(NULL),
         parser(prs){
     }
@@ -49,6 +59,7 @@ public:
 
     AccountingBill * accountingBill;
     AccountingTAMBill * accountingTAMBill;
+    AccountingLSBill * accountingLSBill;
     PriceFieldModel * priceFieldModel;
     MathParser * parser;
 };
@@ -58,6 +69,11 @@ AccountingPrinter::AccountingPrinter( AccountingBill * b, PriceFieldModel * pfm,
 }
 
 AccountingPrinter::AccountingPrinter(AccountingTAMBill *b, MathParser *prs):
+    m_d( new AccountingPrinterPrivate(b, prs) ) {
+
+}
+
+AccountingPrinter::AccountingPrinter(AccountingLSBill *b, MathParser *prs):
     m_d( new AccountingPrinterPrivate(b, prs) ) {
 
 }

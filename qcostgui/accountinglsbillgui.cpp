@@ -76,7 +76,7 @@ class AccountingLSBillGUIPrivate{
 public:
     AccountingLSBillGUIPrivate( QMap<PriceListDBWidget::ImportOptions, bool> *EPAImpOptions,
                               QString * EPAFileName,
-                              MathParser * prs, AccountingBill * b, Project * prj,
+                              MathParser * prs, AccountingLSBill * b, Project * prj,
                               QString * wpf, QWidget *parent ):
         accounting ( b ),
         currentAccountingMeasure( NULL ),
@@ -86,10 +86,7 @@ public:
         mainSplitter( new QSplitter(Qt::Horizontal, parent ) ),
         accountingTreeGUI( new AccountingTreeGUI( EPAImpOptions, EPAFileName, b, prs, prj, mainSplitter ) ),
         accountingItemBillGUI( new AccountingItemBillGUI( prj->priceFieldModel(), parent ) ),
-        accountingItemPPUGUI( new AccountingItemPPUGUI( EPAImpOptions, EPAFileName, prs, prj, parent ) ),
-        accountingItemLSGUI( new AccountingItemLSGUI( prj->priceFieldModel(), parent ) ),
-        accountingItemTAMGUI( new AccountingItemTAMGUI( prj->priceFieldModel(), parent ) ),
-        accountingItemCommentGUI( new AccountingItemCommentGUI( parent ) ),
+        accountingLSBillItemGUI( new AccountingItemPPUGUI( EPAImpOptions, EPAFileName, prs, prj, parent ) ),
         accountingMeasureWidget( new AccountingItemWidget(accountingItemBillGUI, accountingItemPPUGUI, accountingItemLSGUI, accountingItemTAMGUI, accountingItemCommentGUI, mainSplitter ) ) {
         accountingItemBillGUI->hide();
         accountingItemPPUGUI->hide();
@@ -98,8 +95,8 @@ public:
         accountingItemCommentGUI->hide();
     }
 
-    AccountingBill * accounting;
-    AccountingBillItem * currentAccountingMeasure;
+    AccountingLSBill * accounting;
+    AccountingLSBillItem * currentAccountingMeasure;
     Project * project;
     AccountingBillItem * accountingItemEditingPrice;
     PriceItem * importingDataPriceItem;
@@ -115,9 +112,9 @@ public:
     AccountingItemWidget * accountingMeasureWidget;
 };
 
-AccountingLSBillGUI::AccountingLSBillGUI( QMap<PriceListDBWidget::ImportOptions, bool> *EPAImpOptions,
+AccountingLSBillGUI::AccountingLSBillGUI(QMap<PriceListDBWidget::ImportOptions, bool> *EPAImpOptions,
                                       QString * EPAFileName,
-                                      MathParser * prs, AccountingBill * b, Project *p,
+                                      MathParser * prs, AccountingLSBill *b, Project *p,
                                       QString * wordProcessorFile, QWidget *parent) :
     QTabWidget(parent),
     m_d( new AccountingLSBillGUIPrivate( EPAImpOptions, EPAFileName, prs, b, p, wordProcessorFile, this ) ){
@@ -135,7 +132,7 @@ AccountingLSBillGUI::~AccountingLSBillGUI(){
     delete m_d;
 }
 
-void AccountingLSBillGUI::setAccountingBill( AccountingBill * b ){
+void AccountingLSBillGUI::setAccountingBill( AccountingLSBill * b ){
     m_d->accounting = b;
     m_d->accountingDataGUI->setAccountingBill( b );
     m_d->accountingTreeGUI->setAccountingBill( b );
@@ -146,7 +143,7 @@ void AccountingLSBillGUI::setAccountingBill( AccountingBill * b ){
     setAccountingItem( m_d->accountingTreeGUI->currentAccountingBill() );
 }
 
-void AccountingLSBillGUI::setAccountingItem(AccountingBillItem * newItem ) {
+void AccountingLSBillGUI::setAccountingItem(AccountingLSBillItem *newItem ) {
     if( m_d->currentAccountingMeasure != NULL ){
         disconnect( m_d->currentAccountingMeasure, static_cast<void(AccountingBillItem::*)(bool)>(&AccountingBillItem::hasChildrenChanged), this, &AccountingLSBillGUI::updateAccountingMeasureGUI );
         disconnect( m_d->currentAccountingMeasure, &AccountingBillItem::aboutToBeDeleted, this, &AccountingLSBillGUI::setAccountingMeasureNULL );

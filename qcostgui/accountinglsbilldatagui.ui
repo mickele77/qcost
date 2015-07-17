@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1021</width>
-    <height>822</height>
+    <width>986</width>
+    <height>676</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -24,11 +24,11 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>1001</width>
-        <height>802</height>
+        <width>970</width>
+        <height>660</height>
        </rect>
       </property>
-      <layout class="QGridLayout" name="gridLayout_10">
+      <layout class="QGridLayout" name="gridLayout_2">
        <item row="0" column="0">
         <widget class="QSplitter" name="splitter_2">
          <property name="orientation">
@@ -72,71 +72,22 @@
             <string>Importi</string>
            </property>
            <layout class="QGridLayout" name="gridLayout_8">
-            <item row="2" column="3">
-             <widget class="QLineEdit" name="amountNotToBeDiscountedLineEdit">
-              <property name="readOnly">
-               <bool>true</bool>
-              </property>
-             </widget>
-            </item>
-            <item row="3" column="3">
-             <widget class="QLineEdit" name="amountToBeDiscountedLineEdit">
-              <property name="readOnly">
-               <bool>true</bool>
-              </property>
-             </widget>
-            </item>
-            <item row="4" column="3">
-             <widget class="QLineEdit" name="amountDiscountedLineEdit">
-              <property name="readOnly">
-               <bool>true</bool>
-              </property>
-             </widget>
-            </item>
-            <item row="0" column="0" colspan="3">
-             <widget class="QLabel" name="totalAmountToBeDiscountedLabel">
+            <item row="0" column="0" colspan="2">
+             <widget class="QLabel" name="totalAmountLabel">
               <property name="text">
                <string>Totale Progetto</string>
               </property>
              </widget>
             </item>
-            <item row="5" column="0">
-             <widget class="QLabel" name="totalAmountLabel">
+            <item row="2" column="0">
+             <widget class="QLabel" name="percentageAccountedLabel">
               <property name="text">
-               <string>Totale</string>
+               <string>% Contabilizzata</string>
               </property>
              </widget>
             </item>
-            <item row="3" column="0">
-             <widget class="QLabel" name="amountToBeDiscountedLabel">
-              <property name="text">
-               <string>Totale soggetto a ribasso lordo</string>
-              </property>
-             </widget>
-            </item>
-            <item row="5" column="3">
-             <widget class="QLineEdit" name="totalAmountLineEdit">
-              <property name="readOnly">
-               <bool>true</bool>
-              </property>
-             </widget>
-            </item>
-            <item row="4" column="0">
-             <widget class="QLabel" name="amountDiscountedLabel">
-              <property name="text">
-               <string>Totale soggetto a ribasso netto</string>
-              </property>
-             </widget>
-            </item>
-            <item row="2" column="0" colspan="2">
-             <widget class="QLabel" name="amountNotToBeDiscountedLabel">
-              <property name="text">
-               <string>Totale non soggetto a ribasso</string>
-              </property>
-             </widget>
-            </item>
-            <item row="0" column="3">
-             <widget class="QLineEdit" name="totalAmountToBeDiscountedLineEdit">
+            <item row="2" column="2">
+             <widget class="QLineEdit" name="percentageAccountedLineEdit">
               <property name="readOnly">
                <bool>true</bool>
               </property>
@@ -149,7 +100,14 @@
               </property>
              </widget>
             </item>
-            <item row="1" column="3">
+            <item row="0" column="2">
+             <widget class="QLineEdit" name="totalAmountLineEdit">
+              <property name="readOnly">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="2">
              <widget class="QLineEdit" name="totalAmountAccountedLineEdit">
               <property name="readOnly">
                <bool>true</bool>
@@ -187,17 +145,7 @@
               </property>
              </widget>
             </item>
-            <item row="3" column="0">
-             <widget class="QLabel" name="discountLabel">
-              <property name="text">
-               <string>Ribasso</string>
-              </property>
-             </widget>
-            </item>
             <item row="3" column="1">
-             <widget class="QLineEdit" name="discountLineEdit"/>
-            </item>
-            <item row="4" column="1">
              <spacer name="verticalSpacer_3">
               <property name="orientation">
                <enum>Qt::Vertical</enum>
@@ -212,37 +160,6 @@
             </item>
            </layout>
           </widget>
-         </widget>
-         <widget class="QGroupBox" name="pricesGroupBox">
-          <property name="title">
-           <string>Applicazione ribassi</string>
-          </property>
-          <layout class="QGridLayout" name="gridLayout_2">
-           <item row="0" column="2" rowspan="2">
-            <widget class="QGroupBox" name="noDiscountPriceFieldGroupBox">
-             <property name="title">
-              <string>Campi importo non ribassabile</string>
-             </property>
-             <layout class="QGridLayout" name="gridLayout_5">
-              <item row="0" column="0">
-               <widget class="QTableView" name="noDiscountPriceFieldTableView"/>
-              </item>
-             </layout>
-            </widget>
-           </item>
-           <item row="0" column="1" rowspan="2">
-            <widget class="QGroupBox" name="totalPriceFieldGroupBox">
-             <property name="title">
-              <string>Campi importo lordo</string>
-             </property>
-             <layout class="QGridLayout" name="gridLayout_9">
-              <item row="0" column="0">
-               <widget class="QTableView" name="totalPriceFieldTableView"/>
-              </item>
-             </layout>
-            </widget>
-           </item>
-          </layout>
          </widget>
          <widget class="QGroupBox" name="attributesGroupBox">
           <property name="title">
@@ -289,6 +206,18 @@
           </size>
          </property>
         </spacer>
+       </item>
+       <item row="1" column="0">
+        <widget class="QGroupBox" name="totalPriceFieldGroupBox">
+         <property name="title">
+          <string>Campi importo lordo</string>
+         </property>
+         <layout class="QGridLayout" name="gridLayout_9">
+          <item row="0" column="0">
+           <widget class="QTableView" name="totalPriceFieldTableView"/>
+          </item>
+         </layout>
+        </widget>
        </item>
       </layout>
      </widget>

@@ -23,6 +23,7 @@
 
 class AccountingBill;
 class AccountingTAMBill;
+class AccountingLSBill;
 class PriceFieldModel;
 class MathParser;
 class QString;
@@ -54,6 +55,7 @@ public:
 
     AccountingPrinter(AccountingBill *b, PriceFieldModel *pfm, MathParser *prs);
     AccountingPrinter(AccountingTAMBill *b, MathParser *prs);
+    AccountingPrinter(AccountingLSBill *b, MathParser *prs);
     ~AccountingPrinter();
 
     bool printODT(PrintAccountingBillOption prAccountingMeasuresOption,

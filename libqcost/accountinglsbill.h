@@ -113,6 +113,10 @@ public:
 
     double totalAmount() const ;
     QString totalAmountStr() const ;
+    double totalAmountAccounted() const;
+    QString totalAmountAccountedStr() const;
+    double percentageAccounted() const;
+    QString percentageAccountedStr() const;
 
     AttributeModel * attributeModel();
     double totalAmountAttribute(Attribute * attr);
@@ -150,8 +154,6 @@ public:
                                        AccountingPrinter::PrintAccountingBillOption prItemsOption,
                                        const QList<Attribute *> &attrsToPrint,
                                        bool writeAmounts = true );
-    void insertStandardAttributes();
-
 public slots:
     void setName( const QString & n);
     void setDescription( const QString & value );
@@ -164,6 +166,8 @@ signals:
     void priceListChanged( PriceList * );
 
     void totalAmountChanged( const QString & newVal );
+    void totalAmountAccountedChanged( const QString & newVal );
+    void percentageAccountedChanged( const QString & newVal );
 
     void modelChanged();
 
