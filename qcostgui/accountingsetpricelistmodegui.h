@@ -25,6 +25,7 @@ class AccountingSetPriceListModeGUIPrivate;
 
 #include "accountingbill.h"
 #include "accountingtambill.h"
+#include "accountinglsbill.h"
 
 class AccountingSetPriceListModeGUI : public QDialog {
     Q_OBJECT
@@ -35,6 +36,7 @@ public:
 
     AccountingBill::SetPriceListMode returnValue();
     AccountingTAMBill::SetPriceListMode returnTAMValue();
+    AccountingLSBill::SetPriceListMode returnLSValue();
 private:
     AccountingSetPriceListModeGUIPrivate * m_d;
 };

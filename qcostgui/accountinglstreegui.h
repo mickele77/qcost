@@ -24,8 +24,6 @@
 class Project;
 class AccountingLSBill;
 class AccountingLSBillItem;
-class AccountingTAMBill;
-class AccountingTAMBillItem;
 class PriceItem;
 class MathParser;
 class PriceFieldModel;
@@ -39,22 +37,24 @@ class AccountingLSTreeGUI : public QWidget {
     Q_OBJECT
 public:
     friend class AccountingGUI;
-    friend class AccountingTAMBillGUI;
-    explicit AccountingLSTreeGUI( QMap<PriceListDBWidget::ImportOptions, bool> *EPAImpOptions, QString *EPAFileName, AccountingLSBill * b, MathParser *prs, Project *prj, QWidget *parent = 0);
+    friend class AccountingLSBillGUI;
+    explicit AccountingLSTreeGUI( QMap<PriceListDBWidget::ImportOptions, bool> *EPAImpOptions,
+                                  QString *EPAFileName, MathParser *prs, Project *prj, QWidget *parent = 0);
     ~AccountingLSTreeGUI();
     
-    AccountingLSBillItem * currentAccountingLSBill();
-    void setAccountingLSBill( AccountingLSBill * b );
+    AccountingLSBillItem * currentItem();
+    void setBill( AccountingLSBill * b );
 
     void showEvent(QShowEvent * event);
 
 signals:
-    void currentLSBillItemChanged( AccountingTAMBillItem * );
+    void currentItemChanged( AccountingLSBillItem * );
     void editAccountingData( AccountingLSBillItem * );
 
 private slots:
-    void removeItems();
     void addItems();
+    void addChildItems();
+    void removeItems();
 
     void changeCurrentItem( const QModelIndex & currentIndex );
 

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>AccountingTreeGUI</class>
- <widget class="QWidget" name="AccountingTreeGUI">
+ <class>AccountingLSTreeGUI</class>
+ <widget class="QWidget" name="AccountingLSTreeGUI">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -21,42 +21,42 @@
      </property>
      <layout class="QGridLayout" name="amountsLayout">
       <item row="1" column="0">
-       <widget class="QLabel" name="amountNotToBeDiscountedLabel">
+       <widget class="QLabel" name="totalAmountAccountedLabel">
         <property name="text">
-         <string>Totale non ribassabile</string>
+         <string>Importo contabilizzato</string>
         </property>
        </widget>
       </item>
       <item row="0" column="1">
-       <widget class="QLineEdit" name="totalAmountToBeDiscountedLineEdit">
+       <widget class="QLineEdit" name="totalAmountLineEdit">
         <property name="readOnly">
          <bool>true</bool>
         </property>
        </widget>
       </item>
       <item row="1" column="1">
-       <widget class="QLineEdit" name="amountNotToBeDiscountedLineEdit">
+       <widget class="QLineEdit" name="totalAmountAccountedLineEdit">
         <property name="readOnly">
          <bool>true</bool>
         </property>
        </widget>
       </item>
       <item row="0" column="0">
-       <widget class="QLabel" name="totalAmountToBeDiscountedLabel">
+       <widget class="QLabel" name="totalAmountLabel">
         <property name="text">
-         <string>Totale al lordo del ribasso</string>
+         <string>Importo progetto</string>
         </property>
        </widget>
       </item>
       <item row="2" column="0">
-       <widget class="QLabel" name="totalAmountLabel">
+       <widget class="QLabel" name="percentageAccountedLabel">
         <property name="text">
-         <string>Totale al netto del ribasso</string>
+         <string>% contabilizzata</string>
         </property>
        </widget>
       </item>
       <item row="2" column="1">
-       <widget class="QLineEdit" name="totalAmountLineEdit">
+       <widget class="QLineEdit" name="percentageAccountedLineEdit">
         <property name="readOnly">
          <bool>true</bool>
         </property>
@@ -111,7 +111,7 @@
     </layout>
    </item>
    <item row="0" column="1">
-    <widget class="QGroupBox" name="groupBox_2">
+    <widget class="QGroupBox" name="priceGroupBox">
      <property name="title">
       <string>Prezzario</string>
      </property>

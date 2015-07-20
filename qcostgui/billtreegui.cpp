@@ -48,7 +48,7 @@ public:
         project( p ),
         EPAImportOptions(EPAImpOptions),
         EPAFileName(fileName){
-    };
+    }
 
     Ui::BillTreeGUI *ui;
     MathParser * parser;
@@ -386,13 +386,15 @@ void BillTreeGUI::addChildItems(){
 }
 
 void BillTreeGUI::removeItems(){
-    if( m_d->ui->treeView->selectionModel() ){
-        QModelIndexList selRows = m_d->ui->treeView->selectionModel()->selectedRows();
-        for( int i=selRows.size() - 1; i >= 0; --i){
-            // se la lista non contiene il genitore dell'oggetto lo rimuovo
-            // altrimenti è sufficiente rimuovere il genitore
-            if( !(selRows.contains( selRows.at(i).parent()) ) ){
-                m_d->bill->removeBillItems( selRows.at(i).row(), 1, selRows.at(i).parent() );
+    if( m_d->bill != NULL ){
+        if( m_d->ui->treeView->selectionModel() ){
+            QModelIndexList selRows = m_d->ui->treeView->selectionModel()->selectedRows();
+            for( int i=selRows.size() - 1; i >= 0; --i){
+                // se la lista non contiene il genitore dell'oggetto lo rimuovo
+                // altrimenti è sufficiente rimuovere il genitore
+                if( !(selRows.contains( selRows.at(i).parent()) ) ){
+                    m_d->bill->removeBillItems( selRows.at(i).row(), 1, selRows.at(i).parent() );
+                }
             }
         }
     }

@@ -246,7 +246,7 @@ void AccountingLSBill::setPriceList(PriceList *pl, AccountingLSBill::SetPriceLis
                     }
                 } else if( plMode == ResetBill ){
                     // resetta il computo
-                    removeBillItems( 0, m_d->rootItem->childrenCount() );
+                    removeItems( 0, m_d->rootItem->childrenCount() );
                 }
                 if( pl == NULL ){
                     m_d->rootItem->setCurrentPriceDataSet( 0 );
@@ -283,14 +283,14 @@ AccountingPriceFieldModel *AccountingLSBill::totalAmountPriceFieldModel() {
 }
 
 
-AccountingLSBillItem *AccountingLSBill::billItem(const QModelIndex &index ) const {
+AccountingLSBillItem *AccountingLSBill::item(const QModelIndex &index ) const {
     if (index.isValid()) {
         return static_cast<AccountingLSBillItem *>(index.internalPointer());
     }
     return m_d->rootItem;
 }
 
-AccountingLSBillItem *AccountingLSBill::billItem(int childNum, const QModelIndex &parentIndex ) {
+AccountingLSBillItem *AccountingLSBill::item(int childNum, const QModelIndex &parentIndex ) {
     if (parentIndex.isValid()) {
         AccountingLSBillItem * parentItem = static_cast<AccountingLSBillItem *>(parentIndex.internalPointer());
         if( childNum > -1 && childNum < parentItem->childrenCount() ){
@@ -300,7 +300,7 @@ AccountingLSBillItem *AccountingLSBill::billItem(int childNum, const QModelIndex
     return m_d->rootItem;
 }
 
-AccountingLSBillItem *AccountingLSBill::lastBillItem(const QModelIndex &parentIndex) {
+AccountingLSBillItem *AccountingLSBill::lastItem(const QModelIndex &parentIndex) {
     if (parentIndex.isValid()) {
         AccountingLSBillItem * parentItem = static_cast<AccountingLSBillItem *>(parentIndex.internalPointer());
         return parentItem->childItem( parentItem->childrenCount()-1 );
@@ -308,7 +308,7 @@ AccountingLSBillItem *AccountingLSBill::lastBillItem(const QModelIndex &parentIn
     return m_d->rootItem;
 }
 
-AccountingLSBillItem *AccountingLSBill::billItemId(unsigned int itemId) {
+AccountingLSBillItem *AccountingLSBill::itemId(unsigned int itemId) {
     return m_d->rootItem->itemId( itemId );
 }
 
@@ -316,7 +316,7 @@ QVariant AccountingLSBill::data(const QModelIndex &index, int role) const {
     if (!index.isValid())
         return QVariant();
 
-    AccountingLSBillItem *i = billItem(index);
+    AccountingLSBillItem *i = item(index);
 
     return i->data(index.column(), role);
 }
@@ -330,7 +330,7 @@ QVariant AccountingLSBill::headerData(int section, Qt::Orientation orientation, 
 }
 
 int AccountingLSBill::rowCount(const QModelIndex &parent) const {
-    AccountingLSBillItem *parentItem = billItem(parent);
+    AccountingLSBillItem *parentItem = item(parent);
     return parentItem->childrenCount();
 }
 
@@ -339,7 +339,7 @@ int AccountingLSBill::columnCount(const QModelIndex &) const {
 }
 
 Qt::ItemFlags AccountingLSBill::flags(const QModelIndex &index) const {
-    AccountingLSBillItem *b = billItem(index);
+    AccountingLSBillItem *b = item(index);
     if( b ){
         return (b->flags(  index.column() ) );
     } else {
@@ -351,7 +351,7 @@ bool AccountingLSBill::setData(const QModelIndex &index, const QVariant &value, 
     if (role != Qt::EditRole)
         return false;
 
-    AccountingLSBillItem *b = billItem(index);
+    AccountingLSBillItem *b = item(index);
     bool result = b->setData(index.column(), value);
 
     if (result)
@@ -361,7 +361,7 @@ bool AccountingLSBill::setData(const QModelIndex &index, const QVariant &value, 
 }
 
 bool AccountingLSBill::insertBillItems(PriceItem *p, int inputPos, int count, const QModelIndex &parent) {
-    AccountingLSBillItem *parentItem = billItem(parent);
+    AccountingLSBillItem *parentItem = item(parent);
 
     int position = inputPos;
     if( position == -1 ){
@@ -377,8 +377,8 @@ bool AccountingLSBill::insertBillItems(PriceItem *p, int inputPos, int count, co
     return success;
 }
 
-bool AccountingLSBill::removeBillItems(int position, int rows, const QModelIndex &parent) {
-    AccountingLSBillItem *parentItem = billItem(parent);
+bool AccountingLSBill::removeItems(int position, int rows, const QModelIndex &parent) {
+    AccountingLSBillItem *parentItem = item(parent);
     bool success = true;
 
     beginRemoveRows(parent, position, position + rows - 1);
@@ -392,7 +392,7 @@ QModelIndex AccountingLSBill::parent(const QModelIndex &index) const {
     if (!index.isValid())
         return QModelIndex();
 
-    AccountingLSBillItem *childItem = billItem(index);
+    AccountingLSBillItem *childItem = item(index);
     AccountingLSBillItem *parentItem = dynamic_cast<AccountingLSBillItem *>( childItem->parent());
 
     if (parentItem == m_d->rootItem || parentItem == 0 )
@@ -405,7 +405,7 @@ QModelIndex AccountingLSBill::index(int row, int column, const QModelIndex &pare
     if (parent.isValid() && parent.column() != 0)
         return QModelIndex();
 
-    AccountingLSBillItem *parentItem = dynamic_cast<AccountingLSBillItem *>(billItem(parent));
+    AccountingLSBillItem *parentItem = dynamic_cast<AccountingLSBillItem *>(item(parent));
 
     if( parentItem ){
         AccountingLSBillItem *childItem = dynamic_cast<AccountingLSBillItem *>(parentItem->child(row));
@@ -429,8 +429,8 @@ QModelIndex AccountingLSBill::index(AccountingLSBillItem *item, int column) cons
 bool AccountingLSBill::moveRows(const QModelIndex &sourceParent, int sourceRow, int count, const QModelIndex &destinationParent, int destinationRow ) {
 
     if(beginMoveRows( sourceParent, sourceRow, sourceRow + count - 1, destinationParent, destinationRow )){
-        AccountingLSBillItem * srcParent = billItem( sourceParent );
-        AccountingLSBillItem * dstParent = billItem( destinationParent );
+        AccountingLSBillItem * srcParent = item( sourceParent );
+        AccountingLSBillItem * dstParent = item( destinationParent );
         for( int i=0; i<count; ++i ){
             srcParent->childItem( (sourceRow+count-1)-i )->setParent( dstParent, destinationRow );
         }
@@ -499,7 +499,7 @@ unsigned int AccountingLSBill::id() {
 }
 
 void AccountingLSBill::writeXml(QXmlStreamWriter *writer) {
-    writer->writeStartElement( "Bill" );
+    writer->writeStartElement( "AccountingLSBill" );
     writer->writeAttribute( "id", QString::number(m_d->id) );
     writer->writeAttribute( "name", m_d->name );
     writer->writeAttribute( "description", m_d->description );
@@ -516,18 +516,18 @@ void AccountingLSBill::writeXml(QXmlStreamWriter *writer) {
 }
 
 void AccountingLSBill::readXml(QXmlStreamReader *reader, ProjectPriceListParentItem *priceLists) {
-    if(reader->isStartElement() && reader->name().toString().toUpper() == "BILL"){
+    if(reader->isStartElement() && reader->name().toString().toUpper() == "ACCOUNTINGLSBILL"){
         loadFromXml( reader->attributes(), priceLists );
     }
     while( (!reader->atEnd()) &&
            (!reader->hasError()) &&
-           !(reader->isEndElement() && reader->name().toString().toUpper() == "BILL") ){
+           !(reader->isEndElement() && reader->name().toString().toUpper() == "ACCOUNTINGLSBILL") ){
         reader->readNext();
         QString tag = reader->name().toString().toUpper();
-        if( tag == "BILLATTRIBUTEMODEL" && reader->isStartElement()) {
+        if( tag == "ATTRIBUTEMODEL" && reader->isStartElement()) {
             m_d->attributeModel->readXml( reader );
         }
-        if( tag == "BILLITEM" && reader->isStartElement()) {
+        if( tag == "ACCOUNTINGLSBILLITEM" && reader->isStartElement()) {
             m_d->rootItem->readXml( reader, m_d->priceList, m_d->attributeModel );
         }
     }

@@ -37,7 +37,7 @@ class AccountingLSBillItemGUI : public QWidget {
 public:
     explicit AccountingLSBillItemGUI( QMap<PriceListDBWidget::ImportOptions, bool> *EPAImpOptions,
                                       QString *EPAFileName,
-                                      AccountingLSBillItem *b, MathParser * prs, Project * prj,
+                                      MathParser * prs, Project * prj,
                                       QWidget *parent = 0);
     ~AccountingLSBillItemGUI();
 
@@ -45,6 +45,8 @@ public:
 
 public slots:
     void setBillItem(AccountingLSBillItem *b );
+    void setBillItemNULL();
+    void setBillNULL();
 
 private slots:
     void connectPriceItem(PriceItem *oldPriceItem, PriceItem *newPriceItem);
@@ -56,8 +58,6 @@ private slots:
     void addMeasureLines();
     void delMeasureLines();
     void importBillItemMeasuresTXT();
-
-    void setBillItemNULL();
 
     void setQuantityLE();
 

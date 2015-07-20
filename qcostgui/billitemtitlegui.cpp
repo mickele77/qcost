@@ -16,7 +16,7 @@ public:
         item(NULL),
         itemAttributeModel( new BillItemAttributeModel(NULL, NULL) ),
         priceFieldModel(pfm){
-    };
+    }
     ~BillItemTitleGUIPrivate(){
         delete ui;
     }
@@ -130,20 +130,22 @@ void BillItemTitleGUI::removeAttribute(){
 }
 
 void BillItemTitleGUI::setBill(Bill *b) {
-    if( m_d->bill != NULL ){
-        m_d->itemAttributeModel->setAttributeModel( NULL );
-        disconnect( m_d->bill, &Bill::aboutToBeDeleted, this, &BillItemTitleGUI::setBillNULL );
+    if( b != m_d->bill ){
+        if( m_d->bill != NULL ){
+            m_d->itemAttributeModel->setAttributeModel( NULL );
+            disconnect( m_d->bill, &Bill::aboutToBeDeleted, this, &BillItemTitleGUI::setBillNULL );
+        }
+
+        m_d->bill = b;
+
+        if( m_d->bill != NULL ){
+            m_d->itemAttributeModel->setAttributeModel( m_d->bill->attributeModel() );
+            connect( m_d->bill, &Bill::aboutToBeDeleted, this, &BillItemTitleGUI::setBillNULL );
+        }
+
+        // quando si cambia computo corrente la scheda della riga si azzera
+        setBillItem( NULL );
     }
-
-    m_d->bill = b;
-
-    if( m_d->bill != NULL ){
-        m_d->itemAttributeModel->setAttributeModel( m_d->bill->attributeModel() );
-        connect( m_d->bill, &Bill::aboutToBeDeleted, this, &BillItemTitleGUI::setBillNULL );
-    }
-
-    // quando si cambia computo corrente la scheda della riga si azzera
-    setBillItem( NULL );
 }
 
 void BillItemTitleGUI::setBillNULL() {

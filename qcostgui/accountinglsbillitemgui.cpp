@@ -40,6 +40,7 @@ public:
         ui(new Ui::AccountingLSBillItemGUI),
         parser(prs),
         item(NULL),
+        bill(NULL),
         connectedUnitMeasure(NULL),
         itemAttributeModel( new AccountingItemAttributeModel(NULL, NULL) ),
         priceItemGUI( new PriceItemGUI( EPAImpOptions, EPAFileName, NULL, 0, prs, prj, NULL )),
@@ -53,6 +54,7 @@ public:
     Ui::AccountingLSBillItemGUI * ui;
     MathParser * parser;
     AccountingLSBillItem * item;
+    AccountingLSBill * bill;
     UnitMeasure * connectedUnitMeasure;
     AccountingItemAttributeModel * itemAttributeModel;
     PriceItemGUI * priceItemGUI;
@@ -62,11 +64,10 @@ public:
 };
 
 AccountingLSBillItemGUI::AccountingLSBillItemGUI(QMap<PriceListDBWidget::ImportOptions, bool> * EPAImpOptions,
-                          QString * EPAFileName,
-                          AccountingLSBillItem *b,
-                          MathParser * prs,
-                          Project * prj,
-                          QWidget *parent) :
+                                                 QString * EPAFileName,
+                                                 MathParser * prs,
+                                                 Project * prj,
+                                                 QWidget *parent) :
     QWidget(parent),
     m_d(new AccountingLSBillItemGUIPrivate( EPAImpOptions, EPAFileName, prs, prj ) ) {
     m_d->ui->setupUi(this);
@@ -76,7 +77,6 @@ AccountingLSBillItemGUI::AccountingLSBillItemGUI(QMap<PriceListDBWidget::ImportO
     m_d->ui->attributeTableView->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
     m_d->ui->attributeTableView->setModel( m_d->itemAttributeModel );
     associateLinesModel( false );
-    setBillItem( b );
 
     connect( m_d->ui->addBillItemLinePushButton, &QPushButton::clicked, this, &AccountingLSBillItemGUI::addMeasureLines );
     connect( m_d->ui->delBillItemLinePushButton, &QPushButton::clicked, this, &AccountingLSBillItemGUI::delMeasureLines );
@@ -148,13 +148,25 @@ void AccountingLSBillItemGUI::setBillItem(AccountingLSBillItem *b) {
 }
 
 void AccountingLSBillItemGUI::setBill(AccountingLSBill *b) {
-    if( b != NULL ){
-        m_d->itemAttributeModel->setAttributeModel( b->attributeModel() );
-    } else {
-        m_d->itemAttributeModel->setAttributeModel( NULL );
+    if( m_d->bill != b ){
+        if( m_d->bill != NULL ){
+            m_d->itemAttributeModel->setAttributeModel( NULL );
+        }
+
+        m_d->bill = b;
+
+        if( m_d->bill != NULL ){
+            m_d->itemAttributeModel->setAttributeModel( b->attributeModel() );
+            connect( m_d->bill, &AccountingLSBill::aboutToBeDeleted, this, &AccountingLSBillItemGUI::setBillNULL );
+        }
+
+        // quando si cambia computo corrente la scheda della riga si azzera
+        setBillItemNULL();
     }
-    // quando si cambia computo corrente la scheda della riga si azzera
-    setBillItem( NULL );
+}
+
+void AccountingLSBillItemGUI::setBillNULL() {
+    setBill(NULL);
 }
 
 void AccountingLSBillItemGUI::setQuantityLE(){

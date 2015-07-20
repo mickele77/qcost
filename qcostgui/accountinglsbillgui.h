@@ -34,18 +34,18 @@ class AccountingLSBillGUI : public QTabWidget {
     Q_OBJECT
 public:
     explicit AccountingLSBillGUI( QMap<PriceListDBWidget::ImportOptions, bool> *EPAImpOptions,
-                      QString * EPAFileName,
-                      MathParser *prs, AccountingLSBill *b, Project *p,
-                      QString *wordProcessorFile = NULL, QWidget *parent = 0);
+                                  QString * EPAFileName,
+                                  MathParser *prs, Project *p,
+                                  QString *wordProcessorFile = NULL, QWidget *parent = 0);
 
     ~AccountingLSBillGUI();
 
-    void setAccountingBill(AccountingLSBill *);
+    void setBill(AccountingLSBill *);
 
 private slots:
-    void setAccountingItem( AccountingLSBillItem * );
-    void setAccountingMeasureNULL();
-    void updateAccountingMeasureGUI();
+    void setBillItem( AccountingLSBillItem * );
+    void setBillItemNULL();
+    void updateItemGUI();
 private:
     AccountingLSBillGUIPrivate * m_d;
 };

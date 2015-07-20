@@ -38,6 +38,7 @@ public:
         ui(new Ui::BillItemGUI),
         parser(prs),
         item(NULL),
+        bill(NULL),
         connectedUnitMeasure(NULL),
         itemAttributeModel( new BillItemAttributeModel(NULL, NULL) ),
         priceItemGUI( new PriceItemGUI( EPAImpOptions, EPAFileName, NULL, 0, prs, prj, NULL )),
@@ -51,6 +52,7 @@ public:
     Ui::BillItemGUI * ui;
     MathParser * parser;
     BillItem * item;
+    Bill * bill;
     UnitMeasure * connectedUnitMeasure;
     BillItemAttributeModel * itemAttributeModel;
     PriceItemGUI * priceItemGUI;
@@ -156,13 +158,25 @@ void BillItemGUI::setBillItem(BillItem *b) {
 }
 
 void BillItemGUI::setBill(Bill *b) {
-    if( b != NULL ){
-        m_d->itemAttributeModel->setAttributeModel( b->attributeModel() );
-    } else {
-        m_d->itemAttributeModel->setAttributeModel( NULL );
+    if( b != m_d->bill ){
+        if( m_d->bill != NULL ){
+            m_d->itemAttributeModel->setAttributeModel( NULL );
+            disconnect( m_d->bill, &Bill::aboutToBeDeleted, this, &BillItemGUI::setBillNULL );
+        }
+
+        m_d->bill = b;
+        if( m_d->bill != NULL ){
+            m_d->itemAttributeModel->setAttributeModel( b->attributeModel() );
+            connect( m_d->bill, &Bill::aboutToBeDeleted, this, &BillItemGUI::setBillNULL );
+        }
+
+        // quando si cambia computo corrente la scheda della riga si azzera
+        setBillItemNULL();
     }
-    // quando si cambia computo corrente la scheda della riga si azzera
-    setBillItem( NULL );
+}
+
+void BillItemGUI::setBillNULL() {
+    setBill(NULL);
 }
 
 void BillItemGUI::setQuantityLE(){

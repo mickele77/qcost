@@ -44,6 +44,8 @@ public:
 
 public slots:
     void setBillItem( BillItem * b );
+    void setBillItemNULL();
+    void setBillNULL();
 
 private slots:
     void connectPriceItem(PriceItem *oldPriceItem, PriceItem *newPriceItem);
@@ -56,7 +58,6 @@ private slots:
     void delMeasureLines();
     void importBillItemMeasuresTXT();
 
-    void setBillItemNULL();
 
     void setQuantityLE();
 

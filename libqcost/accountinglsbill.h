@@ -98,13 +98,13 @@ public:
     Qt::ItemFlags flags(const QModelIndex &index) const;
     bool setData(const QModelIndex &index, const QVariant &value, int role = Qt::EditRole);
     bool insertBillItems(PriceItem * p, int position = -1, int count = 1, const QModelIndex &parent = QModelIndex() );
-    bool removeBillItems(int position = -1, int rows = 1, const QModelIndex &parent = QModelIndex() );
+    bool removeItems(int position = -1, int rows = 1, const QModelIndex &parent = QModelIndex() );
 
-    AccountingLSBillItem *billItem(const QModelIndex &index ) const;
-    AccountingLSBillItem *billItem(int childNum, const QModelIndex &parentIndex = QModelIndex() );
-    AccountingLSBillItem *lastBillItem( const QModelIndex &parentIndex = QModelIndex() );
+    AccountingLSBillItem *item(const QModelIndex &index ) const;
+    AccountingLSBillItem *item(int childNum, const QModelIndex &parentIndex = QModelIndex() );
+    AccountingLSBillItem *lastItem( const QModelIndex &parentIndex = QModelIndex() );
 
-    AccountingLSBillItem *billItemId(unsigned int itemId);
+    AccountingLSBillItem *itemId(unsigned int itemId);
     QModelIndex parent(const QModelIndex &index) const;
     QModelIndex index(int row, int column, const QModelIndex &parent) const;
     QModelIndex index(AccountingLSBillItem *item, int column) const;
