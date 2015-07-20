@@ -221,7 +221,7 @@ void AccountingTreeGUI::copyToClipboard(){
             for( int i=0; i < selRows.size(); ++i ){
                 copiedAccountingMeasures << m_d->accountingBill->item( selRows.at(i)) ;
             }
-            data->setCopiedAccountingMeasures( copiedAccountingMeasures, m_d->accountingBill, QCostClipboardData::Copy );
+            data->setCopiedAccountingBillItems( copiedAccountingMeasures, m_d->accountingBill, QCostClipboardData::Copy );
             QApplication::clipboard()->setMimeData( data );
         }
     }
@@ -240,7 +240,7 @@ void AccountingTreeGUI::cutToClipboard(){
             for( int i=0; i < selRows.size(); ++i ){
                 copiedAccountingMeasures << m_d->accountingBill->item( selRows.at(i)) ;
             }
-            data->setCopiedAccountingMeasures( copiedAccountingMeasures, m_d->accountingBill, QCostClipboardData::Cut );
+            data->setCopiedAccountingBillItems( copiedAccountingMeasures, m_d->accountingBill, QCostClipboardData::Cut );
             QApplication::clipboard()->setMimeData( data );
         }
     }
@@ -264,7 +264,7 @@ void AccountingTreeGUI::pasteFromClipboard(){
                 QList<AccountingBillItem *> itemsToCopy;
                 AccountingBill * itemsToCopyAccounting = NULL;
                 QCostClipboardData::Mode mode;
-                data->getCopiedAccountingMeasures( &itemsToCopy, itemsToCopyAccounting, &mode);
+                data->getCopiedAccountingBillItems( &itemsToCopy, itemsToCopyAccounting, &mode);
                 if( itemsToCopyAccounting != NULL ){
                     if( mode == QCostClipboardData::Copy ){
                         if( itemsToCopyAccounting->priceList() != m_d->accountingBill->priceList() ){

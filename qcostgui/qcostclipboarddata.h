@@ -24,15 +24,15 @@ public:
 
     QCostClipboardData &operator =(const QCostClipboardData &cp);
 
-    QList<AccountingBill *> copiedAccountingMeasures();
-    QCostClipboardData::Mode copiedAccountingMeasuresMode() const;
-    void setCopiedAccountings( QList<AccountingBill *> cb, Mode m);
+    QList<AccountingBill *> copiedAccountingBills();
+    QCostClipboardData::Mode copiedAccountingBillItemsMode() const;
+    void setCopiedAccountingBills( QList<AccountingBill *> cb, Mode m);
 
-    void setCopiedAccountingMeasures( QList<AccountingBillItem *> accountingItems, AccountingBill * acc, Mode m);
-    void getCopiedAccountingMeasures(QList<AccountingBillItem *> *accountingItems, AccountingBill * &acc, QCostClipboardData::Mode *mode) const;
+    void setCopiedAccountingBillItems( QList<AccountingBillItem *> accountingItems, AccountingBill * acc, Mode m);
+    void getCopiedAccountingBillItems(QList<AccountingBillItem *> *accountingItems, AccountingBill * &acc, QCostClipboardData::Mode *mode) const;
 
     QList<Bill *> copiedBills();
-    QCostClipboardData::Mode copiedBillsMode() const;
+    QCostClipboardData::Mode copiedBillItemsMode() const;
     void setCopiedBills( QList<Bill *> cb, Mode m);
 
     void setCopiedBillItems( QList<BillItem *> bi, Bill * b, Mode m);
