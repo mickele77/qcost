@@ -5,6 +5,7 @@
 #include "priceitemgui.h"
 
 #include "project.h"
+#include "accountinglsbillitem.h"
 #include "accountingtambillitem.h"
 #include "accountingbillitem.h"
 #include "billitem.h"
@@ -18,11 +19,12 @@
 class EditPriceItemDialogPrivate{
 public:
     EditPriceItemDialogPrivate( QMap<PriceListDBWidget::ImportOptions, bool> *EPAImpOptions, QString * EPAFileName, PriceList * pl, int pCol,
-                                BillItem * bItem, AccountingBillItem * aItem, AccountingTAMBillItem * aTAMItem,
+                                BillItem * bItem, AccountingBillItem * aItem, AccountingTAMBillItem * aTAMItem, AccountingLSBillItem * aLSItem,
                                 MathParser * prs, Project * prj, QWidget * parent ):
         billItem(bItem),
         accountingItem(aItem),
         accountingTAMItem(aTAMItem),
+        accountingLSItem(aLSItem),
         priceDataSet(pCol),
         parser( prs ),
         unitMeasureModel( prj->unitMeasureModel() ),
@@ -39,6 +41,7 @@ public:
     BillItem * billItem;
     AccountingBillItem * accountingItem;
     AccountingTAMBillItem * accountingTAMItem;
+    AccountingLSBillItem * accountingLSItem;
     int priceDataSet;
     MathParser * parser;
     UnitMeasureModel * unitMeasureModel;
@@ -54,7 +57,7 @@ EditPriceItemDialog::EditPriceItemDialog( QMap<PriceListDBWidget::ImportOptions,
                                           PriceList * pl, int priceDataSet, BillItem * bItem, MathParser * prs, Project * prj,
                                           QWidget *parent):
     QDialog( parent ),
-    m_d( new EditPriceItemDialogPrivate( EPAImpOptions, EPAFileName, pl, priceDataSet, bItem, NULL, NULL, prs, prj, this ) ) {
+    m_d( new EditPriceItemDialogPrivate( EPAImpOptions, EPAFileName, pl, priceDataSet, bItem, NULL, NULL, NULL, prs, prj, this ) ) {
     init(pl);
 }
 
@@ -63,7 +66,7 @@ EditPriceItemDialog::EditPriceItemDialog( QMap<PriceListDBWidget::ImportOptions,
                                           PriceList * pl, int priceDataSet, AccountingBillItem * aItem, MathParser * prs, Project * prj,
                                           QWidget *parent):
     QDialog( parent ),
-    m_d( new EditPriceItemDialogPrivate( EPAImpOptions, EPAFileName, pl, priceDataSet, NULL, aItem, NULL, prs, prj, this ) ) {
+    m_d( new EditPriceItemDialogPrivate( EPAImpOptions, EPAFileName, pl, priceDataSet, NULL, aItem, NULL, NULL, prs, prj, this ) ) {
     init(pl);
 }
 
@@ -73,7 +76,17 @@ EditPriceItemDialog::EditPriceItemDialog( QMap<PriceListDBWidget::ImportOptions,
                                           MathParser * prs, Project * prj,
                                           QWidget *parent):
     QDialog( parent ),
-    m_d( new EditPriceItemDialogPrivate( EPAImpOptions, EPAFileName, pl, priceDataSet, NULL, NULL, aItem, prs, prj, this ) ) {
+    m_d( new EditPriceItemDialogPrivate( EPAImpOptions, EPAFileName, pl, priceDataSet, NULL, NULL, aItem, NULL, prs, prj, this ) ) {
+    init(pl);
+}
+
+EditPriceItemDialog::EditPriceItemDialog( QMap<PriceListDBWidget::ImportOptions, bool> *EPAImpOptions,
+                                          QString * EPAFileName,
+                                          PriceList * pl, int priceDataSet, AccountingLSBillItem * lsItem,
+                                          MathParser * prs, Project * prj,
+                                          QWidget *parent):
+    QDialog( parent ),
+    m_d( new EditPriceItemDialogPrivate( EPAImpOptions, EPAFileName, pl, priceDataSet, NULL, NULL, NULL, lsItem, prs, prj, this ) ) {
     init(pl);
 }
 
@@ -92,6 +105,8 @@ void EditPriceItemDialog::init(PriceList * pl){
         if( m_d->accountingTAMItem->itemType() == AccountingBillItem::PPU ){
             m_d->priceListTreeGUI->setCurrentPriceItem( m_d->accountingTAMItem->priceItem() );
         }
+    } else if( m_d->accountingLSItem != NULL ){
+        m_d->priceListTreeGUI->setCurrentPriceItem( m_d->accountingLSItem->priceItem() );
     }
 
     setWindowTitle( trUtf8("Cambia articolo Elenco Prezzi - %1").arg( pl->name() ) );
@@ -121,6 +136,8 @@ void EditPriceItemDialog::changePriceItemAndClose(){
                 if( m_d->accountingTAMItem->itemType() == AccountingTAMBillItem::PPU ){
                     m_d->accountingTAMItem->setPriceItem( pItem );
                 }
+            } else if( m_d->accountingLSItem != NULL ){
+                m_d->accountingLSItem->setPriceItem( pItem );
             }
         }
     }

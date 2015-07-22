@@ -23,13 +23,13 @@ public:
     QList<AccountingLSBill *> copiedAccLSBills;
     QCostClipboardData::Mode copiedAccLSBillsMode;
     QList<AccountingLSBillItem *> copiedAccLSBillItems;
-    AccountingBill * copiedAccLSBillItemsBill;
+    AccountingLSBill * copiedAccLSBillItemsBill;
     QCostClipboardData::Mode copiedAccLSBillItemsMode;
 
     QList<AccountingTAMBill *> copiedAccTAMBills;
     QCostClipboardData::Mode copiedAccTAMBillsMode;
     QList<AccountingTAMBillItem *> copiedAccTAMBillItems;
-    AccountingBill * copiedAccTAMBillItemsBill;
+    AccountingTAMBill * copiedAccTAMBillItemsBill;
     QCostClipboardData::Mode copiedAccTAMBillItemsMode;
 
     QList<AccountingBill *> copiedAccBills;
@@ -74,6 +74,39 @@ QCostClipboardData &QCostClipboardData::operator=(const QCostClipboardData &cp) 
     return *this;
 }
 
+QList<Bill *> QCostClipboardData::copiedBills() {
+    return m_d->copiedBills;
+}
+
+QCostClipboardData::Mode QCostClipboardData::copiedBillItemsMode() const {
+    return m_d->copiedBillItemsMode;
+}
+
+void QCostClipboardData::getCopiedBillItems( QList<BillItem *> * billItems,
+                                             Bill * bill,
+                                             QCostClipboardData::Mode * mode ) const{
+    *billItems = m_d->copiedBillItems;
+    bill = m_d->copiedBillItemsBill;
+    *mode = m_d->copiedBillItemsMode;
+}
+
+void QCostClipboardData::setCopiedBillItems(QList<BillItem *> bi, Bill *b, QCostClipboardData::Mode m) {
+    m_d->copiedBillItems = bi;
+    m_d->copiedBillItemsMode = m;
+    m_d->copiedBillItemsBill = b;
+    for( QList<BillItem *>::iterator i = m_d->copiedBillItems.begin(); i != m_d->copiedBillItems.end(); ++i ){
+        connect( (*i), &BillItem::aboutToBeDeleted, this, &QCostClipboardData::removeFromList );
+    }
+}
+
+void QCostClipboardData::setCopiedBills(QList<Bill *> cb, QCostClipboardData::Mode m) {
+    m_d->copiedBills = cb;
+    m_d->copiedBillsMode = m;
+    for( QList<Bill *>::iterator i = m_d->copiedBills.begin(); i != m_d->copiedBills.end(); ++i ){
+        connect( (*i), &Bill::aboutToBeDeleted, this, &QCostClipboardData::removeFromList );
+    }
+}
+
 QList<AccountingBill *> QCostClipboardData::copiedAccountingBills() {
     return m_d->copiedAccBills;
 }
@@ -82,12 +115,103 @@ QCostClipboardData::Mode QCostClipboardData::copiedAccountingBillItemsMode() con
     return m_d->copiedAccBillItemsMode;
 }
 
-QList<Bill *> QCostClipboardData::copiedBills() {
-    return m_d->copiedBills;
+void QCostClipboardData::setCopiedAccountingBills( QList<AccountingBill *> ca,
+                                                   QCostClipboardData::Mode m ) {
+    m_d->copiedAccBills = ca;
+    m_d->copiedAccBillsMode = m;
+    for( QList<AccountingBill *>::iterator i = m_d->copiedAccBills.begin(); i != m_d->copiedAccBills.end(); ++i ){
+        connect( (*i), &AccountingBill::aboutToBeDeleted, this, &QCostClipboardData::removeFromList );
+    }
 }
 
-QCostClipboardData::Mode QCostClipboardData::copiedBillItemsMode() const {
-    return m_d->copiedBillItemsMode;
+void QCostClipboardData::getCopiedAccountingBillItems( QList<AccountingBillItem *> * accountingItems,
+                                                       AccountingBill * accounting,
+                                                       QCostClipboardData::Mode * mode ) const{
+    *accountingItems = m_d->copiedAccBillItems;
+    accounting = m_d->copiedAccBillItemsBill;
+    *mode = m_d->copiedAccBillItemsMode;
+}
+
+void QCostClipboardData::setCopiedAccountingBillItems( QList<AccountingBillItem *> ai,
+                                                       AccountingBill *a,
+                                                       QCostClipboardData::Mode m) {
+    m_d->copiedAccBillItems = ai;
+    m_d->copiedAccBillItemsMode = m;
+    m_d->copiedAccBillItemsBill = a;
+    for( QList<AccountingBillItem *>::iterator i = m_d->copiedAccBillItems.begin(); i != m_d->copiedAccBillItems.end(); ++i ){
+        connect( (*i), &AccountingBillItem::aboutToBeDeleted, this, &QCostClipboardData::removeFromList );
+    }
+}
+
+QList<AccountingTAMBill *> QCostClipboardData::copiedAccountingTAMBills() {
+    return m_d->copiedAccTAMBills;
+}
+
+QCostClipboardData::Mode QCostClipboardData::copiedAccountingTAMBillItemsMode() const {
+    return m_d->copiedAccTAMBillItemsMode;
+}
+
+void QCostClipboardData::setCopiedAccountingTAMBills( QList<AccountingTAMBill *> ca,
+                                                      QCostClipboardData::Mode m) {
+    m_d->copiedAccTAMBills = ca;
+    m_d->copiedAccTAMBillsMode = m;
+    for( QList<AccountingTAMBill *>::iterator i = m_d->copiedAccTAMBills.begin(); i != m_d->copiedAccTAMBills.end(); ++i ){
+        connect( (*i), &AccountingTAMBill::aboutToBeDeleted, this, &QCostClipboardData::removeFromList );
+    }
+}
+
+void QCostClipboardData::getCopiedAccountingTAMBillItems( QList<AccountingTAMBillItem *> * accountingItems,
+                                                          AccountingTAMBill * accounting,
+                                                          QCostClipboardData::Mode * mode ) const{
+    *accountingItems = m_d->copiedAccTAMBillItems;
+    accounting = m_d->copiedAccTAMBillItemsBill;
+    *mode = m_d->copiedAccTAMBillItemsMode;
+}
+
+void QCostClipboardData::setCopiedAccountingTAMBillItems( QList<AccountingTAMBillItem *> ai,
+                                                       AccountingTAMBill *a,
+                                                       QCostClipboardData::Mode m ) {
+    m_d->copiedAccTAMBillItems = ai;
+    m_d->copiedAccTAMBillItemsMode = m;
+    m_d->copiedAccTAMBillItemsBill = a;
+    for( QList<AccountingTAMBillItem *>::iterator i = m_d->copiedAccTAMBillItems.begin(); i != m_d->copiedAccTAMBillItems.end(); ++i ){
+        connect( (*i), &AccountingTAMBillItem::aboutToBeDeleted, this, &QCostClipboardData::removeFromList );
+    }
+}
+
+QList<AccountingLSBill *> QCostClipboardData::copiedAccountingLSBills() {
+    return m_d->copiedAccLSBills;
+}
+
+QCostClipboardData::Mode QCostClipboardData::copiedAccountingLSBillItemsMode() const {
+    return m_d->copiedAccLSBillItemsMode;
+}
+
+void QCostClipboardData::setCopiedAccountingLSBills(QList<AccountingLSBill *> ca, QCostClipboardData::Mode m) {
+    m_d->copiedAccLSBills = ca;
+    m_d->copiedAccLSBillsMode = m;
+    for( QList<AccountingLSBill *>::iterator i = m_d->copiedAccLSBills.begin(); i != m_d->copiedAccLSBills.end(); ++i ){
+        connect( (*i), &AccountingLSBill::aboutToBeDeleted, this, &QCostClipboardData::removeFromList );
+    }
+}
+
+void QCostClipboardData::getCopiedAccountingLSBillItems( QList<AccountingLSBillItem *> * accountingItems,
+                                                         AccountingLSBill * accounting,
+                                                         QCostClipboardData::Mode * mode ) const{
+    *accountingItems = m_d->copiedAccLSBillItems;
+    accounting = m_d->copiedAccLSBillItemsBill;
+    *mode = m_d->copiedAccLSBillItemsMode;
+}
+
+void QCostClipboardData::setCopiedAccountingLSBillItems( QList<AccountingLSBillItem *> ai,
+                                                       AccountingLSBill *a,
+                                                       QCostClipboardData::Mode m) {
+    m_d->copiedAccLSBillItems = ai;
+    m_d->copiedAccLSBillItemsMode = m;
+    m_d->copiedAccLSBillItemsBill = a;
+    for( QList<AccountingLSBillItem *>::iterator i = m_d->copiedAccLSBillItems.begin(); i != m_d->copiedAccLSBillItems.end(); ++i ){
+        connect( (*i), &AccountingLSBillItem::aboutToBeDeleted, this, &QCostClipboardData::removeFromList );
+    }
 }
 
 void QCostClipboardData::removeFromList(){
@@ -148,56 +272,6 @@ void QCostClipboardData::removeFromList(){
         }
     }
 
-}
-
-void QCostClipboardData::setCopiedAccountingBills(QList<AccountingBill *> ca, QCostClipboardData::Mode m) {
-    m_d->copiedAccBills = ca;
-    m_d->copiedAccBillsMode = m;
-    for( QList<AccountingBill *>::iterator i = m_d->copiedAccBills.begin(); i != m_d->copiedAccBills.end(); ++i ){
-        connect( (*i), &AccountingBill::aboutToBeDeleted, this, &QCostClipboardData::removeFromList );
-    }
-}
-
-void QCostClipboardData::getCopiedAccountingBillItems( QList<AccountingBillItem *> * accountingItems,
-                                                       AccountingBill * &accounting,
-                                                       QCostClipboardData::Mode * mode ) const{
-    *accountingItems = m_d->copiedAccBillItems;
-    accounting = m_d->copiedAccBillItemsBill;
-    *mode = m_d->copiedAccBillItemsMode;
-}
-
-void QCostClipboardData::setCopiedAccountingBillItems(QList<AccountingBillItem *> ai, AccountingBill *a, QCostClipboardData::Mode m) {
-    m_d->copiedAccBillItems = ai;
-    m_d->copiedAccBillItemsMode = m;
-    m_d->copiedAccBillItemsBill = a;
-    for( QList<AccountingBillItem *>::iterator i = m_d->copiedAccBillItems.begin(); i != m_d->copiedAccBillItems.end(); ++i ){
-        connect( (*i), &AccountingBillItem::aboutToBeDeleted, this, &QCostClipboardData::removeFromList );
-    }
-}
-
-void QCostClipboardData::setCopiedBills(QList<Bill *> cb, QCostClipboardData::Mode m) {
-    m_d->copiedBills = cb;
-    m_d->copiedBillsMode = m;
-    for( QList<Bill *>::iterator i = m_d->copiedBills.begin(); i != m_d->copiedBills.end(); ++i ){
-        connect( (*i), &Bill::aboutToBeDeleted, this, &QCostClipboardData::removeFromList );
-    }
-}
-
-void QCostClipboardData::getCopiedBillItems( QList<BillItem *> * billItems,
-                                             Bill * &bill,
-                                             QCostClipboardData::Mode * mode ) const{
-    *billItems = m_d->copiedBillItems;
-    bill = m_d->copiedBillItemsBill;
-    *mode = m_d->copiedBillItemsMode;
-}
-
-void QCostClipboardData::setCopiedBillItems(QList<BillItem *> bi, Bill *b, QCostClipboardData::Mode m) {
-    m_d->copiedBillItems = bi;
-    m_d->copiedBillItemsMode = m;
-    m_d->copiedBillItemsBill = b;
-    for( QList<BillItem *>::iterator i = m_d->copiedBillItems.begin(); i != m_d->copiedBillItems.end(); ++i ){
-        connect( (*i), &BillItem::aboutToBeDeleted, this, &QCostClipboardData::removeFromList );
-    }
 }
 
 void QCostClipboardData::updateText(){

@@ -110,7 +110,7 @@ void AccountingLSBillItemGUI::setBillItem(AccountingLSBillItem *b) {
         m_d->ui->totalAmountLineEdit->clear();
 
         m_d->item = b;
-        m_d->itemAttributeModel->setAccountingItem( b );
+        m_d->itemAttributeModel->setItem( b );
 
         if( m_d->item != NULL ){
             m_d->ui->quantityLineEdit->setText( m_d->item->quantityStr() );

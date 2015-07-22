@@ -29,6 +29,7 @@
 #include "projectitemsview.h"
 #include "accountinggui.h"
 #include "accountingtambillgui.h"
+#include "accountinglsbillgui.h"
 
 #include "billprinter.h"
 #include "pricelistprinter.h"
@@ -38,6 +39,7 @@
 #include "projectaccountingparentitem.h"
 #include "accountingbill.h"
 #include "accountingtambill.h"
+#include "accountinglsbill.h"
 #include "bill.h"
 #include "pricelist.h"
 #include "mathparser.h"
@@ -75,6 +77,7 @@ public:
         accountingGUI(NULL),
         accountingBillGUI(NULL),
         accountingTAMBillGUI(NULL),
+        accountingLSBillGUI(NULL),
         EPAFileName(){
 
         projectItemsViewDock->setWidget( projectItemsView );
@@ -98,6 +101,7 @@ public:
     AccountingGUI * accountingGUI;
     AccountingBillGUI * accountingBillGUI;
     AccountingTAMBillGUI * accountingTAMBillGUI;
+    AccountingLSBillGUI * accountingLSBillGUI;
 
     // *** GUI ***
     // file corrente
@@ -160,6 +164,9 @@ QCostGUI::QCostGUI(QWidget *parent) :
     m_d->accountingTAMBillGUI = new AccountingTAMBillGUI(  &(m_d->EPAImportOptions), &(m_d->EPAFileName), &(m_d->parser), NULL, m_d->project, &(m_d->sWordProcessorFile), this );
     m_d->mainWidget->addWidget( m_d->accountingTAMBillGUI );
 
+    m_d->accountingLSBillGUI = new AccountingLSBillGUI(  &(m_d->EPAImportOptions), &(m_d->EPAFileName), &(m_d->parser), m_d->project, &(m_d->sWordProcessorFile), this );
+    m_d->mainWidget->addWidget( m_d->accountingLSBillGUI );
+
     m_d->accountingBillGUI = new AccountingBillGUI( &(m_d->EPAImportOptions), &(m_d->EPAFileName), &(m_d->parser), NULL, m_d->project, &(m_d->sWordProcessorFile), this );
     m_d->mainWidget->addWidget( m_d->accountingBillGUI );
 
@@ -217,8 +224,11 @@ void QCostGUI::saveSettings() {
 
 void QCostGUI::setCurrentItem(ProjectItem *item) {
     if( m_d->project ){
-        if( dynamic_cast<AccountingTAMBill *>(item)){
-            m_d->accountingTAMBillGUI->setAccountingTAMBill( dynamic_cast<AccountingTAMBill *>(item) );
+        if( dynamic_cast<AccountingLSBill *>(item)){
+            m_d->accountingLSBillGUI->setBill( dynamic_cast<AccountingLSBill *>(item) );
+            m_d->mainWidget->setCurrentWidget( m_d->accountingLSBillGUI );
+        } else if( dynamic_cast<AccountingTAMBill *>(item)){
+            m_d->accountingTAMBillGUI->setBill( dynamic_cast<AccountingTAMBill *>(item) );
             m_d->mainWidget->setCurrentWidget( m_d->accountingTAMBillGUI );
         } else if( dynamic_cast<AccountingBill *>(item)){
             m_d->accountingBillGUI->setAccountingBill( dynamic_cast<AccountingBill *>(item) );

@@ -66,7 +66,7 @@ void AccountingItemLSGUI::setAccountingItem(AccountingBillItem *b) {
         m_d->ui->endDateLineEdit->clear();
 
         m_d->item = b;
-        m_d->itemAttributeModel->setAccountingItem( b );
+        m_d->itemAttributeModel->setItem( b );
 
         if( m_d->item != NULL ){
             m_d->ui->beginDateLineEdit->setText( m_d->item->dateBeginStr() );

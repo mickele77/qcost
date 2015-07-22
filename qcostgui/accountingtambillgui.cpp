@@ -111,16 +111,16 @@ AccountingTAMBillGUI::AccountingTAMBillGUI( QMap<PriceListDBWidget::ImportOption
     addTab( m_d->mainSplitter, trUtf8("Opere in economia - Liste"));
 
     setCurrentIndex( 1 );
-    setAccountingTAMBill(b);
+    setBill(b);
 
-    connect( m_d->accountingTreeGUI, &AccountingTreeGUI::currentTAMBillItemChanged, this, &AccountingTAMBillGUI::setAccountingTAMBillItem );
+    connect( m_d->accountingTreeGUI, &AccountingTreeGUI::currentTAMBillItemChanged, this, &AccountingTAMBillGUI::setBillItem );
 }
 
 AccountingTAMBillGUI::~AccountingTAMBillGUI(){
     delete m_d;
 }
 
-void AccountingTAMBillGUI::setAccountingTAMBill( AccountingTAMBill * b ){
+void AccountingTAMBillGUI::setBill( AccountingTAMBill * b ){
     if( m_d->accountingTAMBill != b ){
         m_d->accountingTAMBill = b;
         m_d->accountingDataGUI->setAccountingTAMBill( b );
@@ -130,10 +130,10 @@ void AccountingTAMBillGUI::setAccountingTAMBill( AccountingTAMBill * b ){
     }
 }
 
-void AccountingTAMBillGUI::setAccountingTAMBillItem(AccountingTAMBillItem * newItem ) {
+void AccountingTAMBillGUI::setBillItem(AccountingTAMBillItem * newItem ) {
     if( m_d->currentAccountingTAMBillItem != NULL ){
-        disconnect( m_d->currentAccountingTAMBillItem, static_cast<void(AccountingTAMBillItem::*)(bool)>(&AccountingTAMBillItem::hasChildrenChanged), this, &AccountingTAMBillGUI::updateAccountingTAMBillItemGUI );
-        disconnect( m_d->currentAccountingTAMBillItem, &AccountingTAMBillItem::aboutToBeDeleted, this, &AccountingTAMBillGUI::setAccountingMeasureNULL );
+        disconnect( m_d->currentAccountingTAMBillItem, static_cast<void(AccountingTAMBillItem::*)(bool)>(&AccountingTAMBillItem::hasChildrenChanged), this, &AccountingTAMBillGUI::updateGUI );
+        disconnect( m_d->currentAccountingTAMBillItem, &AccountingTAMBillItem::aboutToBeDeleted, this, &AccountingTAMBillGUI::setBillItemNULL );
         m_d->accountingTAMBillItemPPUGUI->setAccountingItem( (AccountingTAMBillItem *)(NULL) );
         m_d->accountingTAMBillItemPPUGUI->hide();
         m_d->accountingTAMBillItemCommentGUI->setAccountingItemNULL();
@@ -143,17 +143,17 @@ void AccountingTAMBillGUI::setAccountingTAMBillItem(AccountingTAMBillItem * newI
     }
     m_d->currentAccountingTAMBillItem = newItem;
     if( m_d->currentAccountingTAMBillItem != NULL ){
-        updateAccountingTAMBillItemGUI();
-        connect( m_d->currentAccountingTAMBillItem, static_cast<void(AccountingTAMBillItem::*)(bool)>(&AccountingTAMBillItem::hasChildrenChanged), this, &AccountingTAMBillGUI::updateAccountingTAMBillItemGUI );
-        connect( m_d->currentAccountingTAMBillItem, &AccountingTAMBillItem::aboutToBeDeleted, this, &AccountingTAMBillGUI::setAccountingMeasureNULL );
+        updateGUI();
+        connect( m_d->currentAccountingTAMBillItem, static_cast<void(AccountingTAMBillItem::*)(bool)>(&AccountingTAMBillItem::hasChildrenChanged), this, &AccountingTAMBillGUI::updateGUI );
+        connect( m_d->currentAccountingTAMBillItem, &AccountingTAMBillItem::aboutToBeDeleted, this, &AccountingTAMBillGUI::setBillItemNULL );
     }
 }
 
-void AccountingTAMBillGUI::setAccountingMeasureNULL() {
-    setAccountingTAMBillItem( NULL );
+void AccountingTAMBillGUI::setBillItemNULL() {
+    setBillItem( NULL );
 }
 
-void AccountingTAMBillGUI::updateAccountingTAMBillItemGUI() {
+void AccountingTAMBillGUI::updateGUI() {
     if( m_d->currentAccountingTAMBillItem != NULL ){
 
         if( m_d->currentAccountingTAMBillItem->itemType() == AccountingTAMBillItem::PPU ){

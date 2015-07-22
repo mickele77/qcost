@@ -201,7 +201,7 @@ void AccountingLSTreeGUI::pasteFromClipboard(){
                 QList<AccountingLSBillItem *> itemsToCopy;
                 AccountingLSBill * itemsToCopyBill = NULL;
                 QCostClipboardData::Mode mode;
-                data->getCopiedBillItems( &itemsToCopy, itemsToCopyBill, &mode);
+                data->getCopiedAccountingLSBillItems( &itemsToCopy, itemsToCopyBill, &mode);
                 if( itemsToCopyBill != NULL ){
                     if( mode == QCostClipboardData::Copy ){
                         if( itemsToCopyBill->priceList() != m_d->bill->priceList() ){
@@ -291,7 +291,14 @@ void AccountingLSTreeGUI::editAccountingData( const QModelIndex & index ){
                 msgBox.exec();
             } else {
                 if( !m_d->bill->item( index )->hasChildren() ){
-                    EditPriceItemDialog dialog( m_d->EPAImportOptions, m_d->EPAFileName, m_d->bill->priceList(), m_d->bill->priceDataSet(), m_d->bill->item( index ), m_d->parser, m_d->project, this );
+                    EditPriceItemDialog dialog( m_d->EPAImportOptions,
+                                                m_d->EPAFileName,
+                                                m_d->bill->priceList(),
+                                                m_d->bill->priceDataSet(),
+                                                m_d->bill->item( index ),
+                                                m_d->parser,
+                                                m_d->project,
+                                                this );
                     dialog.exec();
                 }
             }

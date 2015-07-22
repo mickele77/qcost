@@ -48,12 +48,12 @@ public:
     bool clear();
 
     void setAttributeModel(AttributeModel *attrModel );
-    void setAccountingItem(AccountingBillItem *item);
-    void setAccountingItem(AccountingTAMBillItem *item);
-    void setAccountingItem(AccountingLSBillItem *item);
+    void setItem(AccountingBillItem *item);
+    void setItem(AccountingTAMBillItem *item);
+    void setItem(AccountingLSBillItem *item);
 private slots:
     void setAttributeModelNULL();
-    void setAccountingItemNULL();
+    void setItemNULL();
 private:
     AccountingItemAttributeModelModelPrivate * m_d;
 };

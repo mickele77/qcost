@@ -34,18 +34,18 @@ class AccountingTAMBillGUI : public QTabWidget {
     Q_OBJECT
 public:
     explicit AccountingTAMBillGUI( QMap<PriceListDBWidget::ImportOptions, bool> *EPAImpOptions,
-                      QString * EPAFileName,
-                      MathParser *prs, AccountingTAMBill *b, Project *p,
-                      QString *wordProcessorFile = NULL, QWidget *parent = 0);
+                                   QString * EPAFileName,
+                                   MathParser *prs, AccountingTAMBill *b, Project *p,
+                                   QString *wordProcessorFile = NULL, QWidget *parent = 0);
 
     ~AccountingTAMBillGUI();
 
-    void setAccountingTAMBill(AccountingTAMBill *);
+    void setBill(AccountingTAMBill *);
 
 private slots:
-    void setAccountingTAMBillItem( AccountingTAMBillItem * );
-    void setAccountingMeasureNULL();
-    void updateAccountingTAMBillItemGUI();
+    void setBillItem( AccountingTAMBillItem * );
+    void setBillItemNULL();
+    void updateGUI();
 private:
     AccountingTAMBillGUIPrivate * m_d;
 };

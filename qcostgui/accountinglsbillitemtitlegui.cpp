@@ -14,7 +14,7 @@ public:
         ui(new Ui::AccountingLSBillItemTitleGUI),
         bill(NULL),
         item(NULL),
-        itemAttributeModel( new BillItemAttributeModel(NULL, NULL) ),
+        itemAttributeModel( new AccountingItemAttributeModel( NULL ) ),
         priceFieldModel(pfm){
     }
     ~AccountingLSBillItemTitleGUIPrivate(){
@@ -34,11 +34,6 @@ AccountingLSBillItemTitleGUI::AccountingLSBillItemTitleGUI(PriceFieldModel * pfm
     m_d->ui->attributeTableView->setModel( m_d->itemAttributeModel );
     connect( m_d->ui->addAttributePushButton, &QPushButton::clicked, this, &AccountingLSBillItemTitleGUI::addAttribute );
     connect( m_d->ui->removeAttributePushButton, &QPushButton::clicked, this, &AccountingLSBillItemTitleGUI::removeAttribute );
-
-    connect( m_d->priceFieldModel, &PriceFieldModel::endInsertPriceField, this, &AccountingLSBillItemTitleGUI::updateAmountNamesValues );
-    connect( m_d->priceFieldModel, &PriceFieldModel::endRemovePriceField, this, &AccountingLSBillItemTitleGUI::updateAmountNamesValues );
-    updateAmountNamesValues();
-    connect( m_d->priceFieldModel, &PriceFieldModel::amountNameChanged, this, &AccountingLSBillItemTitleGUI::updateAmountName );
 }
 
 AccountingLSBillItemTitleGUI::~AccountingLSBillItemTitleGUI() {
@@ -61,7 +56,7 @@ void AccountingLSBillItemTitleGUI::setBillItem(AccountingLSBillItem *b) {
         m_d->ui->totalAmountAccountedLineEdit->clear();
         m_d->ui->percentageAccountedLineEdit->clear();
         m_d->item = b;
-        m_d->itemAttributeModel->setBillItem( b );
+        m_d->itemAttributeModel->setItem( b );
 
         if( m_d->item != NULL ){
             m_d->ui->nameLineEdit->setText( m_d->item->name() );

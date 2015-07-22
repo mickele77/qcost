@@ -194,7 +194,7 @@ void AccountingItemAttributeModel::setAttributeModel(AttributeModel *attrModel) 
     }
     beginResetModel();
     m_d->attributeModel = attrModel;
-    setAccountingItemNULL();
+    setItemNULL();
     endResetModel();
     if( m_d->attributeModel != NULL ){
         connect( m_d->attributeModel, &AttributeModel::aboutToBeDeleted, this, &AccountingItemAttributeModel::setAttributeModelNULL );
@@ -205,16 +205,16 @@ void AccountingItemAttributeModel::setAttributeModelNULL() {
     setAttributeModel( NULL );
 }
 
-void AccountingItemAttributeModel::setAccountingItem( AccountingBillItem * item ){
+void AccountingItemAttributeModel::setItem( AccountingBillItem * item ){
     if( m_d->accountingBillItem != item || m_d->accountingTAMBillItem != NULL || m_d->accountingLSBillItem != NULL ){
         if( m_d->accountingBillItem != NULL ){
-            disconnect( m_d->accountingBillItem, &AccountingBillItem::aboutToBeDeleted, this, &AccountingItemAttributeModel::setAccountingItemNULL );
+            disconnect( m_d->accountingBillItem, &AccountingBillItem::aboutToBeDeleted, this, &AccountingItemAttributeModel::setItemNULL );
         }
         if( m_d->accountingTAMBillItem != NULL ){
-            disconnect( m_d->accountingTAMBillItem, &AccountingTAMBillItem::aboutToBeDeleted, this, &AccountingItemAttributeModel::setAccountingItemNULL );
+            disconnect( m_d->accountingTAMBillItem, &AccountingTAMBillItem::aboutToBeDeleted, this, &AccountingItemAttributeModel::setItemNULL );
         }
         if( m_d->accountingLSBillItem != NULL ){
-            disconnect( m_d->accountingLSBillItem, &AccountingLSBillItem::aboutToBeDeleted, this, &AccountingItemAttributeModel::setAccountingItemNULL );
+            disconnect( m_d->accountingLSBillItem, &AccountingLSBillItem::aboutToBeDeleted, this, &AccountingItemAttributeModel::setItemNULL );
         }
 
         m_d->accountingBillItem = item;
@@ -227,21 +227,21 @@ void AccountingItemAttributeModel::setAccountingItem( AccountingBillItem * item 
             }
         }
         if( m_d->accountingBillItem != NULL ){
-            connect( m_d->accountingBillItem, &AccountingBillItem::aboutToBeDeleted, this, &AccountingItemAttributeModel::setAccountingItemNULL );
+            connect( m_d->accountingBillItem, &AccountingBillItem::aboutToBeDeleted, this, &AccountingItemAttributeModel::setItemNULL );
         }
     }
 }
 
-void AccountingItemAttributeModel::setAccountingItem( AccountingTAMBillItem * item ){
+void AccountingItemAttributeModel::setItem( AccountingTAMBillItem * item ){
     if( m_d->accountingTAMBillItem != item || m_d->accountingBillItem != NULL || m_d->accountingLSBillItem != NULL ){
         if( m_d->accountingBillItem != NULL ){
-            disconnect( m_d->accountingBillItem, &AccountingBillItem::aboutToBeDeleted, this, &AccountingItemAttributeModel::setAccountingItemNULL );
+            disconnect( m_d->accountingBillItem, &AccountingBillItem::aboutToBeDeleted, this, &AccountingItemAttributeModel::setItemNULL );
         }
         if( m_d->accountingTAMBillItem != NULL ){
-            disconnect( m_d->accountingTAMBillItem, &AccountingTAMBillItem::aboutToBeDeleted, this, &AccountingItemAttributeModel::setAccountingItemNULL );
+            disconnect( m_d->accountingTAMBillItem, &AccountingTAMBillItem::aboutToBeDeleted, this, &AccountingItemAttributeModel::setItemNULL );
         }
         if( m_d->accountingLSBillItem != NULL ){
-            disconnect( m_d->accountingLSBillItem, &AccountingLSBillItem::aboutToBeDeleted, this, &AccountingItemAttributeModel::setAccountingItemNULL );
+            disconnect( m_d->accountingLSBillItem, &AccountingLSBillItem::aboutToBeDeleted, this, &AccountingItemAttributeModel::setItemNULL );
         }
 
         m_d->accountingBillItem = NULL;
@@ -254,21 +254,21 @@ void AccountingItemAttributeModel::setAccountingItem( AccountingTAMBillItem * it
             }
         }
         if( m_d->accountingTAMBillItem != NULL ){
-            connect( m_d->accountingTAMBillItem, &AccountingTAMBillItem::aboutToBeDeleted, this, &AccountingItemAttributeModel::setAccountingItemNULL );
+            connect( m_d->accountingTAMBillItem, &AccountingTAMBillItem::aboutToBeDeleted, this, &AccountingItemAttributeModel::setItemNULL );
         }
     }
 }
 
-void AccountingItemAttributeModel::setAccountingItem(AccountingLSBillItem *item) {
+void AccountingItemAttributeModel::setItem(AccountingLSBillItem *item) {
     if( m_d->accountingLSBillItem != item || m_d->accountingTAMBillItem != NULL || m_d->accountingBillItem != NULL ){
         if( m_d->accountingBillItem != NULL ){
-            disconnect( m_d->accountingBillItem, &AccountingBillItem::aboutToBeDeleted, this, &AccountingItemAttributeModel::setAccountingItemNULL );
+            disconnect( m_d->accountingBillItem, &AccountingBillItem::aboutToBeDeleted, this, &AccountingItemAttributeModel::setItemNULL );
         }
         if( m_d->accountingTAMBillItem != NULL ){
-            disconnect( m_d->accountingTAMBillItem, &AccountingTAMBillItem::aboutToBeDeleted, this, &AccountingItemAttributeModel::setAccountingItemNULL );
+            disconnect( m_d->accountingTAMBillItem, &AccountingTAMBillItem::aboutToBeDeleted, this, &AccountingItemAttributeModel::setItemNULL );
         }
         if( m_d->accountingLSBillItem != NULL ){
-            disconnect( m_d->accountingLSBillItem, &AccountingLSBillItem::aboutToBeDeleted, this, &AccountingItemAttributeModel::setAccountingItemNULL );
+            disconnect( m_d->accountingLSBillItem, &AccountingLSBillItem::aboutToBeDeleted, this, &AccountingItemAttributeModel::setItemNULL );
         }
         m_d->accountingBillItem = NULL;
         m_d->accountingTAMBillItem = NULL;
@@ -280,13 +280,13 @@ void AccountingItemAttributeModel::setAccountingItem(AccountingLSBillItem *item)
             }
         }
         if( m_d->accountingLSBillItem != NULL ){
-            connect( m_d->accountingLSBillItem, &AccountingLSBillItem::aboutToBeDeleted, this, &AccountingItemAttributeModel::setAccountingItemNULL );
+            connect( m_d->accountingLSBillItem, &AccountingLSBillItem::aboutToBeDeleted, this, &AccountingItemAttributeModel::setItemNULL );
         }
     }
 }
 
-void AccountingItemAttributeModel::setAccountingItemNULL(){
-    setAccountingItem( (AccountingLSBillItem *)(NULL));
-    setAccountingItem( (AccountingTAMBillItem *)(NULL));
-    setAccountingItem( (AccountingBillItem *)(NULL));
+void AccountingItemAttributeModel::setItemNULL(){
+    setItem( (AccountingLSBillItem *)(NULL));
+    setItem( (AccountingTAMBillItem *)(NULL));
+    setItem( (AccountingBillItem *)(NULL));
 }

@@ -143,7 +143,7 @@ void AccountingItemPPUGUI::setAccountingItem(AccountingTAMBillItem *b) {
 
         m_d->billItem = NULL;
         m_d->TAMBillItem = b;
-        m_d->itemAttributeModel->setAccountingItem( b );
+        m_d->itemAttributeModel->setItem( b );
 
         if( m_d->TAMBillItem != NULL ){
             m_d->ui->dateLineEdit->setText( m_d->TAMBillItem->dateStr() );
@@ -242,7 +242,7 @@ void AccountingItemPPUGUI::setAccountingItem(AccountingBillItem *b) {
 
         m_d->billItem = b;
         m_d->TAMBillItem = NULL;
-        m_d->itemAttributeModel->setAccountingItem( b );
+        m_d->itemAttributeModel->setItem( b );
 
         if( m_d->billItem != NULL ){
             m_d->ui->dateLineEdit->setText( m_d->billItem->dateStr() );
