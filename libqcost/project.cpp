@@ -48,7 +48,7 @@ public:
         rootItem->insertChild( priceListParentItem );
         rootItem->insertChild( billParentItem );
         rootItem->insertChild( accountingParentItem );
-    };
+    }
     UnitMeasureModel * unitMeasureModel;
     PriceFieldModel * priceFieldModel;
     ProjectRootItem * rootItem;
@@ -166,6 +166,10 @@ int Project::billCount() {
 
 Bill *Project::bill(int i) {
     return m_d->billParentItem->bill( i );
+}
+
+AccountingLSBills *Project::accountingLSBills() {
+    return m_d->accountingParentItem->lumpSumBills();
 }
 
 int Project::columnCount(const QModelIndex & /* parent */) const {

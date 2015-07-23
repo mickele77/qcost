@@ -131,9 +131,9 @@ void AccountingItemBillGUI::setAccountingItem(AccountingBillItem *b) {
         m_d->TAMBillItem = NULL;
         m_d->itemAttributeModel->setItem( b );
 
-        if( m_d->TAMBillItem != NULL ){
-            m_d->ui->beginDateLineEdit->setText( m_d->TAMBillItem->dateBeginStr() );
-            m_d->ui->endDateLineEdit->setText( m_d->TAMBillItem->dateEndStr() );
+        if( m_d->billItem != NULL ){
+            m_d->ui->beginDateLineEdit->setText( m_d->billItem->dateBeginStr() );
+            m_d->ui->endDateLineEdit->setText( m_d->billItem->dateEndStr() );
             connect( m_d->billItem, &AccountingBillItem::dateBeginChanged, this, &AccountingItemBillGUI::setDateBegin );
             connect( m_d->billItem, &AccountingBillItem::dateEndChanged, this, &AccountingItemBillGUI::setDateEnd );
 
@@ -265,6 +265,21 @@ bool AccountingItemBillGUI::eventFilter(QObject *object, QEvent *event) {
                 QCalendarDialog dialog( &d, this );
                 if( dialog.exec() == QDialog::Accepted ){
                     m_d->TAMBillItem->setDateEnd( d );
+                }
+            }
+        }
+        if( m_d->billItem != NULL ){
+            if( object == m_d->ui->beginDateLineEdit ){
+                QDate d = m_d->billItem->dateBegin();
+                QCalendarDialog dialog( &d, this );
+                if( dialog.exec() == QDialog::Accepted ){
+                    m_d->billItem->setDateBegin( d );
+                }
+            } else if( object == m_d->ui->endDateLineEdit ){
+                QDate d = m_d->billItem->dateEnd();
+                QCalendarDialog dialog( &d, this );
+                if( dialog.exec() == QDialog::Accepted ){
+                    m_d->billItem->setDateEnd( d );
                 }
             }
         }

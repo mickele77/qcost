@@ -2,6 +2,7 @@
 #define ACCOUNTINGITEMLSGUI_H
 
 class PriceFieldModel;
+class AccountingLSBills;
 class AccountingBill;
 class AccountingBillItem ;
 
@@ -14,7 +15,7 @@ class AccountingItemLSGUI : public QWidget
     Q_OBJECT
     
 public:
-    explicit AccountingItemLSGUI(PriceFieldModel *pfm, QWidget *parent = 0);
+    explicit AccountingItemLSGUI( AccountingLSBills *lsBills, PriceFieldModel *pfm, QWidget *parent = 0);
     ~AccountingItemLSGUI();
     
     void setAccountingBill(AccountingBill *b);
@@ -31,6 +32,8 @@ private slots:
 
     void setDateBegin( const QString & newVal );
     void setDateEnd( const QString & newVal );
+
+    void updateLumpSumsComboBox();
 private:
     AccountingItemLSGUIPrivate * m_d;
 

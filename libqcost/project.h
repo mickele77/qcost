@@ -26,6 +26,7 @@ class ProjectItem;
 class UnitMeasureModel;
 class PriceFieldModel;
 class PriceList;
+class AccountingLSBills;
 class Bill;
 class MathParser;
 class QXmlStreamReader;
@@ -53,11 +54,13 @@ public:
 
     ProjectAccountingParentItem * accounting();
 
-     int priceListCount();
+    int priceListCount();
     PriceList * priceList( int i );
 
     int billCount();
     Bill * bill( int i );
+
+    AccountingLSBills * accountingLSBills();
 
     int columnCount(const QModelIndex &) const;
     int rowCount(const QModelIndex &parent) const;

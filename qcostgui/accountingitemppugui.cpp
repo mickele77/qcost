@@ -81,6 +81,7 @@ AccountingItemPPUGUI::AccountingItemPPUGUI( QMap<PriceListDBWidget::ImportOption
     m_d->ui->attributeTableView->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
     m_d->ui->attributeTableView->setModel( m_d->itemAttributeModel );
     associateLinesModel( false );
+    m_d->ui->priceGBCheckBox->setChecked(true);
 
     connect( m_d->ui->addItemLinePushButton, &QPushButton::clicked, this, &AccountingItemPPUGUI::addMeasureLines );
     connect( m_d->ui->delItemLinePushButton, &QPushButton::clicked, this, &AccountingItemPPUGUI::delMeasureLines );
@@ -90,6 +91,7 @@ AccountingItemPPUGUI::AccountingItemPPUGUI( QMap<PriceListDBWidget::ImportOption
     connect( m_d->ui->removeAttributePushButton, &QPushButton::clicked, this, &AccountingItemPPUGUI::removeAttribute );
 
     connect( m_d->priceItemGUI, static_cast<void(PriceItemGUI::*)(PriceItem *, Bill *)>(&PriceItemGUI::editPriceItemAP), this, &AccountingItemPPUGUI::editPriceItemAP );
+    connect( m_d->ui->associateLinesCheckBox, &QCheckBox::toggled, this, &AccountingItemPPUGUI::associateLinesModel );
 
     m_d->ui->dateLineEdit->installEventFilter(this);
 }
@@ -110,9 +112,7 @@ void AccountingItemPPUGUI::setAccountingItem(AccountingTAMBillItem *b) {
             disconnect( m_d->billItem, &AccountingBillItem::amountNotToBeDiscountedChanged, m_d->ui->amountNotToBeDiscountedLineEdit, &QLineEdit::setText );
             disconnect( m_d->billItem, &AccountingBillItem::totalAmountChanged, m_d->ui->totalAmountLineEdit, &QLineEdit::setText );
 
-            m_d->ui->PPUTotalToBeDiscountedLineEdit->clear();
             disconnect( m_d->billItem, &AccountingBillItem::PPUTotalToBeDiscountedChanged, m_d->ui->PPUTotalToBeDiscountedLineEdit, &QLineEdit::setText );
-            m_d->ui->PPUNotToBDiscountedLineEdit->clear();
             disconnect( m_d->billItem, &AccountingBillItem::PPUNotToBeDiscountedChanged, m_d->ui->PPUNotToBDiscountedLineEdit, &QLineEdit::setText );
 
             disconnect( m_d->billItem, &AccountingBillItem::priceItemChanged, this, &AccountingItemPPUGUI::connectPriceItem );
@@ -122,7 +122,7 @@ void AccountingItemPPUGUI::setAccountingItem(AccountingTAMBillItem *b) {
             disconnect( m_d->billItem, &AccountingBillItem::aboutToBeDeleted, this, &AccountingItemPPUGUI::setAccountingItemNULL );
         }
         if( m_d->TAMBillItem != NULL ){
-/*            disconnect( m_d->TAMBillItem, &AccountingTAMBillItem::dateChanged, m_d->ui->dateLineEdit, &QLineEdit::setText );
+            disconnect( m_d->TAMBillItem, &AccountingTAMBillItem::dateChanged, m_d->ui->dateLineEdit, &QLineEdit::setText );
             disconnect( m_d->ui->dateLineEdit, &QLineEdit::editingFinished, this, &AccountingItemPPUGUI::setDateLE );
             disconnect( m_d->TAMBillItem, &AccountingTAMBillItem::quantityChanged, m_d->ui->quantityLineEdit, &QLineEdit::setText );
             disconnect( m_d->ui->quantityLineEdit, &QLineEdit::editingFinished, this, &AccountingItemPPUGUI::setQuantityLE );
@@ -138,8 +138,15 @@ void AccountingItemPPUGUI::setAccountingItem(AccountingTAMBillItem *b) {
             disconnectPriceItem( m_d->TAMBillItem->priceItem() );
 
             disconnect( m_d->ui->associateLinesCheckBox, &QCheckBox::toggled, this, &AccountingItemPPUGUI::associateLinesModel );
-            disconnect( m_d->TAMBillItem, &AccountingTAMBillItem::aboutToBeDeleted, this, &AccountingItemPPUGUI::setAccountingItemNULL );*/
+            disconnect( m_d->TAMBillItem, &AccountingTAMBillItem::aboutToBeDeleted, this, &AccountingItemPPUGUI::setAccountingItemNULL );
         }
+
+        m_d->ui->totalAmountToBeDiscountedLineEdit->clear();
+        m_d->ui->amountNotToBeDiscountedLineEdit->clear();
+        m_d->ui->totalAmountLineEdit->clear();
+        m_d->ui->PPUNotToBDiscountedLineEdit->clear();
+        m_d->ui->PPUTotalToBeDiscountedLineEdit->clear();
+        m_d->ui->PPUNotToBDiscountedLineEdit->clear();
 
         m_d->billItem = NULL;
         m_d->TAMBillItem = b;
@@ -209,9 +216,7 @@ void AccountingItemPPUGUI::setAccountingItem(AccountingBillItem *b) {
             disconnect( m_d->billItem, &AccountingBillItem::amountNotToBeDiscountedChanged, m_d->ui->amountNotToBeDiscountedLineEdit, &QLineEdit::setText );
             disconnect( m_d->billItem, &AccountingBillItem::totalAmountChanged, m_d->ui->totalAmountLineEdit, &QLineEdit::setText );
 
-            m_d->ui->PPUTotalToBeDiscountedLineEdit->clear();
             disconnect( m_d->billItem, &AccountingBillItem::PPUTotalToBeDiscountedChanged, m_d->ui->PPUTotalToBeDiscountedLineEdit, &QLineEdit::setText );
-            m_d->ui->PPUNotToBDiscountedLineEdit->clear();
             disconnect( m_d->billItem, &AccountingBillItem::PPUNotToBeDiscountedChanged, m_d->ui->PPUNotToBDiscountedLineEdit, &QLineEdit::setText );
 
             disconnect( m_d->billItem, &AccountingBillItem::priceItemChanged, this, &AccountingItemPPUGUI::connectPriceItem );
@@ -239,6 +244,9 @@ void AccountingItemPPUGUI::setAccountingItem(AccountingBillItem *b) {
             disconnect( m_d->ui->associateLinesCheckBox, &QCheckBox::toggled, this, &AccountingItemPPUGUI::associateLinesModel );
             disconnect( m_d->TAMBillItem, &AccountingTAMBillItem::aboutToBeDeleted, this, &AccountingItemPPUGUI::setAccountingItemNULL );
         }
+
+        m_d->ui->PPUTotalToBeDiscountedLineEdit->clear();
+        m_d->ui->PPUNotToBDiscountedLineEdit->clear();
 
         m_d->billItem = b;
         m_d->TAMBillItem = NULL;
@@ -346,6 +354,9 @@ void AccountingItemPPUGUI::disconnectPriceItem( PriceItem * priceItem ) {
         if( priceItem->unitMeasure() ){
             disconnect( priceItem->unitMeasure(), &UnitMeasure::tagChanged, m_d->ui->priceUnitMeasureLineEdit, &QLineEdit::setText );
         }
+        m_d->ui->priceCodeLineEdit->clear();
+        m_d->ui->priceShortDescLineEdit->clear();
+        m_d->ui->priceUnitMeasureLineEdit->clear();
         m_d->priceItemGUI->setPriceItem( NULL );
     }
 }
@@ -396,29 +407,33 @@ void AccountingItemPPUGUI::connectPriceUnitMeasure(){
 }
 
 void AccountingItemPPUGUI::associateLinesModel(bool ass) {
+    m_d->ui->itemMeasuresGroupBox->setVisible( ass );
+    m_d->ui->quantityLineEdit->setReadOnly( ass );
     if( ass ){
         if( m_d->TAMBillItem != NULL ){
-            m_d->ui->itemMeasuresGroupBox->setVisible( true );
             m_d->ui->itemMeasuresTableView->setModel( m_d->TAMBillItem->generateMeasuresModel() );
-            m_d->ui->quantityLineEdit->setReadOnly( true );
-            if( m_d->vSpacer != NULL ){
-                m_d->ui->dataTabLayout->removeItem( m_d->vSpacer);
-                delete m_d->vSpacer;
-                m_d->vSpacer = NULL;
-            }
-            return;
+        }
+        if( m_d->billItem != NULL ){
+            m_d->ui->itemMeasuresTableView->setModel( m_d->billItem->generateMeasuresModel() );
+        }
+        if( m_d->vSpacer != NULL ){
+            m_d->ui->dataTabLayout->removeItem( m_d->vSpacer);
+            delete m_d->vSpacer;
+            m_d->vSpacer = NULL;
+        }
+    } else {
+        if( m_d->TAMBillItem != NULL ){
+            m_d->TAMBillItem->removeMeasuresModel();
+        }
+        if( m_d->billItem != NULL ){
+            m_d->billItem->removeMeasuresModel();
+        }
+        m_d->ui->itemMeasuresTableView->setModel( NULL );
+        if( m_d->vSpacer == NULL ){
+            m_d->vSpacer = new QSpacerItem(0,0, QSizePolicy::Minimum, QSizePolicy::Expanding);
+            m_d->ui->dataTabLayout->addItem( m_d->vSpacer, 6, 0, 1, 3 );
         }
     }
-    if( m_d->TAMBillItem != NULL ){
-        m_d->TAMBillItem->removeMeasuresModel();
-    }
-    m_d->ui->itemMeasuresGroupBox->setVisible( false );
-    m_d->ui->itemMeasuresTableView->setModel( NULL );
-    if( m_d->vSpacer == NULL ){
-        m_d->vSpacer = new QSpacerItem(0,0, QSizePolicy::Minimum, QSizePolicy::Expanding);
-        m_d->ui->dataTabLayout->addItem( m_d->vSpacer, 3, 0, 1, 3 );
-    }
-    m_d->ui->quantityLineEdit->setReadOnly( false );
 }
 
 void AccountingItemPPUGUI::addMeasureLines() {
@@ -439,6 +454,23 @@ void AccountingItemPPUGUI::addMeasureLines() {
                 m_d->TAMBillItem->measuresModel()->insertRows( 0 );
             }
         }
+    } else if( m_d->billItem != NULL ){
+        if( m_d->billItem->measuresModel() ){
+            QModelIndexList rowListSelected = m_d->ui->itemMeasuresTableView->selectionModel()->selectedIndexes();
+            QList<int> rowList;
+            for( int i=0; i < rowListSelected.size(); i++ ){
+                if( !rowList.contains(rowListSelected.at(i).row()) ){
+                    rowList.append( rowListSelected.at(i).row() );
+                }
+            }
+            qSort( rowList.begin(), rowList.end() );
+
+            if( rowList.size() > 0 ){
+                m_d->billItem->measuresModel()->insertRows( rowList.last()+1, rowList.size());
+            } else {
+                m_d->billItem->measuresModel()->insertRows( 0 );
+            }
+        }
     }
 }
 
@@ -455,6 +487,20 @@ void AccountingItemPPUGUI::delMeasureLines() {
                 }
                 qSort( rowList.begin(), rowList.end() );
                 m_d->TAMBillItem->measuresModel()->removeRows( rowList.first(), rowList.size() );
+            }
+        }
+    } else if( m_d->billItem != NULL ){
+        if( m_d->billItem->measuresModel() ){
+            QModelIndexList rowListSelected = m_d->ui->itemMeasuresTableView->selectionModel()->selectedRows();
+            if( !rowListSelected.isEmpty() ){
+                QList<int> rowList;
+                for( int i=0; i < rowListSelected.size(); i++ ){
+                    if( !rowList.contains(rowListSelected.at(i).row()) ){
+                        rowList.append( rowListSelected.at(i).row() );
+                    }
+                }
+                qSort( rowList.begin(), rowList.end() );
+                m_d->billItem->measuresModel()->removeRows( rowList.first(), rowList.size() );
             }
         }
     }
@@ -478,6 +524,25 @@ void AccountingItemPPUGUI::importAccountingMeasureMeasuresTXT() {
             }
 
             ImportBillItemMeasuresTXT dialog( m_d->TAMBillItem->measuresModel(), position, m_d->parser, this );
+            dialog.exec();
+        }
+    } else if( m_d->billItem != NULL ){
+        if( m_d->billItem->measuresModel() ){
+            QModelIndexList rowListSelected = m_d->ui->itemMeasuresTableView->selectionModel()->selectedRows();
+            QList<int> rowList;
+            for( int i=0; i < rowListSelected.size(); i++ ){
+                if( !rowList.contains(rowListSelected.at(i).row()) ){
+                    rowList.append( rowListSelected.at(i).row() );
+                }
+            }
+            qSort( rowList.begin(), rowList.end() );
+
+            int position = m_d->billItem->measuresModel()->rowCount();
+            if( rowList.size() > 0 ){
+                position = rowList.last()+1;
+            }
+
+            ImportBillItemMeasuresTXT dialog( m_d->billItem->measuresModel(), position, m_d->parser, this );
             dialog.exec();
         }
     }

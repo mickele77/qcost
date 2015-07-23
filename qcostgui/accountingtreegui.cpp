@@ -338,23 +338,25 @@ void AccountingTreeGUI::editAttributes(){
 
 void AccountingTreeGUI::editAccountingData( const QModelIndex & index ){
     if( m_d->accountingBill != NULL ){
-        if( index.column() == 4 ){
-            QDate d = m_d->accountingBill->item( index )->date();
-            QCalendarDialog dialog( &d, this );
-            if( dialog.exec() == QDialog::Accepted ){
-                m_d->accountingBill->item( index )->setDate( d );
-            }
-        } else if( index.column() >= 1 || index.column() <= 3 ){
-            if( m_d->accountingBill->priceList() == NULL ){
-                QMessageBox msgBox;
-                msgBox.setText( trUtf8("Al computo non è associato alcun elenco prezzi") );
-                msgBox.setInformativeText(trUtf8("Prima di associare un prezzo ad una riga è necessario aver impostato l'elenco prezzi del computo.") );
-                msgBox.setStandardButtons(QMessageBox::Ok );
-                msgBox.exec();
-            } else {
-                if( !m_d->accountingBill->item( index )->hasChildren() ){
-                    EditPriceItemDialog dialog( m_d->EPAImportOptions, m_d->EPAFileName, m_d->accountingBill->priceList(), m_d->accountingBill->priceDataSet(), m_d->accountingBill->item( index ), m_d->parser, m_d->project, this );
-                    dialog.exec();
+        if( m_d->accountingBill->item( index )->itemType() == AccountingBillItem::PPU ){
+            if( index.column() == 4 ){
+                QDate d = m_d->accountingBill->item( index )->date();
+                QCalendarDialog dialog( &d, this );
+                if( dialog.exec() == QDialog::Accepted ){
+                    m_d->accountingBill->item( index )->setDate( d );
+                }
+            } else if( index.column() >= 1 || index.column() <= 3 ){
+                if( m_d->accountingBill->priceList() == NULL ){
+                    QMessageBox msgBox;
+                    msgBox.setText( trUtf8("Al computo non è associato alcun elenco prezzi") );
+                    msgBox.setInformativeText(trUtf8("Prima di associare un prezzo ad una riga è necessario aver impostato l'elenco prezzi del computo.") );
+                    msgBox.setStandardButtons(QMessageBox::Ok );
+                    msgBox.exec();
+                } else {
+                    if( !m_d->accountingBill->item( index )->hasChildren() ){
+                        EditPriceItemDialog dialog( m_d->EPAImportOptions, m_d->EPAFileName, m_d->accountingBill->priceList(), m_d->accountingBill->priceDataSet(), m_d->accountingBill->item( index ), m_d->parser, m_d->project, this );
+                        dialog.exec();
+                    }
                 }
             }
         }
@@ -726,7 +728,16 @@ void AccountingTreeGUI::addItems(){
                                (item->itemType() == AccountingBillItem::PPU) ||
                                (item->itemType() == AccountingBillItem::LumpSum) ||
                                (item->itemType() == AccountingBillItem::TimeAndMaterials) ){
-                        ret = m_d->accountingBill->insertItems( AccountingBillItem::PPU, rowList.last().row()+1, rowList.size(), rowList.last().parent() );
+                        ret = m_d->accountingBill->insertItems( AccountingBillItem::LumpSum, rowList.last().row()+1, rowList.size(), rowList.last().parent() );
+                    }
+                } else if( sender() == m_d->addTAMAction ) {
+                    if( item->itemType() == AccountingBillItem::Bill ){
+                        ret = m_d->accountingBill->insertItems( AccountingBillItem::TimeAndMaterials, -1, rowList.size(), rowList.last() );
+                    } else if( (item->itemType() == AccountingBillItem::Comment) ||
+                               (item->itemType() == AccountingBillItem::PPU) ||
+                               (item->itemType() == AccountingBillItem::LumpSum) ||
+                               (item->itemType() == AccountingBillItem::TimeAndMaterials) ){
+                        ret = m_d->accountingBill->insertItems( AccountingBillItem::TimeAndMaterials, rowList.last().row()+1, rowList.size(), rowList.last().parent() );
                     }
                 } else {
                     return;
@@ -740,7 +751,9 @@ void AccountingTreeGUI::addItems(){
                     }
                 }
             } else {
-                m_d->accountingBill->insertItems( AccountingBillItem::Bill );
+                if( sender() == m_d->addBillAction ) {
+                    m_d->accountingBill->insertItems( AccountingBillItem::Bill );
+                }
             }
         }
     } else if( m_d->accountingTAMBill != NULL ){
@@ -796,7 +809,9 @@ void AccountingTreeGUI::addItems(){
                     }
                 }
             } else if( sender() == m_d->addTAMBillAction ) {
-                m_d->accountingTAMBill->insertItems( AccountingTAMBillItem::Bill );
+                if( sender() == m_d->addTAMBillAction ) {
+                    m_d->accountingTAMBill->insertItems( AccountingTAMBillItem::Bill );
+                }
             }
         }
     }

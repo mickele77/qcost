@@ -441,7 +441,7 @@ QVariant AccountingBillItem::data(int col, int role) const {
             }
         } else if( col == m_d->dateCol) {
             if( role == Qt::TextAlignmentRole ){
-                return Qt::AlignLeft + Qt::AlignVCenter;;
+                return Qt::AlignCenter + Qt::AlignVCenter;;
             } else { // role == Qt::DisplayRole || role == Qt::EditRole
                 return QVariant( dateStr() );
             }
@@ -860,7 +860,7 @@ bool AccountingBillItem::insertChildren(AccountingBillItem::ItemType iType, int 
         return false;
 
     if( (m_d->itemType == Root && (iType == Bill) ) ||
-            (m_d->itemType == Bill && (iType == PPU || iType == Comment)) ){
+            (m_d->itemType == Bill && (iType == PPU || iType == Comment  || iType == TimeAndMaterials  || iType == LumpSum )) ){
 
         bool hadChildren = m_d->childrenContainer.size() > 0;
 

@@ -82,7 +82,7 @@ public:
                               MathParser * prs, AccountingBill * b, Project * prj,
                               QString * wpf, QWidget *parent ):
         accounting ( b ),
-        currentAccountingMeasure( NULL ),
+        currentItem( NULL ),
         project(prj),
         accountingItemEditingPrice(NULL),
         accountingDataGUI( new AccountingBillDataGUI( prj->priceFieldModel(), prs, NULL, prj, wpf, parent ) ),
@@ -90,7 +90,7 @@ public:
         accountingTreeGUI( new AccountingTreeGUI( EPAImpOptions, EPAFileName, b, prs, prj, mainSplitter ) ),
         accountingItemBillGUI( new AccountingItemBillGUI( prj->priceFieldModel(), parent ) ),
         accountingItemPPUGUI( new AccountingItemPPUGUI( EPAImpOptions, EPAFileName, prs, prj, parent ) ),
-        accountingItemLSGUI( new AccountingItemLSGUI( prj->priceFieldModel(), parent ) ),
+        accountingItemLSGUI( new AccountingItemLSGUI( prj->accountingLSBills(), prj->priceFieldModel(), parent ) ),
         accountingItemTAMGUI( new AccountingItemTAMGUI( prj->priceFieldModel(), parent ) ),
         accountingItemCommentGUI( new AccountingItemCommentGUI( parent ) ),
         accountingItemWidget( new AccountingItemWidget(accountingItemBillGUI, accountingItemPPUGUI, accountingItemLSGUI, accountingItemTAMGUI, accountingItemCommentGUI, mainSplitter ) ) {
@@ -102,7 +102,7 @@ public:
     }
 
     AccountingBill * accounting;
-    AccountingBillItem * currentAccountingMeasure;
+    AccountingBillItem * currentItem;
     Project * project;
     AccountingBillItem * accountingItemEditingPrice;
     PriceItem * importingDataPriceItem;
@@ -150,9 +150,9 @@ void AccountingBillGUI::setAccountingBill( AccountingBill * b ){
 }
 
 void AccountingBillGUI::setAccountingItem(AccountingBillItem * newItem ) {
-    if( m_d->currentAccountingMeasure != NULL ){
-        disconnect( m_d->currentAccountingMeasure, static_cast<void(AccountingBillItem::*)(bool)>(&AccountingBillItem::hasChildrenChanged), this, &AccountingBillGUI::updateAccountingMeasureGUI );
-        disconnect( m_d->currentAccountingMeasure, &AccountingBillItem::aboutToBeDeleted, this, &AccountingBillGUI::setAccountingMeasureNULL );
+    if( m_d->currentItem != NULL ){
+        disconnect( m_d->currentItem, static_cast<void(AccountingBillItem::*)(bool)>(&AccountingBillItem::hasChildrenChanged), this, &AccountingBillGUI::updateAccountingMeasureGUI );
+        disconnect( m_d->currentItem, &AccountingBillItem::aboutToBeDeleted, this, &AccountingBillGUI::setAccountingMeasureNULL );
         m_d->accountingItemBillGUI->setAccountingItemNULL();
         m_d->accountingItemBillGUI->hide();
         m_d->accountingItemPPUGUI->setAccountingItemNULL();
@@ -164,11 +164,11 @@ void AccountingBillGUI::setAccountingItem(AccountingBillItem * newItem ) {
         m_d->accountingItemCommentGUI->setAccountingItemNULL();
         m_d->accountingItemCommentGUI->hide();
     }
-    m_d->currentAccountingMeasure = newItem;
-    if( m_d->currentAccountingMeasure != NULL ){
+    m_d->currentItem = newItem;
+    if( m_d->currentItem != NULL ){
         updateAccountingMeasureGUI();
-        connect( m_d->currentAccountingMeasure, static_cast<void(AccountingBillItem::*)(bool)>(&AccountingBillItem::hasChildrenChanged), this, &AccountingBillGUI::updateAccountingMeasureGUI );
-        connect( m_d->currentAccountingMeasure, &AccountingBillItem::aboutToBeDeleted, this, &AccountingBillGUI::setAccountingMeasureNULL );
+        connect( m_d->currentItem, static_cast<void(AccountingBillItem::*)(bool)>(&AccountingBillItem::hasChildrenChanged), this, &AccountingBillGUI::updateAccountingMeasureGUI );
+        connect( m_d->currentItem, &AccountingBillItem::aboutToBeDeleted, this, &AccountingBillGUI::setAccountingMeasureNULL );
     }
 }
 
@@ -177,10 +177,10 @@ void AccountingBillGUI::setAccountingMeasureNULL() {
 }
 
 void AccountingBillGUI::updateAccountingMeasureGUI() {
-    if( m_d->currentAccountingMeasure != NULL ){
-        if( m_d->currentAccountingMeasure->itemType() == AccountingBillItem::Bill ){
+    if( m_d->currentItem != NULL ){
+        if( m_d->currentItem->itemType() == AccountingBillItem::Bill ){
             m_d->accountingItemBillGUI->show();
-            m_d->accountingItemBillGUI->setAccountingItemNULL();
+            m_d->accountingItemBillGUI->setAccountingItem( m_d->currentItem );
 
             m_d->accountingItemPPUGUI->hide();
             m_d->accountingItemPPUGUI->setAccountingItemNULL();
@@ -196,12 +196,12 @@ void AccountingBillGUI::updateAccountingMeasureGUI() {
 
             return;
         }
-        if( m_d->currentAccountingMeasure->itemType() == AccountingBillItem::PPU ){
+        if( m_d->currentItem->itemType() == AccountingBillItem::PPU ){
             m_d->accountingItemBillGUI->hide();
             m_d->accountingItemBillGUI->setAccountingItemNULL();
 
             m_d->accountingItemPPUGUI->show();
-            m_d->accountingItemPPUGUI->setAccountingItemNULL();
+            m_d->accountingItemPPUGUI->setAccountingItem( m_d->currentItem );
 
             m_d->accountingItemLSGUI->hide();
             m_d->accountingItemLSGUI->setAccountingItemNULL();
@@ -214,7 +214,7 @@ void AccountingBillGUI::updateAccountingMeasureGUI() {
 
             return;
         }
-        if(  m_d->currentAccountingMeasure->itemType() == AccountingBillItem::LumpSum ){
+        if(  m_d->currentItem->itemType() == AccountingBillItem::LumpSum ){
             m_d->accountingItemBillGUI->hide();
             m_d->accountingItemBillGUI->setAccountingItemNULL();
 
@@ -222,7 +222,7 @@ void AccountingBillGUI::updateAccountingMeasureGUI() {
             m_d->accountingItemPPUGUI->setAccountingItemNULL();
 
             m_d->accountingItemLSGUI->show();
-            m_d->accountingItemLSGUI->setAccountingItemNULL();
+            m_d->accountingItemLSGUI->setAccountingItem( m_d->currentItem );
 
             m_d->accountingItemTAMGUI->hide();
             m_d->accountingItemTAMGUI->setAccountingItemNULL();
@@ -232,7 +232,7 @@ void AccountingBillGUI::updateAccountingMeasureGUI() {
 
             return;
         }
-        if(  m_d->currentAccountingMeasure->itemType() == AccountingBillItem::TimeAndMaterials ){
+        if(  m_d->currentItem->itemType() == AccountingBillItem::TimeAndMaterials ){
             m_d->accountingItemBillGUI->hide();
             m_d->accountingItemBillGUI->setAccountingItemNULL();
 
@@ -243,14 +243,14 @@ void AccountingBillGUI::updateAccountingMeasureGUI() {
             m_d->accountingItemLSGUI->setAccountingItemNULL();
 
             m_d->accountingItemTAMGUI->show();
-            m_d->accountingItemTAMGUI->setAccountingItemNULL();
+            m_d->accountingItemTAMGUI->setAccountingItem( m_d->currentItem );
 
             m_d->accountingItemCommentGUI->hide();
             m_d->accountingItemCommentGUI->setAccountingItemNULL();
 
             return;
         }
-        if(  m_d->currentAccountingMeasure->itemType() == AccountingBillItem::Comment ){
+        if(  m_d->currentItem->itemType() == AccountingBillItem::Comment ){
             m_d->accountingItemBillGUI->hide();
             m_d->accountingItemBillGUI->setAccountingItemNULL();
 
@@ -264,7 +264,7 @@ void AccountingBillGUI::updateAccountingMeasureGUI() {
             m_d->accountingItemTAMGUI->setAccountingItemNULL();
 
             m_d->accountingItemCommentGUI->show();
-            m_d->accountingItemCommentGUI->setAccountingItemNULL();
+            m_d->accountingItemCommentGUI->setAccountingItem( m_d->currentItem );
 
             return;
         }

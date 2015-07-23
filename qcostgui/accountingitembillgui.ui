@@ -39,6 +39,9 @@
           </item>
           <item row="1" column="1">
            <widget class="QLineEdit" name="amountNotToBeDiscountedLineEdit">
+            <property name="alignment">
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
             <property name="readOnly">
              <bool>true</bool>
             </property>
@@ -46,6 +49,9 @@
           </item>
           <item row="0" column="1">
            <widget class="QLineEdit" name="totalAmountToBeDiscountedLineEdit">
+            <property name="alignment">
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
             <property name="readOnly">
              <bool>true</bool>
             </property>
@@ -67,6 +73,9 @@
           </item>
           <item row="2" column="1">
            <widget class="QLineEdit" name="totalAmountLineEdit">
+            <property name="alignment">
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
             <property name="readOnly">
              <bool>true</bool>
             </property>

@@ -1,6 +1,7 @@
 #include "accountingitemlsgui.h"
 #include "ui_accountingitemlsgui.h"
 
+#include "accountinglsbills.h"
 #include "accountingbill.h"
 #include "accountingbillitem.h"
 #include "accountingitemattributemodel.h"
@@ -12,8 +13,9 @@
 
 class AccountingItemLSGUIPrivate{
 public:
-    AccountingItemLSGUIPrivate( PriceFieldModel * pfm ):
+    AccountingItemLSGUIPrivate(  AccountingLSBills * lsb, PriceFieldModel * pfm ):
         ui(new Ui::AccountingItemLSGUI),
+        lsBills( lsb ),
         bill(NULL),
         item(NULL),
         itemAttributeModel( new AccountingItemAttributeModel(NULL, NULL) ),
@@ -23,6 +25,7 @@ public:
         delete ui;
     }
     Ui::AccountingItemLSGUI * ui;
+    AccountingLSBills * lsBills;
     AccountingBill * bill;
     AccountingBillItem * item;
     AccountingItemAttributeModel * itemAttributeModel;
@@ -31,9 +34,9 @@ public:
     QList<QLineEdit *> amountDataFieldLEdit;
 };
 
-AccountingItemLSGUI::AccountingItemLSGUI(PriceFieldModel * pfm, QWidget *parent) :
+AccountingItemLSGUI::AccountingItemLSGUI( AccountingLSBills * lsBills, PriceFieldModel * pfm, QWidget *parent) :
     QWidget(parent),
-    m_d(new AccountingItemLSGUIPrivate( pfm ) ) {
+    m_d(new AccountingItemLSGUIPrivate( lsBills, pfm ) ) {
     m_d->ui->setupUi(this);
     m_d->ui->attributeTableView->setModel( m_d->itemAttributeModel );
     connect( m_d->ui->addAttributePushButton, &QPushButton::clicked, this, &AccountingItemLSGUI::addAttribute );
@@ -153,6 +156,13 @@ void AccountingItemLSGUI::setDateBegin( const QString &newVal ) {
 
 void AccountingItemLSGUI::setDateEnd( const QString &newVal ) {
     m_d->ui->endDateLineEdit->setText( newVal );
+}
+
+void AccountingItemLSGUI::updateLumpSumsComboBox() {
+    m_d->ui->lumpSumsComboBox->clear();
+    for( int i=0; i < m_d->lsBills->billCount(); ++i ){
+        m_d->ui->lumpSumsComboBox->insertItem();
+    }
 }
 
 bool AccountingItemLSGUI::eventFilter(QObject *object, QEvent *event) {
