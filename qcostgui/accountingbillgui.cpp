@@ -91,7 +91,7 @@ public:
         accountingItemBillGUI( new AccountingItemBillGUI( prj->priceFieldModel(), parent ) ),
         accountingItemPPUGUI( new AccountingItemPPUGUI( EPAImpOptions, EPAFileName, prs, prj, parent ) ),
         accountingItemLSGUI( new AccountingItemLSGUI( prj->accountingLSBills(), prj->priceFieldModel(), parent ) ),
-        accountingItemTAMGUI( new AccountingItemTAMGUI( prj->priceFieldModel(), parent ) ),
+        accountingItemTAMGUI( new AccountingItemTAMGUI( prj->accountingTAMBill(), prj->priceFieldModel(), parent ) ),
         accountingItemCommentGUI( new AccountingItemCommentGUI( parent ) ),
         accountingItemWidget( new AccountingItemWidget(accountingItemBillGUI, accountingItemPPUGUI, accountingItemLSGUI, accountingItemTAMGUI, accountingItemCommentGUI, mainSplitter ) ) {
         accountingItemBillGUI->hide();

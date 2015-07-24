@@ -27,6 +27,7 @@ class UnitMeasureModel;
 class PriceFieldModel;
 class PriceList;
 class AccountingLSBills;
+class AccountingTAMBill;
 class Bill;
 class MathParser;
 class QXmlStreamReader;
@@ -61,6 +62,7 @@ public:
     Bill * bill( int i );
 
     AccountingLSBills * accountingLSBills();
+    AccountingTAMBill *accountingTAMBill();
 
     int columnCount(const QModelIndex &) const;
     int rowCount(const QModelIndex &parent) const;

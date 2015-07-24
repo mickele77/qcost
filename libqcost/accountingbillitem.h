@@ -88,6 +88,12 @@ public:
     // altri prezzi connessi tramite analisi prezzi
     QList<PriceItem *> connectedPriceItems() const;
 
+    void setLSBill(AccountingLSBill * newLSBill);
+    AccountingLSBill * lsBill();
+
+    void setTAMBill(AccountingTAMBill * newTAMBill);
+    AccountingTAMBill * tamBill();
+
     QDate date() const;
     QString dateStr() const;
 
@@ -253,6 +259,9 @@ signals:
     void dateEndChanged( const QString & newDateEnd );
     void attributesChanged();
 
+    void lsBillChanged( AccountingLSBill * newLSBill );
+    void tamBillChanged( AccountingTAMBill * newTAMBill );
+
 protected:
     AccountingBillItemPrivate * m_d;
 
@@ -355,6 +364,7 @@ protected:
     QList<Attribute *> allAttributes();
     QList<Attribute *> directAttributes() const;
     QList<Attribute *> inheritedAttributes() const;
+
 protected slots:
     void setQuantityPrivate(double v);
     void emitPriceDataUpdated();

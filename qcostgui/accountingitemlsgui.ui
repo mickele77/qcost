@@ -40,7 +40,7 @@
        <item row="3" column="0">
         <widget class="QGroupBox" name="amountsAccountedGroupBox">
          <property name="title">
-          <string>Importi</string>
+          <string>Contabilizzato</string>
          </property>
          <layout class="QGridLayout" name="amountsDataLayout">
           <item row="2" column="0">
@@ -52,6 +52,9 @@
           </item>
           <item row="3" column="1">
            <widget class="QLineEdit" name="totalAmountAccountedLineEdit">
+            <property name="alignment">
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
             <property name="readOnly">
              <bool>true</bool>
             </property>
@@ -59,6 +62,9 @@
           </item>
           <item row="2" column="1">
            <widget class="QLineEdit" name="amountNotToBeDiscountedAccountedLineEdit">
+            <property name="alignment">
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
             <property name="readOnly">
              <bool>true</bool>
             </property>
@@ -80,6 +86,9 @@
           </item>
           <item row="1" column="1">
            <widget class="QLineEdit" name="totalAmountToBeDiscountedAccountedLineEdit">
+            <property name="alignment">
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
             <property name="readOnly">
              <bool>true</bool>
             </property>
@@ -93,7 +102,11 @@
            </widget>
           </item>
           <item row="0" column="1">
-           <widget class="QLineEdit" name="percentageAccountedLineEdit"/>
+           <widget class="QLineEdit" name="percentageAccountedLineEdit">
+            <property name="alignment">
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
+           </widget>
           </item>
          </layout>
         </widget>
@@ -113,6 +126,9 @@
           </item>
           <item row="0" column="1">
            <widget class="QLineEdit" name="beginDateLineEdit">
+            <property name="alignment">
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
             <property name="readOnly">
              <bool>true</bool>
             </property>
@@ -127,6 +143,9 @@
           </item>
           <item row="1" column="1">
            <widget class="QLineEdit" name="endDateLineEdit">
+            <property name="alignment">
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
             <property name="readOnly">
              <bool>true</bool>
             </property>
@@ -150,11 +169,14 @@
        <item row="2" column="0">
         <widget class="QGroupBox" name="amountsGroupBox">
          <property name="title">
-          <string>Importi</string>
+          <string>Progetto</string>
          </property>
          <layout class="QGridLayout" name="amountsDataLayout_2">
           <item row="2" column="1">
            <widget class="QLineEdit" name="totalAmountLineEdit">
+            <property name="alignment">
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
             <property name="readOnly">
              <bool>true</bool>
             </property>
@@ -162,6 +184,9 @@
           </item>
           <item row="0" column="1">
            <widget class="QLineEdit" name="totalAmountToBeDiscountedLineEdit">
+            <property name="alignment">
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
             <property name="readOnly">
              <bool>true</bool>
             </property>
@@ -169,6 +194,9 @@
           </item>
           <item row="1" column="1">
            <widget class="QLineEdit" name="amountNotToBeDiscountedLineEdit">
+            <property name="alignment">
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
             <property name="readOnly">
              <bool>true</bool>
             </property>

@@ -32,29 +32,29 @@ public:
     QCostClipboardData::Mode copiedAccountingLSBillItemsMode() const;
     void setCopiedAccountingLSBills( QList<AccountingLSBill *> cb, Mode m);
     void setCopiedAccountingLSBillItems( QList<AccountingLSBillItem *> accountingItems, AccountingLSBill * b, Mode m);
-    void getCopiedAccountingLSBillItems( QList<AccountingLSBillItem *> *accountingItems,
-                                         AccountingLSBill * b,
+    void getCopiedAccountingLSBillItems(QList<AccountingLSBillItem *> *accountingItems,
+                                         AccountingLSBill *&b,
                                          QCostClipboardData::Mode *mode) const;
 
     QList<AccountingTAMBill *> copiedAccountingTAMBills();
     QCostClipboardData::Mode copiedAccountingTAMBillItemsMode() const;
     void setCopiedAccountingTAMBills( QList<AccountingTAMBill *> cb, Mode m);
     void setCopiedAccountingTAMBillItems( QList<AccountingTAMBillItem *> accountingItems, AccountingTAMBill * b, Mode m);
-    void getCopiedAccountingTAMBillItems( QList<AccountingTAMBillItem *> *accountingItems, AccountingTAMBill * b, QCostClipboardData::Mode *mode) const;
+    void getCopiedAccountingTAMBillItems(QList<AccountingTAMBillItem *> *accountingItems, AccountingTAMBill *&b, QCostClipboardData::Mode *mode) const;
 
     QList<AccountingBill *> copiedAccountingBills();
     QCostClipboardData::Mode copiedAccountingBillItemsMode() const;
     void setCopiedAccountingBills( QList<AccountingBill *> cb, Mode m);
     void setCopiedAccountingBillItems( QList<AccountingBillItem *> accountingItems, AccountingBill * b, Mode m);
-    void getCopiedAccountingBillItems( QList<AccountingBillItem *> *accountingItems,
-                                       AccountingBill * b,
+    void getCopiedAccountingBillItems(QList<AccountingBillItem *> *accountingItems,
+                                       AccountingBill *&b,
                                        QCostClipboardData::Mode *mode) const;
 
     QList<Bill *> copiedBills();
     QCostClipboardData::Mode copiedBillItemsMode() const;
     void setCopiedBills( QList<Bill *> cb, Mode m);
-    void setCopiedBillItems( QList<BillItem *> bi, Bill * b, Mode m);
-    void getCopiedBillItems(QList<BillItem *> *billItems, Bill *bill, QCostClipboardData::Mode *mode) const;
+    void setCopiedBillItems( QList<BillItem *> bi, Bill * &b, Mode m);
+    void getCopiedBillItems(QList<BillItem *> *billItems, Bill * &bill, QCostClipboardData::Mode *mode) const;
 
     QList<PriceList *> copiedPriceLists();
     QCostClipboardData::Mode copiedPriceListsMode();

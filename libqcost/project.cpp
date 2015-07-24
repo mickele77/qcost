@@ -172,6 +172,10 @@ AccountingLSBills *Project::accountingLSBills() {
     return m_d->accountingParentItem->lumpSumBills();
 }
 
+AccountingTAMBill *Project::accountingTAMBill() {
+    return m_d->accountingParentItem->timeAndMaterialBill();
+}
+
 int Project::columnCount(const QModelIndex & /* parent */) const {
     return 1;
 }

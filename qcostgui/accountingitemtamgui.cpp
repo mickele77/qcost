@@ -12,8 +12,9 @@
 
 class AccountingItemTAMGUIPrivate{
 public:
-    AccountingItemTAMGUIPrivate( PriceFieldModel * pfm ):
+    AccountingItemTAMGUIPrivate( AccountingTAMBill * tb, PriceFieldModel * pfm ):
         ui(new Ui::AccountingItemTAMGUI),
+        tamBill(tb),
         bill(NULL),
         item(NULL),
         itemAttributeModel( new AccountingItemAttributeModel(NULL, NULL) ),
@@ -23,6 +24,7 @@ public:
         delete ui;
     }
     Ui::AccountingItemTAMGUI * ui;
+    AccountingTAMBill * tamBill;
     AccountingBill * bill;
     AccountingBillItem * item;
     AccountingItemAttributeModel * itemAttributeModel;
@@ -31,9 +33,9 @@ public:
     QList<QLineEdit *> amountDataFieldLEdit;
 };
 
-AccountingItemTAMGUI::AccountingItemTAMGUI(PriceFieldModel * pfm, QWidget *parent) :
+AccountingItemTAMGUI::AccountingItemTAMGUI(AccountingTAMBill * tamBill, PriceFieldModel * pfm, QWidget *parent) :
     QWidget(parent),
-    m_d(new AccountingItemTAMGUIPrivate( pfm ) ) {
+    m_d(new AccountingItemTAMGUIPrivate( tamBill, pfm ) ) {
     m_d->ui->setupUi(this);
     m_d->ui->attributeTableView->setModel( m_d->itemAttributeModel );
     connect( m_d->ui->addAttributePushButton, &QPushButton::clicked, this, &AccountingItemTAMGUI::addAttribute );
@@ -153,6 +155,28 @@ void AccountingItemTAMGUI::setDateBegin( const QString &newVal ) {
 
 void AccountingItemTAMGUI::setDateEnd( const QString &newVal ) {
     m_d->ui->endDateLineEdit->setText( newVal );
+}
+
+void AccountingItemTAMGUI::updateTAMBillComboBox() {
+    disconnect( m_d->ui->tamBillComboBox, static_cast<void(QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this, &AccountingItemTAMGUI::setTAMBill );
+
+    m_d->ui->tamBillComboBox->clear();
+    int currIndex = 0;
+    QVariant v = qVariantFromValue((void *) NULL);
+    m_d->ui->tamBillComboBox->insertItem( 0, "", v);
+    for( int i=0; i < m_d->lsBills->billCount(); ++i ){
+        AccountingTAMBillItem * b = m_d->tamBill->bill(i);
+        v = qVariantFromValue((void *) b );
+        m_d->ui->tamBillComboBox->insertItem( (i+1), b->name(), v );
+        if( m_d->item != NULL ){
+            if( m_d->item->lsBill() == b ){
+                currIndex = i+1;
+            }
+        }
+    }
+    m_d->ui->tamBillComboBox->setCurrentIndex( currIndex );
+
+    connect( m_d->ui->tamBillComboBox, static_cast<void(QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this, &AccountingItemTAMGUI::setTAMBill );
 }
 
 bool AccountingItemTAMGUI::eventFilter(QObject *object, QEvent *event) {

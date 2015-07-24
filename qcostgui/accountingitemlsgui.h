@@ -10,16 +10,16 @@ class AccountingBillItem ;
 
 class AccountingItemLSGUIPrivate;
 
-class AccountingItemLSGUI : public QWidget
-{
+class AccountingItemLSGUI : public QWidget {
     Q_OBJECT
-    
+
 public:
     explicit AccountingItemLSGUI( AccountingLSBills *lsBills, PriceFieldModel *pfm, QWidget *parent = 0);
     ~AccountingItemLSGUI();
     
     void setAccountingBill(AccountingBill *b);
 
+    void showEvent(QShowEvent * event);
 public slots:
     void setAccountingItem(AccountingBillItem *b );
     void setAccountingItemNULL();
@@ -34,6 +34,7 @@ private slots:
     void setDateEnd( const QString & newVal );
 
     void updateLumpSumsComboBox();
+    void setLSBill();
 private:
     AccountingItemLSGUIPrivate * m_d;
 

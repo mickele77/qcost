@@ -5,6 +5,8 @@
 class AccountingTAMBillItem;
 class AccountingPriceFieldModel;
 
+#include "accountingtambill.h"
+#include "accountinglsbill.h"
 #include "accountingbillitem.h"
 #include "pricefieldmodel.h"
 #include "priceitem.h"
@@ -74,6 +76,10 @@ public:
     AccountingPriceFieldModel * totalAmountPriceFieldModel;
     // nel caso di elemento Root - modello degli importi non soggetto a ribasso
     AccountingPriceFieldModel * noDiscountAmountPriceFieldModel;
+    // nel caso di elemento LumpSum - puntatore alla categoria
+    AccountingLSBill * lsBill;
+    // nel caso di elemento TimeAndMaterial - puntatore alla lista
+    AccountingTAMBill * tamBill;
 
     // indici delle colonne
     static int progNumberCol;

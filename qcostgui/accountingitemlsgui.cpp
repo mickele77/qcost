@@ -2,12 +2,14 @@
 #include "ui_accountingitemlsgui.h"
 
 #include "accountinglsbills.h"
+#include "accountinglsbill.h"
 #include "accountingbill.h"
 #include "accountingbillitem.h"
 #include "accountingitemattributemodel.h"
 #include "pricefieldmodel.h"
 #include "qcalendardialog.h"
 
+#include <QShowEvent>
 #include <QDate>
 #include <QLabel>
 
@@ -41,6 +43,8 @@ AccountingItemLSGUI::AccountingItemLSGUI( AccountingLSBills * lsBills, PriceFiel
     m_d->ui->attributeTableView->setModel( m_d->itemAttributeModel );
     connect( m_d->ui->addAttributePushButton, &QPushButton::clicked, this, &AccountingItemLSGUI::addAttribute );
     connect( m_d->ui->removeAttributePushButton, &QPushButton::clicked, this, &AccountingItemLSGUI::removeAttribute );
+
+    connect( m_d->ui->lumpSumsComboBox, static_cast<void(QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this, &AccountingItemLSGUI::setLSBill );
 
     m_d->ui->beginDateLineEdit->installEventFilter( this );
     m_d->ui->endDateLineEdit->installEventFilter( this );
@@ -159,9 +163,35 @@ void AccountingItemLSGUI::setDateEnd( const QString &newVal ) {
 }
 
 void AccountingItemLSGUI::updateLumpSumsComboBox() {
+    disconnect( m_d->ui->lumpSumsComboBox, static_cast<void(QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this, &AccountingItemLSGUI::setLSBill );
+
     m_d->ui->lumpSumsComboBox->clear();
+    int currIndex = 0;
+    QVariant v = qVariantFromValue((void *) NULL);
+    m_d->ui->lumpSumsComboBox->insertItem( 0, "", v);
     for( int i=0; i < m_d->lsBills->billCount(); ++i ){
-        m_d->ui->lumpSumsComboBox->insertItem();
+        AccountingLSBill * b = m_d->lsBills->bill(i);
+        v = qVariantFromValue((void *) b );
+        m_d->ui->lumpSumsComboBox->insertItem( (i+1), b->name(), v );
+        if( m_d->item != NULL ){
+            if( m_d->item->lsBill() == b ){
+                currIndex = i+1;
+            }
+        }
+    }
+    m_d->ui->lumpSumsComboBox->setCurrentIndex( currIndex );
+
+    connect( m_d->ui->lumpSumsComboBox, static_cast<void(QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this, &AccountingItemLSGUI::setLSBill );
+}
+
+void AccountingItemLSGUI::setLSBill() {
+    if( m_d->item != NULL ){
+        QVariant v = m_d->ui->lumpSumsComboBox->currentData();
+        AccountingLSBill * newLSBill = NULL;
+        if( v.isValid() ){
+            newLSBill = (AccountingLSBill *) v.value<void *>();
+        }
+        m_d->item->setLSBill( newLSBill );
     }
 }
 
@@ -184,4 +214,11 @@ bool AccountingItemLSGUI::eventFilter(QObject *object, QEvent *event) {
         }
     }
     return false;
+}
+
+void AccountingItemLSGUI::showEvent(QShowEvent *event) {
+    if( event->type() == QEvent::Show ){
+        updateLumpSumsComboBox();
+    }
+    QWidget::showEvent( event );
 }

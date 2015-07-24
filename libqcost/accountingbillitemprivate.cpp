@@ -34,6 +34,8 @@ AccountingBillItemPrivate::AccountingBillItemPrivate( AccountingBillItem * paren
     noDiscountAmountPriceFieldsList(QList<int>()),
     totalAmountPriceFieldModel( NULL ),
     noDiscountAmountPriceFieldModel( NULL ),
+    lsBill(NULL),
+    tamBill(NULL),
     colCount(totalAmountCol+1),
     totalAmountToBeDiscounted(0.0),
     amountNotToBeDiscounted(0.0),

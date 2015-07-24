@@ -83,14 +83,14 @@ QCostClipboardData::Mode QCostClipboardData::copiedBillItemsMode() const {
 }
 
 void QCostClipboardData::getCopiedBillItems( QList<BillItem *> * billItems,
-                                             Bill * bill,
+                                             Bill * &bill,
                                              QCostClipboardData::Mode * mode ) const{
     *billItems = m_d->copiedBillItems;
     bill = m_d->copiedBillItemsBill;
     *mode = m_d->copiedBillItemsMode;
 }
 
-void QCostClipboardData::setCopiedBillItems(QList<BillItem *> bi, Bill *b, QCostClipboardData::Mode m) {
+void QCostClipboardData::setCopiedBillItems(QList<BillItem *> bi, Bill *&b, QCostClipboardData::Mode m) {
     m_d->copiedBillItems = bi;
     m_d->copiedBillItemsMode = m;
     m_d->copiedBillItemsBill = b;
@@ -125,7 +125,7 @@ void QCostClipboardData::setCopiedAccountingBills( QList<AccountingBill *> ca,
 }
 
 void QCostClipboardData::getCopiedAccountingBillItems( QList<AccountingBillItem *> * accountingItems,
-                                                       AccountingBill * accounting,
+                                                       AccountingBill * &accounting,
                                                        QCostClipboardData::Mode * mode ) const{
     *accountingItems = m_d->copiedAccBillItems;
     accounting = m_d->copiedAccBillItemsBill;
@@ -161,7 +161,7 @@ void QCostClipboardData::setCopiedAccountingTAMBills( QList<AccountingTAMBill *>
 }
 
 void QCostClipboardData::getCopiedAccountingTAMBillItems( QList<AccountingTAMBillItem *> * accountingItems,
-                                                          AccountingTAMBill * accounting,
+                                                          AccountingTAMBill * &accounting,
                                                           QCostClipboardData::Mode * mode ) const{
     *accountingItems = m_d->copiedAccTAMBillItems;
     accounting = m_d->copiedAccTAMBillItemsBill;
@@ -196,7 +196,7 @@ void QCostClipboardData::setCopiedAccountingLSBills(QList<AccountingLSBill *> ca
 }
 
 void QCostClipboardData::getCopiedAccountingLSBillItems( QList<AccountingLSBillItem *> * accountingItems,
-                                                         AccountingLSBill * accounting,
+                                                         AccountingLSBill * &accounting,
                                                          QCostClipboardData::Mode * mode ) const{
     *accountingItems = m_d->copiedAccLSBillItems;
     accounting = m_d->copiedAccLSBillItemsBill;

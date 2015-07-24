@@ -1330,6 +1330,28 @@ QList<PriceItem *> AccountingBillItem::connectedPriceItems() const {
     return ret;
 }
 
+void AccountingBillItem::setLSBill(AccountingLSBill *newLSBill) {
+    if( m_d->lsBill != newLSBill ){
+        m_d->lsBill = newLSBill;
+        emit lsBillChanged( m_d->lsBill );
+    }
+}
+
+AccountingLSBill *AccountingBillItem::lsBill() {
+    return m_d->lsBill;
+}
+
+void AccountingBillItem::setTAMBill(AccountingTAMBill *newTAMBill) {
+    if( m_d->tamBill != newTAMBill ){
+        m_d->tamBill = newTAMBill;
+        emit tamBillChanged( m_d->tamBill );
+    }
+}
+
+AccountingTAMBill *AccountingBillItem::tamBill() {
+    return m_d->tamBill;
+}
+
 QDate AccountingBillItem::date() const {
     return m_d->date;
 }

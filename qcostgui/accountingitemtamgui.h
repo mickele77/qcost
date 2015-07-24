@@ -2,6 +2,7 @@
 #define ACCOUNTINGITEMTAMGUI_H
 
 class PriceFieldModel;
+class AccountingTAMBill;
 class AccountingBill;
 class AccountingBillItem ;
 
@@ -14,7 +15,7 @@ class AccountingItemTAMGUI : public QWidget
     Q_OBJECT
     
 public:
-    explicit AccountingItemTAMGUI(PriceFieldModel *pfm, QWidget *parent = 0);
+    explicit AccountingItemTAMGUI(AccountingTAMBill *tamBill, PriceFieldModel *pfm, QWidget *parent = 0);
     ~AccountingItemTAMGUI();
     
     void setAccountingBill(AccountingBill *b);
@@ -31,6 +32,9 @@ private slots:
 
     void setDateBegin( const QString & newVal );
     void setDateEnd( const QString & newVal );
+
+    void updateTAMBillComboBox();
+
 private:
     AccountingItemTAMGUIPrivate * m_d;
 
