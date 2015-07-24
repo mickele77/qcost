@@ -98,6 +98,8 @@ public:
     double discount();
     void setDiscount(double newVal);
 
+    QList<AccountingTAMBillItem *> bills();
+
     QVariant data(const QModelIndex &index, int role) const;
     QVariant headerData(int section, Qt::Orientation orientation,
                         int role = Qt::DisplayRole) const;

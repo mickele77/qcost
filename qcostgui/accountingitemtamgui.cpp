@@ -1,6 +1,7 @@
 #include "accountingitemtamgui.h"
 #include "ui_accountingitemtamgui.h"
 
+#include "accountingtambill.h"
 #include "accountingbill.h"
 #include "accountingbillitem.h"
 #include "accountingitemattributemodel.h"
@@ -40,6 +41,8 @@ AccountingItemTAMGUI::AccountingItemTAMGUI(AccountingTAMBill * tamBill, PriceFie
     m_d->ui->attributeTableView->setModel( m_d->itemAttributeModel );
     connect( m_d->ui->addAttributePushButton, &QPushButton::clicked, this, &AccountingItemTAMGUI::addAttribute );
     connect( m_d->ui->removeAttributePushButton, &QPushButton::clicked, this, &AccountingItemTAMGUI::removeAttribute );
+
+    connect( m_d->ui->tamBillComboBox, static_cast<void(QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this, &AccountingItemTAMGUI::setTAMBill );
 
     m_d->ui->beginDateLineEdit->installEventFilter( this );
     m_d->ui->endDateLineEdit->installEventFilter( this );
@@ -164,12 +167,13 @@ void AccountingItemTAMGUI::updateTAMBillComboBox() {
     int currIndex = 0;
     QVariant v = qVariantFromValue((void *) NULL);
     m_d->ui->tamBillComboBox->insertItem( 0, "", v);
-    for( int i=0; i < m_d->lsBills->billCount(); ++i ){
-        AccountingTAMBillItem * b = m_d->tamBill->bill(i);
+    QList<AccountingTAMBillItem *> bills = m_d->tamBill->bills();
+    for( int i=0; i < bills.size(); ++i ){
+        AccountingTAMBillItem * b = bills.at(i);
         v = qVariantFromValue((void *) b );
         m_d->ui->tamBillComboBox->insertItem( (i+1), b->name(), v );
         if( m_d->item != NULL ){
-            if( m_d->item->lsBill() == b ){
+            if( m_d->item->tamBillItem() == b ){
                 currIndex = i+1;
             }
         }
@@ -177,6 +181,17 @@ void AccountingItemTAMGUI::updateTAMBillComboBox() {
     m_d->ui->tamBillComboBox->setCurrentIndex( currIndex );
 
     connect( m_d->ui->tamBillComboBox, static_cast<void(QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this, &AccountingItemTAMGUI::setTAMBill );
+}
+
+void AccountingItemTAMGUI::setTAMBill() {
+    if( m_d->item != NULL ){
+        QVariant v = m_d->ui->tamBillComboBox->currentData();
+        AccountingTAMBillItem * newTAMBillItem = NULL;
+        if( v.isValid() ){
+            newTAMBillItem = (AccountingTAMBillItem *) v.value<void *>();
+        }
+        m_d->item->setTAMBillItem( newTAMBillItem );
+    }
 }
 
 bool AccountingItemTAMGUI::eventFilter(QObject *object, QEvent *event) {

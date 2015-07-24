@@ -321,6 +321,15 @@ void AccountingTAMBill::setDiscount(double newVal) {
     m_d->rootItem->setDiscount( newVal );
 }
 
+QList<AccountingTAMBillItem *> AccountingTAMBill::bills() {
+    QList<AccountingTAMBillItem *> ret;
+    for( int i=0; i < m_d->rootItem->childrenCount(); i++ ){
+
+        ret << dynamic_cast<AccountingTAMBillItem *>( m_d->rootItem->child( i ) );
+    }
+    return ret;
+}
+
 
 AccountingTAMBillItem *AccountingTAMBill::item(const QModelIndex &index ) const {
     if (index.isValid()) {

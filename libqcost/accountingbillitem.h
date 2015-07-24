@@ -21,6 +21,7 @@
 
 #include "library_common.h"
 
+class AccountingTAMBillItem;
 class AccountingPriceFieldModel;
 class PriceList;
 class PriceItem;
@@ -91,8 +92,8 @@ public:
     void setLSBill(AccountingLSBill * newLSBill);
     AccountingLSBill * lsBill();
 
-    void setTAMBill(AccountingTAMBill * newTAMBill);
-    AccountingTAMBill * tamBill();
+    void setTAMBillItem(AccountingTAMBillItem *newTAMBill);
+    AccountingTAMBillItem * tamBillItem();
 
     QDate date() const;
     QString dateStr() const;
@@ -260,7 +261,7 @@ signals:
     void attributesChanged();
 
     void lsBillChanged( AccountingLSBill * newLSBill );
-    void tamBillChanged( AccountingTAMBill * newTAMBill );
+    void tamBillItemChanged( AccountingTAMBillItem * newTAMBill );
 
 protected:
     AccountingBillItemPrivate * m_d;
@@ -375,6 +376,11 @@ protected slots:
     void updateAmountToBeDiscounted();
     void updateAmountDiscounted();
     void updateTotalAmount();
+
+    // nel caso di lumpsum, azzera l'oggetto AccountingLSBill associato
+    void setLSBillNULL();
+    // nel caso di tam, azzera l'oggetto AccountingBillItem associato
+    void setTAMBillItemNULL();
 };
 
 #endif // ACCOUNTINGBILLITEM_H

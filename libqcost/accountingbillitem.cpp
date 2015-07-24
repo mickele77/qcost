@@ -21,6 +21,7 @@
 
 #include "accountingbillitemprivate.h"
 
+#include "accountingtambillitem.h"
 #include "accountingpricefieldmodel.h"
 #include "accountingprinter.h"
 #include "accountingprinter.h"
@@ -1332,24 +1333,44 @@ QList<PriceItem *> AccountingBillItem::connectedPriceItems() const {
 
 void AccountingBillItem::setLSBill(AccountingLSBill *newLSBill) {
     if( m_d->lsBill != newLSBill ){
+        if( m_d->lsBill != NULL ){
+            disconnect( m_d->lsBill, &AccountingLSBill::aboutToBeDeleted, this, &AccountingBillItem::setLSBillNULL );
+        }
         m_d->lsBill = newLSBill;
+        if( m_d->lsBill != NULL ){
+            connect( m_d->lsBill, &AccountingLSBill::aboutToBeDeleted, this, &AccountingBillItem::setLSBillNULL );
+        }
         emit lsBillChanged( m_d->lsBill );
     }
+}
+
+void AccountingBillItem::setLSBillNULL() {
+    setLSBill( NULL );
 }
 
 AccountingLSBill *AccountingBillItem::lsBill() {
     return m_d->lsBill;
 }
 
-void AccountingBillItem::setTAMBill(AccountingTAMBill *newTAMBill) {
-    if( m_d->tamBill != newTAMBill ){
-        m_d->tamBill = newTAMBill;
-        emit tamBillChanged( m_d->tamBill );
+void AccountingBillItem::setTAMBillItem(AccountingTAMBillItem *newTAMBillItem) {
+    if( m_d->tamBillItem != newTAMBillItem ){
+        if( m_d->tamBillItem != NULL ){
+            disconnect( m_d->tamBillItem, &AccountingTAMBillItem::aboutToBeDeleted, this, &AccountingBillItem::setTAMBillItemNULL );
+        }
+        m_d->tamBillItem = newTAMBillItem;
+        if( m_d->tamBillItem != NULL ){
+            connect( m_d->tamBillItem, &AccountingTAMBillItem::aboutToBeDeleted, this, &AccountingBillItem::setTAMBillItemNULL );
+        }
+        emit tamBillItemChanged( m_d->tamBillItem );
     }
 }
 
-AccountingTAMBill *AccountingBillItem::tamBill() {
-    return m_d->tamBill;
+void AccountingBillItem::setTAMBillItemNULL() {
+    setTAMBillItem( NULL );
+}
+
+AccountingTAMBillItem *AccountingBillItem::tamBillItem() {
+    return m_d->tamBillItem;
 }
 
 QDate AccountingBillItem::date() const {

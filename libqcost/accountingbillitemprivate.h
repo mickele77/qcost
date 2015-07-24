@@ -1,11 +1,8 @@
 #ifndef ACCOUNTINGBILLITEMPRIVATE_H
 #define ACCOUNTINGBILLITEMPRIVATE_H
 
-
-class AccountingTAMBillItem;
 class AccountingPriceFieldModel;
 
-#include "accountingtambill.h"
 #include "accountinglsbill.h"
 #include "accountingbillitem.h"
 #include "pricefieldmodel.h"
@@ -50,8 +47,6 @@ public:
     QDate date;
     // Nel caso di lista, data di fine
     QDate dateEnd;
-    // Nel caso di lista, la lista
-    AccountingTAMBillItem * connectedTAMBillItem;
     // nel caso di commento, il testo del commento
     QString text;
     // nel caso di linea con misure, la quantita'
@@ -79,7 +74,7 @@ public:
     // nel caso di elemento LumpSum - puntatore alla categoria
     AccountingLSBill * lsBill;
     // nel caso di elemento TimeAndMaterial - puntatore alla lista
-    AccountingTAMBill * tamBill;
+    AccountingTAMBillItem * tamBillItem;
 
     // indici delle colonne
     static int progNumberCol;

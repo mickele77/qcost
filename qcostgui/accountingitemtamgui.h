@@ -35,6 +35,7 @@ private slots:
 
     void updateTAMBillComboBox();
 
+    void setTAMBill();
 private:
     AccountingItemTAMGUIPrivate * m_d;
 
