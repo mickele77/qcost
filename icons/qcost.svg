@@ -14,7 +14,7 @@
    height="48.000000px"
    id="svg97"
    sodipodi:version="0.32"
-   inkscape:version="0.48.5 r10040"
+   inkscape:version="0.91 r13725"
    sodipodi:docname="qcost.svg"
    inkscape:export-filename="/home/jimmac/ximian_art/icons/nautilus/snowdunes/gnome-fs-directory-accept.png"
    inkscape:export-xdpi="90.000000"
@@ -230,16 +230,16 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="7.9999999"
-     inkscape:cx="-16.252236"
-     inkscape:cy="18.098718"
+     inkscape:cx="28.747765"
+     inkscape:cy="22.723718"
      inkscape:current-layer="layer3"
      showgrid="false"
      inkscape:grid-bbox="true"
      inkscape:document-units="px"
-     inkscape:window-width="1920"
-     inkscape:window-height="1006"
-     inkscape:window-x="-2"
-     inkscape:window-y="-3"
+     inkscape:window-width="1324"
+     inkscape:window-height="739"
+     inkscape:window-x="-4"
+     inkscape:window-y="0"
      inkscape:showpageshadow="false"
      inkscape:window-maximized="1" />
   <metadata
@@ -302,16 +302,16 @@
     </g>
     <text
        xml:space="preserve"
-       style="font-size:15.78525543px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
-       x="6.596756"
-       y="28.383974"
+       style="font-style:normal;font-weight:normal;font-size:15.78525543px;line-height:125%;font-family:Sans;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none"
+       x="8.5658178"
+       y="28.428953"
        id="text3283"
        sodipodi:linespacing="125%"
        transform="matrix(1.0152139,-0.02248915,0.02180945,0.98453096,0,0)"><tspan
          sodipodi:role="line"
          id="tspan3285"
-         x="6.596756"
-         y="28.383974"
-         style="font-size:17.91313362px;text-align:start;text-anchor:start">Cost</tspan></text>
+         x="8.5658178"
+         y="28.428953"
+         style="font-size:16.25px;text-align:start;text-anchor:start">Cost</tspan></text>
   </g>
 </svg>

@@ -108,6 +108,7 @@ bool AccountingPriceFieldModel::setData(const QModelIndex &index, const QVariant
                 } else { // value.toInt() != Qt::Checked
                     m_d->selectedRows->removeAll( index.row() );
                 }
+                emit modelChanged();
                 return true;
             }
         }

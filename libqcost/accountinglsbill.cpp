@@ -26,6 +26,7 @@
 #include "priceitem.h"
 #include "projectpricelistparentitem.h"
 #include "pricefieldmodel.h"
+#include "mathparser.h"
 
 #include <QXmlStreamReader>
 #include <QXmlStreamAttributes>
@@ -35,9 +36,12 @@
 
 class AccountingLSBillPrivate{
 public:
-    AccountingLSBillPrivate( const QString &n, AccountingLSBill * b, PriceFieldModel * pfm, MathParser * prs = NULL ):
+    AccountingLSBillPrivate( const QString &c, const QString &n, AccountingLSBill * b, PriceFieldModel * pfm, MathParser * prs = NULL ):
         id(0),
+        code( c ),
         name( n ),
+        PPUTotalToDiscount(0.0),
+        PPUNotToDiscount(0.0),
         priceFieldModel(pfm),
         parser(prs),
         rootItem(new AccountingLSBillItem( NULL, NULL, pfm, parser )),
@@ -66,8 +70,11 @@ public:
 
     unsigned int id;
 
+    QString code;
     QString name;
     QString description;
+    double PPUTotalToDiscount;
+    double PPUNotToDiscount;
 
     PriceFieldModel * priceFieldModel;
     MathParser * parser;
@@ -77,36 +84,46 @@ public:
     unsigned int priceListIdTmp;
 };
 
-AccountingLSBill::AccountingLSBill(const QString &n, ProjectItem *parent, PriceFieldModel * pfm, MathParser * parser ):
-    QAbstractTableModel(),
+AccountingLSBill::AccountingLSBill( const QString &c, const QString &n,
+                                    ProjectItem *parent, PriceFieldModel * pfm, MathParser * parser ):
+    QAbstractItemModel(),
     ProjectItem(parent),
-    m_d( new AccountingLSBillPrivate( n, this, pfm, parser ) ) {
-    connect( m_d->rootItem, static_cast<void(AccountingLSBillItem::*)(AccountingLSBillItem*,int)>(&AccountingLSBillItem::dataChanged), this, &AccountingLSBill::updateValue );
-    connect( m_d->rootItem, static_cast<void(AccountingLSBillItem::*)(const QString &)>(&AccountingLSBillItem::totalAmountChanged), this, static_cast<void(AccountingLSBill::*)(const QString &)>(&AccountingLSBill::totalAmountChanged) );
-    connect( m_d->rootItem, &AccountingLSBillItem::itemChanged, this, &AccountingLSBill::modelChanged );
+    m_d( new AccountingLSBillPrivate( c, n, this, pfm, parser ) ) {
+    connect( m_d->rootItem, static_cast<void(AccountingLSBillItem::*)(AccountingLSBillItem*,int)>(&AccountingLSBillItem::dataChanged), this, &AccountingLSBill::updateData );
 
+    connect( m_d->rootItem, &AccountingLSBillItem::projAmountChanged, this, &AccountingLSBill::projAmountChanged );
+    connect( m_d->rootItem, &AccountingLSBillItem::accAmountChanged, this, &AccountingLSBill::accAmountChanged );
+    connect( m_d->rootItem, &AccountingLSBillItem::percentageAccountedChanged, this, &AccountingLSBill::percentageAccountedChanged );
+
+    connect( m_d->rootItem, &AccountingLSBillItem::itemChanged, this, &AccountingLSBill::modelChanged );
     connect( m_d->attributeModel, &AttributeModel::modelChanged, this, &AccountingLSBill::modelChanged );
 }
 
 AccountingLSBill::AccountingLSBill(AccountingLSBill & b):
-    QAbstractTableModel(),
+    QAbstractItemModel(),
     ProjectItem( b.ProjectItem::parentItem() ),
-    m_d( new AccountingLSBillPrivate( b.m_d->name, this, b.m_d->priceFieldModel, b.m_d->parser ) ) {
+    m_d( new AccountingLSBillPrivate( b.m_d->code, b.m_d->name, this, b.m_d->priceFieldModel, b.m_d->parser ) ) {
 
     *this = b;
 
-    connect( m_d->rootItem, static_cast<void(AccountingLSBillItem::*)(AccountingLSBillItem*,int)>(&AccountingLSBillItem::dataChanged), this, &AccountingLSBill::updateValue );
-    connect( m_d->rootItem, static_cast<void(AccountingLSBillItem::*)(const QString &)>(&AccountingLSBillItem::totalAmountChanged), this, static_cast<void(AccountingLSBill::*)(const QString &)>(&AccountingLSBill::totalAmountChanged) );
-    connect( m_d->rootItem, &AccountingLSBillItem::itemChanged, this, &AccountingLSBill::modelChanged );
+    connect( m_d->rootItem, static_cast<void(AccountingLSBillItem::*)(AccountingLSBillItem*,int)>(&AccountingLSBillItem::dataChanged), this, &AccountingLSBill::updateData );
 
+    connect( m_d->rootItem, &AccountingLSBillItem::projAmountChanged, this, &AccountingLSBill::projAmountChanged );
+    connect( m_d->rootItem, &AccountingLSBillItem::accAmountChanged, this, &AccountingLSBill::accAmountChanged );
+    connect( m_d->rootItem, &AccountingLSBillItem::percentageAccountedChanged, this, &AccountingLSBill::percentageAccountedChanged );
+
+    connect( m_d->rootItem, &AccountingLSBillItem::itemChanged, this, &AccountingLSBill::modelChanged );
     connect( m_d->attributeModel, &AttributeModel::modelChanged, this, &AccountingLSBill::modelChanged );
 }
 
 AccountingLSBill::~AccountingLSBill(){
-    disconnect( m_d->rootItem, static_cast<void(AccountingLSBillItem::*)(AccountingLSBillItem*,int)>(&AccountingLSBillItem::dataChanged), this, &AccountingLSBill::updateValue );
-    disconnect( m_d->rootItem, static_cast<void(AccountingLSBillItem::*)(const QString &)>(&AccountingLSBillItem::totalAmountChanged), this, static_cast<void(AccountingLSBill::*)(const QString &)>(&AccountingLSBill::totalAmountChanged) );
-    disconnect( m_d->rootItem, &AccountingLSBillItem::itemChanged, this, &AccountingLSBill::modelChanged );
+    disconnect( m_d->rootItem, static_cast<void(AccountingLSBillItem::*)(AccountingLSBillItem*,int)>(&AccountingLSBillItem::dataChanged), this, &AccountingLSBill::updateData );
 
+    disconnect( m_d->rootItem, &AccountingLSBillItem::projAmountChanged, this, &AccountingLSBill::projAmountChanged );
+    disconnect( m_d->rootItem, &AccountingLSBillItem::accAmountChanged, this, &AccountingLSBill::accAmountChanged );
+    disconnect( m_d->rootItem, &AccountingLSBillItem::percentageAccountedChanged, this, &AccountingLSBill::percentageAccountedChanged );
+
+    disconnect( m_d->rootItem, &AccountingLSBillItem::itemChanged, this, &AccountingLSBill::modelChanged );
     disconnect( m_d->attributeModel, &AttributeModel::modelChanged, this, &AccountingLSBill::modelChanged );
 
     emit aboutToBeDeleted();
@@ -115,6 +132,7 @@ AccountingLSBill::~AccountingLSBill(){
 }
 
 AccountingLSBill &AccountingLSBill::operator=(const AccountingLSBill &cp) {
+    setCode( cp.m_d->code );
     setName( cp.m_d->name );
     setDescription( cp.m_d->description );
     setPriceList( cp.m_d->priceList );
@@ -122,7 +140,18 @@ AccountingLSBill &AccountingLSBill::operator=(const AccountingLSBill &cp) {
     return *this;
 }
 
-QString AccountingLSBill::name() {
+QString AccountingLSBill::code() const {
+    return m_d->code;
+}
+
+void AccountingLSBill::setCode(const QString &value) {
+    if( m_d->code != value ){
+        m_d->code = value;
+        emit codeChanged( m_d->code );
+    }
+}
+
+QString AccountingLSBill::name()  const {
     return m_d->name;
 }
 
@@ -136,14 +165,62 @@ void AccountingLSBill::setName(const QString &value) {
     }
 }
 
-QString AccountingLSBill::description() {
+QString AccountingLSBill::description()  const {
     return m_d->description;
+}
+
+double AccountingLSBill::PPUTotalToDiscount() const {
+    return m_d->PPUTotalToDiscount;
+}
+
+QString AccountingLSBill::PPUTotalToDiscountStr() const {
+    if( m_d->parser != NULL ){
+        return m_d->parser->toString( m_d->PPUTotalToDiscount );
+    }
+    return QString::number( m_d->PPUTotalToDiscount );
+}
+
+double AccountingLSBill::PPUNotToDiscount() const {
+    return m_d->PPUNotToDiscount;
+}
+
+QString AccountingLSBill::PPUNotToDiscountStr() const {
+    if( m_d->parser != NULL ){
+        return m_d->parser->toString( m_d->PPUNotToDiscount );
+    }
+    return QString::number( m_d->PPUNotToDiscount );
 }
 
 void AccountingLSBill::setDescription(const QString &value) {
     if( m_d->description != value ){
         m_d->description = value;
         emit descriptionChanged( value );
+    }
+}
+
+void AccountingLSBill::setPPUTotalToDiscount(const QString &newValue) {
+    double v = 0.0;
+    if( m_d->parser != NULL ){
+        v = m_d->parser->evaluate( newValue );
+    } else {
+        v = newValue.toDouble();
+    }
+    if( v != m_d->PPUTotalToDiscount ){
+        m_d->PPUTotalToDiscount = v;
+        emit PPUTotalToDiscountChanged( PPUTotalToDiscountStr() );
+    }
+}
+
+void AccountingLSBill::setPPUNotToDiscount(const QString &newValue) {
+    double v = 0.0;
+    if( m_d->parser != NULL ){
+        v = m_d->parser->evaluate( newValue );
+    } else {
+        v = newValue.toDouble();
+    }
+    if( v != m_d->PPUNotToDiscount ){
+        m_d->PPUNotToDiscount = v;
+        emit PPUNotToDiscountChanged( PPUNotToDiscountStr() );
     }
 }
 
@@ -441,7 +518,7 @@ bool AccountingLSBill::moveRows(const QModelIndex &sourceParent, int sourceRow, 
     return false;
 }
 
-void AccountingLSBill::updateValue(AccountingLSBillItem * item, int column) {
+void AccountingLSBill::updateData(AccountingLSBillItem * item, int column) {
     QModelIndex i = index( item, column);
     emit dataChanged( i, i);
 }
@@ -454,20 +531,20 @@ bool AccountingLSBill::isUsingPriceList(PriceList *pl) {
     return m_d->priceList == pl;
 }
 
-double AccountingLSBill::totalAmount() const {
-    return m_d->rootItem->totalAmount();
+double AccountingLSBill::projAmount() const {
+    return m_d->rootItem->projAmount();
 }
 
-QString AccountingLSBill::totalAmountStr() const {
-    return m_d->rootItem->totalAmountStr();
+QString AccountingLSBill::projAmountStr() const {
+    return m_d->rootItem->projAmountStr();
 }
 
-double AccountingLSBill::totalAmountAccounted() const {
-    return m_d->rootItem->totalAmountAccounted();
+double AccountingLSBill::accAmount() const {
+    return m_d->rootItem->accAmount();
 }
 
-QString AccountingLSBill::totalAmountAccountedStr() const {
-    return m_d->rootItem->totalAmountAccountedStr();
+QString AccountingLSBill::accAmountStr() const {
+    return m_d->rootItem->accAmountStr();
 }
 
 double AccountingLSBill::percentageAccounted() const {
@@ -478,16 +555,20 @@ QString AccountingLSBill::percentageAccountedStr() const {
     return m_d->rootItem->percentageAccountedStr();
 }
 
+double AccountingLSBill::percentageAccounted(const QDate &dBegin, const QDate &dEnd) const {
+    return m_d->rootItem->percentageAccounted(dBegin, dEnd);
+}
+
 AttributeModel *AccountingLSBill::attributeModel() {
     return m_d->attributeModel;
 }
 
 double AccountingLSBill::totalAmountAttribute(Attribute *attr) {
-    return m_d->rootItem->totalAmountAttribute( attr );
+    return m_d->rootItem->projAmountAttribute( attr );
 }
 
 QString AccountingLSBill::totalAmountAttributeStr(Attribute *attr) {
-    return m_d->rootItem->totalAmountAttributeStr( attr );
+    return m_d->rootItem->projAmountAttributeStr( attr );
 }
 
 void AccountingLSBill::nextId() {
@@ -503,6 +584,22 @@ void AccountingLSBill::writeXml(QXmlStreamWriter *writer) {
     writer->writeAttribute( "id", QString::number(m_d->id) );
     writer->writeAttribute( "name", m_d->name );
     writer->writeAttribute( "description", m_d->description );
+    writer->writeAttribute( "PPUTotalToDiscount", QString::number(m_d->PPUTotalToDiscount) );
+    writer->writeAttribute( "PPUNotToDiscount", QString::number(m_d->PPUNotToDiscount) );
+
+    QString fields;
+    QList<int> fieldList = m_d->rootItem->totalAmountPriceFields();
+    QList<int>::iterator i= fieldList.begin();
+    if( i != fieldList.end() ){
+        fields += QString::number((*i));
+        ++i;
+    }
+    for( ; i != fieldList.end(); ++i ){
+        fields += ", ";
+        fields += QString::number((*i));
+    }
+    writer->writeAttribute( "totalAmountPriceFields", fields );
+
     if( m_d->priceList ){
         writer->writeAttribute( "priceList", QString::number( m_d->priceList->id() ) );
     }
@@ -598,14 +695,14 @@ QList<PriceItem *> AccountingLSBill::connectedPriceItems() {
 }
 
 void AccountingLSBill::writeODTBillOnTable( QTextCursor *cursor,
-                                            AccountingPrinter::PrintAccountingBillOption prItemsOption,
+                                            AccountingPrinter::PrintPPUDescOption prItemsOption,
                                             bool writeAmounts ) {
     m_d->rootItem->writeODTBillOnTable( cursor, prItemsOption, writeAmounts );
 }
 
 void AccountingLSBill::writeODTAttributeBillOnTable(QTextCursor *cursor,
                                                     AccountingPrinter::AttributePrintOption prOption,
-                                                    AccountingPrinter::PrintAccountingBillOption prItemsOption,
+                                                    AccountingPrinter::PrintPPUDescOption prItemsOption,
                                                     const QList<Attribute *> &attrsToPrint,
                                                     bool writeAmounts) {
     m_d->rootItem->writeODTAttributeBillOnTable( cursor, prOption, prItemsOption, attrsToPrint, writeAmounts );
@@ -613,7 +710,7 @@ void AccountingLSBill::writeODTAttributeBillOnTable(QTextCursor *cursor,
 
 
 void AccountingLSBill::writeODTSummaryOnTable(QTextCursor *cursor,
-                                              AccountingPrinter::PrintAccountingBillOption prItemsOption,
+                                              AccountingPrinter::PrintPPUDescOption prItemsOption,
                                               bool writeAmounts,
                                               bool writeDetails ) {
     m_d->rootItem->writeODTSummaryOnTable( cursor, prItemsOption, writeAmounts, writeDetails );

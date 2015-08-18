@@ -19,6 +19,7 @@
 #include "qcostgui.h"
 
 #include "pricelistprintergui.h"
+#include "accountingprintergui.h"
 #include "billprintergui.h"
 #include "settingsdialog.h"
 #include "generaldatagui.h"
@@ -32,11 +33,13 @@
 #include "accountinglsbillgui.h"
 
 #include "billprinter.h"
+#include "accountingprinter.h"
 #include "pricelistprinter.h"
 #include "qcostclipboarddata.h"
 #include "project.h"
 #include "projectdataparentitem.h"
 #include "projectaccountingparentitem.h"
+#include "accountingbills.h"
 #include "accountingbill.h"
 #include "accountingtambill.h"
 #include "accountinglsbill.h"
@@ -575,6 +578,51 @@ bool QCostGUI::printODT() {
         return false;
     }
 
+    ProjectAccountingParentItem * accItem = dynamic_cast<ProjectAccountingParentItem *> (m_d->projectItemsView->currentItem());
+    if( accItem == NULL ){
+        AccountingBills * billsItem = dynamic_cast<AccountingBills *> (m_d->projectItemsView->currentItem());
+        if( billsItem != NULL ){
+            accItem = m_d->project->accounting();
+        }
+    }
+    if( accItem == NULL ){
+        AccountingBill * billItem = dynamic_cast<AccountingBill *> (m_d->projectItemsView->currentItem());
+        if( billItem != NULL ){
+            accItem = m_d->project->accounting();
+        }
+    }
+    if( accItem != NULL ){
+        AccountingPrinter::PrintPPUDescOption prPPUDescOption = AccountingPrinter::PrintShortDesc;
+        AccountingPrinter::PrintOption prOptions = AccountingPrinter::PrintRawBill;
+        int billToPrint;
+        double paperWidth = 210.0, paperHeight = 297.0;
+        Qt::Orientation paperOrientation = Qt::Vertical;
+        AccountingPrinterGUI gui( accItem->dataModel(), &prPPUDescOption, &prOptions, &billToPrint, &paperWidth, &paperHeight, &paperOrientation,  this );
+        if( gui.exec() == QDialog::Accepted ){
+            QString fileName = QFileDialog::getSaveFileName(this,
+                                                            trUtf8("Stampa Contabilità"), ".",
+                                                            trUtf8("Documento di testo (*.odt)"));
+            if (!fileName.isEmpty()){
+                QString suf = fileName.split(".").last().toLower();
+                if( suf != "odt"){
+                    fileName.append( ".odt" );
+                }
+                AccountingPrinter writer( accItem->accountingBills()->bill( billToPrint ), &(m_d->parser) );
+                bool ret = writer.printODT( prPPUDescOption, prOptions, fileName, paperWidth, paperHeight, paperOrientation );
+                if( !m_d->sWordProcessorFile.isEmpty() ){
+                    if( QFileInfo(m_d->sWordProcessorFile).exists() ){
+                        QStringList args;
+                        args << fileName;
+                        QProcess *proc = new QProcess(this);
+                        proc->start(m_d->sWordProcessorFile, args);
+                    }
+                }
+                return ret;
+            }
+        }
+        return false;
+    }
+
     return false;
 }
 
@@ -630,8 +678,8 @@ void QCostGUI::about() {
     QMessageBox::about(this, trUtf8("Informazioni su QCost"),
                        trUtf8("<h1>QCost</h1>"
                               "<h2>v0.9.0</h2>"
-                              "<p>QCost è un software per la redazione di computi metrici estimativi."
-                              "<p>Questo programma è software libero; puoi ridistribuirlo e/o modificarlo nei termini della GNU General Public License cos' come pubblicata dalla Free Software Foundation; sia nei termini della versione 3 della licenza che (a tua scelta) nei termini di qualsiasi altra versione successiva."
+                              "<p>QCost è un software per la redazione di computi metrici estimativi e documenti contabili di cantiere."
+                              "<p>Questo programma è software libero; puoi ridistribuirlo e/o modificarlo nei termini della GNU General Public License così come pubblicata dalla Free Software Foundation; sia nei termini della versione 3 della licenza che (a tua scelta) nei termini di qualsiasi altra versione successiva."
                               "<p>Questo programma è distribuito nella speranza che sia utile, ma SENZA ALCUNA GARANZIA; neanche l'implicita garanzia di COMMERCIABILITÀ o di IDONEITÀ AD UN PARTICOLARE IMPIEGO. Consulta la GNU General Public License per maggiori dettagli. "
                               "<p>Con il programma dovresti aver ricevuto una copia della GNU General Public License; qualora non l'avessi ricevuta, scrivi alla Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA."
                               "<p>Se incontri problemi nell'uso del programma, lascia un post nel <a href=\"http://ingegnerialibera.altervista.org/forum/viewforum.php?f=3\">forum di QCost</a>.<p>Il sito di riferimento è <a href=\"http://ingegnerialibera.altervista.org/wiki/doku.php/qcost:indice\">ingegnerialibera.altervista.org/wiki/doku.php/qcost:indice</a>." ) );

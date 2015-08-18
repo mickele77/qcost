@@ -35,7 +35,7 @@ public:
         priceFieldModel(pfm),
         name(QString()),
         id(0){
-    };
+    }
 
     MathParser * parser;
     PriceFieldModel * priceFieldModel;

@@ -45,8 +45,6 @@ public:
     AccountingLSBillItem * currentItem();
     void setBill( AccountingLSBill * b );
 
-    void showEvent(QShowEvent * event);
-
 signals:
     void currentItemChanged( AccountingLSBillItem * );
     void editAccountingData( AccountingLSBillItem * );
@@ -60,9 +58,6 @@ private slots:
 
     void editAccountingData( const QModelIndex & index);
 
-    void setPriceList();
-    void setPriceDatSet();
-
     void clear();
     void accountingTreeViewCustomMenuRequested(QPoint pos);
     void editAttributes();
@@ -75,17 +70,6 @@ private slots:
 private:
     AccountingLSTreeGUIPrivate * m_d;
 
-    void populatePriceListComboBox();
-    void setPriceListComboBox();
-    /**
-     * Imposta il valore dello SpinBox m_d->ui->currentPriceDataSetSpinBox in base al valore di  m_d->accountingBill->priceDataSet()
-     * Ricordarsi di chiamare
-     * disconnect( m_d->ui->currentPriceDataSetSpinBox, static_cast<void(QSpinBox::*)(int)>(&QSpinBox::valueChanged), this, &AccountingLSTreeGUI::setPriceDatSet );
-     * prima e
-     * connect( m_d->ui->currentPriceDataSetSpinBox, static_cast<void(QSpinBox::*)(int)>(&QSpinBox::valueChanged), this, &AccountingLSTreeGUI::setPriceDatSet );
-     * dopo
-     */
-    void setCurrentPriceDataSetSpinBox();
 };
 
 #endif // ACCOUNTINGLSTREEGUI_H

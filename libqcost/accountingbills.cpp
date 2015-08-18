@@ -18,13 +18,17 @@
 */
 #include "accountingbills.h"
 
+#include "paymentadatamodel.h"
 #include "accountingbill.h"
+#include "paymentdata.h"
+#include "projectaccountingparentitem.h"
 #include "priceitem.h"
 
 #include <QXmlStreamReader>
 #include <QTextStream>
 #include <QObject>
 #include <QVariant>
+#include <QDate>
 #include <QList>
 
 class AccountingBillsPrivate{
@@ -33,7 +37,7 @@ public:
         priceFieldModel(pfm),
         parser(p),
         nextId(1){
-    };
+    }
     QList<AccountingBill *> billContainer;
     PriceFieldModel * priceFieldModel;
     MathParser * parser;
@@ -97,8 +101,21 @@ bool AccountingBills::insertChildren(int position, int count) {
             }
         }
         AccountingBill *item = new AccountingBill( purposedBillName, this, m_d->priceFieldModel, m_d->parser );
+        ProjectAccountingParentItem * pItem = dynamic_cast<ProjectAccountingParentItem *>(parentItem());
+        if( pItem ){
+            for( int i=0; i < pItem->workProgressBillsCount(); ++i ){
+                item->insertPayments( i );
+                item->item(i)->setDateBegin( pItem->workProgressBillData( i )->dateBegin() );
+                item->item(i)->setDateEnd( pItem->workProgressBillData( i )->dateEnd() );
+            }
+        }
         connect( item, &AccountingBill::modelChanged, this, &AccountingBills::modelChanged );
+        connect( item, &AccountingBill::requestInsertBills, this, &AccountingBills::insertPaymentsSignal );
+        connect( item, &AccountingBill::requestRemoveBills, this, &AccountingBills::removePaymentsSignal );
+        connect( item, &AccountingBill::requestDateBeginChange, this, &AccountingBills::changePaymentDateBeginSignal );
+        connect( item, &AccountingBill::requestDateEndChange, this, &AccountingBills::changePaymentDateEndSignal );
         m_d->billContainer.insert(position, item);
+        emit modelChanged();
     }
 
     emit endInsertChildren();
@@ -188,6 +205,38 @@ void AccountingBills::readXml(QXmlStreamReader *reader, ProjectPriceListParentIt
                 m_d->billContainer.last()->readXml( reader, priceLists );
             }
         }
+    }
+}
+
+bool AccountingBills::insertPayments(int position, int count) {
+    bool ret = true;
+
+    for( QList<AccountingBill *>::iterator i = m_d->billContainer.begin(); i != m_d->billContainer.end(); ++i ){
+        ret = ret && (*i)->insertPayments( position, count );
+    }
+
+    return ret;
+}
+
+bool AccountingBills::removeBills(int position, int count) {
+    bool ret = true;
+
+    for( QList<AccountingBill *>::iterator i = m_d->billContainer.begin(); i != m_d->billContainer.end(); ++i ){
+        ret = ret && (*i)->removePayments( position, count );
+    }
+
+    return ret;
+}
+
+void AccountingBills::changeBillDateEnd(const QDate &newDate, int position) {
+    for( QList<AccountingBill *>::iterator i = m_d->billContainer.begin(); i != m_d->billContainer.end(); ++i ){
+        (*i)->setBillDateEnd( newDate, position );
+    }
+}
+
+void AccountingBills::changeBillDateBegin(const QDate &newDate, int position) {
+    for( QList<AccountingBill *>::iterator i = m_d->billContainer.begin(); i != m_d->billContainer.end(); ++i ){
+        (*i)->setBillDateBegin( newDate, position );
     }
 }
 

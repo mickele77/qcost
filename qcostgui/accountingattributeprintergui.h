@@ -13,7 +13,7 @@ class AccountingAttributePrinterGUIPrivate;
 class AccountingAttributePrinterGUI : public QDialog {
     Q_OBJECT
 public:
-    explicit AccountingAttributePrinterGUI(AccountingPrinter::PrintAccountingBillOption *prItemsOption,
+    explicit AccountingAttributePrinterGUI(AccountingPrinter::PrintPPUDescOption *prItemsOption,
                                            AccountingPrinter::AttributePrintOption * prOption,
                                            QList<Attribute *> *pAttrs,
                                            double *pWidth, double *pHeight,

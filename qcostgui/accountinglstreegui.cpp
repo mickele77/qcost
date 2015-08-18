@@ -79,25 +79,8 @@ AccountingLSTreeGUI::AccountingLSTreeGUI( QMap<PriceListDBWidget::ImportOptions,
     m_d( new AccountingLSTreeGUIPrivate(EPAImpOptions, EPAFileName, prs, prj) ){
     m_d->ui->setupUi(this);
 
-    populatePriceListComboBox();
-
-    m_d->addBillAction = new QAction(trUtf8("S.A.L."), this);
-    connect( m_d->addBillAction, &QAction::triggered, this, &AccountingLSTreeGUI::addItems );
-    m_d->addCommentAction = new QAction(trUtf8("Riga di commento"), this);
-    connect( m_d->addCommentAction, &QAction::triggered, this, &AccountingLSTreeGUI::addItems );
-    m_d->addPPUAction = new QAction(trUtf8("Opera a misura"), this);
-    connect( m_d->addPPUAction, &QAction::triggered, this, &AccountingLSTreeGUI::addItems );
-    m_d->addLSAction = new QAction(trUtf8("Opera a corpo"), this);
-    connect( m_d->addLSAction, &QAction::triggered, this, &AccountingLSTreeGUI::addItems );
-    m_d->addTAMAction = new QAction(trUtf8("Lista economie"), this);
-    connect( m_d->addTAMAction, &QAction::triggered, this, &AccountingLSTreeGUI::addItems );
-    QMenu * addPushButtonMenu = new QMenu( m_d->ui->addPushButton );
-    addPushButtonMenu->addAction(m_d->addBillAction);
-    addPushButtonMenu->addAction(m_d->addCommentAction);
-    addPushButtonMenu->addAction(m_d->addPPUAction);
-    addPushButtonMenu->addAction(m_d->addLSAction);
-    addPushButtonMenu->addAction(m_d->addTAMAction);
-    m_d->ui->addPushButton->setMenu( addPushButtonMenu );
+    connect( m_d->ui->addPushButton, &QPushButton::clicked, this, &AccountingLSTreeGUI::addItems );
+    connect( m_d->ui->addChildPushButton, &QPushButton::clicked, this, &AccountingLSTreeGUI::addChildItems );
     connect( m_d->ui->delPushButton, &QPushButton::clicked, this, &AccountingLSTreeGUI::removeItems );
     connect( m_d->ui->treeView, &QTreeView::doubleClicked, this, static_cast<void(AccountingLSTreeGUI::*)(const QModelIndex &)>(&AccountingLSTreeGUI::editAccountingData) );
 
@@ -320,16 +303,11 @@ AccountingLSBillItem *AccountingLSTreeGUI::currentItem() {
 void AccountingLSTreeGUI::setBill(AccountingLSBill *b ) {
     if( m_d->bill != b ){
         if( m_d->bill != NULL ){
-            disconnect( m_d->bill, &AccountingLSBill::totalAmountChanged, m_d->ui->totalAmountLineEdit, &QLineEdit::setText );
-            disconnect( m_d->bill, &AccountingLSBill::totalAmountAccountedChanged, m_d->ui->totalAmountAccountedLineEdit, &QLineEdit::setText );
+            disconnect( m_d->bill, &AccountingLSBill::projAmountChanged, m_d->ui->totalAmountLineEdit, &QLineEdit::setText );
+            disconnect( m_d->bill, &AccountingLSBill::accAmountChanged, m_d->ui->totalAmountAccountedLineEdit, &QLineEdit::setText );
             disconnect( m_d->bill, &AccountingLSBill::percentageAccountedChanged, m_d->ui->percentageAccountedLineEdit, &QLineEdit::setText );
             disconnect( m_d->bill, &AccountingLSBill::aboutToBeDeleted, this, &AccountingLSTreeGUI::clear );
-            disconnect( m_d->ui->priceListComboBox, static_cast<void(QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this, &AccountingLSTreeGUI::setPriceList );
-            disconnect( m_d->ui->currentPriceDataSetSpinBox, static_cast<void(QSpinBox::*)(int)>(&QSpinBox::valueChanged), this, &AccountingLSTreeGUI::setPriceDatSet );
         }
-        m_d->ui->priceListComboBox->setCurrentIndex( 0 );
-        m_d->ui->currentPriceDataSetSpinBox->setMaximum(1);
-        m_d->ui->currentPriceDataSetSpinBox->setValue(1);
         m_d->ui->totalAmountLineEdit->clear();
         m_d->ui->totalAmountAccountedLineEdit->clear();
         m_d->ui->percentageAccountedLineEdit->clear();
@@ -341,17 +319,13 @@ void AccountingLSTreeGUI::setBill(AccountingLSBill *b ) {
 
         m_d->ui->treeView->setModel( b );
         if( m_d->bill != NULL ){
-            m_d->ui->totalAmountLineEdit->setText( m_d->bill->totalAmountStr() );
-            m_d->ui->totalAmountAccountedLineEdit->setText( m_d->bill->totalAmountAccountedStr() );
+            m_d->ui->totalAmountLineEdit->setText( m_d->bill->projAmountStr() );
+            m_d->ui->totalAmountAccountedLineEdit->setText( m_d->bill->accAmountStr() );
             m_d->ui->percentageAccountedLineEdit->setText( m_d->bill->percentageAccountedStr() );
-            connect( m_d->bill, &AccountingLSBill::totalAmountChanged, m_d->ui->totalAmountLineEdit, &QLineEdit::setText );
-            connect( m_d->bill, &AccountingLSBill::totalAmountAccountedChanged, m_d->ui->totalAmountAccountedLineEdit, &QLineEdit::setText );
+            connect( m_d->bill, &AccountingLSBill::projAmountChanged, m_d->ui->totalAmountLineEdit, &QLineEdit::setText );
+            connect( m_d->bill, &AccountingLSBill::accAmountChanged, m_d->ui->totalAmountAccountedLineEdit, &QLineEdit::setText );
             connect( m_d->bill, &AccountingLSBill::percentageAccountedChanged, m_d->ui->percentageAccountedLineEdit, &QLineEdit::setText );
 
-            setPriceListComboBox();
-            connect( m_d->ui->priceListComboBox, static_cast<void(QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this, &AccountingLSTreeGUI::setPriceList );
-            setCurrentPriceDataSetSpinBox();
-            connect( m_d->ui->currentPriceDataSetSpinBox, static_cast<void(QSpinBox::*)(int)>(&QSpinBox::valueChanged), this, &AccountingLSTreeGUI::setPriceDatSet );
             connect( m_d->bill, &AccountingLSBill::aboutToBeDeleted, this, &AccountingLSTreeGUI::clear );
         }
         if( m_d->ui->treeView->selectionModel() ){
@@ -373,87 +347,6 @@ void AccountingLSTreeGUI::changeCurrentItem(const QModelIndex &currentIndex  ) {
         }
     }
     emit currentItemChanged( NULL );
-}
-
-void AccountingLSTreeGUI::setPriceList() {
-    QVariant v =  m_d->ui->priceListComboBox->itemData( m_d->ui->priceListComboBox->currentIndex() );
-    PriceList * currentPriceList = (PriceList *) v.value<void *>();
-    if( m_d->bill != NULL ){
-        if( m_d->bill->priceList() && m_d->bill->rowCount() > 0 ){
-            AccountingSetPriceListModeGUI modeGUI( this );
-            AccountingLSBill::SetPriceListMode plMode = modeGUI.returnLSValue();
-            m_d->bill->setPriceList( currentPriceList, plMode );
-        } else {
-            m_d->bill->setPriceList( currentPriceList );
-        }
-        if( m_d->bill->priceList() != NULL ){
-            m_d->ui->currentPriceDataSetSpinBox->setMaximum( m_d->bill->priceList()->priceDataSetCount() );
-        } else {
-            m_d->ui->currentPriceDataSetSpinBox->setMaximum( 1 );
-        }
-    }
-}
-
-void AccountingLSTreeGUI::setPriceDatSet() {
-    if( m_d->bill != NULL ){
-        if( m_d->bill->priceList() ){
-            if( m_d->ui->currentPriceDataSetSpinBox->value() < 1 ){
-                m_d->ui->currentPriceDataSetSpinBox->setValue( 1 );
-            } else if(  m_d->ui->currentPriceDataSetSpinBox->value() > m_d->bill->priceList()->priceDataSetCount() ){
-                m_d->ui->currentPriceDataSetSpinBox->setValue( m_d->bill->priceList()->priceDataSetCount() );
-            } else {
-                m_d->bill->setPriceDataSet( m_d->ui->currentPriceDataSetSpinBox->value()-1 );
-            }
-        }
-    }
-}
-
-void AccountingLSTreeGUI::showEvent(QShowEvent *event) {
-    if( event->type() == QEvent::Show ){
-        disconnect( m_d->ui->priceListComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(setPriceList()) );
-        populatePriceListComboBox();
-        setPriceListComboBox();
-        connect( m_d->ui->priceListComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(setPriceList()) );
-
-        disconnect( m_d->ui->currentPriceDataSetSpinBox, static_cast<void(QSpinBox::*)(int)>(&QSpinBox::valueChanged), this, &AccountingLSTreeGUI::setPriceDatSet );
-        setCurrentPriceDataSetSpinBox();
-        connect( m_d->ui->currentPriceDataSetSpinBox, static_cast<void(QSpinBox::*)(int)>(&QSpinBox::valueChanged), this, &AccountingLSTreeGUI::setPriceDatSet );
-    }
-    QWidget::showEvent( event );
-}
-
-void AccountingLSTreeGUI::populatePriceListComboBox(){
-    m_d->ui->priceListComboBox->clear();
-    m_d->ui->priceListComboBox->addItem( QString("---"), qVariantFromValue((void *) NULL ));
-    for( int i=0; i < m_d->project->priceListCount(); ++i){
-        QString n;
-        if( m_d->project->priceList(i) ){
-            n =  m_d->project->priceList(i)->name();
-        }
-        m_d->ui->priceListComboBox->addItem( n, qVariantFromValue((void *) m_d->project->priceList(i) ));
-    }
-}
-
-void AccountingLSTreeGUI::setPriceListComboBox() {
-    if( m_d->bill != NULL ){
-        int i = m_d->ui->priceListComboBox->findData( qVariantFromValue((void *) m_d->bill->priceList() ));
-        if( i < 0 ){
-            i = 0;
-        }
-        m_d->ui->priceListComboBox->setCurrentIndex( i );
-    }
-}
-
-void AccountingLSTreeGUI::setCurrentPriceDataSetSpinBox() {
-    if( m_d->bill != NULL ){
-        if( m_d->bill->priceList() ){
-            m_d->ui->currentPriceDataSetSpinBox->setMaximum( m_d->bill->priceList()->priceDataSetCount() );
-        }
-        m_d->ui->currentPriceDataSetSpinBox->setValue( m_d->bill->priceDataSet()+1 );
-    } else {
-        m_d->ui->currentPriceDataSetSpinBox->setMaximum( 1 );
-        m_d->ui->currentPriceDataSetSpinBox->setValue( 1 );
-    }
 }
 
 void AccountingLSTreeGUI::resizeColumnsToContents(){

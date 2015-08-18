@@ -66,12 +66,22 @@ public:
     void writeXml( QXmlStreamWriter * writer );
     void readXml(QXmlStreamReader *reader, ProjectPriceListParentItem *priceLists);
 
+    bool insertPayments( int position, int count=1 );
+    bool removeBills( int position, int count=1 );
+
+    void changeBillDateEnd( const QDate & newDate, int position);
+    void changeBillDateBegin( const QDate & newDate, int position);
+
 signals:
     void beginInsertChildren( ProjectItem * item, int first, int last );
     void endInsertChildren();
     void beginRemoveChildren( ProjectItem * item, int first, int last );
     void endRemoveChildren();
     void modelChanged();
+    void insertPaymentsSignal( int position, int count );
+    void removePaymentsSignal( int position, int count );
+    void changePaymentDateBeginSignal( const QDate & newDate, int position );
+    void changePaymentDateEndSignal( const QDate & newDate, int position );
 
 private:
     AccountingBillsPrivate * m_d;

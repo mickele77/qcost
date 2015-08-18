@@ -45,15 +45,15 @@ void AccountingLSBillItemTitleGUI::setBillItem(AccountingLSBillItem *b) {
         if( m_d->item != NULL ){
             disconnect( m_d->item, &AccountingLSBillItem::nameChanged, m_d->ui->nameLineEdit, &QLineEdit::setText );
             disconnect( m_d->ui->nameLineEdit, &QLineEdit::textEdited, m_d->item, &AccountingLSBillItem::setName );
-            disconnect( m_d->item, &AccountingLSBillItem::totalAmountChanged, m_d->ui->totalAmountLineEdit, &QLineEdit::setText );
-            disconnect( m_d->item, &AccountingLSBillItem::totalAmountAccountedChanged, m_d->ui->totalAmountAccountedLineEdit, &QLineEdit::setText );
+            disconnect( m_d->item, &AccountingLSBillItem::projAmountChanged, m_d->ui->projTotalAmountLineEdit, &QLineEdit::setText );
+            disconnect( m_d->item, &AccountingLSBillItem::accAmountChanged, m_d->ui->accTotalAmountLineEdit, &QLineEdit::setText );
             disconnect( m_d->item, &AccountingLSBillItem::percentageAccountedChanged, m_d->ui->percentageAccountedLineEdit, &QLineEdit::setText );
             disconnect( m_d->item, &AccountingLSBillItem::aboutToBeDeleted, this, &AccountingLSBillItemTitleGUI::setBillItemNULL );
         }
 
         m_d->ui->nameLineEdit->clear();
-        m_d->ui->totalAmountLineEdit->clear();
-        m_d->ui->totalAmountAccountedLineEdit->clear();
+        m_d->ui->projTotalAmountLineEdit->clear();
+        m_d->ui->accTotalAmountLineEdit->clear();
         m_d->ui->percentageAccountedLineEdit->clear();
         m_d->item = b;
         m_d->itemAttributeModel->setItem( b );
@@ -62,8 +62,8 @@ void AccountingLSBillItemTitleGUI::setBillItem(AccountingLSBillItem *b) {
             m_d->ui->nameLineEdit->setText( m_d->item->name() );
             connect( m_d->item, &AccountingLSBillItem::nameChanged, m_d->ui->nameLineEdit, &QLineEdit::setText );
             connect( m_d->ui->nameLineEdit, &QLineEdit::textEdited, m_d->item, &AccountingLSBillItem::setName );
-            connect( m_d->item, &AccountingLSBillItem::totalAmountChanged, m_d->ui->totalAmountLineEdit, &QLineEdit::setText );
-            connect( m_d->item, &AccountingLSBillItem::totalAmountAccountedChanged, m_d->ui->totalAmountAccountedLineEdit, &QLineEdit::setText );
+            connect( m_d->item, &AccountingLSBillItem::projAmountChanged, m_d->ui->projTotalAmountLineEdit, &QLineEdit::setText );
+            connect( m_d->item, &AccountingLSBillItem::accAmountChanged, m_d->ui->accTotalAmountLineEdit, &QLineEdit::setText );
             connect( m_d->item, &AccountingLSBillItem::percentageAccountedChanged, m_d->ui->percentageAccountedLineEdit, &QLineEdit::setText );
             connect( m_d->item, &AccountingLSBillItem::aboutToBeDeleted, this, &AccountingLSBillItemTitleGUI::setBillItemNULL );
         }

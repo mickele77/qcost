@@ -27,7 +27,7 @@
 
 class AccountingAttributePrinterGUIPrivate{
 public:
-    AccountingAttributePrinterGUIPrivate( AccountingPrinter::PrintAccountingBillOption * prItemsOption,
+    AccountingAttributePrinterGUIPrivate( AccountingPrinter::PrintPPUDescOption * prItemsOption,
                                           AccountingPrinter::AttributePrintOption *prOption,
                                           QList<Attribute *> * pAttrs,
                                           double * pWidth,
@@ -51,7 +51,7 @@ public:
     }
 
     Ui::AccountingAttributePrinterGUI *ui;
-    AccountingPrinter::PrintAccountingBillOption * printItemsOption;
+    AccountingPrinter::PrintPPUDescOption * printItemsOption;
     AccountingPrinter::AttributePrintOption *printOption;
     QList<Attribute *> * printAttributes;
     AttributeModel * accountingAttributeModel;
@@ -62,7 +62,7 @@ public:
     QList<QPageSize> pageSizeList;
 };
 
-AccountingAttributePrinterGUI::AccountingAttributePrinterGUI(AccountingPrinter::PrintAccountingBillOption *prItemsOption,
+AccountingAttributePrinterGUI::AccountingAttributePrinterGUI(AccountingPrinter::PrintPPUDescOption *prItemsOption,
                                                              AccountingPrinter::AttributePrintOption *prOption,
                                                              QList<Attribute *> * pAttrs,
                                                              double * pWidth,

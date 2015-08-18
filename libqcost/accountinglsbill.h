@@ -39,11 +39,11 @@ class QTextCursor;
 
 #include "accountingprinter.h"
 #include "projectitem.h"
-#include <QAbstractTableModel>
+#include <QAbstractItemModel>
 
 class AccountingLSBillPrivate;
 
-class EXPORT_LIB_OPT AccountingLSBill : public QAbstractTableModel, public ProjectItem {
+class EXPORT_LIB_OPT AccountingLSBill : public QAbstractItemModel, public ProjectItem {
     Q_OBJECT
 public:
     enum SetPriceListMode{
@@ -55,15 +55,21 @@ public:
         ResetBill
     };
 
-    AccountingLSBill(const QString &n, ProjectItem *parent, PriceFieldModel *pfm, MathParser * parser = NULL );
+    AccountingLSBill( const QString &c, const QString &n,
+                      ProjectItem *parent, PriceFieldModel *pfm, MathParser * parser = NULL );
     AccountingLSBill( AccountingLSBill & );
 
     AccountingLSBill & operator= (const AccountingLSBill & cp );
 
     virtual ~AccountingLSBill();
 
-    QString name();
-    QString description();
+    QString code() const;
+    QString name() const;
+    QString description() const;
+    double PPUTotalToDiscount() const;
+    QString PPUTotalToDiscountStr() const;
+    double PPUNotToDiscount() const;
+    QString PPUNotToDiscountStr() const;
 
     ProjectItem *child(int number);
     int childCount() const;
@@ -111,12 +117,14 @@ public:
 
     bool moveRows(const QModelIndex & sourceParent, int sourceRow, int count, const QModelIndex & destinationParent, int destinationChild);
 
-    double totalAmount() const ;
-    QString totalAmountStr() const ;
-    double totalAmountAccounted() const;
-    QString totalAmountAccountedStr() const;
+    double projAmount() const ;
+    QString projAmountStr() const ;
+    double accAmount() const;
+    QString accAmountStr() const;
     double percentageAccounted() const;
     QString percentageAccountedStr() const;
+
+    double percentageAccounted( const QDate & dBegin, const QDate & dEnd ) const;
 
     AttributeModel * attributeModel();
     double totalAmountAttribute(Attribute * attr);
@@ -141,38 +149,45 @@ public:
     QList<PriceItem *> connectedPriceItems();
 
     void writeODTBillOnTable(QTextCursor * cursor,
-                              AccountingPrinter::PrintAccountingBillOption prItemsOption,
+                              AccountingPrinter::PrintPPUDescOption prItemsOption,
                               bool writeAmounts = true );
 
     void writeODTSummaryOnTable( QTextCursor * cursor,
-                                 AccountingPrinter::PrintAccountingBillOption prItemsOption,
+                                 AccountingPrinter::PrintPPUDescOption prItemsOption,
                                  bool writeAmounts = false ,
                                  bool writeDetails = true );
 
     void writeODTAttributeBillOnTable(QTextCursor *cursor,
                                        AccountingPrinter::AttributePrintOption prOption,
-                                       AccountingPrinter::PrintAccountingBillOption prItemsOption,
+                                       AccountingPrinter::PrintPPUDescOption prItemsOption,
                                        const QList<Attribute *> &attrsToPrint,
                                        bool writeAmounts = true );
 public slots:
+    void setCode( const QString & n);
     void setName( const QString & n);
     void setDescription( const QString & value );
+    void setPPUTotalToDiscount(const QString & newValue );
+    void setPPUNotToDiscount( const QString & newValue );
     void setPriceDataSet( int );
 
 signals:
     void aboutToBeDeleted();
+
+    void codeChanged(  const QString & );
     void nameChanged(  const QString & );
-    void descriptionChanged(  const QString & );
+    void descriptionChanged( const QString & );
+    void PPUTotalToDiscountChanged( const QString & );
+    void PPUNotToDiscountChanged( const QString & );
     void priceListChanged( PriceList * );
 
-    void totalAmountChanged( const QString & newVal );
-    void totalAmountAccountedChanged( const QString & newVal );
+    void projAmountChanged( const QString & newVal );
+    void accAmountChanged( const QString & newVal );
     void percentageAccountedChanged( const QString & newVal );
 
     void modelChanged();
 
 private slots:
-    void updateValue(AccountingLSBillItem *item, int column);
+    void updateData(AccountingLSBillItem *item, int column);
 private:
     AccountingLSBillPrivate * m_d;
 };

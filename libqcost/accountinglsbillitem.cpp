@@ -22,8 +22,8 @@
 #include "accountingpricefieldmodel.h"
 #include "pricelist.h"
 #include "priceitem.h"
-#include "measuresmodel.h"
-#include "billitemmeasure.h"
+#include "measureslsmodel.h"
+#include "accountinglsitemmeasure.h"
 #include "attributemodel.h"
 #include "attribute.h"
 #include "unitmeasure.h"
@@ -42,37 +42,39 @@
 
 class AccountingLSBillItemPrivate{
 public:
-    AccountingLSBillItemPrivate( AccountingLSBillItem * parent, PriceFieldModel * pfm, MathParser * p = NULL ):
+    AccountingLSBillItemPrivate( AccountingLSBillItem * parent, PriceFieldModel * pfm, MathParser * prs = NULL ):
         parentItem(parent),
-        measuresModel( NULL ),
-        parser(p),
+        measuresModel( new MeasuresLSModel( prs, NULL ) ),
+        parser( prs ),
         name(QObject::trUtf8("Titolo")),
         priceItem( NULL ),
         currentPriceDataSet(0),
-        quantity(0.0),
-        quantityAccounted(0.0),
-        PPUTotal(0.0),
-        totalAmount(0.0),
-        totalAmountAccounted(0.0),
+        projQuantity(0.0),
+        accQuantity(0.0),
+        PPU(0.0),
+        projAmount(0.0),
+        accAmount(0.0),
         percentageAccounted(0.0),
-        totalAmountPriceFieldsList(QList<int>()),
+        totalAmountPriceFieldsList(NULL),
         totalAmountPriceFieldModel( NULL ),
         priceFieldModel( pfm ) {
         if( parent != NULL ){
             id = 1;
         } else {
             id = 0;
-        }
-        if( parentItem == NULL ) {
-            totalAmountPriceFieldModel = new AccountingPriceFieldModel(&totalAmountPriceFieldsList, pfm);
+            totalAmountPriceFieldsList = new QList<int>();
+            totalAmountPriceFieldModel = new AccountingPriceFieldModel(totalAmountPriceFieldsList, pfm);
         }
     }
     ~AccountingLSBillItemPrivate(){
         for( QList<AccountingLSBillItem *>::iterator i = childrenContainer.begin(); i != childrenContainer.end(); ++i ){
             delete *i;
         }
-        if( measuresModel ){
+        if( measuresModel != NULL ){
             delete measuresModel;
+        }
+        if( totalAmountPriceFieldsList != NULL ){
+            delete totalAmountPriceFieldsList;
         }
     }
 
@@ -126,7 +128,7 @@ public:
 
     void writeDescriptionCell( PriceItem * priceItemToPrint, QTextCursor *cursor, QTextTable * table, const QTextTableCellFormat &centralFormat,
                                const QTextBlockFormat & txtBlockFormat, const QTextCharFormat & txtCharFormat, const QTextCharFormat & txtBoldCharFormat,
-                               AccountingPrinter::PrintAccountingBillOption prItemsOption ){
+                               AccountingPrinter::PrintPPUDescOption prItemsOption ){
         if( priceItemToPrint != NULL ){
             if( prItemsOption == AccountingPrinter::PrintShortDesc ){
                 writeCell( cursor, table, centralFormat, txtBlockFormat, priceItemToPrint->shortDescriptionFull() );
@@ -161,7 +163,7 @@ public:
 
     void writeDescriptionCell( QTextCursor *cursor, QTextTable * table, const QTextTableCellFormat &centralFormat,
                                const QTextBlockFormat & txtBlockFormat, const QTextCharFormat & txtCharFormat, const QTextCharFormat & txtBoldCharFormat,
-                               AccountingPrinter::PrintAccountingBillOption prItemsOption ){
+                               AccountingPrinter::PrintPPUDescOption prItemsOption ){
         writeDescriptionCell( priceItem, cursor, table, centralFormat,
                               txtBlockFormat, txtCharFormat, txtBoldCharFormat,
                               prItemsOption );
@@ -170,7 +172,7 @@ public:
     AccountingLSBillItem * parentItem;
     QList<AccountingLSBillItem *> childrenContainer;
     QList<Attribute *> attributes;
-    MeasuresModel * measuresModel;
+    MeasuresLSModel * measuresModel;
     MathParser * parser;
 
     // se l'oggetto ha figli, l'oggetto diventa un titolo: il titolo è contenuto nell'attributo name
@@ -179,19 +181,21 @@ public:
     // colonna dell'elenco prezzi attiva
     int currentPriceDataSet;
     // quantita'
-    double quantity;
+    double projQuantity;
     // quantita' contabilizzata
-    double quantityAccounted;
+    double accQuantity;
     // prezzo complessivo
-    double PPUTotal;
+    double PPU;
     // Importo complessivo lordo
-    double totalAmount;
+    double projAmount;
     // Importo complessivo contabilizzato
-    double totalAmountAccounted;
+    double accAmount;
+
     // Percentuale contabilizzata
     double percentageAccounted;
+
     // lista dei pricedataset usati per importo totale
-    QList<int> totalAmountPriceFieldsList;
+    QList<int> * totalAmountPriceFieldsList;
     // modello degli importi totali
     AccountingPriceFieldModel * totalAmountPriceFieldModel;
     PriceFieldModel * priceFieldModel;
@@ -201,9 +205,11 @@ public:
     static int priceCodeCol;
     static int priceShortDescCol;
     static int priceUmCol;
-    static int quantityCol;
     static int priceCol;
-    static int amountCol;
+    static int projQuantityCol;
+    static int projAmountCol;
+    static int accQuantityCol;
+    static int accAmountCol;
     static int colCount;
 
     unsigned int id;
@@ -218,10 +224,13 @@ int AccountingLSBillItemPrivate::progNumberCol = 0;
 int AccountingLSBillItemPrivate::priceCodeCol = 1;
 int AccountingLSBillItemPrivate::priceShortDescCol = 2;
 int AccountingLSBillItemPrivate::priceUmCol = 3;
-int AccountingLSBillItemPrivate::quantityCol = 4;
-int AccountingLSBillItemPrivate::priceCol = 5;
-int AccountingLSBillItemPrivate::amountCol = 6;
-int AccountingLSBillItemPrivate::colCount = AccountingLSBillItemPrivate::amountCol + 1;
+int AccountingLSBillItemPrivate::priceCol = 4;
+int AccountingLSBillItemPrivate::projQuantityCol = 5;
+int AccountingLSBillItemPrivate::projAmountCol = 6;
+int AccountingLSBillItemPrivate::accQuantityCol = 7;
+int AccountingLSBillItemPrivate::accAmountCol = 8;
+int AccountingLSBillItemPrivate::colCount = AccountingLSBillItemPrivate::accAmountCol + 1;
+
 int AccountingLSBillItemPrivate::amountPrecision = 2;
 int AccountingLSBillItemPrivate::percentagePrecision = 6;
 
@@ -233,15 +242,30 @@ AccountingLSBillItem::AccountingLSBillItem( PriceItem * p, AccountingLSBillItem 
         connect( parentItem, &AccountingLSBillItem::attributesChanged, this, &AccountingLSBillItem::attributesChanged );
     }
 
+    connect( this, &AccountingLSBillItem::PPUChanged, this, &AccountingLSBillItem::updateProjAmount );
+    connect( this, &AccountingLSBillItem::PPUChanged, this, &AccountingLSBillItem::updateAccAmount );
+
+    connect( m_d->measuresModel, &MeasuresLSModel::projQuantityChanged, this, &AccountingLSBillItem::updateProjQuantityPrivate );
+    connect( m_d->measuresModel, &MeasuresLSModel::accQuantityChanged, this, &AccountingLSBillItem::updateAccQuantityPrivate );
+    connect( m_d->measuresModel, &MeasuresLSModel::modelChanged, this, &AccountingLSBillItem::itemChanged );
+
+    connect( this, &AccountingLSBillItem::projAmountChanged, this, &AccountingLSBillItem::updatePercentageAccounted );
+    connect( this, &AccountingLSBillItem::accAmountChanged, this, &AccountingLSBillItem::updatePercentageAccounted );
+
     connect( this, static_cast<void(AccountingLSBillItem::*)( AccountingLSBillItem *, QList<int> )>(&AccountingLSBillItem::hasChildrenChanged), this, &AccountingLSBillItem::itemChanged );
     connect( this, &AccountingLSBillItem::nameChanged, this, &AccountingLSBillItem::itemChanged );
     connect( this, &AccountingLSBillItem::priceItemChanged, this, &AccountingLSBillItem::itemChanged );
     connect( this, &AccountingLSBillItem::currentPriceDataSetChanged, this, &AccountingLSBillItem::itemChanged );
-    connect( this, &AccountingLSBillItem::quantityChanged, this, &AccountingLSBillItem::itemChanged );
-    connect( this, static_cast<void(AccountingLSBillItem::*)(const QString &)>(&AccountingLSBillItem::totalAmountAccountedChanged), this, &AccountingLSBillItem::itemChanged );
-    connect( this, static_cast<void(AccountingLSBillItem::*)(const QString &)>(&AccountingLSBillItem::percentageAccountedChanged), this, &AccountingLSBillItem::itemChanged );
-    connect( this, static_cast<void(AccountingLSBillItem::*)(const QString &)>(&AccountingLSBillItem::totalAmountChanged), this, &AccountingLSBillItem::itemChanged );
+    connect( this, &AccountingLSBillItem::projQuantityChanged, this, &AccountingLSBillItem::itemChanged );
+    connect( this, &AccountingLSBillItem::accQuantityChanged, this, &AccountingLSBillItem::itemChanged );
+    connect( this, &AccountingLSBillItem::percentageAccountedChanged, this, &AccountingLSBillItem::itemChanged );
+    connect( this, &AccountingLSBillItem::projAmountChanged, this, &AccountingLSBillItem::itemChanged );
+    connect( this, &AccountingLSBillItem::accAmountChanged, this, &AccountingLSBillItem::itemChanged );
     connect( this, &AccountingLSBillItem::attributesChanged, this, &AccountingLSBillItem::itemChanged );
+
+    if( m_d->parentItem == NULL ){
+        connect( m_d->totalAmountPriceFieldModel, &AccountingPriceFieldModel::modelChanged, this, &AccountingLSBillItem::updatePPU );
+    }
 }
 
 AccountingLSBillItem::~AccountingLSBillItem(){
@@ -261,13 +285,9 @@ AccountingLSBillItem &AccountingLSBillItem::operator=(const AccountingLSBillItem
 
         setPriceItem( cp.m_d->priceItem );
         setCurrentPriceDataSet( cp.m_d->currentPriceDataSet );
-        setQuantity( cp.m_d->quantity );
         setName( cp.m_d->name );
+        *(m_d->measuresModel) = *(cp.m_d->measuresModel);
 
-        if( cp.m_d->measuresModel != NULL ){
-            generateMeasuresModel();
-            *(m_d->measuresModel) = *(cp.m_d->measuresModel);
-        }
     }
 
     return *this;
@@ -379,56 +399,69 @@ PriceItem *AccountingLSBillItem::priceItem() {
     return m_d->priceItem;
 }
 
-double AccountingLSBillItem::quantity() const {
-    return m_d->quantity;
+double AccountingLSBillItem::projQuantity() const {
+    return m_d->projQuantity;
 }
 
-QString AccountingLSBillItem::quantityStr() const {
+QString AccountingLSBillItem::projQuantityStr() const {
     int prec = 2;
     if( m_d->priceItem != NULL ){
         if( m_d->priceItem->unitMeasure() != NULL ){
             prec = m_d->priceItem->unitMeasure()->precision();
         }
     }
-    return m_d->toString( m_d->quantity, 'f', prec );
+    return m_d->toString( m_d->projQuantity, 'f', prec );
 }
 
-double AccountingLSBillItem::quantityAccounted() const {
-    return m_d->quantityAccounted;
+double AccountingLSBillItem::accQuantity() const {
+    return m_d->accQuantity;
 }
 
-QString AccountingLSBillItem::quantityAccountedStr() const {
+QString AccountingLSBillItem::accQuantityStr() const {
     int prec = 2;
     if( m_d->priceItem != NULL ){
         if( m_d->priceItem->unitMeasure() != NULL ){
             prec = m_d->priceItem->unitMeasure()->precision();
         }
     }
-    return m_d->toString( m_d->quantityAccounted, 'f', prec );
+    return m_d->toString( m_d->accQuantity, 'f', prec );
 }
 
-double AccountingLSBillItem::PPUTotal() const{
-    return m_d->PPUTotal;
+double AccountingLSBillItem::PPU() const{
+    return m_d->PPU;
 }
 
-QString AccountingLSBillItem::PPUTotalStr() const {
-    return m_d->toString( m_d->PPUTotal, 'f', m_d->amountPrecision );
+QString AccountingLSBillItem::PPUStr() const {
+    return m_d->toString( m_d->PPU, 'f', m_d->amountPrecision );
 }
 
-double AccountingLSBillItem::totalAmount() const{
-    return m_d->totalAmount;
+double AccountingLSBillItem::projAmount() const{
+    return m_d->projAmount;
 }
 
-QString AccountingLSBillItem::totalAmountStr() const {
-    return m_d->toString( m_d->totalAmount, 'f', m_d->amountPrecision );
+QString AccountingLSBillItem::projAmountStr() const {
+    return m_d->toString( m_d->projAmount, 'f', m_d->amountPrecision );
 }
 
-double AccountingLSBillItem::totalAmountAccounted() const{
-    return m_d->totalAmountAccounted;
+double AccountingLSBillItem::accAmount() const{
+    return m_d->accAmount;
 }
 
-QString AccountingLSBillItem::totalAmountAccountedStr() const {
-    return m_d->toString( m_d->totalAmountAccounted, 'f', m_d->amountPrecision );
+double AccountingLSBillItem::accAmount(const QDate &dBegin, const QDate &dEnd) const {
+    double ret = 0.0;
+    if( hasChildren() ){
+        for( QList<AccountingLSBillItem *>::iterator i = m_d->childrenContainer.begin(); i != m_d->childrenContainer.end(); ++i ){
+            ret += (*i)->accAmount(dBegin, dEnd);
+        }
+
+    } else if( m_d->measuresModel != NULL ){
+        ret = m_d->measuresModel->accQuantity( dBegin, dEnd ) * m_d->PPU;
+    }
+    return ret;
+}
+
+QString AccountingLSBillItem::accAmountStr() const {
+    return m_d->toString( m_d->accAmount, 'f', m_d->amountPrecision );
 }
 
 double AccountingLSBillItem::percentageAccounted() const{
@@ -439,13 +472,25 @@ QString AccountingLSBillItem::percentageAccountedStr() const {
     return m_d->toString( m_d->percentageAccounted * 100.0, 'f', m_d->percentagePrecision );
 }
 
+int AccountingLSBillItem::percentagePrecision() {
+    return AccountingLSBillItemPrivate::percentagePrecision;
+}
+
+double AccountingLSBillItem::percentageAccounted(const QDate &dBegin, const QDate &dEnd) const {
+    double v = 0.0;
+    if( m_d->projAmount != 0.0 ){
+        v = UnitMeasure::applyPrecision( accAmount(dBegin, dEnd) / m_d->projAmount, m_d->percentagePrecision+2 );
+    }
+    return v;
+}
+
 void AccountingLSBillItem::setPriceItem(PriceItem * p) {
     if( m_d->priceItem != p ){
         if( m_d->priceItem != NULL ) {
             disconnect( m_d->priceItem, &PriceItem::codeFullChanged, this, &AccountingLSBillItem::emitPriceDataUpdated );
             disconnect( m_d->priceItem, &PriceItem::shortDescriptionFullChanged, this, &AccountingLSBillItem::emitPriceDataUpdated );
             disconnect( m_d->priceItem, &PriceItem::unitMeasureChanged, this, &AccountingLSBillItem::emitPriceDataUpdated );
-            disconnect( m_d->priceItem, &PriceItem::valueChanged, this, &AccountingLSBillItem::emitPriceDataUpdated );
+            disconnect( m_d->priceItem, &PriceItem::valueChanged, this, &AccountingLSBillItem::updatePPU );
         }
         PriceItem * oldPriceItem = m_d->priceItem;
 
@@ -457,56 +502,74 @@ void AccountingLSBillItem::setPriceItem(PriceItem * p) {
             connect( m_d->priceItem, &PriceItem::codeFullChanged, this, &AccountingLSBillItem::emitPriceDataUpdated );
             connect( m_d->priceItem, &PriceItem::shortDescriptionFullChanged, this, &AccountingLSBillItem::emitPriceDataUpdated );
             connect( m_d->priceItem, &PriceItem::unitMeasureChanged, this, &AccountingLSBillItem::emitPriceDataUpdated );
-            connect( m_d->priceItem, &PriceItem::valueChanged, this, &AccountingLSBillItem::emitPriceDataUpdated );
+            connect( m_d->priceItem, &PriceItem::valueChanged, this, &AccountingLSBillItem::updatePPU );
         }
 
         emit dataChanged( this, m_d->priceCodeCol );
         emit dataChanged( this, m_d->priceUmCol );
 
-        double newP = 0.0;
-        for( QList<int>::iterator i=m_d->totalAmountPriceFieldsList.begin(); i != m_d->totalAmountPriceFieldsList.end(); ++i ){
-            newP += m_d->priceItem->value( (*i), m_d->currentPriceDataSet );
-        }
-        if( m_d->PPUTotal != newP ){
-            m_d->PPUTotal = newP;
-            emit PPUTotalChanged( PPUTotalStr() );
-        }
+        updatePPU();
 
         if( m_d->measuresModel != NULL ){
             m_d->measuresModel->setUnitMeasure( m_d->priceItem->unitMeasure() );
         }
-
-        updateTotalAmount();
     }
 }
 
-void AccountingLSBillItem::setQuantity(double v) {
-    if( m_d->measuresModel == NULL ){
-        setQuantityPrivate( v );
+void AccountingLSBillItem::updatePPU(){
+    if( hasChildren() ){
+        for( QList<AccountingLSBillItem *>::iterator i=m_d->childrenContainer.begin(); i != m_d->childrenContainer.end(); ++i ){
+            (*i)->updatePPU();
+        }
+    } else {
+        double newP = 0.0;
+        if( m_d->priceItem != NULL ){
+            QList<int>  totalAmPriceFields = totalAmountPriceFields();
+            for( QList<int>::iterator i=totalAmPriceFields.begin(); i!=totalAmPriceFields.end(); ++i ){
+                newP += m_d->priceItem->value( (*i), m_d->currentPriceDataSet );
+            }
+        }
+        if( m_d->PPU != newP ){
+            m_d->PPU = newP;
+            emit PPUChanged( PPUStr() );
+            updateAccAmount();
+            updateProjAmount();
+        }
     }
 }
 
-void AccountingLSBillItem::setQuantityPrivate(double v) {
-    if( v != m_d->quantity ){
-        m_d->quantity = v;
-        emit quantityChanged( quantityStr() );
-        emit dataChanged( this, m_d->quantityCol );
-        updateTotalAmount();
+void AccountingLSBillItem::updateProjQuantityPrivate() {
+    double v = m_d->measuresModel->projQuantity();
+    if( v != m_d->projQuantity ){
+        m_d->projQuantity = v;
+        emit projQuantityChanged( projQuantityStr() );
+        emit dataChanged( this, m_d->projQuantityCol );
+        updateProjAmount();
     }
 }
 
-void AccountingLSBillItem::setQuantity(const QString &vstr ) {
-    setQuantity( m_d->parser->evaluate( vstr ) );
+void AccountingLSBillItem::updateAccQuantityPrivate() {
+    double v = m_d->measuresModel->accQuantity();
+    if( v != m_d->accQuantity ){
+        m_d->accQuantity = v;
+        emit accQuantityChanged( accQuantityStr() );
+        emit dataChanged( this, m_d->projAmountCol );
+        updateAccAmount();
+    }
 }
 
 QList<int> AccountingLSBillItem::totalAmountPriceFields(){
-    return m_d->totalAmountPriceFieldsList;
+    if( m_d->parentItem != NULL ){
+        return m_d->parentItem->totalAmountPriceFields();
+    } else {
+        return *(m_d->totalAmountPriceFieldsList);
+    }
 }
-
 
 void AccountingLSBillItem::setTotalAmountPriceFields(const QList<int> &newAmountFields) {
     if( m_d->parentItem == NULL ){
-        m_d->totalAmountPriceFieldsList = newAmountFields;
+        *(m_d->totalAmountPriceFieldsList) = newAmountFields;
+        updatePPU();
     }
 }
 
@@ -527,7 +590,7 @@ QVariant AccountingLSBillItem::data(int col, int role) const {
     if( col == m_d->progNumberCol ){
         if( role == Qt::TextAlignmentRole ){
             if( m_d->parentItem == NULL ){
-                return Qt::AlignCenter + Qt::AlignVCenter;;
+                return Qt::AlignHCenter + Qt::AlignVCenter;;
             } else {
                 return Qt::AlignLeft + Qt::AlignVCenter;;
             }
@@ -572,7 +635,7 @@ QVariant AccountingLSBillItem::data(int col, int role) const {
         }
     } else if( col == m_d->priceUmCol ){
         if( role == Qt::TextAlignmentRole ){
-            return Qt::AlignCenter + Qt::AlignVCenter;
+            return Qt::AlignHCenter + Qt::AlignVCenter;
         } else { // role == Qt::DisplayRole || role == Qt::EditRole
             if( m_d->parentItem == NULL ){
                 return QVariant( trUtf8("UdM") );
@@ -586,27 +649,10 @@ QVariant AccountingLSBillItem::data(int col, int role) const {
                 }
             }
         }
-    } else if( col == m_d->quantityCol ){
-        if( role == Qt::TextAlignmentRole ){
-            if( m_d->parentItem == NULL ){
-                return Qt::AlignCenter + Qt::AlignVCenter;
-            } else {
-                return Qt::AlignRight + Qt::AlignVCenter;
-            }
-        } else { // role == Qt::DisplayRole || role == Qt::EditRole
-            if( m_d->parentItem == NULL ){
-                return QVariant( trUtf8("Quantità") );
-            }
-            if( hasChildren() ){
-                return QVariant();
-            } else {
-                return QVariant( quantityStr() );
-            }
-        }
     } else if( col == m_d->priceCol ){
         if( role == Qt::TextAlignmentRole ){
             if( m_d->parentItem == NULL ){
-                return Qt::AlignCenter + Qt::AlignVCenter;
+                return Qt::AlignHCenter + Qt::AlignVCenter;
             } else {
                 return Qt::AlignRight + Qt::AlignVCenter;
             }
@@ -617,21 +663,68 @@ QVariant AccountingLSBillItem::data(int col, int role) const {
             if( hasChildren() ){
                 return QVariant();
             } else {
-                return QVariant( PPUTotalStr() );
+                return QVariant( PPUStr() );
             }
         }
-    } else if( col == m_d->amountCol ){
+    } else if( col == m_d->projQuantityCol ){
         if( role == Qt::TextAlignmentRole ){
             if( m_d->parentItem == NULL ){
-                return Qt::AlignCenter + Qt::AlignVCenter;
+                return Qt::AlignHCenter + Qt::AlignVCenter;
             } else {
                 return Qt::AlignRight + Qt::AlignVCenter;
             }
         } else { // role == Qt::DisplayRole || role == Qt::EditRole
             if( m_d->parentItem == NULL ){
-                return QVariant( trUtf8("Importi") );
+                return QVariant( trUtf8("Quantità prog.") );
             }
-            return QVariant( totalAmountStr() );
+            if( hasChildren() ){
+                return QVariant();
+            } else {
+                return QVariant( projQuantityStr() );
+            }
+        }
+    } else if( col == m_d->projAmountCol ){
+        if( role == Qt::TextAlignmentRole ){
+            if( m_d->parentItem == NULL ){
+                return Qt::AlignHCenter + Qt::AlignVCenter;
+            } else {
+                return Qt::AlignRight + Qt::AlignVCenter;
+            }
+        } else { // role == Qt::DisplayRole || role == Qt::EditRole
+            if( m_d->parentItem == NULL ){
+                return QVariant( trUtf8("Importo prog.") );
+            }
+            return QVariant( projAmountStr() );
+        }
+    } else if( col == m_d->accQuantityCol ){
+        if( role == Qt::TextAlignmentRole ){
+            if( m_d->parentItem == NULL ){
+                return Qt::AlignHCenter + Qt::AlignVCenter;
+            } else {
+                return Qt::AlignRight + Qt::AlignVCenter;
+            }
+        } else { // role == Qt::DisplayRole || role == Qt::EditRole
+            if( m_d->parentItem == NULL ){
+                return QVariant( trUtf8("Quantità cont.") );
+            }
+            if( hasChildren() ){
+                return QVariant();
+            } else {
+                return QVariant( accQuantityStr() );
+            }
+        }
+    } else if( col == m_d->accAmountCol ){
+        if( role == Qt::TextAlignmentRole ){
+            if( m_d->parentItem == NULL ){
+                return Qt::AlignHCenter + Qt::AlignVCenter;
+            } else {
+                return Qt::AlignRight + Qt::AlignVCenter;
+            }
+        } else { // role == Qt::DisplayRole || role == Qt::EditRole
+            if( m_d->parentItem == NULL ){
+                return QVariant( trUtf8("Importo cont.") );
+            }
+            return QVariant( accAmountStr() );
         }
     }
     return QVariant();
@@ -641,12 +734,6 @@ bool AccountingLSBillItem::setData(int column, const QVariant &value) {
     if( hasChildren() ){
         if( column == m_d->priceShortDescCol ){
             m_d->name = value.toString();
-            return true;
-        }
-    } else {
-        if( column == m_d->quantityCol ){
-            setQuantity( value.toString() );
-            updateTotalAmount();
             return true;
         }
     }
@@ -672,15 +759,13 @@ void AccountingLSBillItem::setCurrentPriceDataSet(int v ) {
             emit currentPriceDataSetChanged( m_d->currentPriceDataSet );
         }
     }
+    updatePPU();
 }
 
 void AccountingLSBillItem::emitPriceDataUpdated() {
-    for( QList<AccountingLSBillItem *>::iterator i = m_d->childrenContainer.begin(); i != m_d->childrenContainer.end(); ++i ){
-        (*i)->emitPriceDataUpdated();
-    }
     if( !hasChildren() ){
-        updateTotalAmount();
         emit dataChanged( this, m_d->priceCodeCol );
+        emit dataChanged( this, m_d->priceShortDescCol );
         emit dataChanged( this, m_d->priceUmCol );
     }
 }
@@ -691,28 +776,42 @@ void AccountingLSBillItem::setUnitMeasure(UnitMeasure *ump) {
     }
 }
 
-void AccountingLSBillItem::updateTotalAmount() {
-    double v = UnitMeasure::applyPrecision( m_d->quantity * m_d->PPUTotal, m_d->amountPrecision );
-    if( v != m_d->totalAmount ){
-        m_d->totalAmount = v;
-        emit totalAmountChanged( totalAmountStr() );
+void AccountingLSBillItem::updateProjAmount() {
+    double v = 0.0;
+    if( hasChildren() ){
+        for( QList<AccountingLSBillItem *>::iterator i = m_d->childrenContainer.begin(); i != m_d->childrenContainer.end(); ++i){
+            v += (*i)->projAmount();
+        }
+    } else {
+        v = UnitMeasure::applyPrecision( m_d->projQuantity * m_d->PPU, m_d->amountPrecision );
+    }
+    if( v != m_d->projAmount ){
+        m_d->projAmount = v;
+        emit projAmountChanged( projAmountStr() );
     }
 }
 
-void AccountingLSBillItem::updateTotalAmountAccounted() {
-    double v = UnitMeasure::applyPrecision( m_d->quantity * m_d->PPUTotal, m_d->amountPrecision );
-    if( v != m_d->totalAmount ){
-        m_d->totalAmount = v;
-        emit totalAmountChanged( totalAmountStr() );
+void AccountingLSBillItem::updateAccAmount() {
+    double v = 0.0;
+    if( hasChildren() ){
+        for( QList<AccountingLSBillItem *>::iterator i = m_d->childrenContainer.begin(); i != m_d->childrenContainer.end(); ++i){
+            v += (*i)->accAmount();
+        }
+    } else {
+        v = UnitMeasure::applyPrecision( m_d->accQuantity * m_d->PPU, m_d->amountPrecision );
+    }
+    if( v != m_d->accAmount ){
+        m_d->accAmount = v;
+        emit accAmountChanged( accAmountStr() );
     }
 }
 
 void AccountingLSBillItem::updatePercentageAccounted() {
     double v = 0.0;
-    if( m_d->totalAmount != 0.0 ){
-        v = m_d->totalAmountAccounted / m_d->totalAmount;
+    if( m_d->projAmount != 0.0 ){
+        v = UnitMeasure::applyPrecision( m_d->accAmount / m_d->projAmount, m_d->percentagePrecision+2 );
     }
-    if( v != m_d->totalAmount ){
+    if( v != m_d->projAmount ){
         m_d->percentageAccounted = v;
         emit percentageAccountedChanged( percentageAccountedStr() );
     }
@@ -815,7 +914,8 @@ bool AccountingLSBillItem::insertChildren(PriceItem * p, int position, int count
         }
         m_d->childrenContainer.insert(position, item);
         connect( item, static_cast<void(AccountingLSBillItem::*)(AccountingLSBillItem *,int)> (&AccountingLSBillItem::dataChanged), this, static_cast<void(AccountingLSBillItem::*)(AccountingLSBillItem*,int)> (&AccountingLSBillItem::dataChanged) );
-        connect( item, &AccountingLSBillItem::totalAmountChanged, this, &AccountingLSBillItem::updateTotalAmount );
+        connect( item, &AccountingLSBillItem::projAmountChanged, this, &AccountingLSBillItem::updateProjAmount );
+        connect( item, &AccountingLSBillItem::accAmountChanged, this, &AccountingLSBillItem::updateAccAmount );
         connect( this, &AccountingLSBillItem::currentPriceDataSetChanged, item, &AccountingLSBillItem::setCurrentPriceDataSet );
         connect( item, &AccountingLSBillItem::itemChanged, this, &AccountingLSBillItem::itemChanged );
     }
@@ -848,7 +948,7 @@ bool AccountingLSBillItem::removeChildren(int position, int count) {
     for (int row = 0; row < count; ++row){
         AccountingLSBillItem * item = m_d->childrenContainer.at( position );
         disconnect( item, static_cast<void(AccountingLSBillItem::*)(AccountingLSBillItem *,int)> (&AccountingLSBillItem::dataChanged), this, static_cast<void(AccountingLSBillItem::*)(AccountingLSBillItem *,int)> (&AccountingLSBillItem::dataChanged) );
-        disconnect( item, &AccountingLSBillItem::totalAmountChanged, this, &AccountingLSBillItem::updateTotalAmount );
+        disconnect( item, &AccountingLSBillItem::projAmountChanged, this, &AccountingLSBillItem::updateProjAmount );
         disconnect( this, &AccountingLSBillItem::currentPriceDataSetChanged, item, &AccountingLSBillItem::setCurrentPriceDataSet );
         disconnect( item, &AccountingLSBillItem::itemChanged, this, &AccountingLSBillItem::itemChanged );
         delete item;
@@ -870,39 +970,14 @@ bool AccountingLSBillItem::reset() {
 }
 
 int AccountingLSBillItem::childNumber() const {
-    if (m_d->parentItem)
+    if (m_d->parentItem != NULL ) {
         return m_d->parentItem->m_d->childrenContainer.indexOf( const_cast<AccountingLSBillItem *>(this) );
-
+    }
     return 0;
 }
 
-MeasuresModel *AccountingLSBillItem::measuresModel() {
+MeasuresLSModel * AccountingLSBillItem::measuresModel() {
     return m_d->measuresModel;
-}
-
-MeasuresModel *AccountingLSBillItem::generateMeasuresModel() {
-    if( m_d->measuresModel == NULL ){
-        UnitMeasure * ump = NULL;
-        if( m_d->priceItem != NULL ){
-            ump = m_d->priceItem->unitMeasure();
-        }
-        m_d->measuresModel = new MeasuresModel( m_d->parser, ump );
-        setQuantity( m_d->measuresModel->quantity() );
-        connect( m_d->measuresModel, &MeasuresModel::quantityChanged, this, &AccountingLSBillItem::setQuantityPrivate );
-        connect( m_d->measuresModel, &MeasuresModel::modelChanged, this, &AccountingLSBillItem::itemChanged );
-        emit itemChanged();
-    }
-    return m_d->measuresModel;
-}
-
-void AccountingLSBillItem::removeMeasuresModel() {
-    if( m_d->measuresModel != NULL ){
-        disconnect( m_d->measuresModel, &MeasuresModel::quantityChanged, this, &AccountingLSBillItem::setQuantityPrivate );
-        disconnect( m_d->measuresModel, &MeasuresModel::modelChanged, this, &AccountingLSBillItem::itemChanged );
-        delete m_d->measuresModel;
-        m_d->measuresModel = NULL;
-        updateTotalAmount();
-    }
 }
 
 Qt::ItemFlags AccountingLSBillItem::flags(int column) const {
@@ -914,7 +989,7 @@ Qt::ItemFlags AccountingLSBillItem::flags(int column) const {
             return Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemIsEditable;
         }
     } else {
-        if( column == m_d->quantityCol ){
+        if( column == m_d->projQuantityCol ){
             if( m_d->measuresModel == NULL ){
                 return Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemIsEditable;
             } else {
@@ -928,7 +1003,7 @@ Qt::ItemFlags AccountingLSBillItem::flags(int column) const {
 void AccountingLSBillItem::writeXml(QXmlStreamWriter *writer) {
     if( m_d->parentItem != NULL ){
         // se non e' l'elemento root
-        writer->writeStartElement( "BillItem" );
+        writer->writeStartElement( "AccountingBillItem" );
         writer->writeAttribute( "id", QString::number(m_d->id) );
 
         QString attrs;
@@ -952,7 +1027,7 @@ void AccountingLSBillItem::writeXml(QXmlStreamWriter *writer) {
             if( m_d->priceItem != NULL ){
                 writer->writeAttribute( "priceItem", QString::number( m_d->priceItem->id() ) );
             }
-            writer->writeAttribute( "quantity", QString::number( m_d->quantity ) );
+            writer->writeAttribute( "quantity", QString::number( m_d->projQuantity ) );
             writer->writeAttribute( "priceDataSet", QString::number(m_d->currentPriceDataSet) );
 
             if( m_d->measuresModel ){
@@ -971,21 +1046,21 @@ void AccountingLSBillItem::writeXml(QXmlStreamWriter *writer) {
 
 void AccountingLSBillItem::readXml(QXmlStreamReader *reader, PriceList * priceList, AttributeModel * billAttrModel ) {
     if( m_d->parentItem != NULL ){
-        if(reader->isStartElement() && reader->name().toString().toUpper() == "BILLITEM"){
+        if(reader->isStartElement() && reader->name().toString().toUpper() == "ACCOUNTINGLSBILLITEM"){
             loadFromXml( reader->attributes(), priceList, billAttrModel );
         }
         reader->readNext();
     }
     while( (!reader->atEnd()) &&
            (!reader->hasError()) &&
-           !(reader->isEndElement() && reader->name().toString().toUpper() == "BILLITEM")&&
-           !(reader->isEndElement() && reader->name().toString().toUpper() == "BILL")  ){
-        if( reader->name().toString().toUpper() == "BILLITEM" && reader->isStartElement()) {
+           !(reader->isEndElement() && reader->name().toString().toUpper() == "ACCOUNTINGLSBILLITEM")&&
+           !(reader->isEndElement() && reader->name().toString().toUpper() == "ACCOUNTINGLSBILL")  ){
+        if( reader->name().toString().toUpper() == "ACCOUNTINGLSBILLITEM" && reader->isStartElement()) {
             appendChildren();
             m_d->childrenContainer.last()->readXml( reader, priceList, billAttrModel );
         }
-        if( reader->name().toString().toUpper() == "BILLITEMMEASURESMODEL" && reader->isStartElement() ) {
-            generateMeasuresModel()->readXml( reader );
+        if( reader->name().toString().toUpper() == "MEASURESLSMODEL" && reader->isStartElement() ) {
+            m_d->measuresModel->readXml( reader );
         }
         reader->readNext();
     }
@@ -1006,8 +1081,8 @@ void AccountingLSBillItem::readXmlTmp(QXmlStreamReader *reader) {
             appendChildren();
             m_d->childrenContainer.last()->readXmlTmp( reader );
         }
-        if( reader->name().toString().toUpper() == "BILLITEMMEASURESMODEL" && reader->isStartElement() ) {
-            generateMeasuresModel()->readXml( reader );
+        if( reader->name().toString().toUpper() == "MEASURESLSMODEL" && reader->isStartElement() ) {
+            m_d->measuresModel->readXml( reader );
         }
         reader->readNext();
     }
@@ -1029,10 +1104,6 @@ void AccountingLSBillItem::loadFromXml(const QXmlStreamAttributes &attrs, PriceL
                 addAttribute( billAttrModel->attributeId( attrId ) );
             }
         }
-    }
-    if( attrs.hasAttribute( "quantity" ) ){
-        QString qStr = attrs.value("quantity").toString();
-        setQuantity( qStr.toDouble() );
     }
     if( attrs.hasAttribute( "priceDataSet" ) ){
         setCurrentPriceDataSet( attrs.value( "priceDataSet").toInt() );
@@ -1106,7 +1177,7 @@ void AccountingLSBillItem::removeAllAttributes() {
     emit attributesChanged();
 }
 
-double AccountingLSBillItem::totalAmountAttribute(Attribute *attr ) {
+double AccountingLSBillItem::projAmountAttribute(Attribute *attr ) {
     if( m_d->childrenContainer.size() == 0 ){
         QList<Attribute *> attrs = inheritedAttributes();
         for( QList<Attribute *>::iterator i = m_d->attributes.begin(); i != m_d->attributes.end(); ++i ){
@@ -1115,21 +1186,53 @@ double AccountingLSBillItem::totalAmountAttribute(Attribute *attr ) {
             }
         }
         if( attrs.contains(attr) ){
-            return totalAmount();
+            return projAmount();
         }
     } else {
         double ret = 0.0;
         for( QList<AccountingLSBillItem *>::iterator i = m_d->childrenContainer.begin(); i != m_d->childrenContainer.end(); ++i ){
-            ret += (*i)->totalAmountAttribute( attr );
+            ret += (*i)->projAmountAttribute( attr );
         }
         return ret;
     }
     return 0.0;
 }
 
-QString AccountingLSBillItem::totalAmountAttributeStr(Attribute *attr) {
+QString AccountingLSBillItem::projAmountAttributeStr(Attribute *attr) {
     QString ret;
-    double v = totalAmountAttribute( attr );
+    double v = projAmountAttribute( attr );
+    if( m_d->parser == NULL ){
+        ret = QString::number(v, 'f', m_d->amountPrecision );
+    } else {
+        ret = m_d->parser->toString( v, 'f', m_d->amountPrecision );
+    }
+    return ret;
+}
+
+double AccountingLSBillItem::accAmountAttribute(Attribute *attr ) {
+    if( m_d->childrenContainer.size() == 0 ){
+        QList<Attribute *> attrs = inheritedAttributes();
+        for( QList<Attribute *>::iterator i = m_d->attributes.begin(); i != m_d->attributes.end(); ++i ){
+            if( !attrs.contains( *i) ){
+                attrs.append( *i );
+            }
+        }
+        if( attrs.contains(attr) ){
+            return accAmount();
+        }
+    } else {
+        double ret = 0.0;
+        for( QList<AccountingLSBillItem *>::iterator i = m_d->childrenContainer.begin(); i != m_d->childrenContainer.end(); ++i ){
+            ret += (*i)->accAmountAttribute( attr );
+        }
+        return ret;
+    }
+    return 0.0;
+}
+
+QString AccountingLSBillItem::accAmountAttributeStr(Attribute *attr) {
+    QString ret;
+    double v = accAmountAttribute( attr );
     if( m_d->parser == NULL ){
         ret = QString::number(v, 'f', m_d->amountPrecision );
     } else {
@@ -1196,7 +1299,7 @@ QList<PriceItem *> AccountingLSBillItem::connectedPriceItems() const {
 #include "qtextformatuserdefined.h"
 
 void AccountingLSBillItem::writeODTBillOnTable(QTextCursor *cursor,
-                                               AccountingPrinter::PrintAccountingBillOption prItemsOption,
+                                               AccountingPrinter::PrintPPUDescOption prItemsOption,
                                                bool writeAmounts ) {
     // spessore del bordo della tabella
     double borderWidth = 1.0f;
@@ -1345,7 +1448,7 @@ void AccountingLSBillItem::writeODTBillOnTable(QTextCursor *cursor,
         AccountingLSBillItemPrivate::writeCell( cursor, table, centralTitleFormat, numBlockFormat );
 
         AccountingLSBillItemPrivate::writeCell( cursor, table, centralTitleFormat, numBlockFormat );
-        AccountingLSBillItemPrivate::writeCell( cursor, table, rightTitleFormat, numBlockFormat, totalAmountStr() );
+        AccountingLSBillItemPrivate::writeCell( cursor, table, rightTitleFormat, numBlockFormat, accAmountStr() );
 
         // *** Riga di chiusura ***
         AccountingLSBillItemPrivate::insertEmptyRow( cellCount, cursor, leftBottomFormat, centralBottomFormat, rightBottomFormat );
@@ -1378,7 +1481,7 @@ void AccountingLSBillItem::writeODTBillOnTable(QTextCursor *cursor,
             if( writeAmounts ){
                 AccountingLSBillItemPrivate::writeCell( cursor, table, centralSubTitleFormat, numBlockFormat );
                 AccountingLSBillItemPrivate::writeCell( cursor, table, centralSubTitleFormat, numBlockFormat );
-                AccountingLSBillItemPrivate::writeCell( cursor, table, rightSubTitleFormat, numBlockFormat, totalAmountStr() );
+                AccountingLSBillItemPrivate::writeCell( cursor, table, rightSubTitleFormat, numBlockFormat, accAmountStr() );
             } else {
                 AccountingLSBillItemPrivate::writeCell( cursor, table, rightSubTitleFormat, numBlockFormat );
             }
@@ -1395,7 +1498,7 @@ void AccountingLSBillItem::writeODTBillOnTable(QTextCursor *cursor,
 }
 
 void AccountingLSBillItem::writeODTSummaryOnTable(QTextCursor *cursor,
-                                                  AccountingPrinter::PrintAccountingBillOption prItemsOption,
+                                                  AccountingPrinter::PrintPPUDescOption prItemsOption,
                                                   bool writeAmounts,
                                                   bool writeDetails ) {
     // spessore del bordo della tabella
@@ -1562,10 +1665,13 @@ void AccountingLSBillItem::writeODTSummaryOnTable(QTextCursor *cursor,
             cursor->movePosition(QTextCursor::PreviousRow );
         }
 
-        double itemTotalAmount = 0.0;
-        double itemTotalQuantity = 0.0;
+        double itemProjTotalAmount = 0.0;
+        double itemProjTotalQuantity = 0.0;
+        double itemAccTotalAmount = 0.0;
+        double itemAccTotalQuantity = 0.0;
         for( QList<AccountingLSBillItem *>::iterator j = m_d->childrenContainer.begin(); j != m_d->childrenContainer.end(); ++j ){
-            (*j)->writeODTSummaryLine( *i, cursor, &itemTotalQuantity, &itemTotalAmount,
+            (*j)->writeODTSummaryLine( *i, cursor,
+                                       &itemProjTotalQuantity, &itemProjTotalAmount, &itemAccTotalQuantity, &itemAccTotalAmount,
                                        writeAmounts, writeDetails,
                                        table,
                                        tagBlockFormat, txtBlockFormat, numBlockFormat,
@@ -1579,11 +1685,11 @@ void AccountingLSBillItem::writeODTSummaryOnTable(QTextCursor *cursor,
         AccountingLSBillItemPrivate::writeCell( cursor, table, centralFormat, tagBlockFormat, unitMeasureTag );
 
         if( writeAmounts ){
-            AccountingLSBillItemPrivate::writeCell( cursor, table, centralFormat, numBlockFormat, m_d->toString( itemTotalQuantity, 'f', unitMeasurePrec ));
-            AccountingLSBillItemPrivate::writeCell( cursor, table, centralFormat, numBlockFormat, PPUTotalStr() );
-            AccountingLSBillItemPrivate::writeCell( cursor, table, rightFormat, numBlockFormat, m_d->toString( itemTotalAmount, 'f', m_d->amountPrecision ) );
+            AccountingLSBillItemPrivate::writeCell( cursor, table, centralFormat, numBlockFormat, m_d->toString( itemAccTotalQuantity, 'f', unitMeasurePrec ));
+            AccountingLSBillItemPrivate::writeCell( cursor, table, centralFormat, numBlockFormat, PPUStr() );
+            AccountingLSBillItemPrivate::writeCell( cursor, table, rightFormat, numBlockFormat, m_d->toString( itemAccTotalAmount, 'f', m_d->amountPrecision ) );
         } else {
-            AccountingLSBillItemPrivate::writeCell( cursor, table, rightFormat, numBlockFormat, m_d->toString( itemTotalQuantity, 'f', unitMeasurePrec ));
+            AccountingLSBillItemPrivate::writeCell( cursor, table, rightFormat, numBlockFormat, m_d->toString( itemAccTotalQuantity, 'f', unitMeasurePrec ));
         }
 
         AccountingLSBillItemPrivate::insertEmptyRow( cellCount, cursor, leftFormat, centralFormat, rightFormat );
@@ -1606,7 +1712,7 @@ void AccountingLSBillItem::writeODTSummaryOnTable(QTextCursor *cursor,
         AccountingLSBillItemPrivate::writeCell( cursor, table, centralTitleFormat, numBlockFormat );
 
         AccountingLSBillItemPrivate::writeCell( cursor, table, centralTitleFormat, numBlockFormat );
-        AccountingLSBillItemPrivate::writeCell( cursor, table, rightTitleFormat, numBlockFormat, totalAmountStr() );
+        AccountingLSBillItemPrivate::writeCell( cursor, table, rightTitleFormat, numBlockFormat, accAmountStr() );
     }
 
     // *** Riga di chiusura ***
@@ -1615,8 +1721,10 @@ void AccountingLSBillItem::writeODTSummaryOnTable(QTextCursor *cursor,
 
 void AccountingLSBillItem::writeODTSummaryLine( PriceItem * priceItem,
                                                 QTextCursor *cursor,
-                                                double * itemTotalQuantity,
-                                                double * itemTotalAmount,
+                                                double * itemProjTotalQuantity,
+                                                double * itemProjTotalAmount,
+                                                double * itemAccTotalQuantity,
+                                                double * itemAccTotalAmount,
                                                 bool writeAmounts,
                                                 bool writeDetails,
                                                 QTextTable *table,
@@ -1628,8 +1736,10 @@ void AccountingLSBillItem::writeODTSummaryLine( PriceItem * priceItem,
                                                 QTextTableCellFormat & rightFormat ) {
     if( m_d->childrenContainer.size() == 0 ){
         if( priceItem == m_d->priceItem ){
-            (*itemTotalQuantity) += quantity();
-            (*itemTotalAmount) += totalAmount();
+            (*itemProjTotalQuantity) += projQuantity();
+            (*itemProjTotalAmount) += projAmount();
+            (*itemAccTotalQuantity) += accQuantity();
+            (*itemAccTotalAmount) += accAmount();
             if( writeDetails ){
                 AccountingLSBillItemPrivate::writeCell( cursor, table, leftFormat, txtBlockFormat );
                 AccountingLSBillItemPrivate::writeCell( cursor, table, centralFormat, txtBlockFormat, progressiveCode() );
@@ -1643,11 +1753,11 @@ void AccountingLSBillItem::writeODTSummaryLine( PriceItem * priceItem,
                 AccountingLSBillItemPrivate::writeCell( cursor, table, centralFormat, tagBlockFormat, unitMeasureTag );
 
                 if( writeAmounts ){
-                    AccountingLSBillItemPrivate::writeCell( cursor, table, centralFormat, numBlockFormat, quantityStr() );
+                    AccountingLSBillItemPrivate::writeCell( cursor, table, centralFormat, numBlockFormat, accQuantityStr() );
                     AccountingLSBillItemPrivate::writeCell( cursor, table, centralFormat, numBlockFormat );
                     AccountingLSBillItemPrivate::writeCell( cursor, table, rightFormat, numBlockFormat );
                 } else {
-                    AccountingLSBillItemPrivate::writeCell( cursor, table, rightFormat, numBlockFormat, quantityStr() );
+                    AccountingLSBillItemPrivate::writeCell( cursor, table, rightFormat, numBlockFormat, accQuantityStr() );
                 }
 
                 table->appendRows(1);
@@ -1656,7 +1766,9 @@ void AccountingLSBillItem::writeODTSummaryLine( PriceItem * priceItem,
         }
     } else {
         for( QList<AccountingLSBillItem *>::iterator i = m_d->childrenContainer.begin(); i != m_d->childrenContainer.end(); ++i ){
-            (*i)->writeODTSummaryLine( priceItem, cursor, itemTotalQuantity, itemTotalAmount, writeAmounts, writeDetails,
+            (*i)->writeODTSummaryLine( priceItem, cursor,
+                                       itemProjTotalQuantity, itemProjTotalAmount, itemAccTotalQuantity, itemAccTotalAmount,
+                                       writeAmounts, writeDetails,
                                        table,
                                        tagBlockFormat, txtBlockFormat, numBlockFormat,
                                        leftFormat, centralFormat, rightFormat );
@@ -1666,7 +1778,7 @@ void AccountingLSBillItem::writeODTSummaryLine( PriceItem * priceItem,
 
 void AccountingLSBillItem::writeODTAttributeBillOnTable(QTextCursor *cursor,
                                                         AccountingPrinter::AttributePrintOption prOption,
-                                                        AccountingPrinter::PrintAccountingBillOption prItemsOption,
+                                                        AccountingPrinter::PrintPPUDescOption prItemsOption,
                                                         const QList<Attribute *> &attrsToPrint,
                                                         bool writeAmounts) {
     // spessore del bordo della tabella
@@ -1786,8 +1898,8 @@ void AccountingLSBillItem::writeODTAttributeBillOnTable(QTextCursor *cursor,
     AccountingLSBillItemPrivate::writeCell( cursor, table, centralHeaderFormat, headerBlockFormat, trUtf8("Unità di Misura"));
     if( writeAmounts ){
         AccountingLSBillItemPrivate::writeCell( cursor, table, centralHeaderFormat, headerBlockFormat, trUtf8("Quantità"));
-        AccountingLSBillItemPrivate::writeCell( cursor, table, centralHeaderFormat, headerBlockFormat, PPUTotalStr() );
-        AccountingLSBillItemPrivate::writeCell( cursor, table, rightHeaderFormat, headerBlockFormat, totalAmountStr() );
+        AccountingLSBillItemPrivate::writeCell( cursor, table, centralHeaderFormat, headerBlockFormat, PPUStr() );
+        AccountingLSBillItemPrivate::writeCell( cursor, table, rightHeaderFormat, headerBlockFormat, accAmountStr() );
     } else {
         AccountingLSBillItemPrivate::writeCell( cursor, table, rightHeaderFormat, headerBlockFormat, trUtf8("Quantità"));
     }
@@ -1795,12 +1907,14 @@ void AccountingLSBillItem::writeODTAttributeBillOnTable(QTextCursor *cursor,
     // *** riga vuota ***
     AccountingLSBillItemPrivate::insertEmptyRow( cellCount, cursor, leftFormat, centralFormat, rightFormat );
 
-    double itemTotalAmount;
+    double itemProjTotalAmount = 0.0;
+    double itemAccTotalAmount = 0.0;
 
     if( prOption ==AccountingPrinter::AttributePrintSimple ){
         // *** Righe del computo suddivise per attributo ***
         for( QList<Attribute *>::const_iterator i = attrsToPrint.begin(); i != attrsToPrint.end(); ++i){
-            double itemTotalAmount = 0.0;
+            double itemProjTotalAmount = 0.0;
+            double itemAccTotalAmount = 0.0;
             table->appendRows(1);
             cursor->movePosition(QTextCursor::PreviousRow );
             // cursor->movePosition(QTextCursor::NextCell);
@@ -1820,7 +1934,8 @@ void AccountingLSBillItem::writeODTAttributeBillOnTable(QTextCursor *cursor,
             AccountingLSBillItemPrivate::insertEmptyRow( cellCount, cursor, leftFormat, centralFormat, rightFormat );
 
             writeODTAttributeBillLineSimple( prItemsOption,
-                                             &itemTotalAmount, *i, writeAmounts,
+                                             &itemProjTotalAmount, &itemAccTotalAmount,
+                                             *i, writeAmounts,
                                              cursor, table, tagBlockFormat, txtBlockFormat, numBlockFormat,
                                              leftFormat, centralFormat, rightFormat, centralQuantityTotalFormat, rightQuantityTotalFormat,
                                              txtCharFormat, txtBoldCharFormat );
@@ -1835,7 +1950,7 @@ void AccountingLSBillItem::writeODTAttributeBillOnTable(QTextCursor *cursor,
             if( writeAmounts ){
                 AccountingLSBillItemPrivate::writeCell( cursor, table, centralTitleFormat, numBlockFormat );
                 AccountingLSBillItemPrivate::writeCell( cursor, table, centralTitleFormat, numBlockFormat );
-                AccountingLSBillItemPrivate::writeCell( cursor, table, rightTitleFormat, numBlockFormat, m_d->toString( itemTotalAmount, 'f', m_d->amountPrecision) );
+                AccountingLSBillItemPrivate::writeCell( cursor, table, rightTitleFormat, numBlockFormat, m_d->toString( itemAccTotalAmount, 'f', m_d->amountPrecision) );
             } else {
                 AccountingLSBillItemPrivate::writeCell( cursor, table, rightTitleFormat, numBlockFormat );
             }
@@ -1868,7 +1983,8 @@ void AccountingLSBillItem::writeODTAttributeBillOnTable(QTextCursor *cursor,
         }
 
         writeODTAttributeBillLineUnion( prItemsOption,
-                                        &itemTotalAmount, writeAmounts, attrsToPrint,
+                                        &itemProjTotalAmount, &itemAccTotalAmount,
+                                        writeAmounts, attrsToPrint,
                                         cursor, table, tagBlockFormat, txtBlockFormat, numBlockFormat,
                                         leftFormat, centralFormat, rightFormat, centralQuantityTotalFormat, rightQuantityTotalFormat,
                                         txtCharFormat, txtBoldCharFormat );
@@ -1882,7 +1998,7 @@ void AccountingLSBillItem::writeODTAttributeBillOnTable(QTextCursor *cursor,
         if( writeAmounts ){
             AccountingLSBillItemPrivate::writeCell( cursor, table, centralTitleFormat, numBlockFormat );
             AccountingLSBillItemPrivate::writeCell( cursor, table, centralTitleFormat, numBlockFormat );
-            AccountingLSBillItemPrivate::writeCell( cursor, table, rightTitleFormat, numBlockFormat, m_d->toString( itemTotalAmount, 'f', m_d->amountPrecision ) );
+            AccountingLSBillItemPrivate::writeCell( cursor, table, rightTitleFormat, numBlockFormat, m_d->toString( itemAccTotalAmount, 'f', m_d->amountPrecision ) );
         } else {
             AccountingLSBillItemPrivate::writeCell( cursor, table, rightTitleFormat, numBlockFormat );
         }
@@ -1907,7 +2023,8 @@ void AccountingLSBillItem::writeODTAttributeBillOnTable(QTextCursor *cursor,
         }
 
         writeODTAttributeBillLineIntersection( prItemsOption,
-                                               &itemTotalAmount, attrsToPrint, writeAmounts,
+                                               &itemProjTotalAmount, &itemAccTotalAmount,
+                                               attrsToPrint, writeAmounts,
                                                cursor, table, tagBlockFormat, txtBlockFormat, numBlockFormat,
                                                leftFormat, centralFormat, rightFormat, centralQuantityTotalFormat, rightQuantityTotalFormat,
                                                txtCharFormat, txtBoldCharFormat );
@@ -1921,7 +2038,7 @@ void AccountingLSBillItem::writeODTAttributeBillOnTable(QTextCursor *cursor,
         if( writeAmounts ){
             AccountingLSBillItemPrivate::writeCell( cursor, table, centralTitleFormat, numBlockFormat );
             AccountingLSBillItemPrivate::writeCell( cursor, table, centralTitleFormat, numBlockFormat );
-            AccountingLSBillItemPrivate::writeCell( cursor, table, rightTitleFormat, numBlockFormat, m_d->toString( itemTotalAmount, 'f', m_d->amountPrecision ) );
+            AccountingLSBillItemPrivate::writeCell( cursor, table, rightTitleFormat, numBlockFormat, m_d->toString( itemAccTotalAmount, 'f', m_d->amountPrecision ) );
         } else {
             AccountingLSBillItemPrivate::writeCell( cursor, table, rightTitleFormat, numBlockFormat );
         }
@@ -1931,8 +2048,8 @@ void AccountingLSBillItem::writeODTAttributeBillOnTable(QTextCursor *cursor,
     AccountingLSBillItemPrivate::insertEmptyRow( cellCount, cursor, leftBottomFormat, centralBottomFormat, rightBottomFormat );
 }
 
-void AccountingLSBillItem::writeODTAttributeBillLineSimple(AccountingPrinter::PrintAccountingBillOption prItemsOption,
-                                                           double * itemTotalAmount,
+void AccountingLSBillItem::writeODTAttributeBillLineSimple(AccountingPrinter::PrintPPUDescOption prItemsOption,
+                                                           double * itemProjTotalAmount, double * itemAccTotalAmount,
                                                            Attribute *attrsToPrint,
                                                            bool writeAmounts,
                                                            QTextCursor *cursor,
@@ -1950,7 +2067,8 @@ void AccountingLSBillItem::writeODTAttributeBillLineSimple(AccountingPrinter::Pr
 
     if( !hasChildren() ){
         if( containsAttribute( attrsToPrint ) ){
-            *itemTotalAmount += totalAmount();
+            *itemProjTotalAmount += projAmount();
+            *itemAccTotalAmount += accAmount();
             writeODTBillLine( prItemsOption,
                               false, writeAmounts,
                               cursor, table,
@@ -1962,7 +2080,8 @@ void AccountingLSBillItem::writeODTAttributeBillLineSimple(AccountingPrinter::Pr
     } else {
         for( QList<AccountingLSBillItem *>::iterator i = m_d->childrenContainer.begin(); i != m_d->childrenContainer.end(); ++i ){
             (*i)->writeODTAttributeBillLineSimple( prItemsOption,
-                                                   itemTotalAmount, attrsToPrint, writeAmounts,
+                                                   itemProjTotalAmount, itemAccTotalAmount,
+                                                   attrsToPrint, writeAmounts,
                                                    cursor, table,
                                                    tagBlockFormat, txtBlockFormat, numBlockFormat,
                                                    leftFormat, centralFormat, rightFormat,
@@ -1972,8 +2091,8 @@ void AccountingLSBillItem::writeODTAttributeBillLineSimple(AccountingPrinter::Pr
     }
 }
 
-void AccountingLSBillItem::writeODTAttributeBillLineUnion( AccountingPrinter::PrintAccountingBillOption prItemsOption,
-                                                           double * itemTotalAmount,
+void AccountingLSBillItem::writeODTAttributeBillLineUnion( AccountingPrinter::PrintPPUDescOption prItemsOption,
+                                                           double * itemProjTotalAmount, double * itemAccTotalAmount,
                                                            bool writeAmounts,
                                                            const QList<Attribute *> &attrsToPrint,
                                                            QTextCursor *cursor,
@@ -1998,7 +2117,8 @@ void AccountingLSBillItem::writeODTAttributeBillLineUnion( AccountingPrinter::Pr
             ++i;
         }
         if( unionOk ){
-            *itemTotalAmount += totalAmount();
+            *itemProjTotalAmount += projAmount();
+            *itemAccTotalAmount += accAmount();
             writeODTBillLine( prItemsOption,
                               false, writeAmounts,
                               cursor, table,
@@ -2010,7 +2130,8 @@ void AccountingLSBillItem::writeODTAttributeBillLineUnion( AccountingPrinter::Pr
     } else {
         for( QList<AccountingLSBillItem *>::iterator i = m_d->childrenContainer.begin(); i != m_d->childrenContainer.end(); ++i ){
             (*i)->writeODTAttributeBillLineUnion( prItemsOption,
-                                                  itemTotalAmount, writeAmounts, attrsToPrint,
+                                                  itemProjTotalAmount, itemAccTotalAmount,
+                                                  writeAmounts, attrsToPrint,
                                                   cursor, table,
                                                   tagBlockFormat, txtBlockFormat, numBlockFormat,
                                                   leftFormat, centralFormat, rightFormat,
@@ -2020,8 +2141,8 @@ void AccountingLSBillItem::writeODTAttributeBillLineUnion( AccountingPrinter::Pr
     }
 }
 
-void AccountingLSBillItem::writeODTAttributeBillLineIntersection( AccountingPrinter::PrintAccountingBillOption prItemsOption,
-                                                                  double * itemTotalAmount,
+void AccountingLSBillItem::writeODTAttributeBillLineIntersection( AccountingPrinter::PrintPPUDescOption prItemsOption,
+                                                                  double * itemProjTotalAmount, double * itemAccTotalAmount,
                                                                   const QList<Attribute *> &attrsToPrint,
                                                                   bool writeAmounts,
                                                                   QTextCursor *cursor,
@@ -2046,7 +2167,8 @@ void AccountingLSBillItem::writeODTAttributeBillLineIntersection( AccountingPrin
             ++i;
         }
         if( intersectionOk ){
-            *itemTotalAmount += totalAmount();
+            *itemProjTotalAmount += projAmount();
+            *itemAccTotalAmount += accAmount();
             writeODTBillLine( prItemsOption,
                               false, writeAmounts,
                               cursor, table,
@@ -2058,7 +2180,8 @@ void AccountingLSBillItem::writeODTAttributeBillLineIntersection( AccountingPrin
     } else {
         for( QList<AccountingLSBillItem *>::iterator i = m_d->childrenContainer.begin(); i != m_d->childrenContainer.end(); ++i ){
             (*i)->writeODTAttributeBillLineIntersection( prItemsOption,
-                                                         itemTotalAmount, attrsToPrint, writeAmounts,
+                                                         itemProjTotalAmount, itemAccTotalAmount,
+                                                         attrsToPrint, writeAmounts,
                                                          cursor, table,
                                                          tagBlockFormat, txtBlockFormat, numBlockFormat,
                                                          leftFormat, centralFormat, rightFormat,
@@ -2068,7 +2191,7 @@ void AccountingLSBillItem::writeODTAttributeBillLineIntersection( AccountingPrin
     }
 }
 
-void AccountingLSBillItem::writeODTBillLine( AccountingPrinter::PrintAccountingBillOption prItemsOption,
+void AccountingLSBillItem::writeODTBillLine( AccountingPrinter::PrintPPUDescOption prItemsOption,
                                              bool writeProgCode,
                                              bool writeAmounts,
                                              QTextCursor *cursor,
@@ -2154,13 +2277,13 @@ void AccountingLSBillItem::writeODTBillLine( AccountingPrinter::PrintAccountingB
             }
         }
 
-        for( int i=0; i < m_d->measuresModel->billItemMeasureCount(); ++i ){
-            BillItemMeasure * measure = m_d->measuresModel->measure(i);
+        for( int i=0; i < m_d->measuresModel->measuresCount(); ++i ){
+            AccountingLSItemMeasure * measure = m_d->measuresModel->measure(i);
 
             // formula senza spazi bianchi
             QString realFormula;
             if( measure != NULL ){
-                realFormula = measure->formula();
+                realFormula = measure->accFormula();
                 realFormula.remove(" ");
             }
 
@@ -2169,7 +2292,7 @@ void AccountingLSBillItem::writeODTBillLine( AccountingPrinter::PrintAccountingB
                 if( realFormula.isEmpty() ){
                     AccountingLSBillItemPrivate::writeCell( cursor, table, centralFormat, txtBlockFormat, measure->comment() );
                 } else {
-                    AccountingLSBillItemPrivate::writeCell( cursor, table, centralFormat, txtBlockFormat, measure->comment() + " (" + measure->formula() + ")");
+                    AccountingLSBillItemPrivate::writeCell( cursor, table, centralFormat, txtBlockFormat, measure->comment() + " (" + measure->accFormula() + ")");
                 }
             } else {
                 AccountingLSBillItemPrivate::writeCell( cursor, table, centralFormat, txtBlockFormat);
@@ -2191,9 +2314,9 @@ void AccountingLSBillItem::writeODTBillLine( AccountingPrinter::PrintAccountingB
 
                 // quantità
                 if( writeAmounts ){
-                    AccountingLSBillItemPrivate::writeCell( cursor, table, centralFormat, numBlockFormat, measure->quantityStr() );
+                    AccountingLSBillItemPrivate::writeCell( cursor, table, centralFormat, numBlockFormat, measure->accQuantityStr() );
                 } else {
-                    AccountingLSBillItemPrivate::writeCell( cursor, table, rightFormat, numBlockFormat, measure->quantityStr() );
+                    AccountingLSBillItemPrivate::writeCell( cursor, table, rightFormat, numBlockFormat, measure->accQuantityStr() );
                 }
             }
 
@@ -2223,11 +2346,11 @@ void AccountingLSBillItem::writeODTBillLine( AccountingPrinter::PrintAccountingB
         AccountingLSBillItemPrivate::writeCell( cursor, table,  centralFormat, tagBlockFormat, unitMeasureTag );
 
         if( writeAmounts ){
-            AccountingLSBillItemPrivate::writeCell( cursor, table, centralQuantityTotalFormat, numBlockFormat, quantityStr() );
-            AccountingLSBillItemPrivate::writeCell( cursor, table, centralFormat, numBlockFormat, PPUTotalStr() );
-            AccountingLSBillItemPrivate::writeCell( cursor, table, rightFormat, numBlockFormat, totalAmountStr() );
+            AccountingLSBillItemPrivate::writeCell( cursor, table, centralFormat, numBlockFormat, PPUStr() );
+            AccountingLSBillItemPrivate::writeCell( cursor, table, centralQuantityTotalFormat, numBlockFormat, accQuantityStr() );
+            AccountingLSBillItemPrivate::writeCell( cursor, table, rightFormat, numBlockFormat, accAmountStr() );
         } else {
-            AccountingLSBillItemPrivate::writeCell( cursor, table, rightQuantityTotalFormat, numBlockFormat, quantityStr() );
+            AccountingLSBillItemPrivate::writeCell( cursor, table, rightQuantityTotalFormat, numBlockFormat, accQuantityStr() );
         }
     } else { // m_d->linesModel == NULL
         QString unitMeasureTag;
@@ -2239,11 +2362,11 @@ void AccountingLSBillItem::writeODTBillLine( AccountingPrinter::PrintAccountingB
         AccountingLSBillItemPrivate::writeCell( cursor, table, centralFormat, tagBlockFormat, unitMeasureTag );
 
         if( writeAmounts ){
-            AccountingLSBillItemPrivate::writeCell( cursor, table, centralFormat, numBlockFormat, quantityStr() );
-            AccountingLSBillItemPrivate::writeCell( cursor, table, centralFormat, numBlockFormat, PPUTotalStr() );
-            AccountingLSBillItemPrivate::writeCell( cursor, table, rightFormat, numBlockFormat, totalAmountStr()  );
+            AccountingLSBillItemPrivate::writeCell( cursor, table, centralFormat, numBlockFormat, PPUStr() );
+            AccountingLSBillItemPrivate::writeCell( cursor, table, centralFormat, numBlockFormat, accQuantityStr() );
+            AccountingLSBillItemPrivate::writeCell( cursor, table, rightFormat, numBlockFormat, accAmountStr()  );
         } else {
-            AccountingLSBillItemPrivate::writeCell( cursor, table, rightFormat, numBlockFormat, quantityStr() );
+            AccountingLSBillItemPrivate::writeCell( cursor, table, rightFormat, numBlockFormat, accQuantityStr() );
         }
     }
     if( m_d->parentItem->m_d->parentItem == NULL ){

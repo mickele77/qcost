@@ -60,7 +60,11 @@ SOURCES += \
     attributemodel.cpp \
     measuresmodel.cpp \
     accountinglsbill.cpp \
-    accountinglsbillitem.cpp
+    accountinglsbillitem.cpp \
+    accountinglsitemmeasure.cpp \
+    measureslsmodel.cpp \
+    paymentdata.cpp \
+    paymentdatamodel.cpp
 
 HEADERS  += \
     library_common.h \
@@ -96,4 +100,8 @@ HEADERS  += \
     attributemodel.h \
     measuresmodel.h \
     accountinglsbill.h \
-    accountinglsbillitem.h
+    accountinglsbillitem.h \
+    accountinglsitemmeasure.h \
+    measureslsmodel.h \
+    paymentdata.h \
+    paymentadatamodel.h

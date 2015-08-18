@@ -24,7 +24,7 @@
 class AccountingPriceFieldModel;
 class PriceList;
 class PriceItem;
-class MeasuresModel;
+class MeasuresLSModel;
 class PriceFieldModel;
 class MathParser;
 class AttributeModel;
@@ -50,7 +50,6 @@ class AccountingLSBillItemPrivate;
 class EXPORT_LIB_OPT AccountingLSBillItem :  public QObject, public TreeItem {
     Q_OBJECT
 public:
-    friend class Bill;
     AccountingLSBillItem( PriceItem * p, AccountingLSBillItem * parentItem, PriceFieldModel * pfm, MathParser * parser = NULL );
     ~AccountingLSBillItem();
 
@@ -76,18 +75,24 @@ public:
     // altri prezzi connessi tramite analisi prezzi
     QList<PriceItem *> connectedPriceItems() const;
 
-    double quantity() const;
-    QString quantityStr() const;
-    double quantityAccounted() const;
-    QString quantityAccountedStr() const;
-    double PPUTotal() const;
-    QString PPUTotalStr() const;
-    double totalAmount() const;
-    QString totalAmountStr() const;
-    double totalAmountAccounted() const;
-    QString totalAmountAccountedStr() const;
+    double projQuantity() const;
+    QString projQuantityStr() const;
+    double accQuantity() const;
+    QString accQuantityStr() const;
+
+    double PPU() const;
+    QString PPUStr() const;
+
+    double projAmount() const;
+    QString projAmountStr() const;
+    double accAmount() const;
+    double accAmount(const QDate &dBegin, const QDate &dEnd) const;
+    QString accAmountStr() const;
     double percentageAccounted() const;
     QString percentageAccountedStr() const;
+
+    double percentageAccounted(const QDate &dBegin, const QDate &dEnd) const;
+    static int percentagePrecision();
 
     QList<int> totalAmountPriceFields();
     void setTotalAmountPriceFields(const QList<int> &newAmountFields);
@@ -110,9 +115,7 @@ public:
     bool reset();
     int childNumber() const;
 
-    MeasuresModel * measuresModel();
-    MeasuresModel * generateMeasuresModel();
-    void removeMeasuresModel();
+    MeasuresLSModel *measuresModel();
 
     void writeXml( QXmlStreamWriter * writer );
     void readXml(QXmlStreamReader *reader, PriceList *priceList, AttributeModel * billAttrModel);
@@ -128,19 +131,21 @@ public:
     void addAttribute( Attribute * attr );
     void removeAttribute( Attribute * attr );
     void removeAllAttributes();
-    double totalAmountAttribute(Attribute * attr);
-    QString totalAmountAttributeStr( Attribute * attr );
+    double projAmountAttribute(Attribute * attr);
+    QString projAmountAttributeStr( Attribute * attr );
+    double accAmountAttribute(Attribute * attr);
+    QString accAmountAttributeStr( Attribute * attr );
 
     void writeODTBillOnTable( QTextCursor * cursor,
-                              AccountingPrinter::PrintAccountingBillOption prItemsOption,
+                              AccountingPrinter::PrintPPUDescOption prItemsOption,
                               bool writeAmounts);
     void writeODTSummaryOnTable(QTextCursor *cursor,
-                                AccountingPrinter::PrintAccountingBillOption prItemsOption,
+                                AccountingPrinter::PrintPPUDescOption prItemsOption,
                                 bool writeAmounts,
                                 bool writeDetails);
     void writeODTAttributeBillOnTable( QTextCursor *cursor,
                                        AccountingPrinter::AttributePrintOption prOption,
-                                       AccountingPrinter::PrintAccountingBillOption prItemsOption,
+                                       AccountingPrinter::PrintPPUDescOption prItemsOption,
                                        const QList<Attribute *> &attrsToPrint,
                                        bool writeAmounts = false );
 
@@ -149,25 +154,28 @@ public slots:
     void setCurrentPriceDataSet( int );
     void setName(const QString &newName);
     void setPriceItem( PriceItem * p );
-    void setQuantity( double );
-    void setQuantity( const QString & );
 
 signals:
+    // segnale emesso quando l'oggetto cambia
     void itemChanged();
+    // segnale emesso quando l'oggetto sta per essere eliminato
     void aboutToBeDeleted();
     // segnale emesso se sono stati aggiunti o tolti figli
     void hasChildrenChanged( bool );
     // segnale emesso quando alcuni figli dell'oggetto sono cambiati
     void hasChildrenChanged( AccountingLSBillItem *, QList<int> );
+    // segnale emesso quanto cambia un dato
     void dataChanged( AccountingLSBillItem * );
-    void dataChanged( AccountingLSBillItem *, int column);
+    // segnale emesso quanto cambia il dato della colonna col
+    void dataChanged( AccountingLSBillItem *, int col );
     void nameChanged( const QString & );
     void priceItemChanged( PriceItem * oldPriceItem, PriceItem * newPriceItem );
     void currentPriceDataSetChanged( int newPriceDataSet );
-    void quantityChanged( const QString &  );
-    void PPUTotalChanged( const QString & );
-    void totalAmountChanged( const QString & );
-    void totalAmountAccountedChanged( const QString & );
+    void PPUChanged( const QString & );
+    void projQuantityChanged( const QString &  );
+    void projAmountChanged( const QString & );
+    void accQuantityChanged( const QString &  );
+    void accAmountChanged( const QString & );
     void percentageAccountedChanged( const QString & );
     void attributesChanged();
 
@@ -189,7 +197,7 @@ private:
 
     void writeODTSummaryLine(PriceItem * priceItem,
                              QTextCursor *cursor,
-                             double * itemTotalQuantity, double *itemTotalAmount,
+                             double * itemProjTotalQuantity, double *itemProjTotalAmount, double *itemAccTotalQuantity, double *itemAccTotalAmount,
                              bool writeAmounts,
                              bool writeDetails,
                              QTextTable *table,
@@ -199,8 +207,8 @@ private:
                              QTextTableCellFormat & leftFormat,
                              QTextTableCellFormat & centralFormat,
                              QTextTableCellFormat & rightFormat );
-    void writeODTAttributeBillLineSimple(AccountingPrinter::PrintAccountingBillOption prItemsOption,
-                                          double *itemTotalAmount,
+    void writeODTAttributeBillLineSimple( AccountingPrinter::PrintPPUDescOption prItemsOption,
+                                          double *itemProjTotalAmount, double *itemAccTotalAmount,
                                           Attribute * attrsToPrint,
                                           bool writeAmounts,
                                           QTextCursor *cursor,
@@ -215,8 +223,8 @@ private:
                                           QTextTableCellFormat & rightQuantityTotalFormat,
                                           QTextCharFormat &txtCharFormat,
                                           QTextCharFormat &txtBoldCharFormat );
-    void writeODTAttributeBillLineIntersection( AccountingPrinter::PrintAccountingBillOption prItemsOption,
-                                                double *itemTotalAmount,
+    void writeODTAttributeBillLineIntersection( AccountingPrinter::PrintPPUDescOption prItemsOption,
+                                                double *itemProjTotalAmount, double *itemAccTotalAmount,
                                                 const QList<Attribute *> &attrsToPrint,
                                                 bool writeAmounts,
                                                 QTextCursor *cursor,
@@ -231,8 +239,8 @@ private:
                                                 QTextTableCellFormat & rightQuantityTotalFormat,
                                                 QTextCharFormat &txtCharFormat,
                                                 QTextCharFormat &txtBoldCharFormat );
-    void writeODTAttributeBillLineUnion(AccountingPrinter::PrintAccountingBillOption prItemsOption,
-                                         double *itemTotalAmount,
+    void writeODTAttributeBillLineUnion( AccountingPrinter::PrintPPUDescOption prItemsOption,
+                                         double *itemProjTotalAmount, double *itemAccTotalAmount,
                                          bool writeAmounts,
                                          const QList<Attribute *> &attrsToPrint,
                                          QTextCursor *cursor,
@@ -247,7 +255,7 @@ private:
                                          QTextTableCellFormat & rightQuantityTotalFormat,
                                          QTextCharFormat &txtCharFormat,
                                          QTextCharFormat &txtBoldCharFormat);
-    void writeODTBillLine(AccountingPrinter::PrintAccountingBillOption prItemsOption,
+    void writeODTBillLine(AccountingPrinter::PrintPPUDescOption prItemsOption,
                           bool writeProgCode,
                           bool writeAmounts,
                           QTextCursor *cursor,
@@ -270,12 +278,15 @@ private:
     QList<Attribute *> allAttributes();
     QList<Attribute *> directAttributes();
     QList<Attribute *> inheritedAttributes();
+    void updatePPU();
 private slots:
     void emitPriceDataUpdated();
     void setUnitMeasure( UnitMeasure * ump );
-    void setQuantityPrivate(double v);
-    void updateTotalAmount();
-    void updateTotalAmountAccounted();
+    void updateProjQuantityPrivate();
+    void updateAccQuantityPrivate();
+
+    void updateProjAmount();
+    void updateAccAmount();
     void updatePercentageAccounted();
 };
 

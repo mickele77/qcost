@@ -25,94 +25,6 @@
       </attribute>
       <layout class="QGridLayout" name="gridLayout">
        <item row="2" column="0">
-        <widget class="QGroupBox" name="amountsGroupBox">
-         <property name="title">
-          <string>Importi</string>
-         </property>
-         <layout class="QGridLayout" name="amountsDataLayout_2">
-          <item row="1" column="0">
-           <widget class="QLabel" name="amountNotToBeDiscountedLabel">
-            <property name="text">
-             <string>Importo non ribassabile</string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="1">
-           <widget class="QLineEdit" name="amountNotToBeDiscountedLineEdit">
-            <property name="readOnly">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="1">
-           <widget class="QLineEdit" name="totalAmountToBeDiscountedLineEdit">
-            <property name="readOnly">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="0">
-           <widget class="QLabel" name="totalAmountToBeDiscountedLabel">
-            <property name="text">
-             <string>Importo al lordo del ribasso</string>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="0">
-           <widget class="QLabel" name="totalAmountLabel">
-            <property name="text">
-             <string>Importo al netto del ribasso</string>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="1">
-           <widget class="QLineEdit" name="totalAmountLineEdit">
-            <property name="readOnly">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </widget>
-       </item>
-       <item row="0" column="0">
-        <widget class="QGroupBox" name="dateGroupBox">
-         <property name="title">
-          <string>Date</string>
-         </property>
-         <layout class="QGridLayout" name="gridLayout_3">
-          <item row="0" column="0">
-           <widget class="QLabel" name="beginDateLabel">
-            <property name="text">
-             <string>Data inizio</string>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="1">
-           <widget class="QLineEdit" name="beginDateLineEdit">
-            <property name="readOnly">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="0">
-           <widget class="QLabel" name="endDateLabel">
-            <property name="text">
-             <string>Data fine</string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="1">
-           <widget class="QLineEdit" name="endDateLineEdit">
-            <property name="readOnly">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </widget>
-       </item>
-       <item row="3" column="0">
         <spacer name="verticalSpacer">
          <property name="orientation">
           <enum>Qt::Vertical</enum>
@@ -125,12 +37,19 @@
          </property>
         </spacer>
        </item>
-       <item row="1" column="0">
+       <item row="0" column="0">
         <widget class="QGroupBox" name="tamBillGroupBox">
          <property name="title">
           <string>Lista</string>
          </property>
          <layout class="QGridLayout" name="gridLayout_5">
+          <item row="1" column="0">
+           <widget class="QLabel" name="beginDateLabel">
+            <property name="text">
+             <string>Data inizio</string>
+            </property>
+           </widget>
+          </item>
           <item row="0" column="0">
            <widget class="QLabel" name="tamBillComboBoxlabel">
             <property name="text">
@@ -139,7 +58,115 @@
            </widget>
           </item>
           <item row="0" column="1">
-           <widget class="QComboBox" name="tamBillComboBox"/>
+           <widget class="QComboBox" name="tamBillComboBox">
+            <property name="layoutDirection">
+             <enum>Qt::RightToLeft</enum>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="QLineEdit" name="beginDateLineEdit">
+            <property name="alignment">
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
+            <property name="readOnly">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="0">
+           <widget class="QLabel" name="endDateLabel">
+            <property name="text">
+             <string>Data fine</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="1">
+           <widget class="QLineEdit" name="endDateLineEdit">
+            <property name="alignment">
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
+            <property name="readOnly">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item row="1" column="0">
+        <widget class="QGroupBox" name="amountsGroupBox">
+         <property name="title">
+          <string>Importi contabilizzati</string>
+         </property>
+         <layout class="QGridLayout" name="amountsDataLayout_2">
+          <item row="1" column="0">
+           <widget class="QLabel" name="totalAmountToDiscountLabel">
+            <property name="text">
+             <string>Importo al lordo del ribasso</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="QLineEdit" name="totalAmountToDiscountLineEdit">
+            <property name="alignment">
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
+            <property name="readOnly">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="1">
+           <widget class="QLineEdit" name="amountNotToDiscountLineEdit">
+            <property name="alignment">
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
+            <property name="readOnly">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="0">
+           <widget class="QLabel" name="amountNotToDiscountLabel">
+            <property name="text">
+             <string>Importo non ribassabile</string>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="1">
+           <widget class="QLineEdit" name="totalAmountLineEdit">
+            <property name="alignment">
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
+            <property name="readOnly">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="0">
+           <widget class="QLabel" name="totalAmountLabel">
+            <property name="text">
+             <string>Importo al netto del ribasso</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="0">
+           <widget class="QLabel" name="dateLabel">
+            <property name="text">
+             <string>Data inserimento</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QLineEdit" name="dateLineEdit">
+            <property name="alignment">
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
+            <property name="readOnly">
+             <bool>true</bool>
+            </property>
+           </widget>
           </item>
          </layout>
         </widget>
@@ -166,7 +193,11 @@
         </widget>
        </item>
        <item row="0" column="0" colspan="2">
-        <widget class="QTableView" name="attributeTableView"/>
+        <widget class="QTableView" name="attributeTableView">
+         <property name="alternatingRowColors">
+          <bool>true</bool>
+         </property>
+        </widget>
        </item>
       </layout>
      </widget>

@@ -48,12 +48,23 @@ class QXmlStreamReader;
 
 class AccountingBillItemPrivate;
 
+/**
+* @class AccountingBillItem
+*
+* @brief Classe usata per modellizzare un elemento del libretto delle misure
+*
+* Questa classe viene impiegata per modellizzare gli elementi del libretto delle misure.
+*
+* @author Michele Mocciola
+*
+*/
+
 class EXPORT_LIB_OPT AccountingBillItem :  public QObject, public TreeItem {
     Q_OBJECT
 public:
     enum ItemType{
         Root,
-        Bill,
+        Payment,
         Comment,
         PPU,
         LumpSum,
@@ -62,18 +73,26 @@ public:
 
     friend class AccountingBill;
     friend class AccountingTAMBillItem;
+
     AccountingBillItem( AccountingBillItem * parentItem, AccountingBillItem::ItemType iType, PriceFieldModel * pfm, MathParser * parser = NULL );
     ~AccountingBillItem();
 
     AccountingBillItem &operator =(const AccountingBillItem &cp);
 
-    int firstPriceFieldCol();
-
+    /** @return resituitsce il genitore dell'oggetto */
     AccountingBillItem * parent();
-    /** ricerca tra gli oggetti figlio uno con id pari a itemId */
+    /** Ricerca tra gli oggetti figlio uno con id pari a itemId
+     * @return restituisce l'oggetto trovato */
     AccountingBillItem * itemId(unsigned int itemId);
+    /** Ricerca tra gli oggetti figlio uno con id pari a itemId
+     * @param number il numero d'ordine dell'oggetto figlio restituito
+     * @return restituisce l'oggetto figlio di numero number */
     AccountingBillItem * childItem(int number);
+    /** Restituisce vero se l'oggetto e' un genitore dell'oggetto in questione */
     bool isDescending( AccountingBillItem * ancestor );
+    /** Imposta il genitore dell'oggetto
+     * @param newParent il nuovo genitore
+     * @param position il numero di posizione dell'oggetto nel nuovo genitore*/
     void setParent(AccountingBillItem *newParent, int position);
 
     unsigned int id();
@@ -98,14 +117,19 @@ public:
     QDate date() const;
     QString dateStr() const;
 
-    double totalAmountToBeDiscounted() const;
-    double amountNotToBeDiscounted() const;
-    double amountToBeDiscounted() const;
+    double totalAmountToDiscount() const;
+    double totalAmountToDiscount( ItemType iType ) const;
+    double amountNotToDiscount() const;
+    double amountNotToDiscount( ItemType iType ) const;
+    double amountToDiscount() const;
+    double amountToDiscount( ItemType iType ) const;
     double amountDiscounted() const;
+    double amountDiscounted( ItemType iType ) const;
     double totalAmount() const;
-    QString totalAmountToBeDiscountedStr() const;
-    QString amountNotToBeDiscountedStr() const;
-    QString amountToBeDiscountedStr() const;
+    double totalAmount(ItemType iType ) const;
+    QString totalAmountToDiscountStr() const;
+    QString amountNotToDiscountStr() const;
+    QString amountToDiscountStr() const;
     QString amountDiscountedStr() const;
     QString totalAmountStr() const;
 
@@ -129,11 +153,11 @@ public:
     virtual bool insertChildren(ItemType iType, int position, int count=1);
     bool appendChildren(ItemType iType, int count=1 );
     bool removeChildren(int position, int count=1);
-    bool reset();
+    bool clear();
     int childNumber() const;
 
     void writeXml( QXmlStreamWriter * writer );
-    void readXml(QXmlStreamReader *reader, PriceList *priceList, AttributeModel *billAttrModel);
+    void readXml(QXmlStreamReader *reader, PriceList *priceList, AttributeModel *attrModel);
     void readXmlTmp(QXmlStreamReader *reader);
     void loadFromXml(const QXmlStreamAttributes &attrs, PriceList *priceList, AttributeModel * billAttrModel);
     void loadFromXmlTmp(const QXmlStreamAttributes &attrs);
@@ -147,23 +171,23 @@ public:
     void removeAttribute( Attribute * attr );
     void removeAllAttributes();
 
-    double totalAmountToBeDiscountedAttribute( Attribute * attr ) const;
-    QString totalAmountToBeDiscountedAttributeStr( Attribute * attr ) const;
-    double amountNotToBeDiscountedAttribute( Attribute * attr ) const;
-    QString amountNotToBeDiscountedAttributeStr( Attribute * attr ) const;
+    double totalAmountToDiscountAttribute( Attribute * attr ) const;
+    QString totalAmountToDiscountAttributeStr( Attribute * attr ) const;
+    double amountNotToDiscountAttribute( Attribute * attr ) const;
+    QString amountNotToDiscountAttributeStr( Attribute * attr ) const;
     double totalAmountAttribute( Attribute * attr ) const;
     QString totalAmountAttributeStr( Attribute * attr ) const;
 
     void writeODTAccountingOnTable(QTextCursor * cursor,
-                                   AccountingPrinter::PrintAccountingBillOption prItemsOption,
+                                   AccountingPrinter::PrintPPUDescOption prItemsOption,
                                    bool printAmounts = true ) const;
     void writeODTSummaryOnTable( QTextCursor *cursor,
-                                 AccountingPrinter::PrintAccountingBillOption prItemsOption,
+                                 AccountingPrinter::PrintPPUDescOption prItemsOption,
                                  bool printAmounts = true,
                                  bool writeDetails = true) const;
     void writeODTAttributeAccountingOnTable(QTextCursor *cursor,
                                             AccountingPrinter::AttributePrintOption prOption,
-                                            AccountingPrinter::PrintAccountingBillOption prItemsOption,
+                                            AccountingPrinter::PrintPPUDescOption prItemsOption,
                                             const QList<Attribute *> &attrsToPrint,
                                             bool printAmounts = false ) const;
     /** Il tipo di elemento */
@@ -184,13 +208,13 @@ public:
     MeasuresModel * generateMeasuresModel();
     void removeMeasuresModel();
     /** Nel caso di ppu, prezzo complessivo */
-    double PPUTotalToBeDiscounted() const;
+    double PPUTotalToDiscount() const;
     /** Nel caso di ppu, prezzo non ribassabile */
-    double PPUNotToBeDiscounted() const;
+    double PPUNotToDiscount() const;
     /** Nel caso di ppu, prezzo complessivo, stringa */
-    QString PPUTotalToBeDiscountedStr() const;
+    QString PPUTotalToDiscountStr() const;
     /** Nel caso di ppu, prezzo non ribassabile, stringa */
-    QString PPUNotToBeDiscountedStr() const;
+    QString PPUNotToDiscountStr() const;
     /** Nel caso di Bill (lista sesttimanale), la data di inizio */
     QDate dateBegin() const;
     /** Nel caso di Bill (lista sesttimanale), la data di inizio */
@@ -204,6 +228,18 @@ public:
     /** Nel caso di Root, il modelli di campi prezzo non soggetti a ribasso */
     AccountingPriceFieldModel * noDiscountAmountPriceFieldModel();
 
+    void requestDateBeginChange(const QDate &newDate);
+    void requestDateBeginChange(const QString &newDateStr);
+    void setDateBegin( const QDate & d );
+    void setDateBegin( const QString & d );
+    void requestDateEndChange(const QString &newDateStr);
+    void requestDateEndChange(const QDate &newDate);
+    void setDateEnd( const QDate & d );
+    void setDateEnd( const QString & d );
+
+    /** Aggiorna il numero progressivo delle misure */
+    void updateProgressiveCode();
+
 public slots:
     void setCurrentPriceDataSet(int newVal);
     void setDiscount( double newVal );
@@ -216,14 +252,8 @@ public slots:
     /** Nel caso di PPU, imposta il valore della quantita' */
     void setQuantity(const QString &vstr);
     void setPriceItem( PriceItem * p );
-    void setDateBegin( const QDate & d );
-    void setDateBegin( const QString & d );
-    void setDateEnd( const QDate & d );
-    void setDateEnd( const QString & d );
     void setTotalAmountPriceFields(const QList<int> &newAmountFields);
     void setNoDiscountAmountPriceFields(const QList<int> &newAmountFields);
-    /** Aggiorna tutti gli importi della contabilita */
-    void updatePPUs();
 
 signals:
     /** Segnale emesso quando l'item cambia */
@@ -248,11 +278,11 @@ signals:
     void priceItemChanged( PriceItem * oldPriceItem, PriceItem * newPriceItem );
     void currentPriceDataSetChanged( int newPriceDataSet );
     void discountChanged( double newDiscount );
-    void PPUTotalToBeDiscountedChanged( const QString & newVal );
-    void PPUNotToBeDiscountedChanged( const QString & newVal );
-    void totalAmountToBeDiscountedChanged( const QString & newVal );
-    void amountNotToBeDiscountedChanged( const QString & newVal );
-    void amountToBeDiscountedChanged( const QString & newVal );
+    void PPUTotalToDiscountChanged( const QString & newVal );
+    void PPUNotToDiscountChanged( const QString & newVal );
+    void totalAmountToDiscountChanged( const QString & newVal );
+    void amountNotToDiscountChanged( const QString & newVal );
+    void amountToDiscountChanged( const QString & newVal );
     void amountDiscountedChanged( const QString & newVal );
     void totalAmountChanged( const QString & newVal );
     void dateChanged( const QString &  );
@@ -262,6 +292,11 @@ signals:
 
     void lsBillChanged( AccountingLSBill * newLSBill );
     void tamBillItemChanged( AccountingTAMBillItem * newTAMBill );
+
+    /** Segnale emesso quando si richiede il cambio della data di inizio */
+    void requestDateBeginChangeSignal( const QDate &newDate, int position );
+    /** Segnale emesso quando si richiede il cambio della data di fine */
+    void requestDateEndChangeSignal( const QDate &newDate, int position );
 
 protected:
     AccountingBillItemPrivate * m_d;
@@ -294,7 +329,7 @@ protected:
                               QTextTableCellFormat & centralFormat,
                               QTextTableCellFormat & rightFormat ) const;
 
-    void writeODTAttributeBillLineSimple( AccountingPrinter::PrintAccountingBillOption prItemsOption,
+    void writeODTAttributeBillLineSimple( AccountingPrinter::PrintPPUDescOption prItemsOption,
                                           QList<double> * fieldsAmounts,
                                           Attribute * attrsToPrint,
                                           bool printAmounts,
@@ -310,7 +345,7 @@ protected:
                                           QTextTableCellFormat & rightQuantityTotalFormat,
                                           QTextCharFormat &txtCharFormat,
                                           QTextCharFormat &txtBoldCharFormat ) const;
-    void writeODTAttributeBillLineIntersection( AccountingPrinter::PrintAccountingBillOption prItemsOption,
+    void writeODTAttributeBillLineIntersection( AccountingPrinter::PrintPPUDescOption prItemsOption,
                                                 QList<double> * fieldsAmounts,
                                                 const QList<Attribute *> &attrsToPrint,
                                                 bool printAmounts,
@@ -326,7 +361,7 @@ protected:
                                                 QTextTableCellFormat & rightQuantityTotalFormat,
                                                 QTextCharFormat &txtCharFormat,
                                                 QTextCharFormat &txtBoldCharFormat ) const;
-    void writeODTAttributeBillLineUnion( AccountingPrinter::PrintAccountingBillOption prItemsOption,
+    void writeODTAttributeBillLineUnion( AccountingPrinter::PrintPPUDescOption prItemsOption,
                                          QList<double> * fieldsAmounts,
                                          const QList<Attribute *> &attrsToPrint,
                                          bool printAmounts,
@@ -342,7 +377,7 @@ protected:
                                          QTextTableCellFormat & rightQuantityTotalFormat,
                                          QTextCharFormat &txtCharFormat,
                                          QTextCharFormat &txtBoldCharFormat) const;
-    void writeODTBillLine( AccountingPrinter::PrintAccountingBillOption prItemsOption,
+    void writeODTBillLine( AccountingPrinter::PrintPPUDescOption prItemsOption,
                            bool writeProgCode,
                            bool writeAmounts,
                            QTextCursor *cursor,
@@ -366,14 +401,16 @@ protected:
     QList<Attribute *> directAttributes() const;
     QList<Attribute *> inheritedAttributes() const;
 
+    virtual void updateProgressiveCode(int *startCode);
+
 protected slots:
     void setQuantityPrivate(double v);
     void emitPriceDataUpdated();
     void emitTitleChanged();
 
-    void updateTotalAmountToBeDiscounted();
-    void updateAmountNotToBeDiscounted();
-    void updateAmountToBeDiscounted();
+    void updateTotalAmountToDiscount();
+    void updateAmountNotToDiscount();
+    void updateAmountToDiscount();
     void updateAmountDiscounted();
     void updateTotalAmount();
 
@@ -381,6 +418,11 @@ protected slots:
     void setLSBillNULL();
     // nel caso di tam, azzera l'oggetto AccountingBillItem associato
     void setTAMBillItemNULL();
+
+    /** Aggiorna i prezzi della contabilita */
+    void updatePPUs();
+    /** Aggiorna il campo quantità di categorie a corpo */
+    void updateLSQuantity();
 };
 
 #endif // ACCOUNTINGBILLITEM_H

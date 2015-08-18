@@ -25,6 +25,7 @@
 #include "projectaccountingparentitem.h"
 #include "accountingbills.h"
 #include "accountingbill.h"
+#include "accountingtambill.h"
 #include "bill.h"
 #include "pricelist.h"
 #include "priceitem.h"
@@ -43,7 +44,7 @@ public:
         priceListParentItem( new ProjectPriceListParentItem( rootItem, priceFieldModel, parser )),
         billParentItem(new ProjectBillParentItem( rootItem, priceFieldModel,  parser )),
         accountingParentItem(new ProjectAccountingParentItem( rootItem, priceFieldModel,  parser )),
-        lastXMLVersion(0.3){
+        lastXMLVersion(0.4){
         rootItem->insertChild( new ProjectDataParentItem(rootItem) );
         rootItem->insertChild( priceListParentItem );
         rootItem->insertChild( billParentItem );
@@ -109,6 +110,7 @@ void Project::createSimpleProject(SimpleProjectType projType){
         m_d->billParentItem->bill(0)->setPriceList( m_d->priceListParentItem->priceList(0) );
         m_d->accountingParentItem->accountingBills()->insertChildren( 0 );
         m_d->accountingParentItem->accountingBills()->bill(0)->setPriceList( m_d->priceListParentItem->priceList(0) );
+        m_d->accountingParentItem->timeAndMaterialBill()->setPriceList( m_d->priceListParentItem->priceList(0) );
     } else if( projType == ProjectHumanNetNoDiscount ){
         clear();
         m_d->unitMeasureModel->insertStandardUnits();
@@ -119,6 +121,7 @@ void Project::createSimpleProject(SimpleProjectType projType){
         m_d->billParentItem->bill(0)->setPriceList( m_d->priceListParentItem->priceList(0) );
         m_d->accountingParentItem->accountingBills()->insertChildren( 0 );
         m_d->accountingParentItem->accountingBills()->bill(0)->setPriceList( m_d->priceListParentItem->priceList(0) );
+        m_d->accountingParentItem->timeAndMaterialBill()->setPriceList( m_d->priceListParentItem->priceList(0) );
     }
 }
 
@@ -259,6 +262,7 @@ bool Project::removeRows(int position, int rows, const QModelIndex &parent) {
 }
 
 void Project::clear() {
+    m_d->accountingParentItem->clear();
     m_d->billParentItem->clear();
     m_d->priceListParentItem->clear();
     m_d->priceFieldModel->clear();
@@ -381,6 +385,7 @@ void Project::writeXml(QXmlStreamWriter *writer) {
     m_d->unitMeasureModel->writeXml( writer );
     m_d->priceListParentItem->writeXml( writer );
     m_d->billParentItem->writeXml( writer );
+    m_d->accountingParentItem->writeXml( writer );
 
     writer->writeEndElement();
     writer->writeEndDocument();
@@ -404,6 +409,8 @@ void Project::readXml(QXmlStreamReader *reader) {
             m_d->unitMeasureModel->readXml( reader );
         } else if( reader->isStartElement() && reader->name().toString().toUpper() == "PRICEFIELDMODEL"){
             m_d->priceFieldModel->readXml( reader );
+        } else if( reader->isStartElement() && reader->name().toString().toUpper() == "ACCOUNTING"){
+            m_d->accountingParentItem->readXml( reader, m_d->priceListParentItem );
         }
     }
 }

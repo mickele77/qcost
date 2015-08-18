@@ -82,9 +82,9 @@ AccountingTAMBillDataGUI::~AccountingTAMBillDataGUI(){
 void AccountingTAMBillDataGUI::setAccountingTAMBill(AccountingTAMBill *b) {
     if( m_d->accounting != b ){
         if( m_d->accounting != NULL ){
-            disconnect( m_d->accounting, &AccountingTAMBill::totalAmountToBeDiscountedChanged, m_d->ui->totalAmountToBeDiscountedLineEdit, &QLineEdit::setText );
-            disconnect( m_d->accounting, &AccountingTAMBill::amountNotToBeDiscountedChanged, m_d->ui->amountNotToBeDiscountedLineEdit, &QLineEdit::setText );
-            disconnect( m_d->accounting, &AccountingTAMBill::amountToBeDiscountedChanged, m_d->ui->amountToBeDiscountedLineEdit, &QLineEdit::setText );
+            disconnect( m_d->accounting, &AccountingTAMBill::totalAmountToDiscountChanged, m_d->ui->totalAmountToDiscountLineEdit, &QLineEdit::setText );
+            disconnect( m_d->accounting, &AccountingTAMBill::amountNotToDiscountChanged, m_d->ui->amountNotToDiscountLineEdit, &QLineEdit::setText );
+            disconnect( m_d->accounting, &AccountingTAMBill::amountToDiscountChanged, m_d->ui->amountToDiscountLineEdit, &QLineEdit::setText );
             disconnect( m_d->accounting, &AccountingTAMBill::amountDiscountedChanged, m_d->ui->amountDiscountedLineEdit, &QLineEdit::setText );
             disconnect( m_d->accounting, &AccountingTAMBill::totalAmountChanged, m_d->ui->totalAmountLineEdit, &QLineEdit::setText );
             disconnect( m_d->accounting, &AccountingTAMBill::aboutToBeDeleted, this, &AccountingTAMBillDataGUI::setAccountingNULL );
@@ -107,12 +107,12 @@ void AccountingTAMBillDataGUI::setAccountingTAMBill(AccountingTAMBill *b) {
         m_d->accounting = b;
 
         if( m_d->accounting != NULL ){
-            m_d->ui->totalAmountToBeDiscountedLineEdit->setText( m_d->accounting->totalAmountToBeDiscountedStr() );
-            connect( m_d->accounting, &AccountingTAMBill::totalAmountToBeDiscountedChanged, m_d->ui->totalAmountToBeDiscountedLineEdit, &QLineEdit::setText );
-            m_d->ui->amountNotToBeDiscountedLineEdit->setText( m_d->accounting->amountNotToBeDiscountedStr() );
-            connect( m_d->accounting, &AccountingTAMBill::amountNotToBeDiscountedChanged, m_d->ui->amountNotToBeDiscountedLineEdit, &QLineEdit::setText );
-            m_d->ui->amountToBeDiscountedLineEdit->setText( m_d->accounting->amountToBeDiscountedStr() );
-            connect( m_d->accounting, &AccountingTAMBill::amountToBeDiscountedChanged, m_d->ui->amountToBeDiscountedLineEdit, &QLineEdit::setText );
+            m_d->ui->totalAmountToDiscountLineEdit->setText( m_d->accounting->totalAmountToDiscountStr() );
+            connect( m_d->accounting, &AccountingTAMBill::totalAmountToDiscountChanged, m_d->ui->totalAmountToDiscountLineEdit, &QLineEdit::setText );
+            m_d->ui->amountNotToDiscountLineEdit->setText( m_d->accounting->amountNotToDiscountStr() );
+            connect( m_d->accounting, &AccountingTAMBill::amountNotToDiscountChanged, m_d->ui->amountNotToDiscountLineEdit, &QLineEdit::setText );
+            m_d->ui->amountToDiscountLineEdit->setText( m_d->accounting->amountToDiscountStr() );
+            connect( m_d->accounting, &AccountingTAMBill::amountToDiscountChanged, m_d->ui->amountToDiscountLineEdit, &QLineEdit::setText );
             m_d->ui->amountDiscountedLineEdit->setText( m_d->accounting->amountDiscountedStr() );
             connect( m_d->accounting, &AccountingTAMBill::amountDiscountedChanged, m_d->ui->amountDiscountedLineEdit, &QLineEdit::setText );
             m_d->ui->totalAmountLineEdit->setText( m_d->accounting->totalAmountStr() );
@@ -195,7 +195,7 @@ void AccountingTAMBillDataGUI::updateAmountsValue()
 
 bool AccountingTAMBillDataGUI::printAttributeAccountingODT(){
     if( m_d->accounting != NULL ){
-        AccountingPrinter::PrintAccountingBillOption prAccountingMeasureOption;
+        AccountingPrinter::PrintPPUDescOption prAccountingMeasureOption;
         AccountingPrinter::AttributePrintOption prOption;
         QList<Attribute *> prAttrs;
         double paperWidth = 210.0, paperHeight = 297.0;

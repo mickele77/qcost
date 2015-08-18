@@ -33,7 +33,7 @@ public:
         priceFieldModel(pfm),
         parser(p),
         nextId(1){
-    };
+    }
     QList<Bill *> billContainer;
     PriceFieldModel * priceFieldModel;
     MathParser * parser;

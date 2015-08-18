@@ -8,6 +8,7 @@
 #include "pricefieldmodel.h"
 #include "qcalendardialog.h"
 
+#include <QShowEvent>
 #include <QDate>
 #include <QLabel>
 
@@ -44,6 +45,7 @@ AccountingItemTAMGUI::AccountingItemTAMGUI(AccountingTAMBill * tamBill, PriceFie
 
     connect( m_d->ui->tamBillComboBox, static_cast<void(QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this, &AccountingItemTAMGUI::setTAMBill );
 
+    m_d->ui->dateLineEdit->installEventFilter( this );
     m_d->ui->beginDateLineEdit->installEventFilter( this );
     m_d->ui->endDateLineEdit->installEventFilter( this );
 }
@@ -55,36 +57,47 @@ AccountingItemTAMGUI::~AccountingItemTAMGUI() {
 void AccountingItemTAMGUI::setAccountingItem(AccountingBillItem *b) {
     if( m_d->item != b ){
         if( m_d->item != NULL ){
-            disconnect( m_d->item, &AccountingBillItem::dateBeginChanged, this, &AccountingItemTAMGUI::setDateBegin );
-            disconnect( m_d->item, &AccountingBillItem::dateEndChanged, this, &AccountingItemTAMGUI::setDateEnd );
+            disconnect( m_d->item, &AccountingBillItem::dateChanged, m_d->ui->dateLineEdit, &QLineEdit::setText );
+            disconnect( m_d->item, &AccountingBillItem::dateBeginChanged, m_d->ui->beginDateLineEdit, &QLineEdit::setText );
+            disconnect( m_d->item, &AccountingBillItem::dateEndChanged, m_d->ui->endDateLineEdit, &QLineEdit::setText );
+            disconnect( m_d->item, &AccountingBillItem::dateBeginChanged, this, &AccountingItemTAMGUI::updateTAMBillComboBox );
+            disconnect( m_d->item, &AccountingBillItem::dateEndChanged, this, &AccountingItemTAMGUI::updateTAMBillComboBox );
+
             disconnect( m_d->item, &AccountingBillItem::aboutToBeDeleted, this, &AccountingItemTAMGUI::setAccountingItemNULL );
 
-            disconnect( m_d->item, &AccountingBillItem::totalAmountToBeDiscountedChanged, m_d->ui->totalAmountToBeDiscountedLineEdit, &QLineEdit::setText );
-            disconnect( m_d->item, &AccountingBillItem::amountNotToBeDiscountedChanged, m_d->ui->amountNotToBeDiscountedLineEdit, &QLineEdit::setText );
+            disconnect( m_d->item, &AccountingBillItem::totalAmountToDiscountChanged, m_d->ui->totalAmountToDiscountLineEdit, &QLineEdit::setText );
+            disconnect( m_d->item, &AccountingBillItem::amountNotToDiscountChanged, m_d->ui->amountNotToDiscountLineEdit, &QLineEdit::setText );
             disconnect( m_d->item, &AccountingBillItem::totalAmountChanged, m_d->ui->totalAmountLineEdit, &QLineEdit::setText );
         }
-        m_d->ui->totalAmountToBeDiscountedLineEdit->clear();
-        m_d->ui->amountNotToBeDiscountedLineEdit->clear();
+        m_d->ui->totalAmountToDiscountLineEdit->clear();
+        m_d->ui->amountNotToDiscountLineEdit->clear();
         m_d->ui->totalAmountLineEdit->clear();
 
+        m_d->ui->dateLineEdit->clear();
         m_d->ui->beginDateLineEdit->clear();
         m_d->ui->endDateLineEdit->clear();
 
         m_d->item = b;
         m_d->itemAttributeModel->setItem( b );
 
+        updateTAMBillComboBox();
+
         if( m_d->item != NULL ){
+            m_d->ui->dateLineEdit->setText( m_d->item->dateStr() );
             m_d->ui->beginDateLineEdit->setText( m_d->item->dateBeginStr() );
             m_d->ui->endDateLineEdit->setText( m_d->item->dateEndStr() );
-            connect( m_d->item, &AccountingBillItem::dateBeginChanged, this, &AccountingItemTAMGUI::setDateBegin );
-            connect( m_d->item, &AccountingBillItem::dateEndChanged, this, &AccountingItemTAMGUI::setDateEnd );
+            connect( m_d->item, &AccountingBillItem::dateChanged, m_d->ui->dateLineEdit, &QLineEdit::setText );
+            connect( m_d->item, &AccountingBillItem::dateBeginChanged, m_d->ui->beginDateLineEdit, &QLineEdit::setText );
+            connect( m_d->item, &AccountingBillItem::dateEndChanged, m_d->ui->endDateLineEdit, &QLineEdit::setText );
+            connect( m_d->item, &AccountingBillItem::dateBeginChanged, this, &AccountingItemTAMGUI::updateTAMBillComboBox );
+            connect( m_d->item, &AccountingBillItem::dateEndChanged, this, &AccountingItemTAMGUI::updateTAMBillComboBox );
 
             connect( m_d->item, &AccountingBillItem::aboutToBeDeleted, this, &AccountingItemTAMGUI::setAccountingItemNULL );
 
-            m_d->ui->totalAmountToBeDiscountedLineEdit->setText( m_d->item->totalAmountToBeDiscountedStr() );
-            connect( m_d->item, &AccountingBillItem::totalAmountToBeDiscountedChanged, m_d->ui->totalAmountToBeDiscountedLineEdit, &QLineEdit::setText );
-            m_d->ui->amountNotToBeDiscountedLineEdit->setText( m_d->item->amountNotToBeDiscountedStr() );
-            connect( m_d->item, &AccountingBillItem::amountNotToBeDiscountedChanged, m_d->ui->amountNotToBeDiscountedLineEdit, &QLineEdit::setText );
+            m_d->ui->totalAmountToDiscountLineEdit->setText( m_d->item->totalAmountToDiscountStr() );
+            connect( m_d->item, &AccountingBillItem::totalAmountToDiscountChanged, m_d->ui->totalAmountToDiscountLineEdit, &QLineEdit::setText );
+            m_d->ui->amountNotToDiscountLineEdit->setText( m_d->item->amountNotToDiscountStr() );
+            connect( m_d->item, &AccountingBillItem::amountNotToDiscountChanged, m_d->ui->amountNotToDiscountLineEdit, &QLineEdit::setText );
             m_d->ui->totalAmountLineEdit->setText( m_d->item->totalAmountStr() );
             connect( m_d->item, &AccountingBillItem::totalAmountChanged, m_d->ui->totalAmountLineEdit, &QLineEdit::setText );
         }
@@ -144,20 +157,12 @@ void AccountingItemTAMGUI::setAccountingBill(AccountingBill *b) {
         connect( m_d->bill, &AccountingBill::aboutToBeDeleted, this, &AccountingItemTAMGUI::setAccountingNULL );
     }
 
-    // quando si cambia computo corrente la scheda della riga si azzera
-    setAccountingItem( NULL );
+    // quando si cambia la scheda di contabilita' corrente la scheda della riga si azzera
+    setAccountingItemNULL();
 }
 
 void AccountingItemTAMGUI::setAccountingNULL() {
     setAccountingBill(NULL);
-}
-
-void AccountingItemTAMGUI::setDateBegin( const QString &newVal ) {
-    m_d->ui->beginDateLineEdit->setText( newVal );
-}
-
-void AccountingItemTAMGUI::setDateEnd( const QString &newVal ) {
-    m_d->ui->endDateLineEdit->setText( newVal );
 }
 
 void AccountingItemTAMGUI::updateTAMBillComboBox() {
@@ -171,7 +176,7 @@ void AccountingItemTAMGUI::updateTAMBillComboBox() {
     for( int i=0; i < bills.size(); ++i ){
         AccountingTAMBillItem * b = bills.at(i);
         v = qVariantFromValue((void *) b );
-        m_d->ui->tamBillComboBox->insertItem( (i+1), b->name(), v );
+        m_d->ui->tamBillComboBox->insertItem( (i+1), b->title(), v );
         if( m_d->item != NULL ){
             if( m_d->item->tamBillItem() == b ){
                 currIndex = i+1;
@@ -197,7 +202,13 @@ void AccountingItemTAMGUI::setTAMBill() {
 bool AccountingItemTAMGUI::eventFilter(QObject *object, QEvent *event) {
     if (event->type() == QEvent::MouseButtonDblClick )     {
         if( m_d->item != NULL ){
-            if( object == m_d->ui->beginDateLineEdit ){
+            if( object == m_d->ui->dateLineEdit ){
+                QDate d = m_d->item->date();
+                QCalendarDialog dialog( &d, this );
+                if( dialog.exec() == QDialog::Accepted ){
+                    m_d->item->setDate( d );
+                }
+            } else if( object == m_d->ui->beginDateLineEdit ){
                 QDate d = m_d->item->dateBegin();
                 QCalendarDialog dialog( &d, this );
                 if( dialog.exec() == QDialog::Accepted ){
@@ -213,4 +224,11 @@ bool AccountingItemTAMGUI::eventFilter(QObject *object, QEvent *event) {
         }
     }
     return false;
+}
+
+void AccountingItemTAMGUI::showEvent(QShowEvent *event) {
+    if( event->type() == QEvent::Show ){
+        updateTAMBillComboBox();
+    }
+    QWidget::showEvent( event );
 }

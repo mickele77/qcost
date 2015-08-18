@@ -21,11 +21,13 @@
 #include "ui_accountinglsbillitemgui.h"
 
 #include "priceitemgui.h"
-#include "importbillitemmeasurestxt.h"
+#include "importlsitemmeasurestxt.h"
+#include "qcalendardialog.h"
 
 #include "project.h"
 #include "accountinglsbill.h"
-#include "measuresmodel.h"
+#include "measureslsmodel.h"
+#include "accountinglsitemmeasure.h"
 #include "accountingitemattributemodel.h"
 #include "accountinglsbillitem.h"
 #include "bill.h"
@@ -33,6 +35,8 @@
 #include "unitmeasure.h"
 #include "pricefieldmodel.h"
 #include "mathparser.h"
+
+#include <QDate>
 
 class AccountingLSBillItemGUIPrivate{
 public:
@@ -76,16 +80,17 @@ AccountingLSBillItemGUI::AccountingLSBillItemGUI(QMap<PriceListDBWidget::ImportO
     m_d->ui->priceTab->layout()->addWidget( m_d->priceItemGUI );
     m_d->ui->attributeTableView->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
     m_d->ui->attributeTableView->setModel( m_d->itemAttributeModel );
-    associateLinesModel( false );
 
-    connect( m_d->ui->addBillItemLinePushButton, &QPushButton::clicked, this, &AccountingLSBillItemGUI::addMeasureLines );
-    connect( m_d->ui->delBillItemLinePushButton, &QPushButton::clicked, this, &AccountingLSBillItemGUI::delMeasureLines );
-    connect( m_d->ui->importBillItemMeasuresTXTPushButton, &QPushButton::clicked, this, &AccountingLSBillItemGUI::importBillItemMeasuresTXT );
+    connect( m_d->ui->addMeasurePushButton, &QPushButton::clicked, this, &AccountingLSBillItemGUI::addMeasureLines );
+    connect( m_d->ui->delMeasurePushButton, &QPushButton::clicked, this, &AccountingLSBillItemGUI::delMeasureLines );
+    connect( m_d->ui->importMeasuresTXTPushButton, &QPushButton::clicked, this, &AccountingLSBillItemGUI::importMeasuresTXT );
 
     connect( m_d->ui->addAttributePushButton, &QPushButton::clicked, this, &AccountingLSBillItemGUI::addAttribute );
     connect( m_d->ui->removeAttributePushButton, &QPushButton::clicked, this, &AccountingLSBillItemGUI::removeAttribute );
 
     connect( m_d->priceItemGUI, static_cast<void(PriceItemGUI::*)(PriceItem *, Bill *)>(&PriceItemGUI::editPriceItemAP), this, &AccountingLSBillItemGUI::editPriceItemAP );
+
+    connect( m_d->ui->measuresTableView, &QTableView::doubleClicked, this, &AccountingLSBillItemGUI::editMeasureDate );
 }
 
 AccountingLSBillItemGUI::~AccountingLSBillItemGUI() {
@@ -95,54 +100,53 @@ AccountingLSBillItemGUI::~AccountingLSBillItemGUI() {
 void AccountingLSBillItemGUI::setBillItem(AccountingLSBillItem *b) {
     if( m_d->item != b ){
         if( m_d->item != NULL ){
-            disconnect( m_d->item, &AccountingLSBillItem::quantityChanged, m_d->ui->quantityLineEdit, &QLineEdit::setText );
-            disconnect( m_d->ui->quantityLineEdit, &QLineEdit::editingFinished, this, &AccountingLSBillItemGUI::setQuantityLE );
-            disconnect( m_d->item, &AccountingLSBillItem::totalAmountChanged, m_d->ui->totalAmountLineEdit, &QLineEdit::setText );
-            disconnect( m_d->item, &AccountingLSBillItem::PPUTotalChanged, m_d->ui->PPUTotalLineEdit, &QLineEdit::setText );
+            disconnect( m_d->item, &AccountingLSBillItem::projQuantityChanged, m_d->ui->projQuantityLineEdit, &QLineEdit::setText );
+            disconnect( m_d->item, &AccountingLSBillItem::projAmountChanged, m_d->ui->projAmountLineEdit, &QLineEdit::setText );
+            disconnect( m_d->item, &AccountingLSBillItem::accQuantityChanged, m_d->ui->accQuantityLineEdit, &QLineEdit::setText );
+            disconnect( m_d->item, &AccountingLSBillItem::accAmountChanged, m_d->ui->accAmountLineEdit, &QLineEdit::setText );
+            disconnect( m_d->item, &AccountingLSBillItem::percentageAccountedChanged, m_d->ui->percentageAccountedLineEdit, &QLineEdit::setText );
+            disconnect( m_d->item, &AccountingLSBillItem::PPUChanged, m_d->ui->PPULineEdit, &QLineEdit::setText );
             disconnect( m_d->item, &AccountingLSBillItem::priceItemChanged, this, &AccountingLSBillItemGUI::connectPriceItem );
             disconnectPriceItem( m_d->item->priceItem() );
-            disconnect( m_d->ui->associateLinesCheckBox, &QCheckBox::toggled, this, &AccountingLSBillItemGUI::associateLinesModel );
-            disconnect( m_d->item, &AccountingLSBillItem::aboutToBeDeleted, this, &AccountingLSBillItemGUI::setBillItemNULL );
+            disconnect( m_d->item, &AccountingLSBillItem::aboutToBeDeleted, this, &AccountingLSBillItemGUI::clear );
         }
 
-        m_d->ui->quantityLineEdit->clear();
-        m_d->ui->PPUTotalLineEdit->clear();
-        m_d->ui->totalAmountLineEdit->clear();
+        m_d->ui->projQuantityLineEdit->clear();
+        m_d->ui->accQuantityLineEdit->clear();
+        m_d->ui->PPULineEdit->clear();
+        m_d->ui->projAmountLineEdit->clear();
+        m_d->ui->accAmountLineEdit->clear();
 
         m_d->item = b;
         m_d->itemAttributeModel->setItem( b );
 
         if( m_d->item != NULL ){
-            m_d->ui->quantityLineEdit->setText( m_d->item->quantityStr() );
-            connect( m_d->item, &AccountingLSBillItem::quantityChanged, m_d->ui->quantityLineEdit, &QLineEdit::setText );
-            connect( m_d->ui->quantityLineEdit, &QLineEdit::editingFinished, this, &AccountingLSBillItemGUI::setQuantityLE );
+            m_d->ui->projQuantityLineEdit->setText( m_d->item->projQuantityStr() );
+            connect( m_d->item, &AccountingLSBillItem::projQuantityChanged, m_d->ui->projQuantityLineEdit, &QLineEdit::setText );
 
-            m_d->ui->PPUTotalLineEdit->setText( m_d->item->PPUTotalStr() );
-            connect( m_d->item, &AccountingLSBillItem::PPUTotalChanged, m_d->ui->PPUTotalLineEdit, &QLineEdit::setText );
+            m_d->ui->projAmountLineEdit->setText( m_d->item->projAmountStr() );
+            connect( m_d->item, &AccountingLSBillItem::projAmountChanged, m_d->ui->projAmountLineEdit, &QLineEdit::setText );
 
-            m_d->ui->totalAmountLineEdit->setText( m_d->item->totalAmountStr() );
-            connect( m_d->item, &AccountingLSBillItem::totalAmountChanged, m_d->ui->totalAmountLineEdit, &QLineEdit::setText );
+            m_d->ui->accQuantityLineEdit->setText( m_d->item->accQuantityStr() );
+            connect( m_d->item, &AccountingLSBillItem::accQuantityChanged, m_d->ui->accQuantityLineEdit, &QLineEdit::setText );
+
+            m_d->ui->accAmountLineEdit->setText( m_d->item->accAmountStr() );
+            connect( m_d->item, &AccountingLSBillItem::accAmountChanged, m_d->ui->accAmountLineEdit, &QLineEdit::setText );
+
+            m_d->ui->percentageAccountedLineEdit->setText( m_d->item->percentageAccountedStr() );
+            connect( m_d->item, &AccountingLSBillItem::percentageAccountedChanged, m_d->ui->percentageAccountedLineEdit, &QLineEdit::setText );
+
+            m_d->ui->PPULineEdit->setText( m_d->item->PPUStr() );
+            connect( m_d->item, &AccountingLSBillItem::PPUChanged, m_d->ui->PPULineEdit, &QLineEdit::setText );
 
             connect( m_d->item, &AccountingLSBillItem::priceItemChanged, this, &AccountingLSBillItemGUI::connectPriceItem );
             connectPriceItem( NULL, m_d->item->priceItem());
 
             m_d->priceItemGUI->setCurrentPriceDataSet( m_d->item->currentPriceDataSet() );
 
-            m_d->ui->billItemLinesTableView->setModel( m_d->item->measuresModel() );
+            m_d->ui->measuresTableView->setModel( m_d->item->measuresModel() );
 
-            associateLinesModel( m_d->item->measuresModel() != NULL );
-
-            m_d->ui->associateLinesCheckBox->setChecked(  m_d->item->measuresModel() != NULL  );
-            connect( m_d->ui->associateLinesCheckBox, &QCheckBox::toggled, this, &AccountingLSBillItemGUI::associateLinesModel );
-
-            connect( m_d->item, &AccountingLSBillItem::aboutToBeDeleted, this, &AccountingLSBillItemGUI::setBillItemNULL );
-        } else {
-            m_d->ui->quantityLineEdit->clear();
-            m_d->ui->priceCodeLineEdit->clear();
-            m_d->ui->priceShortDescLineEdit->clear();
-            m_d->priceItemGUI->setPriceItemNULL();
-            m_d->ui->billItemLinesTableView->setModel( NULL );
-            associateLinesModel( false );
+            connect( m_d->item, &AccountingLSBillItem::aboutToBeDeleted, this, &AccountingLSBillItemGUI::clear );
         }
     }
 }
@@ -161,18 +165,12 @@ void AccountingLSBillItemGUI::setBill(AccountingLSBill *b) {
         }
 
         // quando si cambia computo corrente la scheda della riga si azzera
-        setBillItemNULL();
+        clear();
     }
 }
 
 void AccountingLSBillItemGUI::setBillNULL() {
     setBill(NULL);
-}
-
-void AccountingLSBillItemGUI::setQuantityLE(){
-    if( m_d->item != NULL ){
-        m_d->item->setQuantity( m_d->ui->quantityLineEdit->text() );
-    }
 }
 
 void AccountingLSBillItemGUI::disconnectPriceItem( PriceItem * priceItem ) {
@@ -210,7 +208,6 @@ void AccountingLSBillItemGUI::connectPriceItem( PriceItem * oldPriceItem, PriceI
             m_d->ui->priceCodeLineEdit->clear();
             m_d->ui->priceShortDescLineEdit->clear();
             m_d->ui->priceUnitMeasureLineEdit->clear();
-            m_d->ui->PPUTotalLineEdit->clear();
             m_d->priceItemGUI->setPriceItemNULL();
         }
     }
@@ -233,36 +230,10 @@ void AccountingLSBillItemGUI::connectPriceUnitMeasure(){
     }
 }
 
-void AccountingLSBillItemGUI::associateLinesModel(bool ass) {
-    if( ass ){
-        if( m_d->item != NULL ){
-            m_d->ui->billItemLinesGroupBox->setVisible( true );
-            m_d->ui->billItemLinesTableView->setModel( m_d->item->generateMeasuresModel() );
-            m_d->ui->quantityLineEdit->setReadOnly( true );
-            if( m_d->vSpacer != NULL ){
-                m_d->ui->dataTabLayout->removeItem( m_d->vSpacer);
-                delete m_d->vSpacer;
-                m_d->vSpacer = NULL;
-            }
-            return;
-        }
-    }
-    if( m_d->item != NULL ){
-        m_d->item->removeMeasuresModel();
-    }
-    m_d->ui->billItemLinesGroupBox->setVisible( false );
-    m_d->ui->billItemLinesTableView->setModel( NULL );
-    if( m_d->vSpacer == NULL ){
-        m_d->vSpacer = new QSpacerItem(0,0, QSizePolicy::Minimum, QSizePolicy::Expanding);
-        m_d->ui->dataTabLayout->addItem( m_d->vSpacer, 3, 0, 1, 3 );
-    }
-    m_d->ui->quantityLineEdit->setReadOnly( false );
-}
-
 void AccountingLSBillItemGUI::addMeasureLines() {
     if( m_d->item != NULL ){
         if( m_d->item->measuresModel() ){
-            QModelIndexList rowListSelected = m_d->ui->billItemLinesTableView->selectionModel()->selectedIndexes();
+            QModelIndexList rowListSelected = m_d->ui->measuresTableView->selectionModel()->selectedIndexes();
             QList<int> rowList;
             for( int i=0; i < rowListSelected.size(); i++ ){
                 if( !rowList.contains(rowListSelected.at(i).row()) ){
@@ -283,7 +254,7 @@ void AccountingLSBillItemGUI::addMeasureLines() {
 void AccountingLSBillItemGUI::delMeasureLines() {
     if( m_d->item != NULL ){
         if( m_d->item->measuresModel() ){
-            QModelIndexList rowListSelected = m_d->ui->billItemLinesTableView->selectionModel()->selectedRows();
+            QModelIndexList rowListSelected = m_d->ui->measuresTableView->selectionModel()->selectedRows();
             if( !rowListSelected.isEmpty() ){
                 QList<int> rowList;
                 for( int i=0; i < rowListSelected.size(); i++ ){
@@ -298,10 +269,10 @@ void AccountingLSBillItemGUI::delMeasureLines() {
     }
 }
 
-void AccountingLSBillItemGUI::importBillItemMeasuresTXT() {
+void AccountingLSBillItemGUI::importMeasuresTXT() {
     if( m_d->item != NULL ){
         if( m_d->item->measuresModel() ){
-            QModelIndexList rowListSelected = m_d->ui->billItemLinesTableView->selectionModel()->selectedRows();
+            QModelIndexList rowListSelected = m_d->ui->measuresTableView->selectionModel()->selectedRows();
             QList<int> rowList;
             for( int i=0; i < rowListSelected.size(); i++ ){
                 if( !rowList.contains(rowListSelected.at(i).row()) ){
@@ -315,13 +286,13 @@ void AccountingLSBillItemGUI::importBillItemMeasuresTXT() {
                 position = rowList.last()+1;
             }
 
-            ImportBillItemMeasuresTXT dialog( m_d->item->measuresModel(), position, m_d->parser, this );
+            ImportLSItemMeasuresTXT dialog( m_d->item->measuresModel(), position, m_d->parser, this );
             dialog.exec();
         }
     }
 }
 
-void AccountingLSBillItemGUI::setBillItemNULL() {
+void AccountingLSBillItemGUI::clear() {
     setBillItem( NULL );
 }
 
@@ -356,6 +327,19 @@ void AccountingLSBillItemGUI::removeAttribute(){
                     }
                 }
                 m_d->itemAttributeModel->removeRows( row, count );
+            }
+        }
+    }
+}
+
+void AccountingLSBillItemGUI::editMeasureDate( const QModelIndex & index ) {
+    if( m_d->item != NULL ){
+        if( index.column() == m_d->item->measuresModel()->accDateCol() ){
+            AccountingLSItemMeasure * m = m_d->item->measuresModel()->measure(index.row() );
+            QDate d = m->accDate();
+            QCalendarDialog dialog( &d, this );
+            if( dialog.exec() == QDialog::Accepted ){
+                m->setAccDate( d );
             }
         }
     }

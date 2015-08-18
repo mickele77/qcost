@@ -183,13 +183,13 @@ QVariant AttributeModel::data(const QModelIndex &index, int role) const {
                 return QVariant( m_d->bill->amountAttributeStr( m_d->attributeContainer.at(index.row()), index.column() - 1) );
             }
             if( m_d->accountingBill != NULL ){
-                return QVariant( m_d->accountingBill->totalAmountToBeDiscountedStr() );
+                return QVariant( m_d->accountingBill->totalAmountToDiscountStr() );
             }
             if( m_d->accountingTAMBill != NULL ){
-                return QVariant( m_d->accountingTAMBill->totalAmountToBeDiscountedStr() );
+                return QVariant( m_d->accountingTAMBill->totalAmountToDiscountStr() );
             }
             if( m_d->accountingLSBill != NULL ){
-                return QVariant( m_d->accountingLSBill->totalAmountStr() );
+                return QVariant( m_d->accountingLSBill->projAmountStr() );
             }
         }
     }
@@ -298,7 +298,7 @@ void AttributeModel::writeXml(QXmlStreamWriter *writer) {
 void AttributeModel::readXml(QXmlStreamReader *reader) {
     while( !reader->atEnd() &&
            !reader->hasError() &&
-           !(reader->isEndElement() && reader->name().toString().toUpper() == "BILLATTRIBUTEMODEL") ){
+           !(reader->isEndElement() && reader->name().toString().toUpper() == "ATTRIBUTEMODEL") ){
         reader->readNext();
         if( reader->name().toString().toUpper() == "ATTRIBUTE" && reader->isStartElement()) {
             if(append()){

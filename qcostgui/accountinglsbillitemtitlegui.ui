@@ -43,28 +43,34 @@
          </property>
          <layout class="QGridLayout" name="amountsDataLayout">
           <item row="1" column="0">
-           <widget class="QLabel" name="totalAmountAccountedLabel">
+           <widget class="QLabel" name="accTotalAmountLabel">
             <property name="text">
              <string>Importo contabilizzato</string>
             </property>
            </widget>
           </item>
           <item row="0" column="1">
-           <widget class="QLineEdit" name="totalAmountLineEdit">
+           <widget class="QLineEdit" name="projTotalAmountLineEdit">
+            <property name="alignment">
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
             <property name="readOnly">
              <bool>true</bool>
             </property>
            </widget>
           </item>
           <item row="1" column="1">
-           <widget class="QLineEdit" name="totalAmountAccountedLineEdit">
+           <widget class="QLineEdit" name="accTotalAmountLineEdit">
+            <property name="alignment">
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
             <property name="readOnly">
              <bool>true</bool>
             </property>
            </widget>
           </item>
           <item row="0" column="0">
-           <widget class="QLabel" name="totalAmountLabel">
+           <widget class="QLabel" name="projTotalAmountLabel">
             <property name="text">
              <string>Importo progetto</string>
             </property>
@@ -79,6 +85,9 @@
           </item>
           <item row="2" column="1">
            <widget class="QLineEdit" name="percentageAccountedLineEdit">
+            <property name="alignment">
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
             <property name="readOnly">
              <bool>true</bool>
             </property>
@@ -122,7 +131,11 @@
         </widget>
        </item>
        <item row="0" column="0" colspan="2">
-        <widget class="QTableView" name="attributeTableView"/>
+        <widget class="QTableView" name="attributeTableView">
+         <property name="alternatingRowColors">
+          <bool>true</bool>
+         </property>
+        </widget>
        </item>
       </layout>
      </widget>

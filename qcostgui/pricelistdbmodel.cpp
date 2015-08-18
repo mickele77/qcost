@@ -196,7 +196,7 @@ QVariant PriceListDBModel::data(const QModelIndex &index, int role) const {
                 (m_d->visibleColsList.at(index.column()).priceColType == priceMaterialCol) ){
             return QVariant(Qt::AlignRight | Qt::AlignTop);
         } else if(m_d->visibleColsList.at(index.column()).priceColType == unitMeasureCol) {
-            return QVariant(Qt::AlignCenter | Qt::AlignTop);
+            return QVariant(Qt::AlignHCenter | Qt::AlignTop);
         } else {
             return QVariant(Qt::AlignLeft | Qt::AlignTop);
         }

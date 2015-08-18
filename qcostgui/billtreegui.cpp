@@ -66,9 +66,6 @@ BillTreeGUI::BillTreeGUI( QMap<PriceListDBWidget::ImportOptions, bool> *EPAImpOp
     m_d( new BillTreeGUIPrivate(EPAImpOptions, EPAFileName, prs, prj) ){
     m_d->ui->setupUi(this);
 
-    m_d->ui->amountsGroupBox->setHidden( true );
-    m_d->ui->priceListGroupBox->setHidden( true );
-
     populatePriceListComboBox();
 
     setBill( b );

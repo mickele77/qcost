@@ -42,6 +42,7 @@ public:
         formula( f ),
         fieldType(ft) {
     }
+
     PriceFieldData &operator =(const PriceFieldData &cp){
         if( &cp != this ){
             priceName = cp.priceName;
@@ -80,7 +81,7 @@ public:
             ++i;
         }
         return ret;
-    };
+    }
 
     bool appendConnectedFields( QList<int> * conFields ){
         bool ret = false;
@@ -94,7 +95,7 @@ public:
             }
         }
         return ret;
-    };
+    }
 
     static QString fromBoolToQString( bool v ){
         if( v ){
@@ -180,14 +181,14 @@ class PriceFieldModelPrivate{
 public:
     PriceFieldModelPrivate( MathParser * prs ):
         parser(prs){
-    };
+    }
 
     bool isIndexValid( int i ){
         if( i > -1 && i < fieldsList.size() ){
             return true;
         }
         return false;
-    };
+    }
 
     // restituisce il numero dei campi effettivamente connessi
     QList<int> calcEffectiveConnectedFields( int i ){
@@ -204,7 +205,7 @@ public:
             }
         }
         return ret;
-    };
+    }
 
     // controlla che nella formula non ci siano loop
     void updateIsFormulaValid( int i ){
@@ -212,7 +213,7 @@ public:
             updateEffectiveConnectedFields(i);
             fieldsList.at(i)->isFormulaValid = !fieldsList.at(i)->effectiveConnectedFields.contains(i);
         }
-    };
+    }
 
     // calcola i campi effetivamente connessi
     void updateEffectiveConnectedFields( int i ){
@@ -220,14 +221,15 @@ public:
             fieldsList.at(i)->effectiveConnectedFields.clear();
             fieldsList.at(i)->effectiveConnectedFields = calcEffectiveConnectedFields( i );
         }
-    };
+    }
+
     QString	toString(double i, char f = 'g', int prec = 6) const{
         if( parser == NULL ){
             return QString::number( i, f, prec );
         } else {
             return parser->toString( i, f, prec );
         }
-    };
+    }
 
     MathParser * parser;
     QList<PriceFieldData *> fieldsList;

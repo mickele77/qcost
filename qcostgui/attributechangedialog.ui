@@ -43,7 +43,11 @@
     </widget>
    </item>
    <item row="0" column="0" colspan="4">
-    <widget class="QTableView" name="attributesTableView"/>
+    <widget class="QTableView" name="attributesTableView">
+     <property name="alternatingRowColors">
+      <bool>true</bool>
+     </property>
+    </widget>
    </item>
   </layout>
  </widget>

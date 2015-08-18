@@ -80,14 +80,15 @@ AccountingLSBillDataGUI::~AccountingLSBillDataGUI(){
 void AccountingLSBillDataGUI::setAccountingBill(AccountingLSBill *b) {
     if( m_d->accounting != b ){
         if( m_d->accounting != NULL ){
+            disconnect( m_d->ui->codeLineEdit, &QLineEdit::textEdited, m_d->accounting, &AccountingLSBill::setCode );
             disconnect( m_d->ui->nameLineEdit, &QLineEdit::textEdited, m_d->accounting, &AccountingLSBill::setName );
             disconnect( m_d->ui->descriptionTextEdit, &QPlainTextEdit::textChanged, this, &AccountingLSBillDataGUI::setDescription );
 
-            disconnect( m_d->accounting, &AccountingLSBill::totalAmountChanged, m_d->ui->totalAmountLineEdit, &QLineEdit::setText );
-            disconnect( m_d->accounting, &AccountingLSBill::totalAmountAccountedChanged, m_d->ui->totalAmountAccountedLineEdit, &QLineEdit::setText );
+            disconnect( m_d->accounting, &AccountingLSBill::projAmountChanged, m_d->ui->totalAmountLineEdit, &QLineEdit::setText );
+            disconnect( m_d->accounting, &AccountingLSBill::accAmountChanged, m_d->ui->totalAmountAccountedLineEdit, &QLineEdit::setText );
             disconnect( m_d->accounting, &AccountingLSBill::percentageAccountedChanged, m_d->ui->percentageAccountedLineEdit, &QLineEdit::setText );
 
-            disconnect( m_d->accounting, &AccountingLSBill::aboutToBeDeleted, this, &AccountingLSBillDataGUI::setAccountingNULL );
+            disconnect( m_d->accounting, &AccountingLSBill::aboutToBeDeleted, this, &AccountingLSBillDataGUI::clear );
             disconnect( m_d->ui->priceListComboBox, static_cast<void(QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this, &AccountingLSBillDataGUI::setPriceList );
             disconnect( m_d->ui->currentPriceDataSetSpinBox, static_cast<void(QSpinBox::*)(int)>(&QSpinBox::valueChanged), this, &AccountingLSBillDataGUI::setPriceDataSet );
         }
@@ -95,7 +96,7 @@ void AccountingLSBillDataGUI::setAccountingBill(AccountingLSBill *b) {
         m_d->ui->currentPriceDataSetSpinBox->setMaximum(1);
         m_d->ui->currentPriceDataSetSpinBox->setValue(1);
 
-
+        m_d->ui->codeLineEdit->clear();
         m_d->ui->nameLineEdit->clear();
         m_d->ui->descriptionTextEdit->clear();
         m_d->ui->totalAmountLineEdit->clear();
@@ -107,15 +108,17 @@ void AccountingLSBillDataGUI::setAccountingBill(AccountingLSBill *b) {
         m_d->accounting = b;
 
         if( m_d->accounting != NULL ){
+            m_d->ui->codeLineEdit->setText( m_d->accounting->code() );
+            connect( m_d->ui->codeLineEdit, &QLineEdit::textEdited, m_d->accounting, &AccountingLSBill::setCode );
             m_d->ui->nameLineEdit->setText( m_d->accounting->name() );
             connect( m_d->ui->nameLineEdit, &QLineEdit::textEdited, m_d->accounting, &AccountingLSBill::setName );
             m_d->ui->descriptionTextEdit->setPlainText( m_d->accounting->description() );
             connect( m_d->ui->descriptionTextEdit, &QPlainTextEdit::textChanged, this, &AccountingLSBillDataGUI::setDescription );
 
-            m_d->ui->totalAmountLineEdit->setText( m_d->accounting->totalAmountStr() );
-            connect( m_d->accounting, &AccountingLSBill::totalAmountChanged, m_d->ui->totalAmountLineEdit, &QLineEdit::setText );
-            m_d->ui->totalAmountAccountedLineEdit->setText( m_d->accounting->totalAmountAccountedStr() );
-            connect( m_d->accounting, &AccountingLSBill::totalAmountAccountedChanged, m_d->ui->totalAmountAccountedLineEdit, &QLineEdit::setText );
+            m_d->ui->totalAmountLineEdit->setText( m_d->accounting->projAmountStr() );
+            connect( m_d->accounting, &AccountingLSBill::projAmountChanged, m_d->ui->totalAmountLineEdit, &QLineEdit::setText );
+            m_d->ui->totalAmountAccountedLineEdit->setText( m_d->accounting->accAmountStr() );
+            connect( m_d->accounting, &AccountingLSBill::accAmountChanged, m_d->ui->totalAmountAccountedLineEdit, &QLineEdit::setText );
             m_d->ui->percentageAccountedLineEdit->setText( m_d->accounting->percentageAccountedStr() );
             connect( m_d->accounting, &AccountingLSBill::percentageAccountedChanged, m_d->ui->percentageAccountedLineEdit, &QLineEdit::setText );
 
@@ -127,7 +130,7 @@ void AccountingLSBillDataGUI::setAccountingBill(AccountingLSBill *b) {
             m_d->ui->totalPriceFieldTableView->setModel( m_d->accounting->totalAmountPriceFieldModel() );
             m_d->ui->attributesTableView->setModel( m_d->accounting->attributeModel() );
 
-            connect( m_d->accounting, &AccountingLSBill::aboutToBeDeleted, this, &AccountingLSBillDataGUI::setAccountingNULL );
+            connect( m_d->accounting, &AccountingLSBill::aboutToBeDeleted, this, &AccountingLSBillDataGUI::clear );
         }
     }
 }
@@ -138,13 +141,7 @@ void AccountingLSBillDataGUI::setDescription(){
     }
 }
 
-void AccountingLSBillDataGUI::setDiscount() {
-    if( m_d->accounting != NULL ){
-        // m_d->accounting->setDiscount( m_d->ui->discountLineEdit->text() );
-    }
-}
-
-void AccountingLSBillDataGUI::setAccountingNULL(){
+void AccountingLSBillDataGUI::clear(){
     setAccountingBill( NULL );
 }
 
@@ -190,7 +187,7 @@ void AccountingLSBillDataGUI::removeAttribute(){
 
 bool AccountingLSBillDataGUI::printAttributeAccountingODT(){
     if( m_d->accounting != NULL ){
-        AccountingPrinter::PrintAccountingBillOption prAccountingMeasureOption;
+        AccountingPrinter::PrintPPUDescOption prAccountingMeasureOption;
         AccountingPrinter::AttributePrintOption prOption;
         QList<Attribute *> prAttrs;
         double paperWidth = 210.0, paperHeight = 297.0;

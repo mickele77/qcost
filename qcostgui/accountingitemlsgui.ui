@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>519</width>
-    <height>514</height>
+    <height>590</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -24,7 +24,7 @@
        <string>Dati</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout">
-       <item row="4" column="0">
+       <item row="3" column="0">
         <spacer name="verticalSpacer">
          <property name="orientation">
           <enum>Qt::Vertical</enum>
@@ -37,93 +37,12 @@
          </property>
         </spacer>
        </item>
-       <item row="3" column="0">
+       <item row="2" column="0">
         <widget class="QGroupBox" name="amountsAccountedGroupBox">
          <property name="title">
-          <string>Contabilizzato</string>
+          <string>Importi contabilizzati</string>
          </property>
          <layout class="QGridLayout" name="amountsDataLayout">
-          <item row="2" column="0">
-           <widget class="QLabel" name="amountNotToBeDiscountedAccountedLabel">
-            <property name="text">
-             <string>Importo non ribassabile</string>
-            </property>
-           </widget>
-          </item>
-          <item row="3" column="1">
-           <widget class="QLineEdit" name="totalAmountAccountedLineEdit">
-            <property name="alignment">
-             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-            </property>
-            <property name="readOnly">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="1">
-           <widget class="QLineEdit" name="amountNotToBeDiscountedAccountedLineEdit">
-            <property name="alignment">
-             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-            </property>
-            <property name="readOnly">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="0">
-           <widget class="QLabel" name="totalAmountToBeDiscountedAccountedLabel">
-            <property name="text">
-             <string>Importo al lordo del ribasso</string>
-            </property>
-           </widget>
-          </item>
-          <item row="3" column="0">
-           <widget class="QLabel" name="totalAmountAccountedLabel">
-            <property name="text">
-             <string>Importo al netto del ribasso</string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="1">
-           <widget class="QLineEdit" name="totalAmountToBeDiscountedAccountedLineEdit">
-            <property name="alignment">
-             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-            </property>
-            <property name="readOnly">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="0">
-           <widget class="QLabel" name="percentageAccountedLabel">
-            <property name="text">
-             <string>% avanzamento</string>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="1">
-           <widget class="QLineEdit" name="percentageAccountedLineEdit">
-            <property name="alignment">
-             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </widget>
-       </item>
-       <item row="0" column="0">
-        <widget class="QGroupBox" name="groupBox">
-         <property name="title">
-          <string>Date</string>
-         </property>
-         <layout class="QGridLayout" name="gridLayout_3">
-          <item row="0" column="0">
-           <widget class="QLabel" name="beginDateLabel">
-            <property name="text">
-             <string>Data inizio</string>
-            </property>
-           </widget>
-          </item>
           <item row="0" column="1">
            <widget class="QLineEdit" name="beginDateLineEdit">
             <property name="alignment">
@@ -131,6 +50,78 @@
             </property>
             <property name="readOnly">
              <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="0">
+           <widget class="QLabel" name="beginDateLabel">
+            <property name="text">
+             <string>Data inizio</string>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="0">
+           <widget class="QLabel" name="amountNotToDiscountLabel">
+            <property name="text">
+             <string>Importo non ribassabile</string>
+            </property>
+           </widget>
+          </item>
+          <item row="5" column="1">
+           <widget class="QLineEdit" name="totalAmountLineEdit">
+            <property name="alignment">
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
+            <property name="readOnly">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="1">
+           <widget class="QLineEdit" name="amountNotToDiscountLineEdit">
+            <property name="alignment">
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
+            <property name="readOnly">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="0">
+           <widget class="QLabel" name="totalAmountToDiscountLabel">
+            <property name="text">
+             <string>Importo al lordo del ribasso</string>
+            </property>
+           </widget>
+          </item>
+          <item row="5" column="0">
+           <widget class="QLabel" name="totalAmountLabel">
+            <property name="text">
+             <string>Importo al netto del ribasso</string>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="1">
+           <widget class="QLineEdit" name="totalAmountToDiscountLineEdit">
+            <property name="alignment">
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
+            <property name="readOnly">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="0">
+           <widget class="QLabel" name="percentageAccountedLabel">
+            <property name="text">
+             <string>% avanzamento</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="1">
+           <widget class="QLineEdit" name="percentageAccountedLineEdit">
+            <property name="alignment">
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
             </property>
            </widget>
           </item>
@@ -155,71 +146,49 @@
         </widget>
        </item>
        <item row="1" column="0">
-        <widget class="QGroupBox" name="groupBox_2">
+        <widget class="QGroupBox" name="generalDataGroupBox">
          <property name="title">
-          <string>Categoria</string>
+          <string>Dati categoria</string>
          </property>
          <layout class="QGridLayout" name="gridLayout_5">
-          <item row="0" column="0">
-           <widget class="QComboBox" name="lumpSumsComboBox"/>
-          </item>
-         </layout>
-        </widget>
-       </item>
-       <item row="2" column="0">
-        <widget class="QGroupBox" name="amountsGroupBox">
-         <property name="title">
-          <string>Progetto</string>
-         </property>
-         <layout class="QGridLayout" name="amountsDataLayout_2">
-          <item row="2" column="1">
-           <widget class="QLineEdit" name="totalAmountLineEdit">
-            <property name="alignment">
-             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-            </property>
-            <property name="readOnly">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="1">
-           <widget class="QLineEdit" name="totalAmountToBeDiscountedLineEdit">
-            <property name="alignment">
-             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-            </property>
-            <property name="readOnly">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="1">
-           <widget class="QLineEdit" name="amountNotToBeDiscountedLineEdit">
-            <property name="alignment">
-             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-            </property>
-            <property name="readOnly">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="0">
-           <widget class="QLabel" name="totalAmountToBeDiscountedLabel">
-            <property name="text">
-             <string>Importo al lordo del ribasso</string>
-            </property>
-           </widget>
-          </item>
           <item row="2" column="0">
-           <widget class="QLabel" name="totalAmountLabel">
+           <widget class="QLabel" name="PPUNotToDiscountLabel">
             <property name="text">
-             <string>Importo al netto del ribasso</string>
+             <string>Importo non ribassabile</string>
             </property>
            </widget>
           </item>
           <item row="1" column="0">
-           <widget class="QLabel" name="amountNotToBeDiscountedLabel">
+           <widget class="QLabel" name="PPUTotalToDiscountLabel">
             <property name="text">
-             <string>Importo non ribassabile</string>
+             <string>Importo lordo</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="QLineEdit" name="PPUTotalToDiscountLineEdit">
+            <property name="alignment">
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
+            <property name="readOnly">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="1">
+           <widget class="QLineEdit" name="PPUNotToDiscountLineEdit">
+            <property name="alignment">
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
+            <property name="readOnly">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="0" colspan="2">
+           <widget class="QComboBox" name="lumpSumsComboBox">
+            <property name="layoutDirection">
+             <enum>Qt::RightToLeft</enum>
             </property>
            </widget>
           </item>
@@ -248,7 +217,11 @@
         </widget>
        </item>
        <item row="0" column="0" colspan="2">
-        <widget class="QTableView" name="attributeTableView"/>
+        <widget class="QTableView" name="attributeTableView">
+         <property name="alternatingRowColors">
+          <bool>true</bool>
+         </property>
+        </widget>
        </item>
       </layout>
      </widget>

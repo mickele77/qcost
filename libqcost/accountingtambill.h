@@ -39,7 +39,7 @@ class AccountingPriceFieldModel;
 #include "accountingtambillitem.h"
 #include "accountingprinter.h"
 #include "projectitem.h"
-#include <QAbstractTableModel>
+#include <QAbstractItemModel>
 
 class AccountingTAMBillPrivate;
 
@@ -47,7 +47,7 @@ class AccountingTAMBillPrivate;
 
 */
 
-class EXPORT_LIB_OPT AccountingTAMBill : public QAbstractTableModel, public ProjectItem {
+class EXPORT_LIB_OPT AccountingTAMBill : public QAbstractItemModel, public ProjectItem {
     Q_OBJECT
 public:
     enum SetPriceListMode{
@@ -78,6 +78,7 @@ public:
     bool canChildrenBeInserted();
     bool insertChildren(int position, int count);
     bool removeChildren(int position, int count);
+    bool clear();
 
     Qt::ItemFlags flags() const;
     QVariant data() const;
@@ -123,23 +124,23 @@ public:
 
     bool moveRows(const QModelIndex & sourceParent, int sourceRow, int count, const QModelIndex & destinationParent, int destinationChild);
 
-    double totalAmountToBeDiscounted() const;
-    double amountNotToBeDiscounted() const;
-    double amountToBeDiscounted() const;
+    double totalAmountToDiscount() const;
+    double amountNotToDiscount() const;
+    double amountToDiscount() const;
     double amountDiscounted() const;
     double totalAmount() const;
-    QString totalAmountToBeDiscountedStr() const;
-    QString amountNotToBeDiscountedStr() const;
-    QString amountToBeDiscountedStr() const;
+    QString totalAmountToDiscountStr() const;
+    QString amountNotToDiscountStr() const;
+    QString amountToDiscountStr() const;
     QString amountDiscountedStr() const;
     QString totalAmountStr() const;
 
     AttributeModel *attributeModel();
 
-    double totalAmountToBeDiscountedAttribute( Attribute * attr ) const;
-    QString totalAmountToBeDiscountedAttributeStr( Attribute * attr ) const;
-    double amountNotToBeDiscountedAttribute( Attribute * attr ) const;
-    QString amountNotToBeDiscountedAttributeStr( Attribute * attr ) const;
+    double totalAmountToDiscountAttribute( Attribute * attr ) const;
+    QString totalAmountToDiscountAttributeStr( Attribute * attr ) const;
+    double amountNotToDiscountAttribute( Attribute * attr ) const;
+    QString amountNotToDiscountAttributeStr( Attribute * attr ) const;
     double totalAmountAttribute( Attribute * attr ) const;
     QString totalAmountAttributeStr( Attribute * attr ) const;
 
@@ -162,16 +163,16 @@ public:
     QList<PriceItem *> connectedPriceItems();
 
     void writeODTAccountingOnTable( QTextCursor * cursor,
-                                    AccountingPrinter::PrintAccountingBillOption prItemsOption,
+                                    AccountingPrinter::PrintPPUDescOption prItemsOption,
                                     bool printAmounts = true ) const;
     void writeODTSummaryOnTable(QTextCursor * cursor,
-                                 AccountingPrinter::PrintAccountingBillOption prItemsOption,
+                                 AccountingPrinter::PrintPPUDescOption prItemsOption,
                                  bool printAmounts = true,
                                  bool writeDetails = true ) const;
 
     void writeODTAttributeAccountingOnTable( QTextCursor *cursor,
                                              AccountingPrinter::AttributePrintOption prOption,
-                                             AccountingPrinter::PrintAccountingBillOption prItemsOption,
+                                             AccountingPrinter::PrintPPUDescOption prItemsOption,
                                              const QList<Attribute *> &attrsToPrint,
                                              bool printAmounts = true ) const;
     void insertStandardAttributes();
@@ -187,9 +188,9 @@ signals:
     void descriptionChanged(  const QString & );
     void priceListChanged( PriceList * );
 
-    void totalAmountToBeDiscountedChanged( const QString & newVal );
-    void amountNotToBeDiscountedChanged( const QString & newVal );
-    void amountToBeDiscountedChanged( const QString & newVal );
+    void totalAmountToDiscountChanged( const QString & newVal );
+    void amountNotToDiscountChanged( const QString & newVal );
+    void amountToDiscountChanged( const QString & newVal );
     void amountDiscountedChanged( const QString & newVal );
     void totalAmountChanged( const QString & newVal );
 

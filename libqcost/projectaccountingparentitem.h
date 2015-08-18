@@ -21,6 +21,7 @@
 
 #include "library_common.h"
 
+class PaymentDataModel;
 class ProjectPriceListParentItem;
 class AccountingBills;
 class AccountingLSBills;
@@ -30,6 +31,7 @@ class PriceItem;
 class AttributeList;
 class PriceFieldModel;
 class MathParser;
+class PaymentData;
 
 class QXmlStreamReader;
 class QXmlStreamWriter;
@@ -46,6 +48,8 @@ public:
     ProjectAccountingParentItem( ProjectItem * parent, PriceFieldModel * pfm, MathParser * p = NULL );
     ~ProjectAccountingParentItem();
 
+    int workProgressBillsCount();
+    PaymentData * workProgressBillData( int pos );
     AccountingBills * accountingBills();
     AccountingLSBills * lumpSumBills();
     AccountingTAMBill * timeAndMaterialBill();
@@ -61,11 +65,35 @@ public:
     QVariant data() const;
     bool setData( const QVariant &value);
 
+    bool clear();
+
     bool isUsingPriceList( PriceList * pl );
     bool isUsingPriceItem(PriceItem * p );
 
     void writeXml( QXmlStreamWriter * writer );
     void readXml(QXmlStreamReader *reader, ProjectPriceListParentItem *priceLists);
+
+    PaymentDataModel *dataModel();
+
+    void updateAmounts();
+
+    double totalAmountToDiscount();
+    double amountNotToDiscount();
+    double amountToDiscount();
+    double amountDiscounted();
+    double totalAmount();
+
+    QString totalAmountToDiscountStr();
+    QString amountNotToDiscountStr();
+    QString amountToDiscountStr();
+    QString amountDiscountedStr();
+    QString totalAmountStr();
+
+public slots:
+    void insertPayments(int position, int count);
+    void removeBills(int position, int count);
+    void changeBillDateEnd( const QDate & newDate, int position);
+    void changeBillDateBegin( const QDate & newDate, int position);
 
 signals:
     void beginInsertChildren( ProjectItem * item, int first, int last );

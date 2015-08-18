@@ -33,25 +33,22 @@
 
 class AccountingPrinterPrivate{
 public:
-    AccountingPrinterPrivate(AccountingBill * b, PriceFieldModel * pfm, MathParser * prs):
+    AccountingPrinterPrivate(AccountingBill * b, MathParser * prs):
         accountingBill(b),
         accountingTAMBill(NULL),
         accountingLSBill(NULL),
-        priceFieldModel(pfm),
         parser(prs){
     }
     AccountingPrinterPrivate(AccountingTAMBill * b, MathParser * prs):
         accountingBill(NULL),
         accountingTAMBill(b),
         accountingLSBill(NULL),
-        priceFieldModel(NULL),
         parser(prs){
     }
     AccountingPrinterPrivate(AccountingLSBill * b, MathParser * prs):
         accountingBill(NULL),
         accountingTAMBill(NULL),
         accountingLSBill(b),
-        priceFieldModel(NULL),
         parser(prs){
     }
     ~AccountingPrinterPrivate(){
@@ -60,12 +57,11 @@ public:
     AccountingBill * accountingBill;
     AccountingTAMBill * accountingTAMBill;
     AccountingLSBill * accountingLSBill;
-    PriceFieldModel * priceFieldModel;
     MathParser * parser;
 };
 
-AccountingPrinter::AccountingPrinter( AccountingBill * b, PriceFieldModel * pfm, MathParser * prs ):
-    m_d( new AccountingPrinterPrivate(b, pfm, prs) ) {
+AccountingPrinter::AccountingPrinter(AccountingBill * b, MathParser * prs ):
+    m_d( new AccountingPrinterPrivate(b, prs) ) {
 }
 
 AccountingPrinter::AccountingPrinter(AccountingTAMBill *b, MathParser *prs):
@@ -82,24 +78,25 @@ AccountingPrinter::~AccountingPrinter() {
     delete m_d;
 }
 
-bool AccountingPrinter::printODT( AccountingPrinter::PrintAccountingBillOption prAccountingMeasuresOption,
+bool AccountingPrinter::printODT( AccountingPrinter::PrintPPUDescOption prAccountingMeasuresOption,
                                   AccountingPrinter::PrintOption prOption,
                                   const QString &fileName,
                                   double paperWidth,
                                   double paperHeight,
-                                  Qt::Orientation paperOrientation,
-                                  bool printAmounts ) const {
+                                  Qt::Orientation paperOrientation ) const {
     if( prOption == PrintAccounting ){
-        return printAccountingODT( prAccountingMeasuresOption, fileName, paperWidth, paperHeight, paperOrientation, printAmounts );
-    } else if( prOption == PrintSummary ){
-        return printSummaryODT( prAccountingMeasuresOption, fileName, paperWidth, paperHeight, paperOrientation, printAmounts, false );
-    } else if( prOption == PrintSummaryWithDetails ){
-        return printSummaryODT( prAccountingMeasuresOption, fileName, paperWidth, paperHeight, paperOrientation, printAmounts, true );
+        return printAccountingODT( prAccountingMeasuresOption, fileName, paperWidth, paperHeight, paperOrientation, true );
+    } else if( prOption == PrintAccountingSummary ){
+        return printAccountingSummaryODT( prAccountingMeasuresOption, fileName, paperWidth, paperHeight, paperOrientation, true, false );
+    } else if( prOption == PrintBill ){
+        // return printMeasuresODT( prAccountingMeasuresOption, fileName, paperWidth, paperHeight, paperOrientation, printAmounts, true );
+    } else if( prOption == PrintRawBill ){
+        // return printMeasuresODT( prAccountingMeasuresOption, fileName, paperWidth, paperHeight, paperOrientation, printAmounts, true );
     }
     return false;
 }
 
-bool AccountingPrinter::printAttributeODT(AccountingPrinter::PrintAccountingBillOption prItemsOption,
+bool AccountingPrinter::printAttributeODT(AccountingPrinter::PrintPPUDescOption prItemsOption,
                                           AccountingPrinter::AttributePrintOption prOption,
                                           const QList<Attribute *> &attrsToPrint,
                                           const QString &fileName,
@@ -321,7 +318,7 @@ bool AccountingPrinter::printAttributeODT(AccountingPrinter::PrintAccountingBill
     return false;
 }
 
-bool AccountingPrinter::printAccountingODT( PrintAccountingBillOption prItemsOption,
+bool AccountingPrinter::printAccountingODT( PrintPPUDescOption prItemsOption,
                                             const QString &fileName,
                                             double paperWidth, double paperHeight,
                                             Qt::Orientation paperOrientation,
@@ -558,7 +555,7 @@ bool AccountingPrinter::printAccountingODT( PrintAccountingBillOption prItemsOpt
     return false;
 }
 
-bool AccountingPrinter::printSummaryODT(PrintAccountingBillOption prAccountingMeasuresOption,
+bool AccountingPrinter::printAccountingSummaryODT(PrintPPUDescOption prAccountingMeasuresOption,
                                         const QString &fileName,
                                         double paperWidth, double paperHeight,
                                         Qt::Orientation paperOrientation,

@@ -33,7 +33,7 @@ double minus( double v ){
 }
 
 class MathParserPrivate{
-    Q_DECLARE_TR_FUNCTIONS()
+    Q_DECLARE_TR_FUNCTIONS( MathParserPrivate )
 public:
     MathParserPrivate( const QLocale & loc ):
         locale(loc),

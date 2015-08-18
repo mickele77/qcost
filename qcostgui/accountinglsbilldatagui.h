@@ -40,8 +40,7 @@ public:
     void showEvent(QShowEvent *event);
 private slots:
     void setDescription();
-    void setDiscount();
-    void setAccountingNULL();
+    void clear();
     void addAttribute();
     void removeAttribute();
 

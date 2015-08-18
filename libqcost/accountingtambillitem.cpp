@@ -30,7 +30,7 @@ AccountingTAMBillItem::~AccountingTAMBillItem(){
 }
 
 QString AccountingTAMBillItem::title() const{
-    if( m_d->itemType == Bill ){
+    if( m_d->itemType == Payment ){
         return trUtf8("Lista N.%1 (%2-%3)").arg(QString::number(childNumber()+1), dateBeginStr(), dateEndStr() );
     }
     return QString();
@@ -40,8 +40,8 @@ bool AccountingTAMBillItem::insertChildren(AccountingBillItem::ItemType iType, i
     if (position < 0 || position > m_d->childrenContainer.size() )
         return false;
 
-    if( (m_d->itemType == Root && (iType == Bill) ) ||
-            (m_d->itemType == Bill && (iType == PPU || iType == Comment)) ){
+    if( (m_d->itemType == Root && (iType == Payment) ) ||
+            (m_d->itemType == Payment && (iType == PPU || iType == Comment)) ){
 
         bool hadChildren = m_d->childrenContainer.size() > 0;
 
@@ -51,14 +51,14 @@ bool AccountingTAMBillItem::insertChildren(AccountingBillItem::ItemType iType, i
                 item->setId( item->id() + 1 );
             }
             m_d->childrenContainer.insert(position, item);
-            if( iType == Bill ){
+            if( iType == Payment ){
                 for( int j = position+1; j < m_d->childrenContainer.size(); ++j  ){
                     m_d->childrenContainer.at(j)->emitTitleChanged();
                 }
             }
             connect( item, static_cast<void(AccountingBillItem::*)(AccountingBillItem*,int)> (&AccountingBillItem::dataChanged), this, static_cast<void(AccountingBillItem::*)(AccountingBillItem*,int)> (&AccountingBillItem::dataChanged) );
-            connect( item, &AccountingBillItem::totalAmountToBeDiscountedChanged, this, &AccountingBillItem::updateTotalAmountToBeDiscounted );
-            connect( item, &AccountingBillItem::amountNotToBeDiscountedChanged, this, &AccountingBillItem::updateAmountNotToBeDiscounted );
+            connect( item, &AccountingBillItem::totalAmountToDiscountChanged, this, &AccountingBillItem::updateTotalAmountToDiscount );
+            connect( item, &AccountingBillItem::amountNotToDiscountChanged, this, &AccountingBillItem::updateAmountNotToDiscount );
             connect( this, &AccountingBillItem::currentPriceDataSetChanged, item, &AccountingBillItem::setCurrentPriceDataSet );
             connect( item, &AccountingBillItem::itemChanged, this, &AccountingBillItem::itemChanged );
         }

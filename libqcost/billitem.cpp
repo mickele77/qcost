@@ -451,7 +451,7 @@ QVariant BillItem::data(int col, int role) const {
     if( col == m_d->progNumberCol ){
         if( role == Qt::TextAlignmentRole ){
             if( m_d->parentItem == NULL ){
-                return Qt::AlignCenter + Qt::AlignVCenter;;
+                return Qt::AlignHCenter + Qt::AlignVCenter;;
             } else {
                 return Qt::AlignLeft + Qt::AlignVCenter;;
             }
@@ -496,7 +496,7 @@ QVariant BillItem::data(int col, int role) const {
         }
     } else if( col == m_d->priceUmCol ){
         if( role == Qt::TextAlignmentRole ){
-            return Qt::AlignCenter + Qt::AlignVCenter;
+            return Qt::AlignHCenter + Qt::AlignVCenter;
         } else { // role == Qt::DisplayRole || role == Qt::EditRole
             if( m_d->parentItem == NULL ){
                 return QVariant( trUtf8("UdM") );
@@ -513,7 +513,7 @@ QVariant BillItem::data(int col, int role) const {
     } else if( col == m_d->quantityCol ){
         if( role == Qt::TextAlignmentRole ){
             if( m_d->parentItem == NULL ){
-                return Qt::AlignCenter + Qt::AlignVCenter;
+                return Qt::AlignHCenter + Qt::AlignVCenter;
             } else {
                 return Qt::AlignRight + Qt::AlignVCenter;
             }
@@ -530,7 +530,7 @@ QVariant BillItem::data(int col, int role) const {
     } else {
         if( role == Qt::TextAlignmentRole ){
             if( m_d->parentItem == NULL ){
-                return Qt::AlignCenter + Qt::AlignVCenter;
+                return Qt::AlignHCenter + Qt::AlignVCenter;
             } else {
                 return Qt::AlignRight + Qt::AlignVCenter;
             }
@@ -921,7 +921,7 @@ void BillItem::readXml(QXmlStreamReader *reader, PriceList * priceList, Attribut
             appendChildren();
             m_d->childrenContainer.last()->readXml( reader, priceList, billAttrModel );
         }
-        if( reader->name().toString().toUpper() == "BILLITEMMEASURESMODEL" && reader->isStartElement() ) {
+        if( reader->name().toString().toUpper() == "MEASURESMODEL" && reader->isStartElement() ) {
             generateMeasuresModel()->readXml( reader );
         }
         reader->readNext();
@@ -943,7 +943,7 @@ void BillItem::readXmlTmp(QXmlStreamReader *reader) {
             appendChildren();
             m_d->childrenContainer.last()->readXmlTmp( reader );
         }
-        if( reader->name().toString().toUpper() == "BILLITEMMEASURESMODEL" && reader->isStartElement() ) {
+        if( reader->name().toString().toUpper() == "MEASURESMODEL" && reader->isStartElement() ) {
             generateMeasuresModel()->readXml( reader );
         }
         reader->readNext();

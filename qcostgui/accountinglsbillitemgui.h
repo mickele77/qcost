@@ -45,7 +45,7 @@ public:
 
 public slots:
     void setBillItem(AccountingLSBillItem *b );
-    void setBillItemNULL();
+    void clear();
     void setBillNULL();
 
 private slots:
@@ -54,22 +54,19 @@ private slots:
 
     void connectPriceUnitMeasure();
 
-    void associateLinesModel( bool ass );
     void addMeasureLines();
     void delMeasureLines();
-    void importBillItemMeasuresTXT();
-
-    void setQuantityLE();
+    void importMeasuresTXT();
 
     void addAttribute();
     void removeAttribute();
 
+    void editMeasureDate(const QModelIndex &index);
 signals:
     void editPriceItemAP( PriceItem * pItem, Bill * APToEdit );
 
 private:
     AccountingLSBillItemGUIPrivate * m_d;
-
 };
 
 #endif // ACCOUNTINGLSBILLITEMGUI_H

@@ -21,7 +21,7 @@
 #include "accountingbilldatagui.h"
 #include "accountingtreegui.h"
 #include "accountingitemppugui.h"
-#include "accountingitembillgui.h"
+#include "accountingitempaymentgui.h"
 #include "accountingitemlsgui.h"
 #include "accountingitemtamgui.h"
 #include "accountingitemcommentgui.h"
@@ -39,13 +39,13 @@
 
 class AccountingItemWidget : public QWidget {
 private:
-    AccountingItemBillGUI * billGUI;
+    AccountingItemPaymentGUI * billGUI;
     AccountingItemPPUGUI * ppuGUI;
     AccountingItemLSGUI * lsGUI;
     AccountingItemTAMGUI * tamGUI;
     AccountingItemCommentGUI * commentGUI;
 public:
-    AccountingItemWidget( AccountingItemBillGUI * _wipGUI,
+    AccountingItemWidget( AccountingItemPaymentGUI * _wipGUI,
                           AccountingItemPPUGUI * _ppuGUI,
                           AccountingItemLSGUI * _lsGUI,
                           AccountingItemTAMGUI * _tamGUI,
@@ -88,7 +88,7 @@ public:
         accountingDataGUI( new AccountingBillDataGUI( prj->priceFieldModel(), prs, NULL, prj, wpf, parent ) ),
         mainSplitter( new QSplitter(Qt::Horizontal, parent ) ),
         accountingTreeGUI( new AccountingTreeGUI( EPAImpOptions, EPAFileName, b, prs, prj, mainSplitter ) ),
-        accountingItemBillGUI( new AccountingItemBillGUI( prj->priceFieldModel(), parent ) ),
+        accountingItemBillGUI( new AccountingItemPaymentGUI( prj->priceFieldModel(), parent ) ),
         accountingItemPPUGUI( new AccountingItemPPUGUI( EPAImpOptions, EPAFileName, prs, prj, parent ) ),
         accountingItemLSGUI( new AccountingItemLSGUI( prj->accountingLSBills(), prj->priceFieldModel(), parent ) ),
         accountingItemTAMGUI( new AccountingItemTAMGUI( prj->accountingTAMBill(), prj->priceFieldModel(), parent ) ),
@@ -110,7 +110,7 @@ public:
     AccountingBillDataGUI * accountingDataGUI;
     QSplitter * mainSplitter;
     AccountingTreeGUI * accountingTreeGUI;
-    AccountingItemBillGUI * accountingItemBillGUI;
+    AccountingItemPaymentGUI * accountingItemBillGUI;
     AccountingItemPPUGUI * accountingItemPPUGUI;
     AccountingItemLSGUI * accountingItemLSGUI;
     AccountingItemTAMGUI * accountingItemTAMGUI;
@@ -178,7 +178,7 @@ void AccountingBillGUI::setAccountingMeasureNULL() {
 
 void AccountingBillGUI::updateAccountingMeasureGUI() {
     if( m_d->currentItem != NULL ){
-        if( m_d->currentItem->itemType() == AccountingBillItem::Bill ){
+        if( m_d->currentItem->itemType() == AccountingBillItem::Payment ){
             m_d->accountingItemBillGUI->show();
             m_d->accountingItemBillGUI->setAccountingItem( m_d->currentItem );
 
@@ -201,7 +201,7 @@ void AccountingBillGUI::updateAccountingMeasureGUI() {
             m_d->accountingItemBillGUI->setAccountingItemNULL();
 
             m_d->accountingItemPPUGUI->show();
-            m_d->accountingItemPPUGUI->setAccountingItem( m_d->currentItem );
+            m_d->accountingItemPPUGUI->setItem( m_d->currentItem );
 
             m_d->accountingItemLSGUI->hide();
             m_d->accountingItemLSGUI->setAccountingItemNULL();

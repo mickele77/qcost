@@ -18,10 +18,14 @@
 */
 #include "projectaccountingparentitem.h"
 
+#include "paymentadatamodel.h"
+#include "paymentdata.h"
 #include "accountingbills.h"
+#include "accountingbill.h"
 #include "accountinglsbills.h"
 #include "accountingtambill.h"
 #include "priceitem.h"
+#include "mathparser.h"
 
 #include <QXmlStreamReader>
 #include <QTextStream>
@@ -34,9 +38,22 @@ public:
     ProjectAccountingParentItemPrivate( PriceFieldModel * pfm, MathParser * p = NULL ):
         priceFieldModel(pfm),
         parser(p),
-        nextId(1){
+        nextId(1),
+        dataModel( new PaymentDataModel(p) ),
+        totalAmountToDiscount(0.0),
+        amountNotToDiscount(0.0),
+        amountToDiscount(0.0),
+        amountDiscounted(0.0),
+        totalAmount(0.0){
     }
     ~ProjectAccountingParentItemPrivate(){
+        delete dataModel;
+    }
+    QString amountToString( double val ){
+        if( parser != NULL ){
+            return parser->toString( val, 'f', amountPrecision );
+        }
+        return QString::number( val, 'f', amountPrecision );
     }
 
     AccountingBills * measuresBills;
@@ -45,7 +62,18 @@ public:
     PriceFieldModel * priceFieldModel;
     MathParser * parser;
     unsigned int nextId;
+    PaymentDataModel * dataModel;
+
+    double totalAmountToDiscount;
+    double amountNotToDiscount;
+    double amountToDiscount;
+    double amountDiscounted;
+    double totalAmount;
+
+    static int amountPrecision;
 };
+
+int ProjectAccountingParentItemPrivate::amountPrecision = 2;
 
 ProjectAccountingParentItem::ProjectAccountingParentItem( ProjectItem *parent, PriceFieldModel * pfm, MathParser * prs ):
     ProjectRootItem(parent),
@@ -57,6 +85,14 @@ ProjectAccountingParentItem::ProjectAccountingParentItem( ProjectItem *parent, P
     connect( m_d->measuresBills, &AccountingBills::beginRemoveChildren, this, &ProjectAccountingParentItem::beginRemoveChildren );
     connect( m_d->measuresBills, &AccountingBills::endRemoveChildren, this, &ProjectAccountingParentItem::endRemoveChildren );
     connect( m_d->measuresBills, &AccountingBills::modelChanged, this, &ProjectAccountingParentItem::modelChanged );
+    connect( m_d->measuresBills, &AccountingBills::insertPaymentsSignal, this, &ProjectAccountingParentItem::insertPayments );
+    connect( m_d->measuresBills, &AccountingBills::removePaymentsSignal, this, &ProjectAccountingParentItem::removeBills );
+    connect( m_d->measuresBills, &AccountingBills::changePaymentDateBeginSignal, this, &ProjectAccountingParentItem::changeBillDateBegin );
+    connect( m_d->measuresBills, &AccountingBills::changePaymentDateEndSignal, this, &ProjectAccountingParentItem::changeBillDateEnd );
+
+    connect( m_d->dataModel, &PaymentDataModel::insertPaymentsSignal, this, &ProjectAccountingParentItem::insertPayments );
+    connect( m_d->dataModel, &PaymentDataModel::removePaymentsSignal, this, &ProjectAccountingParentItem::removeBills );
+    connect( m_d->dataModel, &PaymentDataModel::modelChanged, this, &ProjectAccountingParentItem::modelChanged );
 
     m_d->lumpSumBills = new AccountingLSBills( this, pfm, prs );
     insertChild( m_d->lumpSumBills );
@@ -73,6 +109,73 @@ ProjectAccountingParentItem::ProjectAccountingParentItem( ProjectItem *parent, P
 
 ProjectAccountingParentItem::~ProjectAccountingParentItem(){
     delete m_d;
+}
+
+int ProjectAccountingParentItem::workProgressBillsCount() {
+    return m_d->dataModel->paymentsCount();
+}
+
+PaymentData *ProjectAccountingParentItem::workProgressBillData(int pos) {
+    return m_d->dataModel->billData( pos );
+}
+
+PaymentDataModel * ProjectAccountingParentItem::dataModel(){
+    return m_d->dataModel;
+}
+
+void ProjectAccountingParentItem::updateAmounts() {
+    m_d->totalAmountToDiscount = 0.0;
+    m_d->amountNotToDiscount = 0.0;
+    m_d->amountToDiscount = 0.0;
+    m_d->amountDiscounted = 0.0;
+    m_d->totalAmount = 0.0;
+    for( int i=0; i < m_d->measuresBills->billCount(); ++i ){
+        m_d->totalAmountToDiscount += m_d->measuresBills->bill(i)->totalAmountToDiscount();
+        m_d->amountNotToDiscount += m_d->measuresBills->bill(i)->amountNotToDiscount();
+        m_d->amountToDiscount += m_d->measuresBills->bill(i)->amountToDiscount();
+        m_d->amountDiscounted += m_d->measuresBills->bill(i)->amountDiscounted();
+        m_d->totalAmount += m_d->measuresBills->bill(i)->totalAmount();
+    }
+}
+
+double ProjectAccountingParentItem::totalAmountToDiscount() {
+    return m_d->totalAmountToDiscount;
+}
+
+double ProjectAccountingParentItem::amountNotToDiscount() {
+    return m_d->amountNotToDiscount;
+}
+
+double ProjectAccountingParentItem::amountToDiscount() {
+    return m_d->amountToDiscount;
+}
+
+double ProjectAccountingParentItem::amountDiscounted() {
+    return m_d->amountDiscounted;
+}
+
+double ProjectAccountingParentItem::totalAmount() {
+    return m_d->totalAmount;
+}
+
+QString ProjectAccountingParentItem::totalAmountToDiscountStr() {
+    return m_d->amountToString( m_d->totalAmountToDiscount );
+}
+
+QString ProjectAccountingParentItem::amountNotToDiscountStr() {
+    return m_d->amountToString( m_d->amountNotToDiscount );
+}
+
+QString ProjectAccountingParentItem::amountToDiscountStr() {
+    return m_d->amountToString( m_d->amountToDiscount );
+}
+
+QString ProjectAccountingParentItem::amountDiscountedStr() {
+    return m_d->amountToString( m_d->amountDiscounted );
+}
+
+QString ProjectAccountingParentItem::totalAmountStr() {
+    return m_d->amountToString( m_d->totalAmount );
 }
 
 AccountingBills *ProjectAccountingParentItem::accountingBills() {
@@ -130,6 +233,15 @@ bool ProjectAccountingParentItem::setData(const QVariant &value) {
     return false;
 }
 
+bool ProjectAccountingParentItem::clear() {
+    bool ret = true;
+    ret = ret && m_d->dataModel->clear();
+    ret = ret && m_d->measuresBills->clear();
+    ret = ret && m_d->lumpSumBills->clear();
+    ret = ret && m_d->timeAndMaterialBill->clear();
+    return ret;
+}
+
 bool ProjectAccountingParentItem::isUsingPriceList(PriceList *pl) {
     if( m_d->measuresBills->isUsingPriceList( pl ) ){
         return true;
@@ -153,28 +265,58 @@ bool ProjectAccountingParentItem::isUsingPriceItem(PriceItem *p) {
 }
 
 void ProjectAccountingParentItem::writeXml(QXmlStreamWriter *writer) {
-    writer->writeStartElement( "Accountings");
+    writer->writeStartElement( "Accounting");
+    m_d->dataModel->writeXml(writer);
     m_d->measuresBills->writeXml( writer );
     m_d->lumpSumBills->writeXml( writer );
     m_d->timeAndMaterialBill->writeXml( writer );
     writer->writeEndElement();
 }
 
-
 void ProjectAccountingParentItem::readXml(QXmlStreamReader *reader, ProjectPriceListParentItem * priceLists) {
     while( (!reader->atEnd()) &&
            (!reader->hasError()) &&
-           !(reader->isEndElement() && reader->name().toString().toUpper() == "ACCOUNTINGS") ){
+           !(reader->isEndElement() && reader->name().toString().toUpper() == "ACCOUNTING") ){
         reader->readNext();
-        if( reader->name().toString().toUpper() == "MEASURESBILLS" && reader->isStartElement()) {
+        QString nodeName = reader->name().toString().toUpper();
+        if( nodeName == "PAYMENTDATAS" && reader->isStartElement()) {
+            m_d->dataModel->readXml( reader );
+        }
+        nodeName = reader->name().toString().toUpper();
+        if( nodeName == "ACCOUNTINGBILLS" && reader->isStartElement()) {
             m_d->measuresBills->readXml( reader, priceLists );
         }
-        if( reader->name().toString().toUpper() == "LUMPSUMBILLS" && reader->isStartElement()) {
+        nodeName = reader->name().toString().toUpper();
+        if( nodeName == "ACCOUNTINGLSBILLS" && reader->isStartElement()) {
             m_d->lumpSumBills->readXml( reader, priceLists );
         }
-        if( reader->name().toString().toUpper() == "TIMEANDMATERIALSBILLS" && reader->isStartElement()) {
+        nodeName = reader->name().toString().toUpper();
+        if( nodeName == "ACCOUNTINGTAMBILL" && reader->isStartElement()) {
             m_d->timeAndMaterialBill->readXml( reader, priceLists );
         }
     }
 }
 
+void ProjectAccountingParentItem::insertPayments( int position, int count) {
+    for( int i=0; i < count; i++){
+        m_d->measuresBills->insertPayments( position );
+        m_d->dataModel->insertPayments( position );
+        for( int j=0; j<m_d->measuresBills->billCount(); ++j ){
+            AccountingBillItem * addedItem = m_d->measuresBills->bill(j)->item(position);
+            m_d->dataModel->billData( position )->addBillItem( addedItem );
+        }
+    }
+}
+
+void ProjectAccountingParentItem::removeBills(int position, int count) {
+    m_d->dataModel->removePayments( position, count);
+    m_d->measuresBills->removeBills( position, count);
+}
+
+void ProjectAccountingParentItem::changeBillDateEnd(const QDate &newDate, int position) {
+    m_d->dataModel->changePaymentDateEnd(newDate, position);
+}
+
+void ProjectAccountingParentItem::changeBillDateBegin(const QDate &newDate, int position) {
+    m_d->dataModel->changePaymentDateBegin(newDate, position);
+}

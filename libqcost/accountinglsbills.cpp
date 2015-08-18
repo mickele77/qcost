@@ -86,17 +86,22 @@ bool AccountingLSBills::insertChildren(int position, int count) {
     emit beginInsertChildren( this, position, position+count-1);
 
     for (int row = 0; row < count; ++row) {
+        QString purposedBillCode = QString("%1 %2").arg( "C", QString::number(m_d->nextId));
         QString purposedBillName = QString("%1 %2").arg(trUtf8("Categoria"), QString::number(m_d->nextId++));
         QList<AccountingLSBill *>::iterator i = m_d->billContainer.begin();
         while( i != m_d->billContainer.end() ){
-            if( (*i)->name().toUpper() == purposedBillName.toUpper() ){
+            if( ((*i)->code().toUpper() == purposedBillCode.toUpper()) ||
+                  ((*i)->name().toUpper() == purposedBillName.toUpper()) ){
+                purposedBillCode = QString("%1 %2").arg( "C", QString::number(m_d->nextId));
                 purposedBillName = QString("%1 %2").arg(trUtf8("Categoria"), QString::number(m_d->nextId++));
                 i = m_d->billContainer.begin();
             } else {
                 i++;
             }
         }
-        AccountingLSBill *item = new AccountingLSBill( purposedBillName, this, m_d->priceFieldModel, m_d->parser );
+
+        AccountingLSBill *item = new AccountingLSBill( purposedBillCode, purposedBillName,
+                                                       this, m_d->priceFieldModel, m_d->parser );
         connect( item, &AccountingLSBill::modelChanged, this, &AccountingLSBills::modelChanged );
         m_d->billContainer.insert(position, item);
     }
@@ -170,20 +175,19 @@ bool AccountingLSBills::isUsingPriceItem(PriceItem *p) {
 }
 
 void AccountingLSBills::writeXml(QXmlStreamWriter *writer) {
-    writer->writeStartElement( "LumpSumBills");
+    writer->writeStartElement( "AccountingLSBills");
     for( QList<AccountingLSBill *>::iterator i = m_d->billContainer.begin(); i != m_d->billContainer.end(); ++i ){
         (*i)->writeXml( writer );
     }
     writer->writeEndElement();
 }
 
-
 void AccountingLSBills::readXml(QXmlStreamReader *reader, ProjectPriceListParentItem * priceLists) {
     while( (!reader->atEnd()) &&
            (!reader->hasError()) &&
-           !(reader->isEndElement() && reader->name().toString().toUpper() == "LUMPSUMBILLS") ){
+           !(reader->isEndElement() && reader->name().toString().toUpper() == "ACCOUNTINGLSBILLS") ){
         reader->readNext();
-        if( reader->name().toString().toUpper() == "LUMPSUMBILL" && reader->isStartElement()) {
+        if( reader->name().toString().toUpper() == "ACCOUNTINGLSBILL" && reader->isStartElement()) {
             if(appendChild()){
                 m_d->billContainer.last()->readXml( reader, priceLists );
             }

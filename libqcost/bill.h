@@ -38,11 +38,11 @@ class QTextCursor;
 
 #include "billprinter.h"
 #include "projectitem.h"
-#include <QAbstractTableModel>
+#include <QAbstractItemModel>
 
 class BillPrivate;
 
-class EXPORT_LIB_OPT Bill : public QAbstractTableModel, public ProjectItem {
+class EXPORT_LIB_OPT Bill : public QAbstractItemModel, public ProjectItem {
     Q_OBJECT
 public:
     enum SetPriceListMode{

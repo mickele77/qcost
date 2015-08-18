@@ -44,7 +44,7 @@ public:
         priceItemGUI( new PriceItemGUI( EPAImpOptions, EPAFileName, NULL, 0, prs, prj, NULL )),
         vSpacer(NULL),
         priceFieldModel( prj->priceFieldModel() ){
-    };
+    }
     ~BillItemGUIPrivate(){
         delete ui;
         delete itemAttributeModel;
@@ -271,7 +271,7 @@ void BillItemGUI::associateLinesModel(bool ass) {
     m_d->ui->billItemLinesTableView->setModel( NULL );
     if( m_d->vSpacer == NULL ){
         m_d->vSpacer = new QSpacerItem(0,0, QSizePolicy::Minimum, QSizePolicy::Expanding);
-        m_d->ui->dataTabLayout->addItem( m_d->vSpacer, 3, 0, 1, 3 );
+        m_d->ui->dataTabLayout->addItem( m_d->vSpacer, 6, 0, 1, 3 );
     }
     m_d->ui->quantityLineEdit->setReadOnly( false );
 }

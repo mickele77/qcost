@@ -18,6 +18,8 @@ public:
     explicit AccountingItemTAMGUI(AccountingTAMBill *tamBill, PriceFieldModel *pfm, QWidget *parent = 0);
     ~AccountingItemTAMGUI();
     
+    void showEvent(QShowEvent *event);
+
     void setAccountingBill(AccountingBill *b);
 
 public slots:
@@ -29,9 +31,6 @@ private slots:
     void removeAttribute();
 
     void setAccountingNULL();
-
-    void setDateBegin( const QString & newVal );
-    void setDateEnd( const QString & newVal );
 
     void updateTAMBillComboBox();
 

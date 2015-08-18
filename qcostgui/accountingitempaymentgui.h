@@ -1,5 +1,5 @@
-#ifndef ACCOUNTINGITEMBILLGUI_H
-#define ACCOUNTINGITEMBILLGUI_H
+#ifndef ACCOUNTINGITEMPAYMENTGUI_H
+#define ACCOUNTINGITEMPAYMENTGUI_H
 
 class PriceFieldModel;
 class AccountingTAMBill;
@@ -9,15 +9,15 @@ class AccountingBillItem ;
 
 #include <QWidget>
 
-class AccountingItemBillGUIPrivate;
+class AccountingItemPaymentGUIPrivate;
 
-class AccountingItemBillGUI : public QWidget
+class AccountingItemPaymentGUI : public QWidget
 {
     Q_OBJECT
     
 public:
-    explicit AccountingItemBillGUI(PriceFieldModel *pfm, QWidget *parent = 0);
-    ~AccountingItemBillGUI();
+    explicit AccountingItemPaymentGUI(PriceFieldModel *pfm, QWidget *parent = 0);
+    ~AccountingItemPaymentGUI();
     
     void setAccountingTAMBill(AccountingTAMBill *b);
     void setAccountingBill(AccountingBill *b);
@@ -36,9 +36,9 @@ private slots:
     void setDateBegin( const QString & newVal );
     void setDateEnd( const QString & newVal );
 private:
-    AccountingItemBillGUIPrivate * m_d;
+    AccountingItemPaymentGUIPrivate * m_d;
 
     bool eventFilter(QObject *object, QEvent *event);
 };
 
-#endif // ACCOUNTINGITEMBILLGUI_H
+#endif // ACCOUNTINGITEMPAYMENTGUI_H

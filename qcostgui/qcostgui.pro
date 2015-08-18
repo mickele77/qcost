@@ -72,7 +72,6 @@ SOURCES += \
     accountingtambilldatagui.cpp \
     accountingitemcommentgui.cpp \
     accountingitemppugui.cpp \
-    accountingitembillgui.cpp \
     accountingbillsetpricelistmodegui.cpp \
     accountingbillgui.cpp \
     accountingbilldatagui.cpp \
@@ -82,7 +81,10 @@ SOURCES += \
     accountinglsbillgui.cpp \
     accountinglsbillitemgui.cpp \
     accountinglstreegui.cpp \
-    accountinglsbillitemtitlegui.cpp
+    accountinglsbillitemtitlegui.cpp \
+    importlsitemmeasurestxt.cpp \
+    accountingprintergui.cpp \
+    accountingitempaymentgui.cpp
 
 HEADERS  += \
     projectitemsview.h \
@@ -128,7 +130,6 @@ HEADERS  += \
     accountingtambilldatagui.h \
     accountingitemcommentgui.h \
     accountingitemppugui.h \
-    accountingitembillgui.h \
     accountingbillsetpricelistmodegui.h \
     accountingbillgui.h \
     accountingbilldatagui.h \
@@ -138,7 +139,10 @@ HEADERS  += \
     accountinglsbillgui.h \
     accountinglsbillitemgui.h \
     accountinglstreegui.h \
-    accountinglsbillitemtitlegui.h
+    accountinglsbillitemtitlegui.h \
+    importlsitemmeasurestxt.h \
+    accountingprintergui.h \
+    accountingitempaymentgui.h
 
 FORMS += \
     generaldatagui.ui \
@@ -166,14 +170,15 @@ FORMS += \
     accountingtambilldatagui.ui \
     accountingitemcommentgui.ui \
     accountingitemppugui.ui \
-    accountingitembillgui.ui \
     accountingbilldatagui.ui \
     accountingitemlsgui.ui \
     accountingitemtamgui.ui \
     accountinglsbilldatagui.ui \
     accountinglsbillitemgui.ui \
     accountinglstreegui.ui \
-    accountinglsbillitemtitlegui.ui
+    accountinglsbillitemtitlegui.ui \
+    importlsitemmeasurestxt.ui \
+    accountingitempaymentgui.ui
 
 OTHER_FILES += \
     ../LICENSE \

@@ -39,15 +39,24 @@ class AccountingPriceFieldModel;
 #include "accountingbillitem.h"
 #include "accountingprinter.h"
 #include "projectitem.h"
-#include <QAbstractTableModel>
+#include <QAbstractItemModel>
 
 class AccountingBillPrivate;
 
 /**
-
+* @class AccountingBill
+*
+* @brief Classe usata per modellizzare un libretto delle misure
+*
+* Questa classe viene impiegata per modellizzare i libretti delle misure.
+* All'interno di una contabilità è possibile avere più libretti delle misure
+* (vedi D.P.R. 207/2010).
+*
+* @author Michele Mocciola
+*
 */
 
-class EXPORT_LIB_OPT AccountingBill : public QAbstractTableModel, public ProjectItem {
+class EXPORT_LIB_OPT AccountingBill : public QAbstractItemModel, public ProjectItem {
     Q_OBJECT
 public:
     enum SetPriceListMode{
@@ -66,22 +75,13 @@ public:
 
     virtual ~AccountingBill();
 
+    void nextId();
+    unsigned int id();
+
+    /** Nome associato al libretto delle misure */
     QString name();
+    /** Informazioni testuali di vario tipo associate al libretto delle misure */
     QString description();
-
-    ProjectItem *child(int number);
-    int childCount() const;
-
-    int childNumber( ProjectItem * item );
-
-    bool reset();
-    bool canChildrenBeInserted();
-    bool insertChildren(int position, int count);
-    bool removeChildren(int position, int count);
-
-    Qt::ItemFlags flags() const;
-    QVariant data() const;
-    bool setData( const QVariant &value);
 
     QList<int> totalAmountPriceFields();
     void setTotalAmountPriceFields( const QList<int> & newAmountFields);
@@ -98,60 +98,76 @@ public:
     double discount();
     void setDiscount(double newVal);
 
+    ProjectItem *child(int number);
+    int childCount() const;
+
+    int childNumber( ProjectItem * item );
+
+    bool clear();
+    bool canChildrenBeInserted();
+    bool insertChildren(int position, int count);
+    bool removeChildren(int position, int count);
+
+    Qt::ItemFlags flags() const;
+    QVariant data() const;
+    bool setData( const QVariant &value);
+
     QVariant data(const QModelIndex &index, int role) const;
     QVariant headerData(int section, Qt::Orientation orientation,
                         int role = Qt::DisplayRole) const;
 
     int rowCount(const QModelIndex &parent = QModelIndex()) const;
     int columnCount(const QModelIndex &parent = QModelIndex()) const;
-
+    bool hasChildren(const QModelIndex &parent = QModelIndex()) const;
     Qt::ItemFlags flags(const QModelIndex &index) const;
     bool setData(const QModelIndex &index, const QVariant &value, int role = Qt::EditRole);
     bool insertItems(AccountingBillItem::ItemType mt, int position = -1, int count = 1, const QModelIndex &parent = QModelIndex() );
+    bool insertPayments(int inputPos = -1, int count = 1);
     bool removeItems(int position = -1, int rows = 1, const QModelIndex &parent = QModelIndex() );
+    bool removePayments(int position, int rows=1);
 
     AccountingBillItem *item(const QModelIndex &index ) const;
     AccountingBillItem *item(int childNum, const QModelIndex &parentIndex = QModelIndex() );
-    AccountingBillItem *lastAccountingMeasure( const QModelIndex &parentIndex = QModelIndex() );
-
+    AccountingBillItem *lastItem( const QModelIndex &parentIndex = QModelIndex() );
     AccountingBillItem *itemId(unsigned int itemId);
+
     QModelIndex parent(const QModelIndex &index) const;
-    QModelIndex index(int row, int column, const QModelIndex &parent) const;
+    QModelIndex index(int row, int col, const QModelIndex &parent) const;
     QModelIndex index(AccountingBillItem *item, int column) const;
 
     bool moveRows(const QModelIndex & sourceParent, int sourceRow, int count, const QModelIndex & destinationParent, int destinationChild);
 
-    double totalAmountToBeDiscounted() const;
-    double amountNotToBeDiscounted() const;
-    double amountToBeDiscounted() const;
+    double totalAmountToDiscount() const;
+    double amountNotToDiscount() const;
+    double amountToDiscount() const;
     double amountDiscounted() const;
     double totalAmount() const;
-    QString totalAmountToBeDiscountedStr() const;
-    QString amountNotToBeDiscountedStr() const;
-    QString amountToBeDiscountedStr() const;
+    QString totalAmountToDiscountStr() const;
+    QString amountNotToDiscountStr() const;
+    QString amountToDiscountStr() const;
     QString amountDiscountedStr() const;
     QString totalAmountStr() const;
 
     AttributeModel * attributeModel();
 
-    double totalAmountToBeDiscountedAttribute( Attribute * attr ) const;
-    QString totalAmountToBeDiscountedAttributeStr( Attribute * attr ) const;
-    double amountNotToBeDiscountedAttribute( Attribute * attr ) const;
-    QString amountNotToBeDiscountedAttributeStr( Attribute * attr ) const;
+    double totalAmountToDiscountAttribute( Attribute * attr ) const;
+    QString totalAmountToDiscountAttributeStr( Attribute * attr ) const;
+    double amountNotToDiscountAttribute( Attribute * attr ) const;
+    QString amountNotToDiscountAttributeStr( Attribute * attr ) const;
     double totalAmountAttribute( Attribute * attr ) const;
     QString totalAmountAttributeStr( Attribute * attr ) const;
 
     bool isUsingPriceItem( PriceItem * p );
     bool isUsingPriceList( PriceList * pl );
 
+    void setBillDateEnd( const QDate & newDate, int position);
+    void setBillDateBegin( const QDate & newDate, int position);
+
     void writeXml( QXmlStreamWriter * writer );
     void readXml(QXmlStreamReader *reader, ProjectPriceListParentItem * priceLists);
     void readXmlTmp(QXmlStreamReader *reader);
     void loadFromXml(const QXmlStreamAttributes &attrs, ProjectPriceListParentItem * priceLists);
     void loadTmpData( PriceList *priceList );
-
-    void nextId();
-    unsigned int id();
 
     void loadTmpData( ProjectPriceListParentItem *priceLists );
     void loadFromXmlTmp(const QXmlStreamAttributes &attrs);
@@ -160,16 +176,16 @@ public:
     QList<PriceItem *> connectedPriceItems();
 
     void writeODTAccountingOnTable(QTextCursor * cursor,
-                                   AccountingPrinter::PrintAccountingBillOption prItemsOption,
+                                   AccountingPrinter::PrintPPUDescOption prItemsOption,
                                    bool printAmounts = true ) const;
     void writeODTSummaryOnTable( QTextCursor * cursor,
-                                 AccountingPrinter::PrintAccountingBillOption prItemsOption,
+                                 AccountingPrinter::PrintPPUDescOption prItemsOption,
                                  bool printAmounts = true,
                                  bool writeDetails = true ) const;
 
     void writeODTAttributeAccountingOnTable(QTextCursor *cursor,
                                             AccountingPrinter::AttributePrintOption prOption,
-                                            AccountingPrinter::PrintAccountingBillOption prItemsOption,
+                                            AccountingPrinter::PrintPPUDescOption prItemsOption,
                                             const QList<Attribute *> &attrsToPrint,
                                             bool printAmounts = true ) const;
     void insertStandardAttributes();
@@ -185,9 +201,14 @@ signals:
     void descriptionChanged(  const QString & );
     void priceListChanged( PriceList * );
 
-    void totalAmountToBeDiscountedChanged( const QString & newVal );
-    void amountNotToBeDiscountedChanged( const QString & newVal );
-    void amountToBeDiscountedChanged( const QString & newVal );
+    void requestInsertBills( int position, int count );
+    void requestRemoveBills( int position, int count );
+    void requestDateBeginChange( const QDate &newDate, int position );
+    void requestDateEndChange( const QDate &newDate, int position );
+
+    void totalAmountToDiscountChanged( const QString & newVal );
+    void amountNotToDiscountChanged( const QString & newVal );
+    void amountToDiscountChanged( const QString & newVal );
     void amountDiscountedChanged( const QString & newVal );
     void totalAmountChanged( const QString & newVal );
 

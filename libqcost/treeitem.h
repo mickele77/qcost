@@ -26,7 +26,7 @@ class QVariant;
 class EXPORT_LIB_OPT TreeItem {
 public:
     explicit TreeItem(){
-    };
+    }
 
     virtual int columnCount() const = 0;
     virtual TreeItem *child(int number) = 0;

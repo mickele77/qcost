@@ -78,7 +78,7 @@ public:
 };
 
 Bill::Bill(const QString &n, ProjectItem *parent, PriceFieldModel * pfm, MathParser * parser ):
-    QAbstractTableModel(),
+    QAbstractItemModel(),
     ProjectItem(parent),
     m_d( new BillPrivate( n, this, pfm, parser ) ) {
     connect( m_d->priceFieldModel, &PriceFieldModel::endInsertPriceField, this, &Bill::insertPriceField );
@@ -93,7 +93,7 @@ Bill::Bill(const QString &n, ProjectItem *parent, PriceFieldModel * pfm, MathPar
 }
 
 Bill::Bill(Bill & b):
-    QAbstractTableModel(),
+    QAbstractItemModel(),
     ProjectItem( b.ProjectItem::parentItem() ),
     m_d( new BillPrivate( b.m_d->name, this, b.m_d->priceFieldModel, b.m_d->parser ) ) {
 

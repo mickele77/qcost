@@ -47,8 +47,8 @@ public:
     void setAccountingBill(AccountingBill *b);
 
 public slots:
-    void setAccountingItem(AccountingTAMBillItem *b );
-    void setAccountingItem(AccountingBillItem *b );
+    void setItem(AccountingTAMBillItem *b );
+    void setItem(AccountingBillItem *b );
     void setAccountingItemNULL();
 
 private slots:

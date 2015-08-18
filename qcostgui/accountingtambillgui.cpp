@@ -22,7 +22,7 @@
 #include "accountingtreegui.h"
 #include "accountingitemppugui.h"
 #include "accountingitemcommentgui.h"
-#include "accountingitembillgui.h"
+#include "accountingitempaymentgui.h"
 
 #include "project.h"
 #include "accountingtambill.h"
@@ -39,11 +39,11 @@ class AccountingItemWidget : public QWidget {
 private:
     AccountingItemPPUGUI * ppuGUI;
     AccountingItemCommentGUI * commentGUI;
-    AccountingItemBillGUI * billGUI;
+    AccountingItemPaymentGUI * billGUI;
 public:
     AccountingItemWidget( AccountingItemPPUGUI * _ppuGUI,
                           AccountingItemCommentGUI * _commentGUI,
-                          AccountingItemBillGUI * _billGUI,
+                          AccountingItemPaymentGUI * _billGUI,
                           QWidget * parent = 0 ):
         QWidget(parent),
         ppuGUI(_ppuGUI),
@@ -78,7 +78,7 @@ public:
         accountingTreeGUI( new AccountingTreeGUI( EPAImpOptions, EPAFileName, b, prs, prj, mainSplitter ) ),
         accountingTAMBillItemPPUGUI( new AccountingItemPPUGUI( EPAImpOptions, EPAFileName, prs, prj, parent ) ),
         accountingTAMBillItemCommentGUI( new AccountingItemCommentGUI( parent ) ),
-        accountingTAMBillItemBillGUI( new AccountingItemBillGUI( prj->priceFieldModel(), parent ) ),
+        accountingTAMBillItemBillGUI( new AccountingItemPaymentGUI( prj->priceFieldModel(), parent ) ),
         accountingItemWidget( new AccountingItemWidget( accountingTAMBillItemPPUGUI, accountingTAMBillItemCommentGUI, accountingTAMBillItemBillGUI, mainSplitter ) ) {
         accountingTAMBillItemPPUGUI->hide();
         accountingTAMBillItemCommentGUI->hide();
@@ -96,7 +96,7 @@ public:
     AccountingTreeGUI * accountingTreeGUI;
     AccountingItemPPUGUI * accountingTAMBillItemPPUGUI;
     AccountingItemCommentGUI * accountingTAMBillItemCommentGUI;
-    AccountingItemBillGUI * accountingTAMBillItemBillGUI;
+    AccountingItemPaymentGUI * accountingTAMBillItemBillGUI;
     AccountingItemWidget * accountingItemWidget;
 };
 
@@ -134,7 +134,7 @@ void AccountingTAMBillGUI::setBillItem(AccountingTAMBillItem * newItem ) {
     if( m_d->currentAccountingTAMBillItem != NULL ){
         disconnect( m_d->currentAccountingTAMBillItem, static_cast<void(AccountingTAMBillItem::*)(bool)>(&AccountingTAMBillItem::hasChildrenChanged), this, &AccountingTAMBillGUI::updateGUI );
         disconnect( m_d->currentAccountingTAMBillItem, &AccountingTAMBillItem::aboutToBeDeleted, this, &AccountingTAMBillGUI::setBillItemNULL );
-        m_d->accountingTAMBillItemPPUGUI->setAccountingItem( (AccountingTAMBillItem *)(NULL) );
+        m_d->accountingTAMBillItemPPUGUI->setItem( (AccountingTAMBillItem *)(NULL) );
         m_d->accountingTAMBillItemPPUGUI->hide();
         m_d->accountingTAMBillItemCommentGUI->setAccountingItemNULL();
         m_d->accountingTAMBillItemCommentGUI->hide();
@@ -158,7 +158,7 @@ void AccountingTAMBillGUI::updateGUI() {
 
         if( m_d->currentAccountingTAMBillItem->itemType() == AccountingTAMBillItem::PPU ){
             m_d->accountingTAMBillItemPPUGUI->show();
-            m_d->accountingTAMBillItemPPUGUI->setAccountingItem( m_d->currentAccountingTAMBillItem );
+            m_d->accountingTAMBillItemPPUGUI->setItem( m_d->currentAccountingTAMBillItem );
 
             m_d->accountingTAMBillItemCommentGUI->hide();
             m_d->accountingTAMBillItemCommentGUI->setAccountingItemNULL();
@@ -182,7 +182,7 @@ void AccountingTAMBillGUI::updateGUI() {
             return;
         }
 
-        if( m_d->currentAccountingTAMBillItem->itemType() == AccountingTAMBillItem::Bill ){
+        if( m_d->currentAccountingTAMBillItem->itemType() == AccountingTAMBillItem::Payment ){
             m_d->accountingTAMBillItemPPUGUI->hide();
             m_d->accountingTAMBillItemPPUGUI->setAccountingItemNULL();
 

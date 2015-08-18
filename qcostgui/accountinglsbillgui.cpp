@@ -98,8 +98,8 @@ AccountingLSBillGUI::AccountingLSBillGUI(QMap<PriceListDBWidget::ImportOptions, 
     QTabWidget(parent),
     m_d( new AccountingLSBillGUIPrivate( EPAImpOptions, EPAFileName, prs, p, wordProcessorFile, this ) ){
 
-    addTab( m_d->accountingDataGUI, trUtf8("Libretto delle Misure - Dati generali"));
-    addTab( m_d->mainSplitter, trUtf8("Libretto delle Misure - Misure"));
+    addTab( m_d->accountingDataGUI, trUtf8("Libretto Opere a Corpo - Dati generali"));
+    addTab( m_d->mainSplitter, trUtf8("Libretto Opere a Corpo - Misure"));
 
     setCurrentIndex( 1 );
 
@@ -143,7 +143,7 @@ void AccountingLSBillGUI::updateItemGUI() {
             m_d->itemTitleGUI->show();
 
             m_d->itemGUI->hide();
-            m_d->itemGUI->setBillItemNULL();
+            m_d->itemGUI->clear();
         } else {
             m_d->itemGUI->setBillItem( m_d->item );
             m_d->itemGUI->show();
@@ -155,7 +155,7 @@ void AccountingLSBillGUI::updateItemGUI() {
     }
 
     m_d->itemGUI->hide();
-    m_d->itemGUI->setBillItemNULL();
+    m_d->itemGUI->clear();
     m_d->itemGUI->setBillNULL();
 
     m_d->itemTitleGUI->hide();

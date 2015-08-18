@@ -685,7 +685,7 @@ QVariant PriceItem::data(int column, int role) const {
         }
     } else if( column == m_d->umCol ){
         if( role == Qt::TextAlignmentRole ){
-            return Qt::AlignCenter + Qt::AlignVCenter;
+            return Qt::AlignHCenter + Qt::AlignVCenter;
         } else { // role == Qt::DisplayRole || role == Qt::EditRole
             if( m_d->parentItem == NULL ){
                 return QVariant(QObject::trUtf8("UdM") );
@@ -703,7 +703,7 @@ QVariant PriceItem::data(int column, int role) const {
     } else {
         if( role == Qt::TextAlignmentRole ){
             if( m_d->parentItem == NULL ){
-                return Qt::AlignCenter + Qt::AlignVCenter;
+                return Qt::AlignHCenter + Qt::AlignVCenter;
             } else {
                 return Qt::AlignRight + Qt::AlignVCenter;
             }

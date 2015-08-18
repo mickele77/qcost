@@ -78,15 +78,15 @@ public:
 };
 
 AccountingTAMBill::AccountingTAMBill( const QString &n, ProjectItem *parent, PriceFieldModel * pfm, MathParser * parser ):
-    QAbstractTableModel(),
+    QAbstractItemModel(),
     ProjectItem(parent),
     m_d( new AccountingTAMBillPrivate( n, this, pfm, parser ) ) {
 
     connect( m_d->rootItem, static_cast<void(AccountingBillItem::*)(AccountingBillItem*,int)>(&AccountingBillItem::dataChanged), this, &AccountingTAMBill::updateValue );
 
-    connect( m_d->rootItem, &AccountingTAMBillItem::totalAmountToBeDiscountedChanged, this, &AccountingTAMBill::totalAmountToBeDiscountedChanged );
-    connect( m_d->rootItem, &AccountingTAMBillItem::amountNotToBeDiscountedChanged, this, &AccountingTAMBill::amountNotToBeDiscountedChanged );
-    connect( m_d->rootItem, &AccountingTAMBillItem::amountToBeDiscountedChanged, this, &AccountingTAMBill::amountToBeDiscountedChanged );
+    connect( m_d->rootItem, &AccountingTAMBillItem::totalAmountToDiscountChanged, this, &AccountingTAMBill::totalAmountToDiscountChanged );
+    connect( m_d->rootItem, &AccountingTAMBillItem::amountNotToDiscountChanged, this, &AccountingTAMBill::amountNotToDiscountChanged );
+    connect( m_d->rootItem, &AccountingTAMBillItem::amountToDiscountChanged, this, &AccountingTAMBill::amountToDiscountChanged );
     connect( m_d->rootItem, &AccountingTAMBillItem::amountDiscountedChanged, this, &AccountingTAMBill::amountDiscountedChanged );
     connect( m_d->rootItem, &AccountingTAMBillItem::totalAmountChanged, this, &AccountingTAMBill::totalAmountChanged );
 
@@ -96,7 +96,7 @@ AccountingTAMBill::AccountingTAMBill( const QString &n, ProjectItem *parent, Pri
 }
 
 AccountingTAMBill::AccountingTAMBill(AccountingTAMBill & b):
-    QAbstractTableModel(),
+    QAbstractItemModel(),
     ProjectItem( b.ProjectItem::parentItem() ),
     m_d( new AccountingTAMBillPrivate( "", this, b.m_d->priceFieldModel, b.m_d->parser ) ) {
 
@@ -104,9 +104,9 @@ AccountingTAMBill::AccountingTAMBill(AccountingTAMBill & b):
 
     connect( m_d->rootItem, static_cast<void(AccountingBillItem::*)(AccountingBillItem*,int)>(&AccountingBillItem::dataChanged), this, &AccountingTAMBill::updateValue );
 
-    connect( m_d->rootItem, &AccountingTAMBillItem::totalAmountToBeDiscountedChanged, this, &AccountingTAMBill::totalAmountToBeDiscountedChanged );
-    connect( m_d->rootItem, &AccountingTAMBillItem::amountNotToBeDiscountedChanged, this, &AccountingTAMBill::amountNotToBeDiscountedChanged );
-    connect( m_d->rootItem, &AccountingTAMBillItem::amountToBeDiscountedChanged, this, &AccountingTAMBill::amountToBeDiscountedChanged );
+    connect( m_d->rootItem, &AccountingTAMBillItem::totalAmountToDiscountChanged, this, &AccountingTAMBill::totalAmountToDiscountChanged );
+    connect( m_d->rootItem, &AccountingTAMBillItem::amountNotToDiscountChanged, this, &AccountingTAMBill::amountNotToDiscountChanged );
+    connect( m_d->rootItem, &AccountingTAMBillItem::amountToDiscountChanged, this, &AccountingTAMBill::amountToDiscountChanged );
     connect( m_d->rootItem, &AccountingTAMBillItem::amountDiscountedChanged, this, &AccountingTAMBill::amountDiscountedChanged );
     connect( m_d->rootItem, &AccountingTAMBillItem::totalAmountChanged, this, &AccountingTAMBill::totalAmountChanged );
 
@@ -118,9 +118,9 @@ AccountingTAMBill::AccountingTAMBill(AccountingTAMBill & b):
 AccountingTAMBill::~AccountingTAMBill(){
     disconnect( m_d->rootItem, static_cast<void(AccountingBillItem::*)(AccountingBillItem*,int)>(&AccountingBillItem::dataChanged), this, &AccountingTAMBill::updateValue );
 
-    disconnect( m_d->rootItem, &AccountingTAMBillItem::totalAmountToBeDiscountedChanged, this, &AccountingTAMBill::totalAmountToBeDiscountedChanged );
-    disconnect( m_d->rootItem, &AccountingTAMBillItem::amountNotToBeDiscountedChanged, this, &AccountingTAMBill::amountNotToBeDiscountedChanged );
-    disconnect( m_d->rootItem, &AccountingTAMBillItem::amountToBeDiscountedChanged, this, &AccountingTAMBill::amountToBeDiscountedChanged );
+    disconnect( m_d->rootItem, &AccountingTAMBillItem::totalAmountToDiscountChanged, this, &AccountingTAMBill::totalAmountToDiscountChanged );
+    disconnect( m_d->rootItem, &AccountingTAMBillItem::amountNotToDiscountChanged, this, &AccountingTAMBill::amountNotToDiscountChanged );
+    disconnect( m_d->rootItem, &AccountingTAMBillItem::amountToDiscountChanged, this, &AccountingTAMBill::amountToDiscountChanged );
     disconnect( m_d->rootItem, &AccountingTAMBillItem::amountDiscountedChanged, this, &AccountingTAMBill::amountDiscountedChanged );
     disconnect( m_d->rootItem, &AccountingTAMBillItem::totalAmountChanged, this, &AccountingTAMBill::totalAmountChanged );
 
@@ -186,7 +186,7 @@ int AccountingTAMBill::childNumber(ProjectItem * /*item*/) {
 }
 
 bool AccountingTAMBill::reset() {
-    return m_d->rootItem->reset();
+    return m_d->rootItem->clear();
 }
 
 bool AccountingTAMBill::canChildrenBeInserted() {
@@ -203,6 +203,10 @@ bool AccountingTAMBill::removeChildren(int position, int count) {
     Q_UNUSED(position);
     Q_UNUSED(count);
     return false;
+}
+
+bool AccountingTAMBill::clear() {
+    return removeRows( 0, rowCount() );
 }
 
 Qt::ItemFlags AccountingTAMBill::flags() const {
@@ -324,8 +328,7 @@ void AccountingTAMBill::setDiscount(double newVal) {
 QList<AccountingTAMBillItem *> AccountingTAMBill::bills() {
     QList<AccountingTAMBillItem *> ret;
     for( int i=0; i < m_d->rootItem->childrenCount(); i++ ){
-
-        ret << dynamic_cast<AccountingTAMBillItem *>( m_d->rootItem->child( i ) );
+        ret << dynamic_cast<AccountingTAMBillItem *>(m_d->rootItem->childItem( i ));
     }
     return ret;
 }
@@ -422,6 +425,8 @@ bool AccountingTAMBill::insertItems(AccountingBillItem::ItemType mt, int inputPo
     success = parentItem->insertChildren( mt, position, count );
     endInsertRows();
 
+    m_d->rootItem->updateProgressiveCode();
+
     return success;
 }
 
@@ -432,6 +437,10 @@ bool AccountingTAMBill::removeItems(int position, int rows, const QModelIndex &p
     beginRemoveRows(parent, position, position + rows - 1);
     success = parentItem->removeChildren(position, rows);
     endRemoveRows();
+
+    if( success ){
+        m_d->rootItem->updateProgressiveCode();
+    }
 
     return success;
 }
@@ -502,16 +511,16 @@ bool AccountingTAMBill::isUsingPriceList(PriceList *pl) {
     return m_d->priceList == pl;
 }
 
-double AccountingTAMBill::totalAmountToBeDiscounted() const {
-    return m_d->rootItem->totalAmountToBeDiscounted();
+double AccountingTAMBill::totalAmountToDiscount() const {
+    return m_d->rootItem->totalAmountToDiscount();
 }
 
-double AccountingTAMBill::amountNotToBeDiscounted() const {
-    return m_d->rootItem->amountNotToBeDiscounted();
+double AccountingTAMBill::amountNotToDiscount() const {
+    return m_d->rootItem->amountNotToDiscount();
 }
 
-double AccountingTAMBill::amountToBeDiscounted() const {
-    return m_d->rootItem->amountToBeDiscounted();
+double AccountingTAMBill::amountToDiscount() const {
+    return m_d->rootItem->amountToDiscount();
 }
 
 double AccountingTAMBill::amountDiscounted() const {
@@ -522,16 +531,16 @@ double AccountingTAMBill::totalAmount() const {
     return m_d->rootItem->totalAmount();
 }
 
-QString AccountingTAMBill::totalAmountToBeDiscountedStr() const {
-    return m_d->rootItem->totalAmountToBeDiscountedStr();
+QString AccountingTAMBill::totalAmountToDiscountStr() const {
+    return m_d->rootItem->totalAmountToDiscountStr();
 }
 
-QString AccountingTAMBill::amountNotToBeDiscountedStr() const {
-    return m_d->rootItem->amountNotToBeDiscountedStr();
+QString AccountingTAMBill::amountNotToDiscountStr() const {
+    return m_d->rootItem->amountNotToDiscountStr();
 }
 
-QString AccountingTAMBill::amountToBeDiscountedStr() const {
-    return m_d->rootItem->amountToBeDiscountedStr();
+QString AccountingTAMBill::amountToDiscountStr() const {
+    return m_d->rootItem->amountToDiscountStr();
 }
 
 QString AccountingTAMBill::amountDiscountedStr() const {
@@ -546,20 +555,20 @@ AttributeModel *AccountingTAMBill::attributeModel() {
     return m_d->attributeModel;
 }
 
-double AccountingTAMBill::totalAmountToBeDiscountedAttribute(Attribute *attr) const {
-    return m_d->rootItem->totalAmountToBeDiscountedAttribute(attr);
+double AccountingTAMBill::totalAmountToDiscountAttribute(Attribute *attr) const {
+    return m_d->rootItem->totalAmountToDiscountAttribute(attr);
 }
 
-QString AccountingTAMBill::totalAmountToBeDiscountedAttributeStr(Attribute *attr) const {
-    return m_d->rootItem->totalAmountToBeDiscountedAttributeStr(attr);
+QString AccountingTAMBill::totalAmountToDiscountAttributeStr(Attribute *attr) const {
+    return m_d->rootItem->totalAmountToDiscountAttributeStr(attr);
 }
 
-double AccountingTAMBill::amountNotToBeDiscountedAttribute(Attribute *attr) const {
-    return m_d->rootItem->amountNotToBeDiscountedAttribute(attr);
+double AccountingTAMBill::amountNotToDiscountAttribute(Attribute *attr) const {
+    return m_d->rootItem->amountNotToDiscountAttribute(attr);
 }
 
-QString AccountingTAMBill::amountNotToBeDiscountedAttributeStr(Attribute *attr) const {
-    return m_d->rootItem->amountNotToBeDiscountedAttributeStr(attr);
+QString AccountingTAMBill::amountNotToDiscountAttributeStr(Attribute *attr) const {
+    return m_d->rootItem->amountNotToDiscountAttributeStr(attr);
 }
 
 double AccountingTAMBill::totalAmountAttribute(Attribute *attr) const {
@@ -579,7 +588,7 @@ unsigned int AccountingTAMBill::id() {
 }
 
 void AccountingTAMBill::writeXml(QXmlStreamWriter *writer) {
-    writer->writeStartElement( "Accounting" );
+    writer->writeStartElement( "AccountingTAMBill" );
     writer->writeAttribute( "id", QString::number(m_d->id) );
     writer->writeAttribute( "name", m_d->name );
     writer->writeAttribute( "description", m_d->description );
@@ -597,32 +606,32 @@ void AccountingTAMBill::writeXml(QXmlStreamWriter *writer) {
 }
 
 void AccountingTAMBill::readXml(QXmlStreamReader *reader, ProjectPriceListParentItem *priceLists) {
-    if(reader->isStartElement() && reader->name().toString().toUpper() == "ACCOUNTINGMEASURES"){
+    if(reader->isStartElement() && reader->name().toString().toUpper() == "ACCOUNTINGTAMBILL"){
         loadFromXml( reader->attributes(), priceLists );
     }
     while( (!reader->atEnd()) &&
            (!reader->hasError()) &&
-           !(reader->isEndElement() && reader->name().toString().toUpper() == "ACCOUNTINGMEASURES") ){
+           !(reader->isEndElement() && reader->name().toString().toUpper() == "ACCOUNTINGTAMBILL") ){
         reader->readNext();
         QString tag = reader->name().toString().toUpper();
         if( tag == "ACCOUNTINGATTRIBUTEMODEL" && reader->isStartElement()) {
             m_d->attributeModel->readXml( reader );
         }
-        if( tag == "ACCOUNTINGITEM" && reader->isStartElement()) {
+        if( tag == "ACCOUNTINGBILLITEM" && reader->isStartElement()) {
             m_d->rootItem->readXml( reader, m_d->priceList, m_d->attributeModel );
         }
     }
 }
 
 void AccountingTAMBill::readXmlTmp(QXmlStreamReader *reader ) {
-    if(reader->isStartElement() && reader->name().toString().toUpper() == "ACCOUNTING"){
+    if(reader->isStartElement() && reader->name().toString().toUpper() == "ACCOUNTINGTAMBILL"){
         loadFromXmlTmp( reader->attributes() );
     }
     while( (!reader->atEnd()) &&
            (!reader->hasError()) &&
-           !(reader->isEndElement() && reader->name().toString().toUpper() == "ACCOUNTING") ){
+           !(reader->isEndElement() && reader->name().toString().toUpper() == "ACCOUNTINGTAMBILL") ){
         reader->readNext();
-        if( reader->name().toString().toUpper() == "ACCOUNTINGITEM" && reader->isStartElement()) {
+        if( reader->name().toString().toUpper() == "ACCOUNTINGBILLITEM" && reader->isStartElement()) {
             m_d->rootItem->readXmlTmp( reader );
         }
     }
@@ -691,14 +700,14 @@ QList<PriceItem *> AccountingTAMBill::connectedPriceItems() {
 }
 
 void AccountingTAMBill::writeODTAccountingOnTable( QTextCursor *cursor,
-                                                   AccountingPrinter::PrintAccountingBillOption prItemsOption,
+                                                   AccountingPrinter::PrintPPUDescOption prItemsOption,
                                                    bool printAmounts ) const {
     m_d->rootItem->writeODTAccountingOnTable(cursor, prItemsOption, printAmounts );
 }
 
 void AccountingTAMBill::writeODTAttributeAccountingOnTable(QTextCursor *cursor,
                                                            AccountingPrinter::AttributePrintOption prOption,
-                                                           AccountingPrinter::PrintAccountingBillOption prItemsOption,
+                                                           AccountingPrinter::PrintPPUDescOption prItemsOption,
                                                            const QList<Attribute *> &attrsToPrint,
                                                            bool printAmounts ) const {
     m_d->rootItem->writeODTAttributeAccountingOnTable( cursor, prOption, prItemsOption, attrsToPrint, printAmounts );
@@ -706,7 +715,7 @@ void AccountingTAMBill::writeODTAttributeAccountingOnTable(QTextCursor *cursor,
 
 
 void AccountingTAMBill::writeODTSummaryOnTable(QTextCursor *cursor,
-                                               AccountingPrinter::PrintAccountingBillOption prItemsOption,
+                                               AccountingPrinter::PrintPPUDescOption prItemsOption,
                                                bool printAmounts,
                                                bool writeDetails ) const {
     m_d->rootItem->writeODTSummaryOnTable(cursor, prItemsOption, printAmounts, writeDetails );

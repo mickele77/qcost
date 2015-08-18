@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>500</width>
-    <height>547</height>
+    <height>559</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -94,20 +94,6 @@
           <string>Misure</string>
          </property>
          <layout class="QGridLayout" name="valueDataLayout">
-          <item row="0" column="1">
-           <widget class="QLabel" name="quantityLabel">
-            <property name="text">
-             <string>Quantità</string>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="2">
-           <widget class="QLineEdit" name="quantityLineEdit">
-            <property name="alignment">
-             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-            </property>
-           </widget>
-          </item>
           <item row="1" column="1" colspan="3">
            <widget class="QGroupBox" name="billItemLinesGroupBox">
             <property name="sizePolicy">
@@ -120,6 +106,16 @@
              <string>Dettaglio</string>
             </property>
             <layout class="QGridLayout" name="gridLayout_6">
+             <item row="1" column="0" colspan="3">
+              <widget class="QTableView" name="billItemLinesTableView"/>
+             </item>
+             <item row="0" column="1">
+              <widget class="QPushButton" name="delBillItemLinePushButton">
+               <property name="text">
+                <string>-</string>
+               </property>
+              </widget>
+             </item>
              <item row="0" column="0">
               <widget class="QPushButton" name="addBillItemLinePushButton">
                <property name="text">
@@ -134,49 +130,27 @@
                </property>
               </widget>
              </item>
-             <item row="1" column="0" colspan="3">
-              <widget class="QTableView" name="billItemLinesTableView"/>
-             </item>
-             <item row="0" column="1">
-              <widget class="QPushButton" name="delBillItemLinePushButton">
-               <property name="text">
-                <string>-</string>
-               </property>
-              </widget>
-             </item>
-             <item row="2" column="0">
-              <spacer name="verticalSpacer">
-               <property name="orientation">
-                <enum>Qt::Vertical</enum>
-               </property>
-               <property name="sizeHint" stdset="0">
-                <size>
-                 <width>20</width>
-                 <height>40</height>
-                </size>
-               </property>
-              </spacer>
-             </item>
             </layout>
            </widget>
-          </item>
-          <item row="2" column="1">
-           <spacer name="valueDataVertSpacer">
-            <property name="orientation">
-             <enum>Qt::Vertical</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>20</width>
-              <height>40</height>
-             </size>
-            </property>
-           </spacer>
           </item>
           <item row="0" column="3">
            <widget class="QCheckBox" name="associateLinesCheckBox">
             <property name="text">
              <string>Associa misure</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QLabel" name="quantityLabel">
+            <property name="text">
+             <string>Quantità</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="2">
+           <widget class="QLineEdit" name="quantityLineEdit">
+            <property name="alignment">
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
             </property>
            </widget>
           </item>

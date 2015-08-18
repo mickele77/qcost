@@ -14,11 +14,14 @@ public:
     explicit AccountingGUI(ProjectAccountingParentItem *acc, QWidget *parent = 0);
     ~AccountingGUI();
 
+    void showEvent(QShowEvent *event);
 private slots:
-    void addWorkProgress();
-    void delWorkProgress();
+    void addPayment();
+    void removePayment();
 private:
     AccountingGUIPrivate * m_d;
+
+    void updateAmounts();
 };
 
 #endif // ACCOUNTINGGUI_H

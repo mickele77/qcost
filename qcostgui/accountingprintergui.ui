@@ -17,48 +17,28 @@
    <item row="0" column="0">
     <layout class="QVBoxLayout" name="verticalLayout_2">
      <item>
-      <widget class="QGroupBox" name="groupBox_2">
+      <widget class="QGroupBox" name="billToPrintGroupBox">
        <property name="title">
-        <string>Documento</string>
+        <string>S.A.L.</string>
        </property>
-       <layout class="QGridLayout" name="gridLayout_3">
-        <item row="3" column="0">
-         <widget class="QRadioButton" name="printSummaryWithDetailsRadioButton">
-          <property name="text">
-           <string>Sommario Dettagliato</string>
-          </property>
-          <property name="checked">
-           <bool>false</bool>
-          </property>
-         </widget>
-        </item>
-        <item row="2" column="0">
-         <widget class="QRadioButton" name="printSummaryRadioButton">
-          <property name="text">
-           <string>Sommario</string>
-          </property>
-          <property name="checked">
-           <bool>false</bool>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="0">
-         <widget class="QRadioButton" name="printBillRadioButton">
-          <property name="text">
-           <string>Computo Metrico Estimativo</string>
-          </property>
-          <property name="checked">
-           <bool>false</bool>
+       <layout class="QGridLayout" name="gridLayout_6">
+        <item row="0" column="1">
+         <widget class="QComboBox" name="billToPrintComboBox">
+          <property name="layoutDirection">
+           <enum>Qt::RightToLeft</enum>
           </property>
          </widget>
         </item>
         <item row="0" column="0">
-         <widget class="QRadioButton" name="printEmptyBillRadioButton">
-          <property name="text">
-           <string>Computo Metrico</string>
+         <widget class="QLabel" name="billToPrintLabel">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
           </property>
-          <property name="checked">
-           <bool>true</bool>
+          <property name="text">
+           <string>S.A.L.</string>
           </property>
          </widget>
         </item>
@@ -66,7 +46,66 @@
       </widget>
      </item>
      <item>
-      <widget class="QGroupBox" name="groupBox">
+      <widget class="QGroupBox" name="printDocGroupBox">
+       <property name="title">
+        <string>Documenti contabili</string>
+       </property>
+       <layout class="QGridLayout" name="gridLayout_3">
+        <item row="5" column="0">
+         <widget class="QRadioButton" name="printAccountingSummaryButton">
+          <property name="text">
+           <string>Sommario del registro di contabilità</string>
+          </property>
+          <property name="checked">
+           <bool>false</bool>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="0">
+         <widget class="QRadioButton" name="printAccountingButton">
+          <property name="text">
+           <string>Registro di contabilit&amp;à</string>
+          </property>
+          <property name="checked">
+           <bool>false</bool>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="0">
+         <widget class="QRadioButton" name="printBillButton">
+          <property name="text">
+           <string>&amp;Libretto delle misure</string>
+          </property>
+          <property name="checked">
+           <bool>false</bool>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="0">
+         <widget class="QRadioButton" name="printRawBillButton">
+          <property name="text">
+           <string>Brogliaccio del libretto delle &amp;misure</string>
+          </property>
+          <property name="checked">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="0">
+         <widget class="QRadioButton" name="printPaymentButton">
+          <property name="text">
+           <string>S.A.L.</string>
+          </property>
+          <property name="checked">
+           <bool>false</bool>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </item>
+     <item>
+      <widget class="QGroupBox" name="printPriceItemOptionsGroupBox">
        <property name="title">
         <string>Descrizione voci di prezzo</string>
        </property>
@@ -75,6 +114,9 @@
          <widget class="QRadioButton" name="printShortDescRadioButton">
           <property name="text">
            <string>Descrizione breve</string>
+          </property>
+          <property name="checked">
+           <bool>true</bool>
           </property>
          </widget>
         </item>
@@ -98,7 +140,7 @@
            <string>Descrizione breve ed estesa (ottimizzato)</string>
           </property>
           <property name="checked">
-           <bool>true</bool>
+           <bool>false</bool>
           </property>
          </widget>
         </item>
@@ -110,13 +152,13 @@
    <item row="0" column="1">
     <layout class="QVBoxLayout" name="verticalLayout">
      <item>
-      <widget class="QGroupBox" name="groupBox_3">
+      <widget class="QGroupBox" name="paperGroupBox">
        <property name="title">
         <string>Supporto</string>
        </property>
        <layout class="QGridLayout" name="gridLayout">
         <item row="0" column="0">
-         <widget class="QGroupBox" name="paperDImensionsGroupBox">
+         <widget class="QGroupBox" name="paperDimensionsGroupBox">
           <property name="title">
            <string>Dimensioni</string>
           </property>
@@ -130,13 +172,13 @@
         <item row="1" column="0">
          <widget class="QGroupBox" name="paperOrientationGroupBox">
           <property name="title">
-           <string>Orientamento supporto</string>
+           <string>Orientamento</string>
           </property>
           <layout class="QGridLayout" name="gridLayout_4">
            <item row="1" column="0">
             <widget class="QRadioButton" name="paperHorizzontalRadioButton">
              <property name="text">
-              <string>Orizzontale</string>
+              <string>Ori&amp;zzontale</string>
              </property>
              <property name="checked">
               <bool>false</bool>
@@ -146,7 +188,7 @@
            <item row="0" column="0">
             <widget class="QRadioButton" name="paperVerticalRadioButton">
              <property name="text">
-              <string>Verticale</string>
+              <string>&amp;Verticale</string>
              </property>
              <property name="checked">
               <bool>true</bool>
@@ -174,90 +216,17 @@
      </item>
     </layout>
    </item>
-   <item row="0" column="2">
-    <spacer name="horizontalSpacer">
+   <item row="2" column="0" colspan="2">
+    <widget class="QDialogButtonBox" name="buttonBox">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
      </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>370</width>
-       <height>20</height>
-      </size>
+     <property name="standardButtons">
+      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
      </property>
-    </spacer>
-   </item>
-   <item row="1" column="0" colspan="3">
-    <widget class="QGroupBox" name="priceFieldsGroupBox">
-     <property name="title">
-      <string>Campi Prezzo</string>
-     </property>
-     <layout class="QGridLayout" name="priceFieldsGroupBoxLayout">
-      <property name="spacing">
-       <number>0</number>
-      </property>
-      <item row="2" column="0">
-       <layout class="QHBoxLayout" name="priceFieldComboBoxLayout">
-        <item>
-         <layout class="QHBoxLayout" name="horizontalLayout"/>
-        </item>
-        <item>
-         <spacer name="horizontalSpacer_3">
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>40</width>
-            <height>20</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-       </layout>
-      </item>
-      <item row="4" column="0">
-       <layout class="QGridLayout" name="priceFieldPushButtonLayout">
-        <item row="0" column="0">
-         <widget class="QPushButton" name="insertPriceFieldPushButton">
-          <property name="text">
-           <string>+</string>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="3">
-         <spacer name="piceFieldPushButtonSpacer">
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>40</width>
-            <height>20</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-        <item row="0" column="1">
-         <widget class="QPushButton" name="removePriceFieldPushButton">
-          <property name="text">
-           <string>-</string>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="2">
-         <widget class="QCheckBox" name="groupPriceAmountCheckBox">
-          <property name="text">
-           <string>Raggruppa Prezzi ed Importi</string>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </item>
-     </layout>
     </widget>
    </item>
-   <item row="2" column="0">
+   <item row="1" column="0" colspan="2">
     <spacer name="verticalSpacer">
      <property name="orientation">
       <enum>Qt::Vertical</enum>
@@ -270,18 +239,23 @@
      </property>
     </spacer>
    </item>
-   <item row="3" column="1" colspan="2">
-    <widget class="QDialogButtonBox" name="buttonBox">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-     <property name="standardButtons">
-      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
-     </property>
-    </widget>
-   </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>printRawBillButton</tabstop>
+  <tabstop>printBillButton</tabstop>
+  <tabstop>printPaymentButton</tabstop>
+  <tabstop>printAccountingButton</tabstop>
+  <tabstop>printAccountingSummaryButton</tabstop>
+  <tabstop>printShortDescRadioButton</tabstop>
+  <tabstop>printLongDescRadioButton</tabstop>
+  <tabstop>printShortLongDescRadioButton</tabstop>
+  <tabstop>printShortLongDescOptRadioButton</tabstop>
+  <tabstop>billToPrintComboBox</tabstop>
+  <tabstop>paperDimensionsComboBox</tabstop>
+  <tabstop>paperVerticalRadioButton</tabstop>
+  <tabstop>paperHorizzontalRadioButton</tabstop>
+ </tabstops>
  <resources/>
  <connections>
   <connection>

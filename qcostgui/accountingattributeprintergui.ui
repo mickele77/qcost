@@ -21,7 +21,11 @@
      </property>
      <layout class="QGridLayout" name="gridLayout_2">
       <item row="0" column="0">
-       <widget class="QTableView" name="attributesTableView"/>
+       <widget class="QTableView" name="attributesTableView">
+        <property name="alternatingRowColors">
+         <bool>true</bool>
+        </property>
+       </widget>
       </item>
      </layout>
     </widget>
@@ -73,7 +77,7 @@
         <item row="1" column="0">
          <widget class="QRadioButton" name="attributePrintUnionRadioButton">
           <property name="text">
-           <string>Stampa Unione</string>
+           <string>Sta&amp;mpa Unione</string>
           </property>
           <property name="checked">
            <bool>false</bool>
@@ -199,7 +203,7 @@
            <item row="0" column="0">
             <widget class="QRadioButton" name="paperVerticalRadioButton">
              <property name="text">
-              <string>Verticale</string>
+              <string>&amp;Verticale</string>
              </property>
              <property name="checked">
               <bool>true</bool>
@@ -209,7 +213,7 @@
            <item row="1" column="0">
             <widget class="QRadioButton" name="paperHorizzontalRadioButton">
              <property name="text">
-              <string>Orizzontale</string>
+              <string>Ori&amp;zzontale</string>
              </property>
              <property name="checked">
               <bool>false</bool>

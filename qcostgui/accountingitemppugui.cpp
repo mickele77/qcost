@@ -100,7 +100,7 @@ AccountingItemPPUGUI::~AccountingItemPPUGUI() {
     delete m_d;
 }
 
-void AccountingItemPPUGUI::setAccountingItem(AccountingTAMBillItem *b) {
+void AccountingItemPPUGUI::setItem(AccountingTAMBillItem *b) {
     if( m_d->TAMBillItem != b || m_d->billItem != NULL ){
         if( m_d->billItem != NULL ){
             disconnect( m_d->billItem, &AccountingBillItem::dateChanged, m_d->ui->dateLineEdit, &QLineEdit::setText );
@@ -108,12 +108,12 @@ void AccountingItemPPUGUI::setAccountingItem(AccountingTAMBillItem *b) {
             disconnect( m_d->billItem, &AccountingBillItem::quantityChanged, m_d->ui->quantityLineEdit, &QLineEdit::setText );
             disconnect( m_d->ui->quantityLineEdit, &QLineEdit::editingFinished, this, &AccountingItemPPUGUI::setQuantityLE );
 
-            disconnect( m_d->billItem, &AccountingBillItem::totalAmountToBeDiscountedChanged, m_d->ui->totalAmountToBeDiscountedLineEdit, &QLineEdit::setText );
-            disconnect( m_d->billItem, &AccountingBillItem::amountNotToBeDiscountedChanged, m_d->ui->amountNotToBeDiscountedLineEdit, &QLineEdit::setText );
+            disconnect( m_d->billItem, &AccountingBillItem::totalAmountToDiscountChanged, m_d->ui->totalAmountToDiscountLineEdit, &QLineEdit::setText );
+            disconnect( m_d->billItem, &AccountingBillItem::amountNotToDiscountChanged, m_d->ui->amountNotToDiscountLineEdit, &QLineEdit::setText );
             disconnect( m_d->billItem, &AccountingBillItem::totalAmountChanged, m_d->ui->totalAmountLineEdit, &QLineEdit::setText );
 
-            disconnect( m_d->billItem, &AccountingBillItem::PPUTotalToBeDiscountedChanged, m_d->ui->PPUTotalToBeDiscountedLineEdit, &QLineEdit::setText );
-            disconnect( m_d->billItem, &AccountingBillItem::PPUNotToBeDiscountedChanged, m_d->ui->PPUNotToBDiscountedLineEdit, &QLineEdit::setText );
+            disconnect( m_d->billItem, &AccountingBillItem::PPUTotalToDiscountChanged, m_d->ui->PPUTotalToDiscountLineEdit, &QLineEdit::setText );
+            disconnect( m_d->billItem, &AccountingBillItem::PPUNotToDiscountChanged, m_d->ui->PPUNotToBDiscountedLineEdit, &QLineEdit::setText );
 
             disconnect( m_d->billItem, &AccountingBillItem::priceItemChanged, this, &AccountingItemPPUGUI::connectPriceItem );
             disconnectPriceItem( m_d->billItem->priceItem() );
@@ -127,12 +127,12 @@ void AccountingItemPPUGUI::setAccountingItem(AccountingTAMBillItem *b) {
             disconnect( m_d->TAMBillItem, &AccountingTAMBillItem::quantityChanged, m_d->ui->quantityLineEdit, &QLineEdit::setText );
             disconnect( m_d->ui->quantityLineEdit, &QLineEdit::editingFinished, this, &AccountingItemPPUGUI::setQuantityLE );
 
-            disconnect( m_d->TAMBillItem, &AccountingTAMBillItem::totalAmountToBeDiscountedChanged, m_d->ui->totalAmountToBeDiscountedLineEdit, &QLineEdit::setText );
-            disconnect( m_d->TAMBillItem, &AccountingTAMBillItem::amountNotToBeDiscountedChanged, m_d->ui->amountNotToBeDiscountedLineEdit, &QLineEdit::setText );
+            disconnect( m_d->TAMBillItem, &AccountingTAMBillItem::totalAmountToDiscountChanged, m_d->ui->totalAmountToDiscountLineEdit, &QLineEdit::setText );
+            disconnect( m_d->TAMBillItem, &AccountingTAMBillItem::amountNotToDiscountChanged, m_d->ui->amountNotToDiscountLineEdit, &QLineEdit::setText );
             disconnect( m_d->TAMBillItem, &AccountingTAMBillItem::totalAmountChanged, m_d->ui->totalAmountLineEdit, &QLineEdit::setText );
 
-            disconnect( m_d->TAMBillItem, &AccountingTAMBillItem::PPUTotalToBeDiscountedChanged, m_d->ui->PPUTotalToBeDiscountedLineEdit, &QLineEdit::setText );
-            disconnect( m_d->TAMBillItem, &AccountingTAMBillItem::PPUNotToBeDiscountedChanged, m_d->ui->PPUNotToBDiscountedLineEdit, &QLineEdit::setText );
+            disconnect( m_d->TAMBillItem, &AccountingTAMBillItem::PPUTotalToDiscountChanged, m_d->ui->PPUTotalToDiscountLineEdit, &QLineEdit::setText );
+            disconnect( m_d->TAMBillItem, &AccountingTAMBillItem::PPUNotToDiscountChanged, m_d->ui->PPUNotToBDiscountedLineEdit, &QLineEdit::setText );
 
             disconnect( m_d->TAMBillItem, &AccountingTAMBillItem::priceItemChanged, this, &AccountingItemPPUGUI::connectPriceItem );
             disconnectPriceItem( m_d->TAMBillItem->priceItem() );
@@ -141,11 +141,11 @@ void AccountingItemPPUGUI::setAccountingItem(AccountingTAMBillItem *b) {
             disconnect( m_d->TAMBillItem, &AccountingTAMBillItem::aboutToBeDeleted, this, &AccountingItemPPUGUI::setAccountingItemNULL );
         }
 
-        m_d->ui->totalAmountToBeDiscountedLineEdit->clear();
-        m_d->ui->amountNotToBeDiscountedLineEdit->clear();
+        m_d->ui->totalAmountToDiscountLineEdit->clear();
+        m_d->ui->amountNotToDiscountLineEdit->clear();
         m_d->ui->totalAmountLineEdit->clear();
         m_d->ui->PPUNotToBDiscountedLineEdit->clear();
-        m_d->ui->PPUTotalToBeDiscountedLineEdit->clear();
+        m_d->ui->PPUTotalToDiscountLineEdit->clear();
         m_d->ui->PPUNotToBDiscountedLineEdit->clear();
 
         m_d->billItem = NULL;
@@ -160,20 +160,20 @@ void AccountingItemPPUGUI::setAccountingItem(AccountingTAMBillItem *b) {
             connect( m_d->TAMBillItem, &AccountingTAMBillItem::quantityChanged, m_d->ui->quantityLineEdit, &QLineEdit::setText );
             connect( m_d->ui->quantityLineEdit, &QLineEdit::editingFinished, this, &AccountingItemPPUGUI::setQuantityLE );
 
-            m_d->ui->totalAmountToBeDiscountedLineEdit->setText( m_d->TAMBillItem->totalAmountToBeDiscountedStr() );
-            connect( m_d->TAMBillItem, &AccountingTAMBillItem::totalAmountToBeDiscountedChanged, m_d->ui->totalAmountToBeDiscountedLineEdit, &QLineEdit::setText );
-            m_d->ui->amountNotToBeDiscountedLineEdit->setText( m_d->TAMBillItem->amountNotToBeDiscountedStr() );
-            connect( m_d->TAMBillItem, &AccountingTAMBillItem::amountNotToBeDiscountedChanged, m_d->ui->amountNotToBeDiscountedLineEdit, &QLineEdit::setText );
+            m_d->ui->totalAmountToDiscountLineEdit->setText( m_d->TAMBillItem->totalAmountToDiscountStr() );
+            connect( m_d->TAMBillItem, &AccountingTAMBillItem::totalAmountToDiscountChanged, m_d->ui->totalAmountToDiscountLineEdit, &QLineEdit::setText );
+            m_d->ui->amountNotToDiscountLineEdit->setText( m_d->TAMBillItem->amountNotToDiscountStr() );
+            connect( m_d->TAMBillItem, &AccountingTAMBillItem::amountNotToDiscountChanged, m_d->ui->amountNotToDiscountLineEdit, &QLineEdit::setText );
             m_d->ui->totalAmountLineEdit->setText( m_d->TAMBillItem->totalAmountStr() );
             connect( m_d->TAMBillItem, &AccountingTAMBillItem::totalAmountChanged, m_d->ui->totalAmountLineEdit, &QLineEdit::setText );
 
             connectPriceItem( NULL, m_d->TAMBillItem->priceItem());
             connect( m_d->TAMBillItem, &AccountingTAMBillItem::priceItemChanged, this, &AccountingItemPPUGUI::connectPriceItem );
 
-            m_d->ui->PPUTotalToBeDiscountedLineEdit->setText( m_d->TAMBillItem->PPUTotalToBeDiscountedStr() );
-            connect( m_d->TAMBillItem, &AccountingTAMBillItem::PPUTotalToBeDiscountedChanged, m_d->ui->PPUTotalToBeDiscountedLineEdit, &QLineEdit::setText );
-            m_d->ui->PPUNotToBDiscountedLineEdit->setText( m_d->TAMBillItem->PPUNotToBeDiscountedStr() );
-            connect( m_d->TAMBillItem, &AccountingTAMBillItem::PPUNotToBeDiscountedChanged, m_d->ui->PPUNotToBDiscountedLineEdit, &QLineEdit::setText );
+            m_d->ui->PPUTotalToDiscountLineEdit->setText( m_d->TAMBillItem->PPUTotalToDiscountStr() );
+            connect( m_d->TAMBillItem, &AccountingTAMBillItem::PPUTotalToDiscountChanged, m_d->ui->PPUTotalToDiscountLineEdit, &QLineEdit::setText );
+            m_d->ui->PPUNotToBDiscountedLineEdit->setText( m_d->TAMBillItem->PPUNotToDiscountStr() );
+            connect( m_d->TAMBillItem, &AccountingTAMBillItem::PPUNotToDiscountChanged, m_d->ui->PPUNotToBDiscountedLineEdit, &QLineEdit::setText );
 
             m_d->priceItemGUI->setCurrentPriceDataSet( m_d->TAMBillItem->currentPriceDataSet() );
 
@@ -190,11 +190,11 @@ void AccountingItemPPUGUI::setAccountingItem(AccountingTAMBillItem *b) {
             m_d->ui->priceCodeLineEdit->clear();
             m_d->ui->priceShortDescLineEdit->clear();
 
-            m_d->ui->PPUTotalToBeDiscountedLineEdit->clear();
+            m_d->ui->PPUTotalToDiscountLineEdit->clear();
             m_d->ui->PPUNotToBDiscountedLineEdit->clear();
 
-            m_d->ui->totalAmountToBeDiscountedLineEdit->clear();
-            m_d->ui->amountNotToBeDiscountedLineEdit->clear();
+            m_d->ui->totalAmountToDiscountLineEdit->clear();
+            m_d->ui->amountNotToDiscountLineEdit->clear();
             m_d->ui->totalAmountLineEdit->clear();
 
             m_d->priceItemGUI->setPriceItemNULL();
@@ -204,7 +204,7 @@ void AccountingItemPPUGUI::setAccountingItem(AccountingTAMBillItem *b) {
     }
 }
 
-void AccountingItemPPUGUI::setAccountingItem(AccountingBillItem *b) {
+void AccountingItemPPUGUI::setItem(AccountingBillItem *b) {
     if( m_d->billItem != b || m_d->TAMBillItem != NULL ){
         if( m_d->billItem != NULL ){
             disconnect( m_d->billItem, &AccountingBillItem::dateChanged, m_d->ui->dateLineEdit, &QLineEdit::setText );
@@ -212,12 +212,12 @@ void AccountingItemPPUGUI::setAccountingItem(AccountingBillItem *b) {
             disconnect( m_d->billItem, &AccountingBillItem::quantityChanged, m_d->ui->quantityLineEdit, &QLineEdit::setText );
             disconnect( m_d->ui->quantityLineEdit, &QLineEdit::editingFinished, this, &AccountingItemPPUGUI::setQuantityLE );
 
-            disconnect( m_d->billItem, &AccountingBillItem::totalAmountToBeDiscountedChanged, m_d->ui->totalAmountToBeDiscountedLineEdit, &QLineEdit::setText );
-            disconnect( m_d->billItem, &AccountingBillItem::amountNotToBeDiscountedChanged, m_d->ui->amountNotToBeDiscountedLineEdit, &QLineEdit::setText );
+            disconnect( m_d->billItem, &AccountingBillItem::totalAmountToDiscountChanged, m_d->ui->totalAmountToDiscountLineEdit, &QLineEdit::setText );
+            disconnect( m_d->billItem, &AccountingBillItem::amountNotToDiscountChanged, m_d->ui->amountNotToDiscountLineEdit, &QLineEdit::setText );
             disconnect( m_d->billItem, &AccountingBillItem::totalAmountChanged, m_d->ui->totalAmountLineEdit, &QLineEdit::setText );
 
-            disconnect( m_d->billItem, &AccountingBillItem::PPUTotalToBeDiscountedChanged, m_d->ui->PPUTotalToBeDiscountedLineEdit, &QLineEdit::setText );
-            disconnect( m_d->billItem, &AccountingBillItem::PPUNotToBeDiscountedChanged, m_d->ui->PPUNotToBDiscountedLineEdit, &QLineEdit::setText );
+            disconnect( m_d->billItem, &AccountingBillItem::PPUTotalToDiscountChanged, m_d->ui->PPUTotalToDiscountLineEdit, &QLineEdit::setText );
+            disconnect( m_d->billItem, &AccountingBillItem::PPUNotToDiscountChanged, m_d->ui->PPUNotToBDiscountedLineEdit, &QLineEdit::setText );
 
             disconnect( m_d->billItem, &AccountingBillItem::priceItemChanged, this, &AccountingItemPPUGUI::connectPriceItem );
             disconnectPriceItem( m_d->billItem->priceItem() );
@@ -231,12 +231,12 @@ void AccountingItemPPUGUI::setAccountingItem(AccountingBillItem *b) {
             disconnect( m_d->TAMBillItem, &AccountingTAMBillItem::quantityChanged, m_d->ui->quantityLineEdit, &QLineEdit::setText );
             disconnect( m_d->ui->quantityLineEdit, &QLineEdit::editingFinished, this, &AccountingItemPPUGUI::setQuantityLE );
 
-            disconnect( m_d->TAMBillItem, &AccountingTAMBillItem::totalAmountToBeDiscountedChanged, m_d->ui->totalAmountToBeDiscountedLineEdit, &QLineEdit::setText );
-            disconnect( m_d->TAMBillItem, &AccountingTAMBillItem::amountNotToBeDiscountedChanged, m_d->ui->amountNotToBeDiscountedLineEdit, &QLineEdit::setText );
+            disconnect( m_d->TAMBillItem, &AccountingTAMBillItem::totalAmountToDiscountChanged, m_d->ui->totalAmountToDiscountLineEdit, &QLineEdit::setText );
+            disconnect( m_d->TAMBillItem, &AccountingTAMBillItem::amountNotToDiscountChanged, m_d->ui->amountNotToDiscountLineEdit, &QLineEdit::setText );
             disconnect( m_d->TAMBillItem, &AccountingTAMBillItem::totalAmountChanged, m_d->ui->totalAmountLineEdit, &QLineEdit::setText );
 
-            disconnect( m_d->TAMBillItem, &AccountingTAMBillItem::PPUTotalToBeDiscountedChanged, m_d->ui->PPUTotalToBeDiscountedLineEdit, &QLineEdit::setText );
-            disconnect( m_d->TAMBillItem, &AccountingTAMBillItem::PPUNotToBeDiscountedChanged, m_d->ui->PPUNotToBDiscountedLineEdit, &QLineEdit::setText );
+            disconnect( m_d->TAMBillItem, &AccountingTAMBillItem::PPUTotalToDiscountChanged, m_d->ui->PPUTotalToDiscountLineEdit, &QLineEdit::setText );
+            disconnect( m_d->TAMBillItem, &AccountingTAMBillItem::PPUNotToDiscountChanged, m_d->ui->PPUNotToBDiscountedLineEdit, &QLineEdit::setText );
 
             disconnect( m_d->TAMBillItem, &AccountingTAMBillItem::priceItemChanged, this, &AccountingItemPPUGUI::connectPriceItem );
             disconnectPriceItem( m_d->TAMBillItem->priceItem() );
@@ -245,7 +245,7 @@ void AccountingItemPPUGUI::setAccountingItem(AccountingBillItem *b) {
             disconnect( m_d->TAMBillItem, &AccountingTAMBillItem::aboutToBeDeleted, this, &AccountingItemPPUGUI::setAccountingItemNULL );
         }
 
-        m_d->ui->PPUTotalToBeDiscountedLineEdit->clear();
+        m_d->ui->PPUTotalToDiscountLineEdit->clear();
         m_d->ui->PPUNotToBDiscountedLineEdit->clear();
 
         m_d->billItem = b;
@@ -260,20 +260,20 @@ void AccountingItemPPUGUI::setAccountingItem(AccountingBillItem *b) {
             connect( m_d->billItem, &AccountingBillItem::quantityChanged, m_d->ui->quantityLineEdit, &QLineEdit::setText );
             connect( m_d->ui->quantityLineEdit, &QLineEdit::editingFinished, this, &AccountingItemPPUGUI::setQuantityLE );
 
-            m_d->ui->totalAmountToBeDiscountedLineEdit->setText( m_d->billItem->totalAmountToBeDiscountedStr() );
-            connect( m_d->billItem, &AccountingBillItem::totalAmountToBeDiscountedChanged, m_d->ui->totalAmountToBeDiscountedLineEdit, &QLineEdit::setText );
-            m_d->ui->amountNotToBeDiscountedLineEdit->setText( m_d->billItem->amountNotToBeDiscountedStr() );
-            connect( m_d->billItem, &AccountingBillItem::amountNotToBeDiscountedChanged, m_d->ui->amountNotToBeDiscountedLineEdit, &QLineEdit::setText );
+            m_d->ui->totalAmountToDiscountLineEdit->setText( m_d->billItem->totalAmountToDiscountStr() );
+            connect( m_d->billItem, &AccountingBillItem::totalAmountToDiscountChanged, m_d->ui->totalAmountToDiscountLineEdit, &QLineEdit::setText );
+            m_d->ui->amountNotToDiscountLineEdit->setText( m_d->billItem->amountNotToDiscountStr() );
+            connect( m_d->billItem, &AccountingBillItem::amountNotToDiscountChanged, m_d->ui->amountNotToDiscountLineEdit, &QLineEdit::setText );
             m_d->ui->totalAmountLineEdit->setText( m_d->billItem->totalAmountStr() );
             connect( m_d->billItem, &AccountingBillItem::totalAmountChanged, m_d->ui->totalAmountLineEdit, &QLineEdit::setText );
 
             connectPriceItem( NULL, m_d->billItem->priceItem());
             connect( m_d->billItem, &AccountingBillItem::priceItemChanged, this, &AccountingItemPPUGUI::connectPriceItem );
 
-            m_d->ui->PPUTotalToBeDiscountedLineEdit->setText( m_d->billItem->PPUTotalToBeDiscountedStr() );
-            connect( m_d->billItem, &AccountingBillItem::PPUTotalToBeDiscountedChanged, m_d->ui->PPUTotalToBeDiscountedLineEdit, &QLineEdit::setText );
-            m_d->ui->PPUNotToBDiscountedLineEdit->setText( m_d->billItem->PPUNotToBeDiscountedStr() );
-            connect( m_d->billItem, &AccountingBillItem::PPUNotToBeDiscountedChanged, m_d->ui->PPUNotToBDiscountedLineEdit, &QLineEdit::setText );
+            m_d->ui->PPUTotalToDiscountLineEdit->setText( m_d->billItem->PPUTotalToDiscountStr() );
+            connect( m_d->billItem, &AccountingBillItem::PPUTotalToDiscountChanged, m_d->ui->PPUTotalToDiscountLineEdit, &QLineEdit::setText );
+            m_d->ui->PPUNotToBDiscountedLineEdit->setText( m_d->billItem->PPUNotToDiscountStr() );
+            connect( m_d->billItem, &AccountingBillItem::PPUNotToDiscountChanged, m_d->ui->PPUNotToBDiscountedLineEdit, &QLineEdit::setText );
 
             m_d->priceItemGUI->setCurrentPriceDataSet( m_d->billItem->currentPriceDataSet() );
 
@@ -290,11 +290,11 @@ void AccountingItemPPUGUI::setAccountingItem(AccountingBillItem *b) {
             m_d->ui->priceCodeLineEdit->clear();
             m_d->ui->priceShortDescLineEdit->clear();
 
-            m_d->ui->PPUTotalToBeDiscountedLineEdit->clear();
+            m_d->ui->PPUTotalToDiscountLineEdit->clear();
             m_d->ui->PPUNotToBDiscountedLineEdit->clear();
 
-            m_d->ui->totalAmountToBeDiscountedLineEdit->clear();
-            m_d->ui->amountNotToBeDiscountedLineEdit->clear();
+            m_d->ui->totalAmountToDiscountLineEdit->clear();
+            m_d->ui->amountNotToDiscountLineEdit->clear();
             m_d->ui->totalAmountLineEdit->clear();
 
             m_d->priceItemGUI->setPriceItemNULL();
@@ -311,7 +311,7 @@ void AccountingItemPPUGUI::setAccountingTAMBill(AccountingTAMBill *b) {
         m_d->itemAttributeModel->setAttributeModel( NULL );
     }
     // quando si cambia computo corrente la scheda della riga si azzera
-    setAccountingItem( (AccountingTAMBillItem *)(NULL) );
+    setItem( (AccountingTAMBillItem *)(NULL) );
 }
 
 void AccountingItemPPUGUI::setAccountingBill(AccountingBill *b) {
@@ -321,7 +321,7 @@ void AccountingItemPPUGUI::setAccountingBill(AccountingBill *b) {
         m_d->itemAttributeModel->setAttributeModel( NULL );
     }
     // quando si cambia computo corrente la scheda della riga si azzera
-    setAccountingItem( (AccountingBillItem *)(NULL) );
+    setItem( (AccountingBillItem *)(NULL) );
 }
 
 void AccountingItemPPUGUI::changeItemDateGUI(){
@@ -362,36 +362,35 @@ void AccountingItemPPUGUI::disconnectPriceItem( PriceItem * priceItem ) {
 }
 
 void AccountingItemPPUGUI::connectPriceItem( PriceItem * oldPriceItem, PriceItem * newPriceItem ) {
-    if( m_d->TAMBillItem ){
+    disconnectPriceItem( oldPriceItem );
 
-        disconnectPriceItem( oldPriceItem );
-
-        if( newPriceItem != NULL ){
-            m_d->ui->priceCodeLineEdit->setText( newPriceItem->codeFull() );
-            m_d->ui->priceShortDescLineEdit->setText( newPriceItem->shortDescriptionFull() );
-            if( newPriceItem->unitMeasure() ){
-                m_d->ui->priceUnitMeasureLineEdit->setText( newPriceItem->unitMeasure()->tag() );
-            }
-
-            connect( newPriceItem, &PriceItem::codeFullChanged, m_d->ui->priceCodeLineEdit, &QLineEdit::setText );
-            connect( newPriceItem, &PriceItem::shortDescriptionFullChanged, m_d->ui->priceShortDescLineEdit, &QLineEdit::setText );
-            connect( newPriceItem, &PriceItem::unitMeasureChanged, this, &AccountingItemPPUGUI::connectPriceUnitMeasure );
-            if( newPriceItem->unitMeasure() ){
-                connect( newPriceItem->unitMeasure(), &UnitMeasure::tagChanged, m_d->ui->priceUnitMeasureLineEdit, &QLineEdit::setText );
-            }
-            m_d->priceItemGUI->setPriceItem( newPriceItem );
+    if( newPriceItem != NULL ){
+        m_d->ui->priceCodeLineEdit->setText( newPriceItem->codeFull() );
+        m_d->ui->priceShortDescLineEdit->setText( newPriceItem->shortDescriptionFull() );
+        if( newPriceItem->unitMeasure() ){
+            m_d->ui->priceUnitMeasureLineEdit->setText( newPriceItem->unitMeasure()->tag() );
         } else {
-            m_d->ui->priceCodeLineEdit->clear();
-            m_d->ui->priceShortDescLineEdit->clear();
-            m_d->ui->priceUnitMeasureLineEdit->clear();
-            m_d->priceItemGUI->setPriceItemNULL();
+            m_d->ui->priceUnitMeasureLineEdit->setText( QString("---") );
         }
+
+        connect( newPriceItem, &PriceItem::codeFullChanged, m_d->ui->priceCodeLineEdit, &QLineEdit::setText );
+        connect( newPriceItem, &PriceItem::shortDescriptionFullChanged, m_d->ui->priceShortDescLineEdit, &QLineEdit::setText );
+        connect( newPriceItem, &PriceItem::unitMeasureChanged, this, &AccountingItemPPUGUI::connectPriceUnitMeasure );
+        if( newPriceItem->unitMeasure() ){
+            connect( newPriceItem->unitMeasure(), &UnitMeasure::tagChanged, m_d->ui->priceUnitMeasureLineEdit, &QLineEdit::setText );
+        }
+        m_d->priceItemGUI->setPriceItem( newPriceItem );
+    } else {
+        m_d->ui->priceCodeLineEdit->clear();
+        m_d->ui->priceShortDescLineEdit->clear();
+        m_d->ui->priceUnitMeasureLineEdit->clear();
+        m_d->priceItemGUI->setPriceItemNULL();
     }
 }
 
 void AccountingItemPPUGUI::connectPriceUnitMeasure(){
-    if( m_d->TAMBillItem ){
-        if( m_d->TAMBillItem->priceItem()){
+    if( m_d->TAMBillItem != NULL ){
+        if( m_d->TAMBillItem->priceItem() != NULL ) {
             if( m_d->connectedUnitMeasure != NULL ){
                 disconnect(  m_d->connectedUnitMeasure, &UnitMeasure::tagChanged, m_d->ui->priceUnitMeasureLineEdit, &QLineEdit::setText );
             }
@@ -403,7 +402,21 @@ void AccountingItemPPUGUI::connectPriceUnitMeasure(){
                 connect(  m_d->connectedUnitMeasure, &UnitMeasure::tagChanged, m_d->ui->priceUnitMeasureLineEdit, &QLineEdit::setText );
             }
         }
+    } else if( m_d->billItem != NULL ){
+        if( m_d->billItem->priceItem() != NULL ) {
+            if( m_d->connectedUnitMeasure != NULL ){
+                disconnect(  m_d->connectedUnitMeasure, &UnitMeasure::tagChanged, m_d->ui->priceUnitMeasureLineEdit, &QLineEdit::setText );
+            }
+
+            m_d->connectedUnitMeasure = m_d->billItem->priceItem()->unitMeasure();
+
+            if( m_d->connectedUnitMeasure != NULL ){
+                m_d->ui->priceUnitMeasureLineEdit->setText( m_d->connectedUnitMeasure->tag()  );
+                connect(  m_d->connectedUnitMeasure, &UnitMeasure::tagChanged, m_d->ui->priceUnitMeasureLineEdit, &QLineEdit::setText );
+            }
+        }
     }
+
 }
 
 void AccountingItemPPUGUI::associateLinesModel(bool ass) {
@@ -549,8 +562,8 @@ void AccountingItemPPUGUI::importAccountingMeasureMeasuresTXT() {
 }
 
 void AccountingItemPPUGUI::setAccountingItemNULL() {
-    setAccountingItem( (AccountingTAMBillItem *)( NULL ));
-    setAccountingItem( (AccountingBillItem *)( NULL ));
+    setItem( (AccountingTAMBillItem *)( NULL ));
+    setItem( (AccountingBillItem *)( NULL ));
 }
 
 void AccountingItemPPUGUI::addAttribute(){

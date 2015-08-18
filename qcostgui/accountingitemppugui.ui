@@ -172,21 +172,21 @@
            </widget>
           </item>
           <item row="3" column="0">
-           <widget class="QLabel" name="PPUTotalToBeDiscountedLabel">
+           <widget class="QLabel" name="PPUTotalToDiscountLabel">
             <property name="text">
              <string>Costo Unitario Lordo</string>
             </property>
            </widget>
           </item>
           <item row="4" column="0">
-           <widget class="QLabel" name="PPUNotToBeDiscountedLabel">
+           <widget class="QLabel" name="PPUNotToDiscountLabel">
             <property name="text">
              <string>Costo Unitario non Ribassabile</string>
             </property>
            </widget>
           </item>
           <item row="3" column="1">
-           <widget class="QLineEdit" name="PPUTotalToBeDiscountedLineEdit">
+           <widget class="QLineEdit" name="PPUTotalToDiscountLineEdit">
             <property name="alignment">
              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
             </property>
@@ -211,7 +211,7 @@
        <item row="3" column="0">
         <widget class="QGroupBox" name="amountsGroupBox">
          <property name="title">
-          <string>I&amp;mporti</string>
+          <string>I&amp;mporti contabilizzati</string>
          </property>
          <property name="checkable">
           <bool>true</bool>
@@ -221,21 +221,21 @@
          </property>
          <layout class="QGridLayout" name="amountsDataLayout">
           <item row="0" column="0">
-           <widget class="QLabel" name="totalAmountToBeDiscountedLabel">
+           <widget class="QLabel" name="totalAmountToDiscountLabel">
             <property name="text">
              <string>Importo al lordo del ribasso</string>
             </property>
            </widget>
           </item>
           <item row="1" column="0">
-           <widget class="QLabel" name="amountNotToBeDiscountedLabel">
+           <widget class="QLabel" name="amountNotToDiscountLabel">
             <property name="text">
              <string>Importo non ribassabile</string>
             </property>
            </widget>
           </item>
           <item row="0" column="1">
-           <widget class="QLineEdit" name="totalAmountToBeDiscountedLineEdit">
+           <widget class="QLineEdit" name="totalAmountToDiscountLineEdit">
             <property name="alignment">
              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
             </property>
@@ -252,7 +252,7 @@
            </widget>
           </item>
           <item row="1" column="1">
-           <widget class="QLineEdit" name="amountNotToBeDiscountedLineEdit">
+           <widget class="QLineEdit" name="amountNotToDiscountLineEdit">
             <property name="alignment">
              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
             </property>
@@ -277,7 +277,7 @@
        <item row="2" column="0">
         <widget class="QCheckBox" name="amountsGBCheckBox">
          <property name="text">
-          <string>Importi</string>
+          <string>Importi contabilizzati</string>
          </property>
         </widget>
        </item>
@@ -309,7 +309,11 @@
         </widget>
        </item>
        <item row="0" column="0" colspan="2">
-        <widget class="QTableView" name="attributeTableView"/>
+        <widget class="QTableView" name="attributeTableView">
+         <property name="alternatingRowColors">
+          <bool>true</bool>
+         </property>
+        </widget>
        </item>
       </layout>
      </widget>

@@ -27,17 +27,17 @@ public:
     static void writeCell( QTextCursor *cursor, QTextTable * table, const QTextTableCellFormat &cellFormat, const QTextBlockFormat &blockFormat, QList< QPair<QString, QTextCharFormat> > txt, bool nextCell = true );
     void writeDescriptionCell( PriceItem * priceItemToPrint, QTextCursor *cursor, QTextTable * table, const QTextTableCellFormat &centralFormat,
                                const QTextBlockFormat & txtBlockFormat, const QTextCharFormat & txtCharFormat, const QTextCharFormat & txtBoldCharFormat,
-                               AccountingPrinter::PrintAccountingBillOption prItemsOption );
+                               AccountingPrinter::PrintPPUDescOption prItemsOption );
     void writeDescriptionCell( QTextCursor *cursor, QTextTable * table, const QTextTableCellFormat &centralFormat,
                                const QTextBlockFormat & txtBlockFormat, const QTextCharFormat & txtCharFormat, const QTextCharFormat & txtBoldCharFormat,
-                               AccountingPrinter::PrintAccountingBillOption prItemsOption );
+                               AccountingPrinter::PrintPPUDescOption prItemsOption );
 
     AccountingBillItem * parentItem;
     QList<AccountingBillItem *> childrenContainer;
     QList<Attribute *> attributes;
     MathParser * parser;
     PriceFieldModel * priceFieldModel;
-
+    int progressiveCode;
 
     // Il tipo di elemento
     AccountingBillItem::ItemType itemType;
@@ -54,9 +54,9 @@ public:
     // nel caso di linea con misure, il prezzo unitario
     PriceItem * priceItem;
     // prezzo totale lordo
-    double PPUTotalToBeDiscounted;
+    double PPUTotalToDiscount;
     // prezzo non soggetto a ribasso
-    double PPUNotToBeDiscounted;
+    double PPUNotToDiscount;
     // nel caso di linea con misure, il modello delle misure
     MeasuresModel * measuresModel;
     // nel caso di elemento Root - colonna dell'elenco prezzi attiva
@@ -64,9 +64,9 @@ public:
     // nel caso di elemento Root - ribasso
     double discount;
     // nel caso di elemento Root - lista dei pricedataset usati per importo totale
-    QList<int> totalAmountPriceFieldsList;
+    QList<int> * totalAmountPriceFieldsList;
     // nel caso di elemento Root - lista dei pricedataset usati per importo non soggetto a ribasso
-    QList<int> noDiscountAmountPriceFieldsList;
+    QList<int> * noDiscountAmountPriceFieldsList;
     // nel caso di elemento Root - modello degli importi totali
     AccountingPriceFieldModel * totalAmountPriceFieldModel;
     // nel caso di elemento Root - modello degli importi non soggetto a ribasso
@@ -83,14 +83,16 @@ public:
     static int priceShortDescCol;
     static int priceUmCol;
     static int quantityCol;
-    static int totalAmountToBeDiscountedCol;
-    static int amountNotToBeDiscountedCol;
+    static int PPUTotalToDiscountCol;
+    static int totalAmountToDiscountCol;
+    static int PPUNotToDiscountCol;
+    static int amountNotToDiscountCol;
     static int totalAmountCol;
     int colCount;
 
-    double totalAmountToBeDiscounted;
-    double amountNotToBeDiscounted;
-    double amountToBeDiscounted;
+    double totalAmountToDiscount;
+    double amountNotToDiscount;
+    double amountToDiscount;
     double amountDiscounted;
     double totalAmount;
     static int amountPrecision;
@@ -99,6 +101,7 @@ public:
     unsigned int id;
 
     QXmlStreamAttributes tmpAttributes;
+    QString attributesString();
 };
 
 #endif // ACCOUNTINGBILLITEMPRIVATE_H
