@@ -88,6 +88,7 @@ public:
     static int PPUNotToDiscountCol;
     static int amountNotToDiscountCol;
     static int totalAmountCol;
+    static int discountPrecision;
     int colCount;
 
     double totalAmountToDiscount;

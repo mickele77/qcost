@@ -64,6 +64,7 @@ AccountingBillItem::AccountingBillItem(AccountingBillItem *parentItem, Accountin
     connect( this, &AccountingBillItem::titleChanged, this, &AccountingBillItem::itemChanged );
     connect( this, &AccountingBillItem::priceItemChanged, this, &AccountingBillItem::itemChanged );
     connect( this, &AccountingBillItem::currentPriceDataSetChanged, this, &AccountingBillItem::itemChanged );
+    connect( this, &AccountingBillItem::discountChanged, this, &AccountingBillItem::itemChanged );
 
     if( m_d->itemType == PPU || m_d->itemType == LumpSum ){
         connect( this, &AccountingBillItem::quantityChanged, this, &AccountingBillItem::updateTotalAmountToDiscount );
@@ -83,6 +84,13 @@ AccountingBillItem::AccountingBillItem(AccountingBillItem *parentItem, Accountin
     connect( this, &AccountingBillItem::amountToDiscountChanged, this, &AccountingBillItem::itemChanged );
     connect( this, &AccountingBillItem::amountDiscountedChanged, this, &AccountingBillItem::itemChanged );
     connect( this, &AccountingBillItem::totalAmountChanged, this, &AccountingBillItem::itemChanged );
+
+    if( m_d->totalAmountPriceFieldModel != NULL ){
+        connect( m_d->totalAmountPriceFieldModel, &AccountingPriceFieldModel::modelChanged, this, &AccountingBillItem::itemChanged );
+    }
+    if( m_d->noDiscountAmountPriceFieldModel != NULL ){
+        connect( m_d->noDiscountAmountPriceFieldModel, &AccountingPriceFieldModel::modelChanged, this, &AccountingBillItem::itemChanged );
+    }
 
     connect( this, &AccountingBillItem::attributesChanged, this, &AccountingBillItem::itemChanged );
 
@@ -285,7 +293,7 @@ QList<int> AccountingBillItem::totalAmountPriceFields() {
 
 void AccountingBillItem::setTotalAmountPriceFields(const QList<int> &newAmountFields) {
     if( m_d->itemType == Root ){
-        *(m_d->totalAmountPriceFieldsList) = newAmountFields;
+        m_d->totalAmountPriceFieldModel->setPriceFields( newAmountFields );
     }
 }
 
@@ -305,7 +313,7 @@ QList<int> AccountingBillItem::noDiscountAmountPriceFields() {
 
 void AccountingBillItem::setNoDiscountAmountPriceFields(const QList<int> &newAmountFields) {
     if( m_d->itemType == Root ){
-        *(m_d->noDiscountAmountPriceFieldsList) = newAmountFields;
+        m_d->noDiscountAmountPriceFieldModel->setPriceFields( newAmountFields );
     }
 }
 
@@ -918,6 +926,10 @@ double AccountingBillItem::discount() const {
     return 0.0;
 }
 
+QString AccountingBillItem::discountStr() const {
+    return QString("%1 %").arg( m_d->toString( discount() * 100.0, m_d->discountPrecision - 2 ) );
+}
+
 void AccountingBillItem::setCurrentPriceDataSet(int newVal ) {
     if( m_d->itemType == Root ){
         if( newVal != m_d->currentPriceDataSet ){
@@ -930,14 +942,25 @@ void AccountingBillItem::setCurrentPriceDataSet(int newVal ) {
     updatePPUs();
 }
 
-void AccountingBillItem::setDiscount(double newVal ) {
+void AccountingBillItem::setDiscount(double newValPurp ) {
     if( m_d->itemType == Root ){
+        double newVal = UnitMeasure::applyPrecision( newValPurp, m_d->discountPrecision );
         if( newVal != m_d->discount ){
             m_d->discount = newVal;
-            emit discountChanged( newVal );
+            emit discountChanged( discountStr() );
         }
     } else if( m_d->parentItem ){
-        m_d->parentItem->setDiscount( newVal );
+        m_d->parentItem->setDiscount( newValPurp );
+    }
+}
+
+void AccountingBillItem::setDiscount(const QString &newVal) {
+    QString v = newVal;
+    v.remove("%");
+    if( m_d->parser != NULL ){
+        setDiscount( m_d->parser->evaluate( v ) / 100.0 );
+    } else {
+        setDiscount( v.toDouble() / 100.0 );
     }
 }
 
@@ -1172,6 +1195,14 @@ bool AccountingBillItem::removeChildren(int position, int count) {
 }
 
 bool AccountingBillItem::clear() {
+    if( m_d->itemType == Root ){
+        setDiscount( 0.0 );
+        setName( "" );
+        QList<int> emptyList;
+        setTotalAmountPriceFields( emptyList );
+        setNoDiscountAmountPriceFields( emptyList );
+        setCurrentPriceDataSet( 0 );
+    }
     return removeChildren( 0, m_d->childrenContainer.size() );
 }
 
@@ -1315,8 +1346,12 @@ void AccountingBillItem::readXml( QXmlStreamReader *reader, PriceList * priceLis
                         iType = LumpSum;
                     }
                     appendChildren( iType );
-                    m_d->childrenContainer.last()->loadFromXml( reader->attributes(), priceList, attrModel );
+                    m_d->childrenContainer.last()->readXml( reader, priceList, attrModel );
                 }
+            }
+        }  else if( m_d->itemType == PPU ){
+            if( reader->name().toString().toUpper() == "MEASURESMODEL" && reader->isStartElement() ) {
+                generateMeasuresModel()->readXml( reader );
             }
         }
         reader->readNext();

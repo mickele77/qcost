@@ -84,6 +84,7 @@ AccountingBill::AccountingBill( const QString &n, ProjectItem *parent, PriceFiel
     m_d( new AccountingBillPrivate( n, this, pfm, parser ) ) {
     connect( m_d->rootItem, static_cast<void(AccountingBillItem::*)(AccountingBillItem*,int)>(&AccountingBillItem::dataChanged), this, &AccountingBill::updateValue );
 
+    connect( m_d->rootItem, &AccountingBillItem::discountChanged, this, &AccountingBill::discountChanged );
     connect( m_d->rootItem, &AccountingBillItem::totalAmountToDiscountChanged, this, &AccountingBill::totalAmountToDiscountChanged );
     connect( m_d->rootItem, &AccountingBillItem::amountNotToDiscountChanged, this, &AccountingBill::amountNotToDiscountChanged );
     connect( m_d->rootItem, &AccountingBillItem::amountToDiscountChanged, this, &AccountingBill::amountToDiscountChanged );
@@ -104,6 +105,7 @@ AccountingBill::AccountingBill(AccountingBill & b):
 
     connect( m_d->rootItem, static_cast<void(AccountingBillItem::*)(AccountingBillItem*,int)>(&AccountingBillItem::dataChanged), this, &AccountingBill::updateValue );
 
+    connect( m_d->rootItem, &AccountingBillItem::discountChanged, this, &AccountingBill::discountChanged );
     connect( m_d->rootItem, &AccountingBillItem::totalAmountToDiscountChanged, this, &AccountingBill::totalAmountToDiscountChanged );
     connect( m_d->rootItem, &AccountingBillItem::amountNotToDiscountChanged, this, &AccountingBill::amountNotToDiscountChanged );
     connect( m_d->rootItem, &AccountingBillItem::amountToDiscountChanged, this, &AccountingBill::amountToDiscountChanged );
@@ -317,7 +319,15 @@ double AccountingBill::discount() {
     return m_d->rootItem->discount();
 }
 
+QString AccountingBill::discountStr() {
+    return m_d->rootItem->discountStr();
+}
+
 void AccountingBill::setDiscount(double newVal) {
+    m_d->rootItem->setDiscount( newVal );
+}
+
+void AccountingBill::setDiscount( const QString & newVal) {
     m_d->rootItem->setDiscount( newVal );
 }
 
@@ -707,6 +717,7 @@ void AccountingBill::readXml(QXmlStreamReader *reader, ProjectPriceListParentIte
             m_d->rootItem->readXml( reader, m_d->priceList, m_d->attributeModel );
         }
     }
+    m_d->rootItem->updateProgressiveCode();
 }
 
 void AccountingBill::readXmlTmp(QXmlStreamReader *reader ) {
@@ -740,6 +751,33 @@ void AccountingBill::loadFromXml(const QXmlStreamAttributes &attrs, ProjectPrice
         }
         if( nameUp == "PRICEDATASET" ){
             m_d->rootItem->setCurrentPriceDataSet( (*i).value().toInt() );
+        }
+        if( nameUp == "DISCOUNT" ){
+            m_d->rootItem->setDiscount( (*i).value().toDouble() );
+        }
+        if( nameUp == "TOTALAMOUNTPRICEFIELDS" ){
+            QStringList pFieldsStr = (*i).value().toString().split(",");
+            QList<int> pFields;
+            for(QStringList::const_iterator pStr = pFieldsStr.constBegin(); pStr != pFieldsStr.constEnd(); pStr++ ){
+                bool ok = false;
+                int p = (*pStr).toInt( &ok );
+                if( ok ){
+                    pFields << p;
+                }
+            }
+            m_d->rootItem->setTotalAmountPriceFields( pFields );
+        }
+        if( nameUp == "NODISCOUNTAMOUNTPRICEFIELDS" ){
+            QStringList pFieldsStr = (*i).value().toString().split(",");
+            QList<int> pFields;
+            for(QStringList::const_iterator pStr = pFieldsStr.constBegin(); pStr != pFieldsStr.constEnd(); pStr++ ){
+                bool ok = false;
+                int p = (*pStr).toInt( &ok );
+                if( ok ){
+                    pFields << p;
+                }
+            }
+            m_d->rootItem->setNoDiscountAmountPriceFields( pFields );
         }
     }
 }

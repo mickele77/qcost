@@ -42,6 +42,9 @@ public:
     Qt::ItemFlags flags(const QModelIndex &index) const;
     bool setData(const QModelIndex &index, const QVariant &value, int role = Qt::EditRole);
 
+
+
+    void setPriceFields(const QList<int> &newAmountFields);
 signals:
     void modelChanged();
 

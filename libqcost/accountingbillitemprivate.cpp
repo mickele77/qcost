@@ -16,6 +16,7 @@ int AccountingBillItemPrivate::PPUNotToDiscountCol = 8;
 int AccountingBillItemPrivate::amountNotToDiscountCol = 9;
 int AccountingBillItemPrivate::totalAmountCol = 10;
 int AccountingBillItemPrivate::amountPrecision = 2;
+int AccountingBillItemPrivate::discountPrecision = 8;
 
 AccountingBillItemPrivate::AccountingBillItemPrivate( AccountingBillItem * parent, AccountingBillItem::ItemType iType, PriceFieldModel * pfm, MathParser * p ):
     parentItem(parent),

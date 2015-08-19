@@ -1,6 +1,8 @@
 #ifndef PROJECTACCOUNTINGDATAMODEL_H
 #define PROJECTACCOUNTINGDATAMODEL_H
 
+#include "library_common.h"
+
 class MathParser;
 class PaymentData;
 class PaymentDataModelPrivate;
@@ -10,7 +12,7 @@ class QXmlStreamReader;
 
 #include <QAbstractItemModel>
 
-class PaymentDataModel : public QAbstractItemModel {
+class EXPORT_LIB_OPT PaymentDataModel : public QAbstractItemModel {
     Q_OBJECT
 public:
     PaymentDataModel( MathParser *prs );

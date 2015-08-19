@@ -115,3 +115,8 @@ bool AccountingPriceFieldModel::setData(const QModelIndex &index, const QVariant
     }
     return false;
 }
+
+void  AccountingPriceFieldModel::setPriceFields(const QList<int> &newAmountFields) {
+    *(m_d->selectedRows) = newAmountFields;
+    emit modelChanged();
+}

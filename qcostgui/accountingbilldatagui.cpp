@@ -72,6 +72,8 @@ AccountingBillDataGUI::AccountingBillDataGUI(PriceFieldModel * pfm, MathParser *
 
     m_d->ui->attributesTableView->setContextMenuPolicy(Qt::CustomContextMenu);
     connect(m_d->ui->attributesTableView, &QTableView::customContextMenuRequested, this, &AccountingBillDataGUI::attributesTableViewCustomMenuRequested );
+
+    connect( m_d->ui->discountLineEdit, &QLineEdit::editingFinished, this, &AccountingBillDataGUI::setDiscountFromLineEdit );
 }
 
 AccountingBillDataGUI::~AccountingBillDataGUI(){
@@ -84,6 +86,7 @@ void AccountingBillDataGUI::setAccountingBill(AccountingBill *b) {
             disconnect( m_d->ui->nameLineEdit, &QLineEdit::textEdited, m_d->accounting, &AccountingBill::setName );
             disconnect( m_d->ui->descriptionTextEdit, &QPlainTextEdit::textChanged, this, &AccountingBillDataGUI::setDescription );
 
+            disconnect( m_d->accounting, &AccountingBill::discountChanged, m_d->ui->discountLineEdit, &QLineEdit::setText );
             disconnect( m_d->accounting, &AccountingBill::totalAmountToDiscountChanged, m_d->ui->totalAmountToDiscountLineEdit, &QLineEdit::setText );
             disconnect( m_d->accounting, &AccountingBill::amountNotToDiscountChanged, m_d->ui->amountNotToDiscountLineEdit, &QLineEdit::setText );
             disconnect( m_d->accounting, &AccountingBill::amountToDiscountChanged, m_d->ui->amountToDiscountLineEdit, &QLineEdit::setText );
@@ -98,6 +101,7 @@ void AccountingBillDataGUI::setAccountingBill(AccountingBill *b) {
         m_d->ui->currentPriceDataSetSpinBox->setMaximum(1);
         m_d->ui->currentPriceDataSetSpinBox->setValue(1);
 
+        m_d->ui->discountLineEdit->clear();
         m_d->ui->totalAmountToDiscountLineEdit->clear();
         m_d->ui->amountNotToDiscountLineEdit->clear();
         m_d->ui->amountToDiscountLineEdit->clear();
@@ -122,6 +126,9 @@ void AccountingBillDataGUI::setAccountingBill(AccountingBill *b) {
             connect( m_d->ui->nameLineEdit, &QLineEdit::textEdited, m_d->accounting, &AccountingBill::setName );
             m_d->ui->descriptionTextEdit->setPlainText( m_d->accounting->description() );
             connect( m_d->ui->descriptionTextEdit, &QPlainTextEdit::textChanged, this, &AccountingBillDataGUI::setDescription );
+
+            m_d->ui->discountLineEdit->setText( m_d->accounting->discountStr() );
+            connect( m_d->accounting, &AccountingBill::discountChanged, m_d->ui->discountLineEdit, &QLineEdit::setText );
 
             m_d->ui->totalAmountToDiscountLineEdit->setText( m_d->accounting->totalAmountToDiscountStr() );
             connect( m_d->accounting, &AccountingBill::totalAmountToDiscountChanged, m_d->ui->totalAmountToDiscountLineEdit, &QLineEdit::setText );
@@ -149,14 +156,14 @@ void AccountingBillDataGUI::setAccountingBill(AccountingBill *b) {
 }
 
 void AccountingBillDataGUI::setDescription(){
-    if( m_d->accounting ){
+    if( m_d->accounting != NULL ){
         m_d->accounting->setDescription( m_d->ui->descriptionTextEdit->toPlainText() );
     }
 }
 
-void AccountingBillDataGUI::setDiscount() {
+void AccountingBillDataGUI::setDiscountFromLineEdit() {
     if( m_d->accounting != NULL ){
-        // m_d->accounting->setDiscount( m_d->ui->discountLineEdit->text() );
+        m_d->accounting->setDiscount( m_d->ui->discountLineEdit->text() );
     }
 }
 

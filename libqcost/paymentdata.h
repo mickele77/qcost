@@ -1,6 +1,8 @@
 #ifndef PAYMENTDATA_H
 #define PAYMENTDATA_H
 
+#include "library_common.h"
+
 class AccountingBillItem;
 class MathParser;
 
@@ -26,7 +28,7 @@ class PaymentDataPrivate;
 *
 */
 
-class PaymentData: public QObject {
+class EXPORT_LIB_OPT PaymentData: public QObject {
     Q_OBJECT
 public:
     enum DataType {

@@ -96,7 +96,9 @@ public:
     int priceDataSet();
 
     double discount();
+    QString discountStr();
     void setDiscount(double newVal);
+    void setDiscount(const QString & newVal);
 
     ProjectItem *child(int number);
     int childCount() const;
@@ -214,7 +216,7 @@ signals:
 
     void modelChanged();
 
-    void discountChanged( double );
+    void discountChanged( const QString & );
 
 private slots:
     void updateValue(AccountingBillItem *item, int column);

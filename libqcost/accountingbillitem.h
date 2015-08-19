@@ -100,6 +100,7 @@ public:
     QString name();
     int currentPriceDataSet() const;
     double discount() const;
+    QString discountStr() const;
     // dice se il prezzo è usato dall'articolo di computo o da un suo sottoarticolo
     bool isUsingPriceItem( PriceItem * p );
     // restituisce l'elenco degli articoli di prezzo contenuti nell'articolo di computo o nei sottoarticoli
@@ -242,7 +243,8 @@ public:
 
 public slots:
     void setCurrentPriceDataSet(int newVal);
-    void setDiscount( double newVal );
+    void setDiscount(double newValPurp );
+    void setDiscount( const QString & newVal );
     void setName(const QString &newName);
     void setItemType(ItemType iType);
     void setDate( const QDate & d );
@@ -277,7 +279,7 @@ signals:
     void nameChanged( const QString & );
     void priceItemChanged( PriceItem * oldPriceItem, PriceItem * newPriceItem );
     void currentPriceDataSetChanged( int newPriceDataSet );
-    void discountChanged( double newDiscount );
+    void discountChanged( const QString & newVal );
     void PPUTotalToDiscountChanged( const QString & newVal );
     void PPUNotToDiscountChanged( const QString & newVal );
     void totalAmountToDiscountChanged( const QString & newVal );

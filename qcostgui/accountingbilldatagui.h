@@ -40,7 +40,6 @@ public:
     void showEvent(QShowEvent *event);
 private slots:
     void setDescription();
-    void setDiscount();
     void setAccountingNULL();
     void addAttribute();
     void removeAttribute();
@@ -54,6 +53,7 @@ private slots:
 
     void setPriceList();
     void setPriceDataSet();
+    void setDiscountFromLineEdit();
 private:
     AccountingBillDataGUIPrivate * m_d;
 
