@@ -65,7 +65,7 @@ public:
     QMap<PriceListDBWidget::ImportOptions, bool> *EPAImportOptions;
     QString * EPAFileName;
 
-    QAction * addBillAction;
+    QAction * addPaymentAction;
     QAction * addCommentAction;
     QAction * addPPUAction;
     QAction * addLSAction;
@@ -86,8 +86,8 @@ AccountingTreeGUI::AccountingTreeGUI( QMap<PriceListDBWidget::ImportOptions, boo
 
     setAccountingBill( b );
 
-    m_d->addBillAction = new QAction(trUtf8("S.A.L."), this);
-    connect( m_d->addBillAction, &QAction::triggered, this, &AccountingTreeGUI::addItems );
+    m_d->addPaymentAction = new QAction(trUtf8("S.A.L."), this);
+    connect( m_d->addPaymentAction, &QAction::triggered, this, &AccountingTreeGUI::addItems );
     m_d->addCommentAction = new QAction(trUtf8("Riga di commento"), this);
     connect( m_d->addCommentAction, &QAction::triggered, this, &AccountingTreeGUI::addItems );
     m_d->addPPUAction = new QAction(trUtf8("Opera a misura"), this);
@@ -97,7 +97,7 @@ AccountingTreeGUI::AccountingTreeGUI( QMap<PriceListDBWidget::ImportOptions, boo
     m_d->addTAMAction = new QAction(trUtf8("Lista economie"), this);
     connect( m_d->addTAMAction, &QAction::triggered, this, &AccountingTreeGUI::addItems );
     QMenu * addPushButtonMenu = new QMenu( m_d->ui->addPushButton );
-    addPushButtonMenu->addAction(m_d->addBillAction);
+    addPushButtonMenu->addAction(m_d->addPaymentAction);
     addPushButtonMenu->addAction(m_d->addCommentAction);
     addPushButtonMenu->addAction(m_d->addPPUAction);
     addPushButtonMenu->addAction(m_d->addLSAction);
@@ -147,7 +147,7 @@ void AccountingTreeGUI::accountingTreeViewCustomMenuRequested(QPoint pos){
     if( m_d->accountingBill != NULL ){
         QMenu *addSubMenu=new QMenu(this);
         addSubMenu->setTitle( trUtf8("Aggiungi"));
-        addSubMenu->addAction( m_d->addBillAction );
+        addSubMenu->addAction( m_d->addPaymentAction );
         addSubMenu->addAction( m_d->addPPUAction );
         addSubMenu->addAction( m_d->addCommentAction );
         addSubMenu->addAction( m_d->addLSAction );
@@ -708,7 +708,7 @@ void AccountingTreeGUI::addItems(){
                 bool ret = false;
                 AccountingBillItem * item = m_d->accountingBill->item( rowList.last() );
 
-                if( sender() == m_d->addBillAction ) {
+                if( sender() == m_d->addPaymentAction ) {
                     if( item->itemType() == AccountingBillItem::Payment ){
                         ret = m_d->accountingBill->insertItems(  AccountingBillItem::Payment, item->childNumber(), rowList.size(), rowList.last().parent() );
                     } else {
@@ -716,7 +716,7 @@ void AccountingTreeGUI::addItems(){
                     }
                 } else if( sender() == m_d->addCommentAction ) {
                     if( item->itemType() == AccountingBillItem::Payment ){
-                        ret = m_d->accountingBill->insertItems( AccountingBillItem::Comment, -1, rowList.size(), rowList.last() );
+                        ret = m_d->accountingBill->insertItems( AccountingBillItem::Comment, 0, rowList.size(), rowList.last() );
                     } else if( (item->itemType() == AccountingBillItem::Comment) ||
                                (item->itemType() == AccountingBillItem::PPU) ||
                                (item->itemType() == AccountingBillItem::LumpSum) ||
@@ -725,7 +725,7 @@ void AccountingTreeGUI::addItems(){
                     }
                 } else if( sender() == m_d->addPPUAction ) {
                     if( item->itemType() == AccountingBillItem::Payment ){
-                        ret = m_d->accountingBill->insertItems( AccountingBillItem::PPU, -1, rowList.size(), rowList.last() );
+                        ret = m_d->accountingBill->insertItems( AccountingBillItem::PPU, 0, rowList.size(), rowList.last() );
                     } else if( (item->itemType() == AccountingBillItem::Comment) ||
                                (item->itemType() == AccountingBillItem::PPU) ||
                                (item->itemType() == AccountingBillItem::LumpSum) ||
@@ -734,7 +734,7 @@ void AccountingTreeGUI::addItems(){
                     }
                 } else if( sender() == m_d->addLSAction ) {
                     if( item->itemType() == AccountingBillItem::Payment ){
-                        ret = m_d->accountingBill->insertItems( AccountingBillItem::LumpSum, -1, rowList.size(), rowList.last() );
+                        ret = m_d->accountingBill->insertItems( AccountingBillItem::LumpSum, 0, rowList.size(), rowList.last() );
                     } else if( (item->itemType() == AccountingBillItem::Comment) ||
                                (item->itemType() == AccountingBillItem::PPU) ||
                                (item->itemType() == AccountingBillItem::LumpSum) ||
@@ -743,7 +743,7 @@ void AccountingTreeGUI::addItems(){
                     }
                 } else if( sender() == m_d->addTAMAction ) {
                     if( item->itemType() == AccountingBillItem::Payment ){
-                        ret = m_d->accountingBill->insertItems( AccountingBillItem::TimeAndMaterials, -1, rowList.size(), rowList.last() );
+                        ret = m_d->accountingBill->insertItems( AccountingBillItem::TimeAndMaterials, 0, rowList.size(), rowList.last() );
                     } else if( (item->itemType() == AccountingBillItem::Comment) ||
                                (item->itemType() == AccountingBillItem::PPU) ||
                                (item->itemType() == AccountingBillItem::LumpSum) ||
@@ -762,7 +762,7 @@ void AccountingTreeGUI::addItems(){
                              (sender() == m_d->addLSAction) ||
                              (sender() == m_d->addTAMAction)) &&
                                 (item->itemType() == AccountingBillItem::Payment ) ) {
-                            m_d->ui->treeView->selectionModel()->setCurrentIndex( m_d->accountingBill->index( item->childrenCount()-1, 0, rowList.last() ),
+                            m_d->ui->treeView->selectionModel()->setCurrentIndex( m_d->accountingBill->index( 0, 0, rowList.last() ),
                                                                                   QItemSelectionModel::Rows | QItemSelectionModel::SelectCurrent );
                         } else
                             m_d->ui->treeView->selectionModel()->setCurrentIndex( m_d->accountingBill->index( rowList.last().row()+rowList.size(), 0, rowList.last().parent() ),
@@ -770,7 +770,7 @@ void AccountingTreeGUI::addItems(){
                     }
                 }
             } else {
-                if( sender() == m_d->addBillAction ) {
+                if( sender() == m_d->addPaymentAction ) {
                     m_d->accountingBill->insertItems( AccountingBillItem::Payment );
                 }
             }

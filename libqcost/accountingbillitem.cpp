@@ -437,11 +437,11 @@ QDate AccountingBillItem::dateBegin() const {
 }
 
 QString AccountingBillItem::dateBeginStr() const {
-    if( m_d->itemType == Payment ){
+    if( (m_d->itemType == Payment) || (m_d->itemType == LumpSum) ){
         if( m_d->parser != NULL ){
             return m_d->parser->toString( dateBegin(), QLocale::NarrowFormat );
         }
-        return m_d->date.toString();
+        return dateBegin().toString();
     } else if( m_d->itemType == TimeAndMaterials && m_d->tamBillItem != NULL ){
         return m_d->tamBillItem->dateBeginStr();
     }
@@ -488,11 +488,11 @@ QDate AccountingBillItem::dateEnd() const {
 }
 
 QString AccountingBillItem::dateEndStr() const {
-    if( m_d->itemType == Payment ){
+    if( (m_d->itemType == Payment) || (m_d->itemType == LumpSum) ){
         if( m_d->parser != NULL ){
             return m_d->parser->toString( dateEnd(), QLocale::NarrowFormat );
         }
-        return m_d->dateEnd.toString();
+        return dateEnd().toString();
     } else if( m_d->itemType == TimeAndMaterials && m_d->tamBillItem != NULL ){
         return m_d->tamBillItem->dateEndStr();
     }

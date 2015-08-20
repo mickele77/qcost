@@ -30,9 +30,6 @@ private slots:
 
     void setAccountingNULL();
 
-    void setDateBegin( const QString & newVal );
-    void setDateEnd( const QString & newVal );
-
     void updateLumpSumsComboBox();
     void setLSBill();
 private:

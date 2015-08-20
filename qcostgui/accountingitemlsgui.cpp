@@ -59,8 +59,8 @@ void AccountingItemLSGUI::setItem(AccountingBillItem *b) {
         if( m_d->item != NULL ){
             disconnect( m_d->item, &AccountingBillItem::aboutToBeDeleted, this, &AccountingItemLSGUI::setAccountingItemNULL );
 
-            disconnect( m_d->item, &AccountingBillItem::dateBeginChanged, this, &AccountingItemLSGUI::setDateBegin );
-            disconnect( m_d->item, &AccountingBillItem::dateEndChanged, this, &AccountingItemLSGUI::setDateEnd );
+            disconnect( m_d->item, &AccountingBillItem::dateBeginChanged, m_d->ui->beginDateLineEdit, &QLineEdit::setText );
+            disconnect( m_d->item, &AccountingBillItem::dateEndChanged, m_d->ui->endDateLineEdit, &QLineEdit::setText );
 
             disconnect( m_d->item, &AccountingBillItem::totalAmountToDiscountChanged, m_d->ui->totalAmountToDiscountLineEdit, &QLineEdit::setText );
             disconnect( m_d->item, &AccountingBillItem::amountNotToDiscountChanged, m_d->ui->amountNotToDiscountLineEdit, &QLineEdit::setText );
@@ -86,10 +86,11 @@ void AccountingItemLSGUI::setItem(AccountingBillItem *b) {
         if( m_d->item != NULL ){
             connect( m_d->item, &AccountingBillItem::aboutToBeDeleted, this, &AccountingItemLSGUI::setAccountingItemNULL );
 
+            QString v = m_d->item->dateBeginStr();
             m_d->ui->beginDateLineEdit->setText( m_d->item->dateBeginStr() );
-            connect( m_d->item, &AccountingBillItem::dateBeginChanged, this, &AccountingItemLSGUI::setDateBegin );
+            connect( m_d->item, &AccountingBillItem::dateBeginChanged, m_d->ui->beginDateLineEdit, &QLineEdit::setText );
             m_d->ui->endDateLineEdit->setText( m_d->item->dateEndStr() );
-            connect( m_d->item, &AccountingBillItem::dateEndChanged, this, &AccountingItemLSGUI::setDateEnd );
+            connect( m_d->item, &AccountingBillItem::dateEndChanged, m_d->ui->endDateLineEdit, &QLineEdit::setText );
 
             m_d->ui->totalAmountToDiscountLineEdit->setText( m_d->item->totalAmountToDiscountStr() );
             connect( m_d->item, &AccountingBillItem::totalAmountToDiscountChanged, m_d->ui->totalAmountToDiscountLineEdit, &QLineEdit::setText );
@@ -165,14 +166,6 @@ void AccountingItemLSGUI::setAccountingBill(AccountingBill *b) {
 
 void AccountingItemLSGUI::setAccountingNULL() {
     setAccountingBill(NULL);
-}
-
-void AccountingItemLSGUI::setDateBegin( const QString &newVal ) {
-    m_d->ui->beginDateLineEdit->setText( newVal );
-}
-
-void AccountingItemLSGUI::setDateEnd( const QString &newVal ) {
-    m_d->ui->endDateLineEdit->setText( newVal );
 }
 
 void AccountingItemLSGUI::updateLumpSumsComboBox() {
