@@ -72,6 +72,7 @@ AccountingTAMBillDataGUI::AccountingTAMBillDataGUI(PriceFieldModel * pfm, MathPa
     connect( m_d->ui->printAttributePushButton, &QPushButton::clicked, this, &AccountingTAMBillDataGUI::printAttributeAccountingODT );
 
     m_d->ui->attributesTableView->setContextMenuPolicy(Qt::CustomContextMenu);
+    m_d->ui->attributesTableView->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
     connect(m_d->ui->attributesTableView, &QTableView::customContextMenuRequested, this, &AccountingTAMBillDataGUI::attributesTableViewCustomMenuRequested );
 }
 
