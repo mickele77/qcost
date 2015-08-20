@@ -79,18 +79,19 @@ AccountingPrinter::~AccountingPrinter() {
 }
 
 bool AccountingPrinter::printODT( AccountingPrinter::PrintPPUDescOption prAccountingMeasuresOption,
+                                  PrintAmountsOption prAmountsOption,
                                   AccountingPrinter::PrintOption prOption,
                                   const QString &fileName,
                                   double paperWidth,
                                   double paperHeight,
                                   Qt::Orientation paperOrientation ) const {
     if( prOption == PrintAccounting ){
-        return printAccountingODT( prAccountingMeasuresOption, fileName, paperWidth, paperHeight, paperOrientation, true );
+        return printAccountingODT( prAccountingMeasuresOption, prAmountsOption, fileName, paperWidth, paperHeight, paperOrientation, true );
     } else if( prOption == PrintAccountingSummary ){
-        return printAccountingSummaryODT( prAccountingMeasuresOption, fileName, paperWidth, paperHeight, paperOrientation, true, false );
-    } else if( prOption == PrintBill ){
+        return printAccountingSummaryODT( prAccountingMeasuresOption, prAmountsOption, fileName, paperWidth, paperHeight, paperOrientation, true, false );
+    } else if( prOption == PrintMeasures ){
         // return printMeasuresODT( prAccountingMeasuresOption, fileName, paperWidth, paperHeight, paperOrientation, printAmounts, true );
-    } else if( prOption == PrintRawBill ){
+    } else if( prOption == PrintRawMeasures ){
         // return printMeasuresODT( prAccountingMeasuresOption, fileName, paperWidth, paperHeight, paperOrientation, printAmounts, true );
     }
     return false;
@@ -318,7 +319,8 @@ bool AccountingPrinter::printAttributeODT(AccountingPrinter::PrintPPUDescOption 
     return false;
 }
 
-bool AccountingPrinter::printAccountingODT( PrintPPUDescOption prItemsOption,
+bool AccountingPrinter::printAccountingODT( AccountingPrinter::PrintPPUDescOption prItemsOption,
+                                            AccountingPrinter::PrintAmountsOption prAmountOption,
                                             const QString &fileName,
                                             double paperWidth, double paperHeight,
                                             Qt::Orientation paperOrientation,
@@ -556,11 +558,12 @@ bool AccountingPrinter::printAccountingODT( PrintPPUDescOption prItemsOption,
 }
 
 bool AccountingPrinter::printAccountingSummaryODT(PrintPPUDescOption prAccountingMeasuresOption,
-                                        const QString &fileName,
-                                        double paperWidth, double paperHeight,
-                                        Qt::Orientation paperOrientation,
-                                        bool printAmounts,
-                                        bool writeDetails ) const {
+                                                  PrintAmountsOption prAmountsOption,
+                                                  const QString &fileName,
+                                                  double paperWidth, double paperHeight,
+                                                  Qt::Orientation paperOrientation,
+                                                  bool printAmounts,
+                                                  bool writeDetails ) const {
     if( m_d->accountingBill != NULL ){
         if( paperOrientation == Qt::Horizontal ){
             if( paperHeight > paperWidth ){

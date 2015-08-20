@@ -33,6 +33,7 @@ public:
     explicit AccountingPrinterGUI( PaymentDataModel *dataModel,
                                    AccountingPrinter::PrintPPUDescOption *prItemsOption,
                                    AccountingPrinter::PrintOption * prOption,
+                                   AccountingPrinter::PrintAmountsOption * prAmountsOption,
                                    int * billToPrint,
                                    double *pWidth,
                                    double *pHeight,

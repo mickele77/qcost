@@ -36,6 +36,11 @@ class AccountingPrinterPrivate;
 
 class EXPORT_LIB_OPT AccountingPrinter {
 public:
+    enum PrintAmountsOption{
+        PrintTotalAmountsToDiscount,
+        PrintAmountsNotToDiscount,
+        PrintAllAmounts
+    };
     enum PrintPPUDescOption{
         PrintShortDesc,
         PrintLongDesc,
@@ -43,8 +48,8 @@ public:
         PrintShortLongDescOpt
     };
     enum PrintOption{
-        PrintRawBill,
-        PrintBill,
+        PrintRawMeasures,
+        PrintMeasures,
         PrintPayment,
         PrintAccounting,
         PrintAccountingSummary
@@ -61,6 +66,7 @@ public:
     ~AccountingPrinter();
 
     bool printODT( PrintPPUDescOption prAccountingMeasuresOption,
+                   PrintAmountsOption prAmountsOption,
                    PrintOption prOption,
                    const QString &fileName,
                    double paperWidth = 210.0, double paperHeight = 297.0,
@@ -77,18 +83,20 @@ public:
 private:
     AccountingPrinterPrivate * m_d;
 
-    bool printAccountingODT(PrintPPUDescOption prItemsOption,
-                            const QString &fileName,
-                            double paperWidth = 210.0, double paperHeight = 297.0,
-                            Qt::Orientation paperOrientation = Qt::Vertical,
-                            bool printAmounts = true ) const;
+    bool printAccountingODT( PrintPPUDescOption prItemsOption,
+                             PrintAmountsOption prAmountOption,
+                             const QString &fileName,
+                             double paperWidth = 210.0, double paperHeight = 297.0,
+                             Qt::Orientation paperOrientation = Qt::Vertical,
+                             bool printAmounts = true ) const;
 
-    bool printAccountingSummaryODT(PrintPPUDescOption prAccountingMeasuresOption,
-                                   const QString &fileName,
-                                   double paperWidth = 210.0, double paperHeight = 297.0,
-                                   Qt::Orientation paperOrientation = Qt::Vertical,
-                                   bool printAmounts = true,
-                                   bool writeDetails = true) const;
+    bool printAccountingSummaryODT( PrintPPUDescOption prAccountingMeasuresOption,
+                                    PrintAmountsOption prAmountsOption,
+                                    const QString &fileName,
+                                    double paperWidth = 210.0, double paperHeight = 297.0,
+                                    Qt::Orientation paperOrientation = Qt::Vertical,
+                                    bool printAmounts = true,
+                                    bool writeDetails = true) const;
 };
 
 #endif // ACCOUNTINGPRINTER_H
