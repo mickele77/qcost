@@ -1711,6 +1711,7 @@ void AccountingBillItem::setLSBill(AccountingLSBill *newLSBill) {
             disconnect( m_d->lsBill, &AccountingLSBill::aboutToBeDeleted, this, &AccountingBillItem::setLSBillNULL );
         }
         m_d->lsBill = newLSBill;
+        updateLSQuantity();
         if( m_d->lsBill != NULL ){
             connect( m_d->lsBill, &AccountingLSBill::modelChanged, this, &AccountingBillItem::updateLSQuantity );
             connect( m_d->lsBill, &AccountingLSBill::PPUTotalToDiscountChanged, this, &AccountingBillItem::updatePPUs );
@@ -1724,12 +1725,13 @@ void AccountingBillItem::setLSBill(AccountingLSBill *newLSBill) {
 }
 
 void AccountingBillItem::updateLSQuantity() {
-    if( (m_d->itemType == AccountingBillItem::LumpSum) &&
-            (m_d->lsBill != NULL) ){
+    if( m_d->itemType == AccountingBillItem::LumpSum ) {
         double newQuantity = 0.0;
-        if( m_d->parentItem != NULL ){
-            if( m_d->parentItem->itemType() == AccountingBillItem::Payment ){
-                newQuantity = m_d->lsBill->percentageAccounted( m_d->parentItem->dateBegin(), m_d->parentItem->dateEnd() );
+        if(m_d->lsBill != NULL){
+            if( m_d->parentItem != NULL ){
+                if( m_d->parentItem->itemType() == AccountingBillItem::Payment ){
+                    newQuantity = m_d->lsBill->percentageAccounted( m_d->parentItem->dateBegin(), m_d->parentItem->dateEnd() );
+                }
             }
         }
         if( newQuantity != m_d->quantity ){
@@ -2004,7 +2006,7 @@ QString AccountingBillItem::quantityStr() const {
         return m_d->toString( m_d->quantity, 'f', prec );
     }
     if( m_d->itemType == LumpSum ){
-        return m_d->toString( m_d->quantity * 100.0, 'f', AccountingLSBillItem::percentagePrecision() );
+        return QString("%1 %").arg( m_d->toString(m_d->quantity * 100.0, 'f', AccountingLSBillItem::percentagePrecision() ) );
     }
     return QString();
 }

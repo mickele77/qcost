@@ -62,6 +62,8 @@ void AccountingItemLSGUI::setItem(AccountingBillItem *b) {
             disconnect( m_d->item, &AccountingBillItem::dateBeginChanged, m_d->ui->beginDateLineEdit, &QLineEdit::setText );
             disconnect( m_d->item, &AccountingBillItem::dateEndChanged, m_d->ui->endDateLineEdit, &QLineEdit::setText );
 
+            disconnect( m_d->item, &AccountingBillItem::quantityChanged, m_d->ui->percentageAccountedLineEdit, &QLineEdit::setText );
+
             disconnect( m_d->item, &AccountingBillItem::totalAmountToDiscountChanged, m_d->ui->totalAmountToDiscountLineEdit, &QLineEdit::setText );
             disconnect( m_d->item, &AccountingBillItem::amountNotToDiscountChanged, m_d->ui->amountNotToDiscountLineEdit, &QLineEdit::setText );
             disconnect( m_d->item, &AccountingBillItem::totalAmountChanged, m_d->ui->totalAmountLineEdit, &QLineEdit::setText );
@@ -69,14 +71,16 @@ void AccountingItemLSGUI::setItem(AccountingBillItem *b) {
             disconnect( m_d->item, &AccountingBillItem::PPUTotalToDiscountChanged, m_d->ui->PPUTotalToDiscountLineEdit, &QLineEdit::setText );
             disconnect( m_d->item, &AccountingBillItem::PPUNotToDiscountChanged, m_d->ui->PPUNotToDiscountLineEdit, &QLineEdit::setText );
         }
-        m_d->ui->PPUTotalToDiscountLineEdit->clear();
-        m_d->ui->PPUNotToDiscountLineEdit->clear();
+        m_d->ui->beginDateLineEdit->clear();
+        m_d->ui->endDateLineEdit->clear();
+
+        m_d->ui->percentageAccountedLineEdit->clear();
         m_d->ui->totalAmountToDiscountLineEdit->clear();
         m_d->ui->amountNotToDiscountLineEdit->clear();
         m_d->ui->totalAmountLineEdit->clear();
 
-        m_d->ui->beginDateLineEdit->clear();
-        m_d->ui->endDateLineEdit->clear();
+        m_d->ui->PPUTotalToDiscountLineEdit->clear();
+        m_d->ui->PPUNotToDiscountLineEdit->clear();
 
         m_d->item = b;
         m_d->itemAttributeModel->setItem( b );
@@ -86,11 +90,13 @@ void AccountingItemLSGUI::setItem(AccountingBillItem *b) {
         if( m_d->item != NULL ){
             connect( m_d->item, &AccountingBillItem::aboutToBeDeleted, this, &AccountingItemLSGUI::setAccountingItemNULL );
 
-            QString v = m_d->item->dateBeginStr();
             m_d->ui->beginDateLineEdit->setText( m_d->item->dateBeginStr() );
             connect( m_d->item, &AccountingBillItem::dateBeginChanged, m_d->ui->beginDateLineEdit, &QLineEdit::setText );
             m_d->ui->endDateLineEdit->setText( m_d->item->dateEndStr() );
             connect( m_d->item, &AccountingBillItem::dateEndChanged, m_d->ui->endDateLineEdit, &QLineEdit::setText );
+
+            m_d->ui->percentageAccountedLineEdit->setText( m_d->item->quantityStr() );
+            connect( m_d->item, &AccountingBillItem::quantityChanged, m_d->ui->percentageAccountedLineEdit, &QLineEdit::setText );
 
             m_d->ui->totalAmountToDiscountLineEdit->setText( m_d->item->totalAmountToDiscountStr() );
             connect( m_d->item, &AccountingBillItem::totalAmountToDiscountChanged, m_d->ui->totalAmountToDiscountLineEdit, &QLineEdit::setText );
