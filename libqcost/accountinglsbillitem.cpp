@@ -453,7 +453,6 @@ double AccountingLSBillItem::accAmount(const QDate &dBegin, const QDate &dEnd) c
         for( QList<AccountingLSBillItem *>::iterator i = m_d->childrenContainer.begin(); i != m_d->childrenContainer.end(); ++i ){
             ret += (*i)->accAmount(dBegin, dEnd);
         }
-
     } else if( m_d->measuresModel != NULL ){
         ret = m_d->measuresModel->accQuantity( dBegin, dEnd ) * m_d->PPU;
     }
@@ -469,7 +468,7 @@ double AccountingLSBillItem::percentageAccounted() const{
 }
 
 QString AccountingLSBillItem::percentageAccountedStr() const {
-    return m_d->toString( m_d->percentageAccounted * 100.0, 'f', m_d->percentagePrecision );
+    return QString("%1 %").arg( m_d->toString( m_d->percentageAccounted * 100.0, 'f', m_d->percentagePrecision ) );
 }
 
 int AccountingLSBillItem::percentagePrecision() {
@@ -1003,7 +1002,7 @@ Qt::ItemFlags AccountingLSBillItem::flags(int column) const {
 void AccountingLSBillItem::writeXml(QXmlStreamWriter *writer) {
     if( m_d->parentItem != NULL ){
         // se non e' l'elemento root
-        writer->writeStartElement( "AccountingBillItem" );
+        writer->writeStartElement( "AccountingLSBillItem" );
         writer->writeAttribute( "id", QString::number(m_d->id) );
 
         QString attrs;

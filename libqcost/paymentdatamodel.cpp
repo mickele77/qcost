@@ -174,6 +174,9 @@ bool PaymentDataModel::insertPayments(int position, int count) {
 }
 
 bool PaymentDataModel::removePayments(int position, int purpCount) {
+    if( purpCount <= 0 ){
+        return true;
+    }
     bool ret = false;
     if( (position >= 0) && (position < m_d->rootData->childrenCount()) ){
         int count = purpCount;

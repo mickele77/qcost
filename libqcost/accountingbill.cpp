@@ -188,7 +188,11 @@ int AccountingBill::childNumber(ProjectItem * /*item*/) {
 }
 
 bool AccountingBill::clear() {
-    return m_d->rootItem->clear();
+    bool ret = m_d->rootItem->clear();
+    m_d->rootItem->setCurrentPriceDataSet( 0 );
+    setName("");
+    setPriceList( NULL );
+    return ret;
 }
 
 bool AccountingBill::canChildrenBeInserted() {

@@ -222,7 +222,7 @@ void AccountingBillGUI::updateAccountingMeasureGUI() {
             m_d->accountingItemPPUGUI->setAccountingItemNULL();
 
             m_d->accountingItemLSGUI->show();
-            m_d->accountingItemLSGUI->setAccountingItem( m_d->currentItem );
+            m_d->accountingItemLSGUI->setItem( m_d->currentItem );
 
             m_d->accountingItemTAMGUI->hide();
             m_d->accountingItemTAMGUI->setAccountingItemNULL();

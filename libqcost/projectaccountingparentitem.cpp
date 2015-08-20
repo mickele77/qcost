@@ -236,9 +236,9 @@ bool ProjectAccountingParentItem::setData(const QVariant &value) {
 bool ProjectAccountingParentItem::clear() {
     bool ret = true;
     ret = ret && m_d->dataModel->clear();
-    ret = ret && m_d->measuresBills->clear();
-    ret = ret && m_d->lumpSumBills->clear();
-    ret = ret && m_d->timeAndMaterialBill->clear();
+    ret = m_d->measuresBills->clear() && ret;
+    ret = m_d->lumpSumBills->clear() && ret;
+    ret = m_d->timeAndMaterialBill->clear() && ret;
     return ret;
 }
 

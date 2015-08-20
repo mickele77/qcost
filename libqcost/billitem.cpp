@@ -777,6 +777,10 @@ bool BillItem::appendChildren(int count) {
 }
 
 bool BillItem::removeChildren(int position, int count) {
+    if( count <= 0 ){
+        return true;
+    }
+
     if (position < 0 || position + count > m_d->childrenContainer.size())
         return false;
 

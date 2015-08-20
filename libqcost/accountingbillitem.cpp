@@ -66,6 +66,16 @@ AccountingBillItem::AccountingBillItem(AccountingBillItem *parentItem, Accountin
     connect( this, &AccountingBillItem::currentPriceDataSetChanged, this, &AccountingBillItem::itemChanged );
     connect( this, &AccountingBillItem::discountChanged, this, &AccountingBillItem::itemChanged );
 
+
+    if( m_d->itemType == LumpSum ){
+        if( m_d->parentItem != NULL ){
+            if( m_d->parentItem->m_d->itemType == Payment ){
+                connect( m_d->parentItem, &AccountingBillItem::dateBeginChanged, this, &AccountingBillItem::dateBeginChanged );
+                connect( m_d->parentItem, &AccountingBillItem::dateEndChanged, this, &AccountingBillItem::dateEndChanged );
+            }
+        }
+    }
+
     if( m_d->itemType == PPU || m_d->itemType == LumpSum ){
         connect( this, &AccountingBillItem::quantityChanged, this, &AccountingBillItem::updateTotalAmountToDiscount );
         connect( this, &AccountingBillItem::PPUTotalToDiscountChanged, this, &AccountingBillItem::updateTotalAmountToDiscount );
@@ -416,13 +426,20 @@ void AccountingBillItem::setDate(const QString &d) {
 }
 
 QDate AccountingBillItem::dateBegin() const {
+    if( m_d->itemType == LumpSum ){
+        if( m_d->parentItem != NULL ){
+            if( m_d->parentItem->m_d->itemType == Payment ){
+                return m_d->parentItem->m_d->date;
+            }
+        }
+    }
     return m_d->date;
 }
 
 QString AccountingBillItem::dateBeginStr() const {
     if( m_d->itemType == Payment ){
         if( m_d->parser != NULL ){
-            return m_d->parser->toString( m_d->date, QLocale::NarrowFormat );
+            return m_d->parser->toString( dateBegin(), QLocale::NarrowFormat );
         }
         return m_d->date.toString();
     } else if( m_d->itemType == TimeAndMaterials && m_d->tamBillItem != NULL ){
@@ -441,6 +458,12 @@ void AccountingBillItem::setDateBegin(const QDate &d) {
         } else if( m_d->itemType == TimeAndMaterials && m_d->tamBillItem != NULL ){
             m_d->tamBillItem->setDateBegin(d);
             emit dateBeginChanged( dateBeginStr() );
+        } else if( m_d->itemType == LumpSum ){
+            if( m_d->parentItem != NULL ){
+                if( m_d->parentItem->m_d->itemType == Payment ){
+                    m_d->parentItem->setDateBegin( d );
+                }
+            }
         }
     }
 }
@@ -454,13 +477,20 @@ void AccountingBillItem::setDateBegin(const QString &d) {
 }
 
 QDate AccountingBillItem::dateEnd() const {
+    if( m_d->itemType == LumpSum ){
+        if( m_d->parentItem != NULL ){
+            if( m_d->parentItem->m_d->itemType == Payment ){
+                return m_d->parentItem->m_d->dateEnd;
+            }
+        }
+    }
     return m_d->dateEnd;
 }
 
 QString AccountingBillItem::dateEndStr() const {
     if( m_d->itemType == Payment ){
         if( m_d->parser != NULL ){
-            return m_d->parser->toString( m_d->dateEnd, QLocale::NarrowFormat );
+            return m_d->parser->toString( dateEnd(), QLocale::NarrowFormat );
         }
         return m_d->dateEnd.toString();
     } else if( m_d->itemType == TimeAndMaterials && m_d->tamBillItem != NULL ){
@@ -479,6 +509,12 @@ void AccountingBillItem::setDateEnd(const QDate &d) {
         } else if( m_d->itemType == TimeAndMaterials && m_d->tamBillItem != NULL ){
             m_d->tamBillItem->setDateEnd( d );
             emit dateEndChanged( dateEndStr() );
+        } else if( m_d->itemType == LumpSum ){
+            if( m_d->parentItem != NULL ){
+                if( m_d->parentItem->m_d->itemType == Payment ){
+                    m_d->parentItem->setDateEnd( d );
+                }
+            }
         }
     }
 }
@@ -1168,6 +1204,10 @@ bool AccountingBillItem::appendChildren(ItemType iType, int count) {
 }
 
 bool AccountingBillItem::removeChildren(int position, int count) {
+    if( count <= 0 ){
+        return true;
+    }
+
     if (position < 0 || position + count > m_d->childrenContainer.size())
         return false;
 
@@ -1678,6 +1718,8 @@ void AccountingBillItem::setLSBill(AccountingLSBill *newLSBill) {
             connect( m_d->lsBill, &AccountingLSBill::aboutToBeDeleted, this, &AccountingBillItem::setLSBillNULL );
         }
         emit lsBillChanged( m_d->lsBill );
+        emit PPUTotalToDiscountChanged( PPUTotalToDiscountStr() );
+        emit PPUNotToDiscountChanged( PPUNotToDiscountStr() );
     }
 }
 
@@ -1993,19 +2035,29 @@ void AccountingBillItem::setQuantity(const QString &vstr ) {
 }
 
 double AccountingBillItem::PPUTotalToDiscount() const {
+    if( m_d->itemType == LumpSum ){
+        if( m_d->lsBill != NULL ){
+            return m_d->lsBill->PPUTotalToDiscount();
+        }
+    }
     return m_d->PPUTotalToDiscount;
 }
 
 double AccountingBillItem::PPUNotToDiscount() const {
+    if( m_d->itemType == LumpSum ){
+        if( m_d->lsBill != NULL ){
+            return m_d->lsBill->PPUNotToDiscount();
+        }
+    }
     return m_d->PPUNotToDiscount;
 }
 
 QString AccountingBillItem::PPUTotalToDiscountStr() const {
-    return m_d->toString( m_d->PPUTotalToDiscount, 'f', m_d->amountPrecision );
+    return m_d->toString( PPUTotalToDiscount(), 'f', m_d->amountPrecision );
 }
 
 QString AccountingBillItem::PPUNotToDiscountStr() const {
-    return m_d->toString( m_d->PPUNotToDiscount, 'f', m_d->amountPrecision );
+    return m_d->toString( PPUNotToDiscount(), 'f', m_d->amountPrecision );
 }
 
 void AccountingBillItem::emitPriceDataUpdated() {

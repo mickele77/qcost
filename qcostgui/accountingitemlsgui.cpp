@@ -54,17 +54,23 @@ AccountingItemLSGUI::~AccountingItemLSGUI() {
     delete m_d;
 }
 
-void AccountingItemLSGUI::setAccountingItem(AccountingBillItem *b) {
+void AccountingItemLSGUI::setItem(AccountingBillItem *b) {
     if( m_d->item != b ){
         if( m_d->item != NULL ){
+            disconnect( m_d->item, &AccountingBillItem::aboutToBeDeleted, this, &AccountingItemLSGUI::setAccountingItemNULL );
+
             disconnect( m_d->item, &AccountingBillItem::dateBeginChanged, this, &AccountingItemLSGUI::setDateBegin );
             disconnect( m_d->item, &AccountingBillItem::dateEndChanged, this, &AccountingItemLSGUI::setDateEnd );
-            disconnect( m_d->item, &AccountingBillItem::aboutToBeDeleted, this, &AccountingItemLSGUI::setAccountingItemNULL );
 
             disconnect( m_d->item, &AccountingBillItem::totalAmountToDiscountChanged, m_d->ui->totalAmountToDiscountLineEdit, &QLineEdit::setText );
             disconnect( m_d->item, &AccountingBillItem::amountNotToDiscountChanged, m_d->ui->amountNotToDiscountLineEdit, &QLineEdit::setText );
             disconnect( m_d->item, &AccountingBillItem::totalAmountChanged, m_d->ui->totalAmountLineEdit, &QLineEdit::setText );
+
+            disconnect( m_d->item, &AccountingBillItem::PPUTotalToDiscountChanged, m_d->ui->PPUTotalToDiscountLineEdit, &QLineEdit::setText );
+            disconnect( m_d->item, &AccountingBillItem::PPUNotToDiscountChanged, m_d->ui->PPUNotToDiscountLineEdit, &QLineEdit::setText );
         }
+        m_d->ui->PPUTotalToDiscountLineEdit->clear();
+        m_d->ui->PPUNotToDiscountLineEdit->clear();
         m_d->ui->totalAmountToDiscountLineEdit->clear();
         m_d->ui->amountNotToDiscountLineEdit->clear();
         m_d->ui->totalAmountLineEdit->clear();
@@ -78,12 +84,12 @@ void AccountingItemLSGUI::setAccountingItem(AccountingBillItem *b) {
         updateLumpSumsComboBox();
 
         if( m_d->item != NULL ){
-            m_d->ui->beginDateLineEdit->setText( m_d->item->dateBeginStr() );
-            m_d->ui->endDateLineEdit->setText( m_d->item->dateEndStr() );
-            connect( m_d->item, &AccountingBillItem::dateBeginChanged, this, &AccountingItemLSGUI::setDateBegin );
-            connect( m_d->item, &AccountingBillItem::dateEndChanged, this, &AccountingItemLSGUI::setDateEnd );
-
             connect( m_d->item, &AccountingBillItem::aboutToBeDeleted, this, &AccountingItemLSGUI::setAccountingItemNULL );
+
+            m_d->ui->beginDateLineEdit->setText( m_d->item->dateBeginStr() );
+            connect( m_d->item, &AccountingBillItem::dateBeginChanged, this, &AccountingItemLSGUI::setDateBegin );
+            m_d->ui->endDateLineEdit->setText( m_d->item->dateEndStr() );
+            connect( m_d->item, &AccountingBillItem::dateEndChanged, this, &AccountingItemLSGUI::setDateEnd );
 
             m_d->ui->totalAmountToDiscountLineEdit->setText( m_d->item->totalAmountToDiscountStr() );
             connect( m_d->item, &AccountingBillItem::totalAmountToDiscountChanged, m_d->ui->totalAmountToDiscountLineEdit, &QLineEdit::setText );
@@ -91,12 +97,17 @@ void AccountingItemLSGUI::setAccountingItem(AccountingBillItem *b) {
             connect( m_d->item, &AccountingBillItem::amountNotToDiscountChanged, m_d->ui->amountNotToDiscountLineEdit, &QLineEdit::setText );
             m_d->ui->totalAmountLineEdit->setText( m_d->item->totalAmountStr() );
             connect( m_d->item, &AccountingBillItem::totalAmountChanged, m_d->ui->totalAmountLineEdit, &QLineEdit::setText );
+
+            m_d->ui->PPUTotalToDiscountLineEdit->setText( m_d->item->PPUTotalToDiscountStr() );
+            connect( m_d->item, &AccountingBillItem::PPUTotalToDiscountChanged, m_d->ui->PPUTotalToDiscountLineEdit, &QLineEdit::setText );
+            m_d->ui->PPUNotToDiscountLineEdit->setText( m_d->item->PPUNotToDiscountStr() );
+            connect( m_d->item, &AccountingBillItem::PPUNotToDiscountChanged, m_d->ui->PPUNotToDiscountLineEdit, &QLineEdit::setText );
         }
     }
 }
 
 void AccountingItemLSGUI::setAccountingItemNULL() {
-    setAccountingItem( NULL );
+    setItem( NULL );
 }
 
 void AccountingItemLSGUI::addAttribute(){
@@ -149,7 +160,7 @@ void AccountingItemLSGUI::setAccountingBill(AccountingBill *b) {
     }
 
     // quando si cambia computo corrente la scheda della riga si azzera
-    setAccountingItem( NULL );
+    setItem( NULL );
 }
 
 void AccountingItemLSGUI::setAccountingNULL() {

@@ -21,7 +21,7 @@ public:
 
     void showEvent(QShowEvent * event);
 public slots:
-    void setAccountingItem(AccountingBillItem *b );
+    void setItem(AccountingBillItem *b );
     void setAccountingItemNULL();
 
 private slots:

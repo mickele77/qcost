@@ -206,7 +206,7 @@ bool AccountingTAMBill::removeChildren(int position, int count) {
 }
 
 bool AccountingTAMBill::clear() {
-    return removeRows( 0, rowCount() );
+    return m_d->rootItem->clear();
 }
 
 Qt::ItemFlags AccountingTAMBill::flags() const {
