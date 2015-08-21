@@ -167,10 +167,14 @@ void AccountingTAMBill::setDescription(const QString &value) {
 }
 
 void AccountingTAMBill::setPriceDataSet(int v) {
-    if( v > -1 && v < m_d->priceList->priceDataSetCount() &&
-            m_d->rootItem->currentPriceDataSet() != v ){
-        m_d->rootItem->setCurrentPriceDataSet( v );
+    int effV = 0;
+    if( m_d->priceList != NULL ){
+        if( v > -1 && v < m_d->priceList->priceDataSetCount() &&
+                m_d->rootItem->currentPriceDataSet() != v ){
+            effV = v;
+        }
     }
+    m_d->rootItem->setCurrentPriceDataSet( effV );
 }
 
 ProjectItem *AccountingTAMBill::child(int /*number*/) {
@@ -206,7 +210,12 @@ bool AccountingTAMBill::removeChildren(int position, int count) {
 }
 
 bool AccountingTAMBill::clear() {
-    return m_d->rootItem->clear();
+    beginResetModel();
+    bool ret = m_d->rootItem->clear();
+    setPriceDataSet( 0 );
+    setPriceList( NULL );
+    endResetModel();
+    return ret;
 }
 
 Qt::ItemFlags AccountingTAMBill::flags() const {
