@@ -21,6 +21,8 @@
 
 #include "accountingbillitemprivate.h"
 
+#include "accountingtambill.h"
+#include "accountinglsbills.h"
 #include "accountingtambillitem.h"
 #include "accountinglsbillitem.h"
 #include "accountingpricefieldmodel.h"
@@ -1352,7 +1354,7 @@ void AccountingBillItem::readXml( QXmlStreamReader *reader, PriceList * priceLis
 
     if( m_d->itemType != Root ){
         if(reader->isStartElement() && reader->name().toString().toUpper() == "ACCOUNTINGBILLITEM"){
-            loadFromXml( reader->attributes(), priceList, attrModel );
+            loadFromXmlTmp( reader->attributes() );
         }
         reader->readNext();
     }
@@ -1426,7 +1428,11 @@ void AccountingBillItem::readXmlTmp(QXmlStreamReader *reader) {
     }
 }
 
-void AccountingBillItem::loadFromXml(const QXmlStreamAttributes &attrs, PriceList * priceList, AttributeModel * billAttrModel) {
+void AccountingBillItem::loadFromXml( const QXmlStreamAttributes &attrs,
+                                      AccountingLSBills * lsBills,
+                                      AccountingTAMBill * tamBill,
+                                      PriceList * priceList,
+                                      AttributeModel * billAttrModel ) {
     if( attrs.hasAttribute( "id" ) ){
         m_d->id = attrs.value( "id").toUInt();
     }
@@ -1470,6 +1476,15 @@ void AccountingBillItem::loadFromXml(const QXmlStreamAttributes &attrs, PriceLis
                 setPriceItem( priceList->priceItemId( attrs.value( "priceItem").toUInt() ) );
             }
         }
+    } else if( m_d->itemType == LumpSum ){
+        if( attrs.hasAttribute("lumpSumBill") ){
+            setLSBill( lsBills->billId( attrs.value("lumpSumBill").toUInt() ) );
+        }
+    }
+    if( m_d->itemType == TimeAndMaterials ){
+        if( attrs.hasAttribute("timeAndMaterials") ){
+            setTAMBillItem( tamBill->itemId( attrs.value("timeAndMaterials").toUInt() ) );
+        }
     }
 }
 
@@ -1478,13 +1493,13 @@ void AccountingBillItem::loadFromXmlTmp(const QXmlStreamAttributes &attrs) {
     m_d->tmpAttributes = attrs;
 }
 
-void AccountingBillItem::loadTmpData( PriceList *priceList, AttributeModel * billAttrModel) {
+void AccountingBillItem::loadTmpData( AccountingLSBills * lsBills, AccountingTAMBill * tamBill ,PriceList * priceList, AttributeModel * billAttrModel ) {
     if( !m_d->tmpAttributes.isEmpty() ){
-        loadFromXml(m_d->tmpAttributes, priceList, billAttrModel );
+        loadFromXml( m_d->tmpAttributes, lsBills, tamBill, priceList, billAttrModel );
         m_d->tmpAttributes.clear();
     }
     for( QList<AccountingBillItem *>::iterator i = m_d->childrenContainer.begin(); i != m_d->childrenContainer.end(); ++i ){
-        (*i)->loadTmpData( priceList, billAttrModel );
+        (*i)->loadTmpData( lsBills, tamBill, priceList, billAttrModel );
     }
 }
 

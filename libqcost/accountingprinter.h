@@ -72,7 +72,8 @@ public:
                    double paperWidth = 210.0, double paperHeight = 297.0,
                    Qt::Orientation paperOrientation = Qt::Vertical) const;
 
-    bool printAttributeODT( PrintPPUDescOption prAccountingMeasuresOption,
+    bool printAttributeODT( PrintAmountsOption prAmountsOption,
+                            PrintPPUDescOption prAccountingMeasuresOption,
                             AccountingPrinter::AttributePrintOption prOption,
                             const QList<Attribute *> &attrsToPrint,
                             const QString &fileName,

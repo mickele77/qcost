@@ -97,14 +97,15 @@ bool AccountingPrinter::printODT( AccountingPrinter::PrintPPUDescOption prAccoun
     return false;
 }
 
-bool AccountingPrinter::printAttributeODT(AccountingPrinter::PrintPPUDescOption prItemsOption,
-                                          AccountingPrinter::AttributePrintOption prOption,
-                                          const QList<Attribute *> &attrsToPrint,
-                                          const QString &fileName,
-                                          double paperWidth,
-                                          double paperHeight,
-                                          Qt::Orientation paperOrientation,
-                                          bool printAmounts ) const {
+bool AccountingPrinter::printAttributeODT( AccountingPrinter::PrintAmountsOption prAmountsOption,
+                                           AccountingPrinter::PrintPPUDescOption prItemsOption,
+                                           AccountingPrinter::AttributePrintOption prOption,
+                                           const QList<Attribute *> &attrsToPrint,
+                                           const QString &fileName,
+                                           double paperWidth,
+                                           double paperHeight,
+                                           Qt::Orientation paperOrientation,
+                                           bool printAmounts ) const {
     if( m_d->accountingBill != NULL ){
         if( paperOrientation == Qt::Horizontal ){
             if( paperHeight > paperWidth ){
@@ -199,7 +200,7 @@ bool AccountingPrinter::printAttributeODT(AccountingPrinter::PrintPPUDescOption 
         tableFormat.setColumnWidthConstraints( colWidths );
         cursor.insertTable(1, colWidths.size(), tableFormat );
 
-        m_d->accountingBill->writeODTAttributeAccountingOnTable( &cursor, prOption, prItemsOption, attrsToPrint, printAmounts);
+        m_d->accountingBill->writeODTAttributeAccountingOnTable( &cursor, prOption, prAmountsOption, prItemsOption, attrsToPrint, printAmounts);
 
         QFile *file = new QFile(fileName);
         QString suf = QFileInfo(file->fileName()).suffix().toLower().toLatin1();
@@ -427,7 +428,7 @@ bool AccountingPrinter::printAccountingODT( AccountingPrinter::PrintPPUDescOptio
         tableFormat.setColumnWidthConstraints( colWidths );
         cursor.insertTable(1, colWidths.size(), tableFormat );
 
-        m_d->accountingBill->writeODTAccountingOnTable( &cursor, prItemsOption, printAmounts );
+        m_d->accountingBill->writeODTAccountingOnTable( &cursor, prAmountOption, prItemsOption, printAmounts );
 
         QFile *file = new QFile(fileName);
         QString suf = QFileInfo(file->fileName()).suffix().toLower().toLatin1();
@@ -658,7 +659,7 @@ bool AccountingPrinter::printAccountingSummaryODT(PrintPPUDescOption prAccountin
         tableFormat.setColumnWidthConstraints( colWidths );
         cursor.insertTable(1, colWidths.size(), tableFormat );
 
-        m_d->accountingBill->writeODTSummaryOnTable( &cursor, prAccountingMeasuresOption, printAmounts, writeDetails );
+        m_d->accountingBill->writeODTSummaryOnTable( &cursor, prAmountsOption, prAccountingMeasuresOption, printAmounts, writeDetails );
 
         QFile *file = new QFile(fileName);
         QString suf = QFileInfo(file->fileName()).suffix().toLower().toLatin1();

@@ -56,6 +56,15 @@ AccountingLSBill *AccountingLSBills::bill(int i) {
     return NULL;
 }
 
+AccountingLSBill *AccountingLSBills::billId(unsigned int dd) {
+    for( QList<AccountingLSBill *>::iterator i = m_d->billContainer.begin(); i != m_d->billContainer.end(); ++i){
+        if( (*i)->id() == dd ){
+            return (*i);
+        }
+    }
+    return NULL;
+}
+
 ProjectItem *AccountingLSBills::child(int number) {
     if( number >= 0 && number < m_d->billContainer.size() ){
         return m_d->billContainer[number];

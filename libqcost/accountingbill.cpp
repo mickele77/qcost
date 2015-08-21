@@ -816,6 +816,7 @@ QList<PriceItem *> AccountingBill::connectedPriceItems() {
 }
 
 void AccountingBill::writeODTAccountingOnTable( QTextCursor *cursor,
+                                                AccountingPrinter::PrintAmountsOption prAmountsOption,
                                                 AccountingPrinter::PrintPPUDescOption prItemsOption,
                                                 bool printAmounts ) const {
     m_d->rootItem->writeODTAccountingOnTable(cursor, prItemsOption, printAmounts );
@@ -823,6 +824,7 @@ void AccountingBill::writeODTAccountingOnTable( QTextCursor *cursor,
 
 void AccountingBill::writeODTAttributeAccountingOnTable(QTextCursor *cursor,
                                                         AccountingPrinter::AttributePrintOption prOption,
+                                                        AccountingPrinter::PrintAmountsOption prAmountsOption,
                                                         AccountingPrinter::PrintPPUDescOption prItemsOption,
                                                         const QList<Attribute *> &attrsToPrint,
                                                         bool printAmounts) const {
@@ -831,14 +833,15 @@ void AccountingBill::writeODTAttributeAccountingOnTable(QTextCursor *cursor,
 
 
 void AccountingBill::writeODTSummaryOnTable( QTextCursor *cursor,
+                                             AccountingPrinter::PrintAmountsOption prAmountsOption,
                                              AccountingPrinter::PrintPPUDescOption prItemsOption,
                                              bool printAmounts,
                                              bool writeDetails ) const {
     m_d->rootItem->writeODTSummaryOnTable(cursor, prItemsOption, printAmounts, writeDetails );
 }
-void AccountingBill::loadTmpData(ProjectPriceListParentItem * priceLists) {
+void AccountingBill::loadTmpData(ProjectPriceListParentItem * priceLists, AccountingLSBills * lsBills, AccountingTAMBill * tamBill ) {
     m_d->priceList = priceLists->priceListId( m_d->priceListIdTmp );
-    m_d->rootItem->loadTmpData( m_d->priceList, m_d->attributeModel );
+    m_d->rootItem->loadTmpData( lsBills, tamBill, m_d->priceList, m_d->attributeModel );
 }
 
 void AccountingBill::insertStandardAttributes(){

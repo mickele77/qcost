@@ -44,6 +44,7 @@ public:
 
     int billCount();
     AccountingLSBill *bill( int i );
+    AccountingLSBill *billId(unsigned int dd );
 
     ProjectItem *child(int number);
     int childCount() const;

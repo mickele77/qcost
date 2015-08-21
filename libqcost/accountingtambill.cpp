@@ -732,7 +732,7 @@ void AccountingTAMBill::writeODTSummaryOnTable(QTextCursor *cursor,
 
 void AccountingTAMBill::loadTmpData(ProjectPriceListParentItem * priceLists) {
     m_d->priceList = priceLists->priceListId( m_d->priceListIdTmp );
-    m_d->rootItem->loadTmpData( m_d->priceList, m_d->attributeModel );
+    m_d->rootItem->loadTmpData( NULL, NULL, m_d->priceList, m_d->attributeModel );
 }
 
 void AccountingTAMBill::insertStandardAttributes(){

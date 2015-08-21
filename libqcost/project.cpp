@@ -401,7 +401,9 @@ void Project::readXml(QXmlStreamReader *reader) {
     while( (!reader->atEnd()) &&
            (!reader->hasError())){
         reader->readNext();
-        if( reader->isStartElement() && reader->name().toString().toUpper() == "BILLS"){
+        if( reader->isStartElement() && reader->name().toString().toUpper() == "ACCOUNTING"){
+            m_d->accountingParentItem->readXml( reader, m_d->priceListParentItem );
+        } else if( reader->isStartElement() && reader->name().toString().toUpper() == "BILLS"){
             m_d->billParentItem->readXml( reader, m_d->priceListParentItem );
         } else if( reader->isStartElement() && reader->name().toString().toUpper() == "PRICELISTS"){
             m_d->priceListParentItem->readXml( reader, m_d->unitMeasureModel );
@@ -409,8 +411,6 @@ void Project::readXml(QXmlStreamReader *reader) {
             m_d->unitMeasureModel->readXml( reader );
         } else if( reader->isStartElement() && reader->name().toString().toUpper() == "PRICEFIELDMODEL"){
             m_d->priceFieldModel->readXml( reader );
-        } else if( reader->isStartElement() && reader->name().toString().toUpper() == "ACCOUNTING"){
-            m_d->accountingParentItem->readXml( reader, m_d->priceListParentItem );
         }
     }
 }

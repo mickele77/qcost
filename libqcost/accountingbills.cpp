@@ -212,6 +212,12 @@ void AccountingBills::readXml(QXmlStreamReader *reader, ProjectPriceListParentIt
     }
 }
 
+void AccountingBills::loadTmpData( ProjectPriceListParentItem * priceLists, AccountingLSBills * lsBills, AccountingTAMBill * tamBill ) {
+    for( QList<AccountingBill *>::iterator i = m_d->billContainer.begin(); i != m_d->billContainer.end(); ++i ){
+        (*i)->loadTmpData( priceLists, lsBills, tamBill );
+    }
+}
+
 bool AccountingBills::insertPayments(int position, int count) {
     bool ret = true;
 

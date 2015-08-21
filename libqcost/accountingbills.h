@@ -21,6 +21,8 @@
 
 #include "library_common.h"
 
+class AccountingLSBills;
+class AccountingTAMBill;
 class AccountingBill;
 class ProjectPriceListParentItem;
 class PriceList;
@@ -65,6 +67,7 @@ public:
 
     void writeXml( QXmlStreamWriter * writer );
     void readXml(QXmlStreamReader *reader, ProjectPriceListParentItem *priceLists);
+    void loadTmpData(ProjectPriceListParentItem *priceLists, AccountingLSBills *lsBills, AccountingTAMBill *tamBill);
 
     bool insertPayments( int position, int count=1 );
     bool removeBills( int position, int count=1 );

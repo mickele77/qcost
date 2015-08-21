@@ -28,6 +28,7 @@ class PriceItem;
 class MeasuresModel;
 class PriceFieldModel;
 class MathParser;
+class AccountingLSBills;
 class AttributeModel;
 class Attribute;
 class UnitMeasure;
@@ -160,9 +161,13 @@ public:
     void writeXml( QXmlStreamWriter * writer );
     void readXml(QXmlStreamReader *reader, PriceList *priceList, AttributeModel *attrModel);
     void readXmlTmp(QXmlStreamReader *reader);
-    void loadFromXml(const QXmlStreamAttributes &attrs, PriceList *priceList, AttributeModel * billAttrModel);
+    void loadFromXml( const QXmlStreamAttributes &attrs,
+                      AccountingLSBills * lsBills,
+                      AccountingTAMBill * tamBill,
+                      PriceList * priceList,
+                      AttributeModel * billAttrModel );
     void loadFromXmlTmp(const QXmlStreamAttributes &attrs);
-    void loadTmpData(PriceList *priceList , AttributeModel *billAttrModel);
+    void loadTmpData( AccountingLSBills * lsBills, AccountingTAMBill * tamBill ,PriceList * priceList, AttributeModel * billAttrModel );
 
     bool containsAttribute( Attribute * attr ) const ;
     bool containsAttributeInherited( Attribute * attr ) const ;

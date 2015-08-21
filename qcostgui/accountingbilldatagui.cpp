@@ -215,12 +215,14 @@ void AccountingBillDataGUI::removeAttribute(){
 bool AccountingBillDataGUI::printAttributeAccountingODT(){
     if( m_d->accounting != NULL ){
         AccountingPrinter::PrintPPUDescOption prAccountingMeasureOption;
+        AccountingPrinter::PrintAmountsOption prAmountsOption;
         AccountingPrinter::AttributePrintOption prOption;
         QList<Attribute *> prAttrs;
         double paperWidth = 210.0, paperHeight = 297.0;
         Qt::Orientation paperOrientation;
         bool printAmounts = false;
         AccountingAttributePrinterGUI printGUI( &prAccountingMeasureOption,
+                                                &prAmountsOption,
                                                 &prOption,
                                                 &prAttrs,
                                                 &paperWidth, &paperHeight,
@@ -239,7 +241,7 @@ bool AccountingBillDataGUI::printAttributeAccountingODT(){
                     fileName.append( ".odt" );
                 }
                 AccountingPrinter printer( m_d->accounting, m_d->parser );
-                bool ret = printer.printAttributeODT( prAccountingMeasureOption, prOption, prAttrs, fileName, paperWidth, paperHeight, paperOrientation, printAmounts );
+                bool ret = printer.printAttributeODT( prAmountsOption, prAccountingMeasureOption, prOption, prAttrs, fileName, paperWidth, paperHeight, paperOrientation, printAmounts );
                 if( m_d->wordProcessorFile != NULL ){
                     if( !m_d->wordProcessorFile->isEmpty() ){
                         if( QFileInfo(*(m_d->wordProcessorFile)).exists() ){

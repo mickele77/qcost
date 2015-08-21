@@ -295,6 +295,8 @@ void ProjectAccountingParentItem::readXml(QXmlStreamReader *reader, ProjectPrice
             m_d->timeAndMaterialBill->readXml( reader, priceLists );
         }
     }
+    m_d->timeAndMaterialBill->loadTmpData( priceLists );
+    m_d->measuresBills->loadTmpData( priceLists, m_d->lumpSumBills, m_d->timeAndMaterialBill );
 }
 
 void ProjectAccountingParentItem::insertPayments( int position, int count) {

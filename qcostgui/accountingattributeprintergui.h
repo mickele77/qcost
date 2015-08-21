@@ -14,6 +14,7 @@ class AccountingAttributePrinterGUI : public QDialog {
     Q_OBJECT
 public:
     explicit AccountingAttributePrinterGUI(AccountingPrinter::PrintPPUDescOption *prItemsOption,
+                                           AccountingPrinter::PrintAmountsOption *prAmountsOption,
                                            AccountingPrinter::AttributePrintOption * prOption,
                                            QList<Attribute *> *pAttrs,
                                            double *pWidth, double *pHeight,

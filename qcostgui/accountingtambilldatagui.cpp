@@ -197,12 +197,14 @@ void AccountingTAMBillDataGUI::updateAmountsValue()
 bool AccountingTAMBillDataGUI::printAttributeAccountingODT(){
     if( m_d->accounting != NULL ){
         AccountingPrinter::PrintPPUDescOption prAccountingMeasureOption;
+        AccountingPrinter::PrintAmountsOption prAmountsOption;
         AccountingPrinter::AttributePrintOption prOption;
         QList<Attribute *> prAttrs;
         double paperWidth = 210.0, paperHeight = 297.0;
         Qt::Orientation paperOrientation;
         bool printAmounts = true;
         AccountingAttributePrinterGUI printGUI( &prAccountingMeasureOption,
+                                                &prAmountsOption,
                                                 &prOption,
                                                 &prAttrs,
                                                 &paperWidth, &paperHeight,

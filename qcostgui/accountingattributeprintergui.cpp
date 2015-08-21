@@ -28,6 +28,7 @@
 class AccountingAttributePrinterGUIPrivate{
 public:
     AccountingAttributePrinterGUIPrivate( AccountingPrinter::PrintPPUDescOption * prItemsOption,
+                                          AccountingPrinter::PrintAmountsOption *prAmountsOption,
                                           AccountingPrinter::AttributePrintOption *prOption,
                                           QList<Attribute *> * pAttrs,
                                           double * pWidth,
@@ -37,6 +38,7 @@ public:
                                           AttributeModel * bam ):
         ui(new Ui::AccountingAttributePrinterGUI),
         printItemsOption(prItemsOption),
+        printAmountsOption( prAmountsOption ),
         printOption(prOption),
         printAttributes(pAttrs),
         accountingAttributeModel(bam),
@@ -52,6 +54,7 @@ public:
 
     Ui::AccountingAttributePrinterGUI *ui;
     AccountingPrinter::PrintPPUDescOption * printItemsOption;
+    AccountingPrinter::PrintAmountsOption * printAmountsOption;
     AccountingPrinter::AttributePrintOption *printOption;
     QList<Attribute *> * printAttributes;
     AttributeModel * accountingAttributeModel;
@@ -62,17 +65,18 @@ public:
     QList<QPageSize> pageSizeList;
 };
 
-AccountingAttributePrinterGUI::AccountingAttributePrinterGUI(AccountingPrinter::PrintPPUDescOption *prItemsOption,
-                                                             AccountingPrinter::AttributePrintOption *prOption,
-                                                             QList<Attribute *> * pAttrs,
-                                                             double * pWidth,
-                                                             double * pHeight,
-                                                             Qt::Orientation * pOrient,
-                                                             bool *printAmounts,
-                                                             AttributeModel * bam,
-                                                             QWidget *parent ) :
+AccountingAttributePrinterGUI::AccountingAttributePrinterGUI( AccountingPrinter::PrintPPUDescOption *prItemsOption,
+                                                              AccountingPrinter::PrintAmountsOption *prAmountsOption,
+                                                              AccountingPrinter::AttributePrintOption *prOption,
+                                                              QList<Attribute *> * pAttrs,
+                                                              double * pWidth,
+                                                              double * pHeight,
+                                                              Qt::Orientation * pOrient,
+                                                              bool *printAmounts,
+                                                              AttributeModel * bam,
+                                                              QWidget *parent ) :
     QDialog(parent),
-    m_d( new AccountingAttributePrinterGUIPrivate( prItemsOption, prOption, pAttrs, pWidth, pHeight, pOrient, printAmounts, bam) ) {
+    m_d( new AccountingAttributePrinterGUIPrivate( prItemsOption, prAmountsOption, prOption, pAttrs, pWidth, pHeight, pOrient, printAmounts, bam) ) {
     m_d->ui->setupUi(this);
     m_d->ui->attributesTableView->setModel( m_d->accountingAttributeModel );
 
