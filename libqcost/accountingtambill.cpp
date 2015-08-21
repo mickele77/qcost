@@ -630,6 +630,7 @@ void AccountingTAMBill::readXml(QXmlStreamReader *reader, ProjectPriceListParent
             m_d->rootItem->readXml( reader, m_d->priceList, m_d->attributeModel );
         }
     }
+    m_d->rootItem->updateProgressiveCode();
 }
 
 void AccountingTAMBill::readXmlTmp(QXmlStreamReader *reader ) {

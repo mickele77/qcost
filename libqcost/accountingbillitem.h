@@ -159,7 +159,7 @@ public:
     int childNumber() const;
 
     void writeXml( QXmlStreamWriter * writer );
-    void readXml(QXmlStreamReader *reader, PriceList *priceList, AttributeModel *attrModel);
+    virtual void readXml(QXmlStreamReader *reader, PriceList *priceList, AttributeModel *attrModel);
     void readXmlTmp(QXmlStreamReader *reader);
     void loadFromXml( const QXmlStreamAttributes &attrs,
                       AccountingLSBills * lsBills,

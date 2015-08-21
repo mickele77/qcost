@@ -36,6 +36,8 @@ public:
     QString title() const;
 
     bool insertChildren(ItemType iType, int position, int count=1);
+
+    void readXml(QXmlStreamReader *reader, PriceList *priceList, AttributeModel *attrModel);
 };
 
 #endif // ACCOUNTINGTAMBILLITEM_H

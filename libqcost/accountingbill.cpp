@@ -724,20 +724,6 @@ void AccountingBill::readXml(QXmlStreamReader *reader, ProjectPriceListParentIte
     m_d->rootItem->updateProgressiveCode();
 }
 
-void AccountingBill::readXmlTmp(QXmlStreamReader *reader ) {
-    if(reader->isStartElement() && reader->name().toString().toUpper() == "ACCOUNTING"){
-        loadFromXmlTmp( reader->attributes() );
-    }
-    while( (!reader->atEnd()) &&
-           (!reader->hasError()) &&
-           !(reader->isEndElement() && reader->name().toString().toUpper() == "ACCOUNTING") ){
-        reader->readNext();
-        if( reader->name().toString().toUpper() == "ACCOUNTINGITEM" && reader->isStartElement()) {
-            m_d->rootItem->readXmlTmp( reader );
-        }
-    }
-}
-
 void AccountingBill::loadFromXml(const QXmlStreamAttributes &attrs, ProjectPriceListParentItem * priceLists) {
     for( QXmlStreamAttributes::const_iterator i=attrs.begin(); i != attrs.end(); ++i ){
         QString nameUp = (*i).name().toString().toUpper();

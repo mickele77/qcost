@@ -167,7 +167,6 @@ public:
 
     void writeXml( QXmlStreamWriter * writer );
     void readXml(QXmlStreamReader *reader, ProjectPriceListParentItem * priceLists);
-    void readXmlTmp(QXmlStreamReader *reader);
     void loadFromXml(const QXmlStreamAttributes &attrs, ProjectPriceListParentItem * priceLists);
     void loadTmpData( PriceList *priceList );
 
