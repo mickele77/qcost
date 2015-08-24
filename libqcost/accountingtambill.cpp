@@ -709,24 +709,24 @@ QList<PriceItem *> AccountingTAMBill::connectedPriceItems() {
     return m_d->rootItem->connectedPriceItems();
 }
 
-void AccountingTAMBill::writeODTAccountingOnTable( QTextCursor *cursor,
-                                                   AccountingPrinter::PrintPPUDescOption prItemsOption,
-                                                   bool printAmounts ) const {
-    m_d->rootItem->writeODTAccountingOnTable(cursor, prItemsOption, printAmounts );
+void AccountingTAMBill::writeODTAccountingOnTable(QTextCursor *cursor,
+                                                  AccountingPrinter::PrintAmountsOption prAmountsOption,
+                                                  AccountingPrinter::PrintPPUDescOption prItemsOption) const {
+    m_d->rootItem->writeODTAccountingOnTable(cursor, prAmountsOption, prItemsOption );
 }
 
 void AccountingTAMBill::writeODTAttributeAccountingOnTable(QTextCursor *cursor,
                                                            AccountingPrinter::AttributePrintOption prOption,
+                                                           AccountingPrinter::PrintAmountsOption printAmountsOption,
                                                            AccountingPrinter::PrintPPUDescOption prItemsOption,
-                                                           const QList<Attribute *> &attrsToPrint,
-                                                           bool printAmounts ) const {
-    m_d->rootItem->writeODTAttributeAccountingOnTable( cursor, prOption, prItemsOption, attrsToPrint, printAmounts );
+                                                           const QList<Attribute *> &attrsToPrint) const {
+    m_d->rootItem->writeODTAttributeAccountingOnTable( cursor, prOption, printAmountsOption, prItemsOption, attrsToPrint );
 }
 
 
 void AccountingTAMBill::writeODTSummaryOnTable(QTextCursor *cursor,
+                                               AccountingPrinter::PrintAmountsOption prAmountsOption,
                                                AccountingPrinter::PrintPPUDescOption prItemsOption,
-                                               bool printAmounts,
                                                bool writeDetails ) const {
     m_d->rootItem->writeODTSummaryOnTable(cursor, prItemsOption, printAmounts, writeDetails );
 }

@@ -803,25 +803,22 @@ QList<PriceItem *> AccountingBill::connectedPriceItems() {
 
 void AccountingBill::writeODTAccountingOnTable( QTextCursor *cursor,
                                                 AccountingPrinter::PrintAmountsOption prAmountsOption,
-                                                AccountingPrinter::PrintPPUDescOption prItemsOption,
-                                                bool printAmounts ) const {
-    m_d->rootItem->writeODTAccountingOnTable(cursor, prItemsOption, printAmounts );
+                                                AccountingPrinter::PrintPPUDescOption prPPUDescOption ) const {
+    m_d->rootItem->writeODTAccountingOnTable(cursor, prAmountsOption, prPPUDescOption );
 }
 
 void AccountingBill::writeODTAttributeAccountingOnTable(QTextCursor *cursor,
                                                         AccountingPrinter::AttributePrintOption prOption,
                                                         AccountingPrinter::PrintAmountsOption prAmountsOption,
                                                         AccountingPrinter::PrintPPUDescOption prItemsOption,
-                                                        const QList<Attribute *> &attrsToPrint,
-                                                        bool printAmounts) const {
-    m_d->rootItem->writeODTAttributeAccountingOnTable( cursor, prOption, prItemsOption, attrsToPrint, printAmounts );
+                                                        const QList<Attribute *> &attrsToPrint ) const {
+    m_d->rootItem->writeODTAttributeAccountingOnTable( cursor, prOption, prAmountsOption, prItemsOption, attrsToPrint );
 }
 
 
 void AccountingBill::writeODTSummaryOnTable( QTextCursor *cursor,
                                              AccountingPrinter::PrintAmountsOption prAmountsOption,
                                              AccountingPrinter::PrintPPUDescOption prItemsOption,
-                                             bool printAmounts,
                                              bool writeDetails ) const {
     m_d->rootItem->writeODTSummaryOnTable(cursor, prItemsOption, printAmounts, writeDetails );
 }

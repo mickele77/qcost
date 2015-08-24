@@ -178,19 +178,17 @@ public:
 
     void writeODTAccountingOnTable(QTextCursor * cursor,
                                    AccountingPrinter::PrintAmountsOption prAmountsOption,
-                                   AccountingPrinter::PrintPPUDescOption prItemsOption,
-                                   bool printAmounts = true ) const;
-    void writeODTSummaryOnTable( QTextCursor * cursor,
+                                   AccountingPrinter::PrintPPUDescOption prPPUDescOption) const;
+    void writeODTSummaryOnTable(QTextCursor * cursor,
                                  AccountingPrinter::PrintAmountsOption prAmountsOption,
                                  AccountingPrinter::PrintPPUDescOption prItemsOption,
-                                 bool printAmounts = true,
                                  bool writeDetails = true ) const;
 
     void writeODTAttributeAccountingOnTable( QTextCursor *cursor,
-                                             AccountingPrinter::AttributePrintOption prOption, AccountingPrinter::PrintAmountsOption prAmountsOption,
+                                             AccountingPrinter::AttributePrintOption prOption,
+                                             AccountingPrinter::PrintAmountsOption prAmountsOption,
                                              AccountingPrinter::PrintPPUDescOption prItemsOption,
-                                             const QList<Attribute *> &attrsToPrint,
-                                             bool printAmounts = true ) const;
+                                             const QList<Attribute *> &attrsToPrint ) const;
     void insertStandardAttributes();
 
 public slots:

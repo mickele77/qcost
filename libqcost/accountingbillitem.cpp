@@ -2127,8 +2127,8 @@ void AccountingBillItem::removeMeasuresModel() {
 #include "qtextformatuserdefined.h"
 
 void AccountingBillItem::writeODTAccountingOnTable( QTextCursor *cursor,
-                                                    AccountingPrinter::PrintPPUDescOption prItemsOption,
-                                                    bool printAmounts ) const {
+                                                    AccountingPrinter::PrintAmountsOption prAmountsOption,
+                                                    AccountingPrinter::PrintPPUDescOption prPPUDescOption  ) const {
     // spessore del bordo della tabella
     double borderWidth = 1.0f;
 
@@ -2260,7 +2260,7 @@ void AccountingBillItem::writeODTAccountingOnTable( QTextCursor *cursor,
 
         // *** Scrive il computo dei sottoarticoli ***
         for( QList<AccountingBillItem *>::iterator i = m_d->childrenContainer.begin(); i != m_d->childrenContainer.end(); ++i){
-            (*i)->writeODTAccountingOnTable( cursor, prItemsOption, printAmounts );
+            (*i)->writeODTAccountingOnTable( cursor, prPPUDescOption, printAmounts );
         }
 
         // *** riga dei totali complessivi
@@ -2304,7 +2304,7 @@ void AccountingBillItem::writeODTAccountingOnTable( QTextCursor *cursor,
             }
 
             for( QList<AccountingBillItem *>::iterator i = m_d->childrenContainer.begin(); i != m_d->childrenContainer.end(); ++i){
-                (*i)->writeODTAccountingOnTable( cursor, prItemsOption, printAmounts );
+                (*i)->writeODTAccountingOnTable( cursor, prPPUDescOption, printAmounts );
             }
 
             table->appendRows(1);
@@ -2322,7 +2322,7 @@ void AccountingBillItem::writeODTAccountingOnTable( QTextCursor *cursor,
                 AccountingBillItemPrivate::writeCell( cursor, table, rightSubTitleFormat, numBlockFormat );
             }
         } else { // !hasChildren()
-            writeODTBillLine( prItemsOption,
+            writeODTBillLine( prPPUDescOption,
                               true, printAmounts,
                               cursor, table,
                               tagBlockFormat, txtBlockFormat, numBlockFormat,
@@ -2637,10 +2637,11 @@ void AccountingBillItem::writeODTSummaryLine(PriceItem * priceItem,
     }
 }
 
-void AccountingBillItem::writeODTAttributeAccountingOnTable(QTextCursor *cursor,
-                                                            AccountingPrinter::AttributePrintOption prOption, AccountingPrinter::PrintPPUDescOption prItemsOption,
-                                                            const QList<Attribute *> &attrsToPrint,
-                                                            bool printAmounts) const {
+void AccountingBillItem::writeODTAttributeAccountingOnTable( QTextCursor *cursor,
+                                                             AccountingPrinter::AttributePrintOption prOption,
+                                                             AccountingPrinter::PrintAmountsOption prAmountsOption,
+                                                             AccountingPrinter::PrintPPUDescOption prItemsOption,
+                                                             const QList<Attribute *> &attrsToPrint ) const {
     // spessore del bordo della tabella
     double borderWidth = 1.0f;
 
@@ -2912,22 +2913,21 @@ AccountingBillItem::ItemType AccountingBillItem::itemType() const {
     return m_d->itemType;
 }
 
-void AccountingBillItem::writeODTAttributeBillLineSimple(AccountingPrinter::PrintPPUDescOption prItemsOption,
-                                                         QList<double> * fieldsAmounts,
-                                                         Attribute *attrsToPrint,
-                                                         bool printAmounts,
-                                                         QTextCursor *cursor,
-                                                         QTextTable *table,
-                                                         QTextBlockFormat &tagBlockFormat,
-                                                         QTextBlockFormat &txtBlockFormat,
-                                                         QTextBlockFormat &numBlockFormat,
-                                                         QTextTableCellFormat &leftFormat,
-                                                         QTextTableCellFormat &centralFormat,
-                                                         QTextTableCellFormat &rightFormat,
-                                                         QTextTableCellFormat &centralQuantityTotalFormat,
-                                                         QTextTableCellFormat &rightQuantityTotalFormat,
-                                                         QTextCharFormat & txtCharFormat,
-                                                         QTextCharFormat & txtBoldCharFormat ) const {
+void AccountingBillItem::writeODTAttributeBillLineSimple( AccountingPrinter::PrintAmountsOption prAmountsOption,
+                                                          AccountingPrinter::PrintPPUDescOption prPPUDescOption,
+                                                          Attribute *attrsToPrint,
+                                                          QTextCursor *cursor,
+                                                          QTextTable *table,
+                                                          QTextBlockFormat &tagBlockFormat,
+                                                          QTextBlockFormat &txtBlockFormat,
+                                                          QTextBlockFormat &numBlockFormat,
+                                                          QTextTableCellFormat &leftFormat,
+                                                          QTextTableCellFormat &centralFormat,
+                                                          QTextTableCellFormat &rightFormat,
+                                                          QTextTableCellFormat &centralQuantityTotalFormat,
+                                                          QTextTableCellFormat &rightQuantityTotalFormat,
+                                                          QTextCharFormat & txtCharFormat,
+                                                          QTextCharFormat & txtBoldCharFormat ) const {
 
     if( !hasChildren() ){
         if( containsAttribute( attrsToPrint ) ){
@@ -2941,7 +2941,7 @@ void AccountingBillItem::writeODTAttributeBillLineSimple(AccountingPrinter::Prin
             fieldsAmounts[1] += amountNotToDiscount();
             fieldsAmounts[2] += totalAmount();
 
-            writeODTBillLine( prItemsOption,
+            writeODTBillLine( prPPUDescOption,
                               false, printAmounts,
                               cursor, table,
                               tagBlockFormat, txtBlockFormat, numBlockFormat,
@@ -2951,7 +2951,7 @@ void AccountingBillItem::writeODTAttributeBillLineSimple(AccountingPrinter::Prin
         }
     } else {
         for( QList<AccountingBillItem *>::iterator i = m_d->childrenContainer.begin(); i != m_d->childrenContainer.end(); ++i ){
-            (*i)->writeODTAttributeBillLineSimple( prItemsOption,
+            (*i)->writeODTAttributeBillLineSimple( prPPUDescOption,
                                                    fieldsAmounts, attrsToPrint, printAmounts,
                                                    cursor, table,
                                                    tagBlockFormat, txtBlockFormat, numBlockFormat,
@@ -2962,22 +2962,21 @@ void AccountingBillItem::writeODTAttributeBillLineSimple(AccountingPrinter::Prin
     }
 }
 
-void AccountingBillItem::writeODTAttributeBillLineUnion( AccountingPrinter::PrintPPUDescOption prItemsOption,
-                                                         QList<double> * fieldsAmounts,
-                                                         const QList<Attribute *> &attrsToPrint,
-                                                         bool printAmounts,
-                                                         QTextCursor *cursor,
-                                                         QTextTable *table,
-                                                         QTextBlockFormat &tagBlockFormat,
-                                                         QTextBlockFormat &txtBlockFormat,
-                                                         QTextBlockFormat &numBlockFormat,
-                                                         QTextTableCellFormat &leftFormat,
-                                                         QTextTableCellFormat &centralFormat,
-                                                         QTextTableCellFormat &rightFormat,
-                                                         QTextTableCellFormat &centralQuantityTotalFormat,
-                                                         QTextTableCellFormat &rightQuantityTotalFormat,
-                                                         QTextCharFormat &txtCharFormat,
-                                                         QTextCharFormat &txtBoldCharFormat) const {
+void AccountingBillItem::writeODTAttributeBillLineUnion(AccountingPrinter::PrintAmountsOption prAmountsOption, AccountingPrinter::PrintPPUDescOption prPPUDescOption,
+                                                        QList<double> * fieldsAmounts,
+                                                        const QList<Attribute *> &attrsToPrint,
+                                                        QTextCursor *cursor,
+                                                        QTextTable *table,
+                                                        QTextBlockFormat &tagBlockFormat,
+                                                        QTextBlockFormat &txtBlockFormat,
+                                                        QTextBlockFormat &numBlockFormat,
+                                                        QTextTableCellFormat &leftFormat,
+                                                        QTextTableCellFormat &centralFormat,
+                                                        QTextTableCellFormat &rightFormat,
+                                                        QTextTableCellFormat &centralQuantityTotalFormat,
+                                                        QTextTableCellFormat &rightQuantityTotalFormat,
+                                                        QTextCharFormat &txtCharFormat,
+                                                        QTextCharFormat &txtBoldCharFormat) const {
     if( !hasChildren() ){
         bool unionOk = false;
         QList<Attribute *>::const_iterator i = attrsToPrint.begin();
@@ -2991,7 +2990,7 @@ void AccountingBillItem::writeODTAttributeBillLineUnion( AccountingPrinter::Prin
             fieldsAmounts[0] += totalAmountToDiscount();
             fieldsAmounts[1] += amountNotToDiscount();
             fieldsAmounts[2] += totalAmount();
-            writeODTBillLine( prItemsOption,
+            writeODTBillLine( prPPUDescOption,
                               false, printAmounts,
                               cursor, table,
                               tagBlockFormat, txtBlockFormat, numBlockFormat,
@@ -3001,7 +3000,7 @@ void AccountingBillItem::writeODTAttributeBillLineUnion( AccountingPrinter::Prin
         }
     } else {
         for( QList<AccountingBillItem *>::iterator i = m_d->childrenContainer.begin(); i != m_d->childrenContainer.end(); ++i ){
-            (*i)->writeODTAttributeBillLineUnion( prItemsOption,
+            (*i)->writeODTAttributeBillLineUnion( prPPUDescOption,
                                                   fieldsAmounts, attrsToPrint,
                                                   printAmounts,
                                                   cursor, table,
@@ -3013,22 +3012,21 @@ void AccountingBillItem::writeODTAttributeBillLineUnion( AccountingPrinter::Prin
     }
 }
 
-void AccountingBillItem::writeODTAttributeBillLineIntersection( AccountingPrinter::PrintPPUDescOption prItemsOption,
-                                                                QList<double> * fieldsAmounts,
-                                                                const QList<Attribute *> &attrsToPrint,
-                                                                bool printAmounts,
-                                                                QTextCursor *cursor,
-                                                                QTextTable *table,
-                                                                QTextBlockFormat &tagBlockFormat,
-                                                                QTextBlockFormat & txtBlockFormat,
-                                                                QTextBlockFormat & numBlockFormat,
-                                                                QTextTableCellFormat & leftFormat,
-                                                                QTextTableCellFormat & centralFormat,
-                                                                QTextTableCellFormat & rightFormat,
-                                                                QTextTableCellFormat & centralQuantityTotalFormat,
-                                                                QTextTableCellFormat & rightQuantityTotalFormat,
-                                                                QTextCharFormat &txtCharFormat,
-                                                                QTextCharFormat &txtBoldCharFormat ) const{
+void AccountingBillItem::writeODTAttributeBillLineIntersection(AccountingPrinter::PrintAmountsOption prAmountsOption, AccountingPrinter::PrintPPUDescOption prPPUDescOption,
+                                                               QList<double> * fieldsAmounts,
+                                                               const QList<Attribute *> &attrsToPrint,
+                                                               QTextCursor *cursor,
+                                                               QTextTable *table,
+                                                               QTextBlockFormat &tagBlockFormat,
+                                                               QTextBlockFormat & txtBlockFormat,
+                                                               QTextBlockFormat & numBlockFormat,
+                                                               QTextTableCellFormat & leftFormat,
+                                                               QTextTableCellFormat & centralFormat,
+                                                               QTextTableCellFormat & rightFormat,
+                                                               QTextTableCellFormat & centralQuantityTotalFormat,
+                                                               QTextTableCellFormat & rightQuantityTotalFormat,
+                                                               QTextCharFormat &txtCharFormat,
+                                                               QTextCharFormat &txtBoldCharFormat ) const{
     if( !hasChildren() ){
         bool intersectionOk = true;
         QList<Attribute *>::const_iterator i = attrsToPrint.begin();
@@ -3042,7 +3040,7 @@ void AccountingBillItem::writeODTAttributeBillLineIntersection( AccountingPrinte
             fieldsAmounts[0] += totalAmountToDiscount();
             fieldsAmounts[1] += amountNotToDiscount();
             fieldsAmounts[2] += totalAmount();
-            writeODTBillLine( prItemsOption,
+            writeODTBillLine( prPPUDescOption,
                               false, printAmounts,
                               cursor, table,
                               tagBlockFormat, txtBlockFormat, numBlockFormat,
@@ -3052,7 +3050,7 @@ void AccountingBillItem::writeODTAttributeBillLineIntersection( AccountingPrinte
         }
     } else {
         for( QList<AccountingBillItem *>::iterator i = m_d->childrenContainer.begin(); i != m_d->childrenContainer.end(); ++i ){
-            (*i)->writeODTAttributeBillLineIntersection( prItemsOption,
+            (*i)->writeODTAttributeBillLineIntersection( prPPUDescOption,
                                                          fieldsAmounts, attrsToPrint, printAmounts,
                                                          cursor, table,
                                                          tagBlockFormat, txtBlockFormat, numBlockFormat,
@@ -3063,9 +3061,9 @@ void AccountingBillItem::writeODTAttributeBillLineIntersection( AccountingPrinte
     }
 }
 
-void AccountingBillItem::writeODTBillLine( AccountingPrinter::PrintPPUDescOption prItemsOption,
+void AccountingBillItem::writeODTBillLine( AccountingPrinter::PrintAmountsOption prAmountsOption,
+                                           AccountingPrinter::PrintPPUDescOption prItemsOption,
                                            bool writeProgCode,
-                                           bool writeAmounts,
                                            QTextCursor *cursor,
                                            QTextTable *table,
                                            QTextBlockFormat &tagBlockFormat,
