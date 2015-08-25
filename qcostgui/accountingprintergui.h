@@ -30,11 +30,11 @@ class AccountingPrinterGUIPrivate;
 class AccountingPrinterGUI : public QDialog {
     Q_OBJECT
 public:
-    explicit AccountingPrinterGUI( PaymentDataModel *dataModel,
+    explicit AccountingPrinterGUI(PaymentDataModel *dataModel,
                                    AccountingPrinter::PrintPPUDescOption *prItemsOption,
                                    AccountingPrinter::PrintOption * prOption,
                                    AccountingPrinter::PrintAmountsOption * prAmountsOption,
-                                   int * billToPrint,
+                                   int * payToPrint,
                                    double *pWidth,
                                    double *pHeight,
                                    Qt::Orientation *pOrient,

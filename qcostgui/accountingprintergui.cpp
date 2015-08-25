@@ -31,7 +31,7 @@ public:
                                  AccountingPrinter::PrintPPUDescOption * prPPUDescOption,
                                  AccountingPrinter::PrintOption *prOption,
                                  AccountingPrinter::PrintAmountsOption * prAmountsOption,
-                                 int * bToPrint,
+                                 int * payToPrint,
                                  double *pWidth,
                                  double *pHeight,
                                  Qt::Orientation * pOrient ):
@@ -40,7 +40,7 @@ public:
         printPPUDescOption(prPPUDescOption),
         printOption(prOption),
         printAmountsOption(prAmountsOption),
-        billToPrint(bToPrint),
+        paymentToPrint(payToPrint),
         paperWidth(pWidth),
         paperHeight(pHeight),
         paperOrientation( pOrient ) {
@@ -55,7 +55,7 @@ public:
     AccountingPrinter::PrintPPUDescOption * printPPUDescOption;
     AccountingPrinter::PrintOption *printOption;
     AccountingPrinter::PrintAmountsOption * printAmountsOption;
-    int * billToPrint;
+    int * paymentToPrint;
     double *paperWidth;
     double *paperHeight;
     Qt::Orientation * paperOrientation;
@@ -66,13 +66,13 @@ AccountingPrinterGUI::AccountingPrinterGUI(PaymentDataModel * dataModel,
                                            AccountingPrinter::PrintPPUDescOption * prPPUDescOption,
                                            AccountingPrinter::PrintOption *prOption,
                                            AccountingPrinter::PrintAmountsOption *prAmountsOption,
-                                           int * billToPrint,
+                                           int * payToPrint,
                                            double *pWidth,
                                            double *pHeight,
                                            Qt::Orientation * pOrient,
                                            QWidget *parent ) :
     QDialog(parent),
-    m_d( new AccountingPrinterGUIPrivate( dataModel, prPPUDescOption, prOption, prAmountsOption, billToPrint, pWidth, pHeight, pOrient ) ) {
+    m_d( new AccountingPrinterGUIPrivate( dataModel, prPPUDescOption, prOption, prAmountsOption, payToPrint, pWidth, pHeight, pOrient ) ) {
     m_d->ui->setupUi(this);
 
     connect( this, &AccountingPrinterGUI::accepted, this, &AccountingPrinterGUI::setPrintData );
@@ -148,7 +148,7 @@ void AccountingPrinterGUI::setPrintData(){
         *(m_d->printOption) = AccountingPrinter::PrintRawMeasures;
     }
 
-    *(m_d->billToPrint) = m_d->ui->billToPrintComboBox->currentIndex() - 1;
+    *(m_d->paymentToPrint) = m_d->ui->billToPrintComboBox->currentIndex() - 1;
 
     *(m_d->paperWidth) = m_d->pageSizeList.at( m_d->ui->paperDimensionsComboBox->currentIndex() ).size( QPageSize::Millimeter ).width();
     *(m_d->paperHeight) = m_d->pageSizeList.at( m_d->ui->paperDimensionsComboBox->currentIndex() ).size( QPageSize::Millimeter ).height();

@@ -578,27 +578,15 @@ bool QCostGUI::printODT() {
         return false;
     }
 
-    ProjectAccountingParentItem * accItem = dynamic_cast<ProjectAccountingParentItem *> (m_d->projectItemsView->currentItem());
-    if( accItem == NULL ){
-        AccountingBills * billsItem = dynamic_cast<AccountingBills *> (m_d->projectItemsView->currentItem());
-        if( billsItem != NULL ){
-            accItem = m_d->project->accounting();
-        }
-    }
-    if( accItem == NULL ){
-        AccountingBill * billItem = dynamic_cast<AccountingBill *> (m_d->projectItemsView->currentItem());
-        if( billItem != NULL ){
-            accItem = m_d->project->accounting();
-        }
-    }
-    if( accItem != NULL ){
+    AccountingBill * bill = dynamic_cast<AccountingBill *> (m_d->projectItemsView->currentItem());
+    if( bill != NULL ){
         AccountingPrinter::PrintPPUDescOption prPPUDescOption = AccountingPrinter::PrintShortDesc;
         AccountingPrinter::PrintOption prOptions = AccountingPrinter::PrintRawMeasures;
         AccountingPrinter::PrintAmountsOption prAmountsOptions = AccountingPrinter::PrintAllAmounts;
-        int billToPrint;
+        int payToPrint;
         double paperWidth = 210.0, paperHeight = 297.0;
         Qt::Orientation paperOrientation = Qt::Vertical;
-        AccountingPrinterGUI gui( accItem->dataModel(), &prPPUDescOption, &prOptions, &prAmountsOptions, &billToPrint, &paperWidth, &paperHeight, &paperOrientation,  this );
+        AccountingPrinterGUI gui( m_d->project->accounting()->dataModel(), &prPPUDescOption, &prOptions, &prAmountsOptions, &payToPrint, &paperWidth, &paperHeight, &paperOrientation,  this );
         if( gui.exec() == QDialog::Accepted ){
             QString fileName = QFileDialog::getSaveFileName(this,
                                                             trUtf8("Stampa Contabilità"), ".",
@@ -608,7 +596,7 @@ bool QCostGUI::printODT() {
                 if( suf != "odt"){
                     fileName.append( ".odt" );
                 }
-                AccountingPrinter writer( accItem->accountingBills()->bill( billToPrint ), &(m_d->parser) );
+                AccountingPrinter writer( bill, &(m_d->parser) );
                 bool ret = writer.printODT( prOptions, prAmountsOptions, prPPUDescOption, fileName, paperWidth, paperHeight, paperOrientation );
                 if( !m_d->sWordProcessorFile.isEmpty() ){
                     if( QFileInfo(m_d->sWordProcessorFile).exists() ){
