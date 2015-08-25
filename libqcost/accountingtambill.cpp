@@ -728,7 +728,7 @@ void AccountingTAMBill::writeODTSummaryOnTable(QTextCursor *cursor,
                                                AccountingPrinter::PrintAmountsOption prAmountsOption,
                                                AccountingPrinter::PrintPPUDescOption prItemsOption,
                                                bool writeDetails ) const {
-    m_d->rootItem->writeODTSummaryOnTable(cursor, prItemsOption, printAmounts, writeDetails );
+    m_d->rootItem->writeODTSummaryOnTable( cursor, prAmountsOption, prItemsOption, writeDetails );
 }
 
 void AccountingTAMBill::loadTmpData(ProjectPriceListParentItem * priceLists) {

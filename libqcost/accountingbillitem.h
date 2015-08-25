@@ -187,13 +187,12 @@ public:
     void writeODTAccountingOnTable(QTextCursor * cursor,
                                    AccountingPrinter::PrintAmountsOption prAmountsOption,
                                    AccountingPrinter::PrintPPUDescOption prPPUDescOption) const;
-    void writeODTSummaryOnTable( QTextCursor *cursor,
+    void writeODTSummaryOnTable(QTextCursor *cursor, AccountingPrinter::PrintAmountsOption prAmountsOption,
                                  AccountingPrinter::PrintPPUDescOption prItemsOption,
-                                 bool printAmounts = true,
                                  bool writeDetails = true) const;
     void writeODTAttributeAccountingOnTable(QTextCursor *cursor,
                                             AccountingPrinter::AttributePrintOption prOption, AccountingPrinter::PrintAmountsOption prAmountsOption,
-                                            AccountingPrinter::PrintPPUDescOption prItemsOption,
+                                            AccountingPrinter::PrintPPUDescOption prPPUDescOption,
                                             const QList<Attribute *> &attrsToPrint) const;
     /** Il tipo di elemento */
     ItemType itemType() const;
@@ -337,8 +336,8 @@ protected:
 
     void writeODTAttributeBillLineSimple( AccountingPrinter::PrintAmountsOption prAmountsOption,
                                           AccountingPrinter::PrintPPUDescOption prPPUDescOption,
+                                          QList<double> * fieldsAmounts,
                                           Attribute * attrsToPrint,
-                                          bool printAmounts,
                                           QTextCursor *cursor,
                                           QTextTable *table,
                                           QTextBlockFormat &tagBlockFormat,
@@ -355,7 +354,6 @@ protected:
                                                 AccountingPrinter::PrintPPUDescOption prPPUDescOption,
                                                 QList<double> * fieldsAmounts,
                                                 const QList<Attribute *> &attrsToPrint,
-                                                bool printAmounts,
                                                 QTextCursor *cursor,
                                                 QTextTable *table,
                                                 QTextBlockFormat &tagBlockFormat,

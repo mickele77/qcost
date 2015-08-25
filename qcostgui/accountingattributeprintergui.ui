@@ -97,17 +97,10 @@
         <item row="0" column="0">
          <widget class="QRadioButton" name="attributePrintSimpleRadioButton">
           <property name="text">
-           <string>Stampa Semplice</string>
+           <string>Stampa Semp&amp;lice</string>
           </property>
           <property name="checked">
            <bool>true</bool>
-          </property>
-         </widget>
-        </item>
-        <item row="3" column="0">
-         <widget class="QCheckBox" name="printAmountsCheckBox">
-          <property name="text">
-           <string>Stampa importi</string>
           </property>
          </widget>
         </item>

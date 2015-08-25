@@ -2233,7 +2233,7 @@ void AccountingBillItem::writeODTAccountingOnTable( QTextCursor *cursor,
 
     // numero complessivo colonne
     int cellCount = 6;
-    if( printAmounts ){
+    if( prAmountsOption != AccountingPrinter::PrintNoAmount ){
         cellCount += 2;
     }
 
@@ -2247,12 +2247,12 @@ void AccountingBillItem::writeODTAccountingOnTable( QTextCursor *cursor,
         AccountingBillItemPrivate::writeCell( cursor, table, centralHeaderFormat, headerBlockFormat, trUtf8("Art.Elenco") );
         AccountingBillItemPrivate::writeCell( cursor, table, centralHeaderFormat, headerBlockFormat, trUtf8("Indicazioni dei lavori"));
         AccountingBillItemPrivate::writeCell( cursor, table, centralHeaderFormat, headerBlockFormat, trUtf8("Unità di Misura"));
-        if( printAmounts ){
+        if( prAmountsOption == AccountingPrinter::PrintNoAmount ){
+            AccountingBillItemPrivate::writeCell( cursor, table, rightHeaderFormat, headerBlockFormat, trUtf8("Quantità"));
+        } else {
             AccountingBillItemPrivate::writeCell( cursor, table, centralHeaderFormat, headerBlockFormat, trUtf8("Quantità"));
             AccountingBillItemPrivate::writeCell( cursor, table, centralHeaderFormat, headerBlockFormat, trUtf8("Costo Unitario"));
             AccountingBillItemPrivate::writeCell( cursor, table, rightHeaderFormat, headerBlockFormat, trUtf8("Importo"));
-        } else {
-            AccountingBillItemPrivate::writeCell( cursor, table, rightHeaderFormat, headerBlockFormat, trUtf8("Quantità"));
         }
 
         // *** Riga vuota ***
@@ -2260,11 +2260,11 @@ void AccountingBillItem::writeODTAccountingOnTable( QTextCursor *cursor,
 
         // *** Scrive il computo dei sottoarticoli ***
         for( QList<AccountingBillItem *>::iterator i = m_d->childrenContainer.begin(); i != m_d->childrenContainer.end(); ++i){
-            (*i)->writeODTAccountingOnTable( cursor, prPPUDescOption, printAmounts );
+            (*i)->writeODTAccountingOnTable( cursor, prAmountsOption, prPPUDescOption );
         }
 
         // *** riga dei totali complessivi
-        if( printAmounts ){
+        if( prAmountsOption != AccountingPrinter::PrintNoAmount ){
             // riga vuota
             AccountingBillItemPrivate::insertEmptyRow( cellCount, cursor, leftFormat, centralFormat, rightFormat );
 
@@ -2295,16 +2295,16 @@ void AccountingBillItem::writeODTAccountingOnTable( QTextCursor *cursor,
             AccountingBillItemPrivate::writeCell( cursor, table, centralSubTitleFormat, txtBlockFormat );
             AccountingBillItemPrivate::writeCell( cursor, table, centralSubTitleFormat, txtBlockFormat, m_d->name );
             AccountingBillItemPrivate::writeCell( cursor, table, centralSubTitleFormat, tagBlockFormat );
-            if( printAmounts ){
-                AccountingBillItemPrivate::writeCell( cursor, table, centralSubTitleFormat, numBlockFormat );
-                AccountingBillItemPrivate::writeCell( cursor, table, centralSubTitleFormat, numBlockFormat );
+            if( prAmountsOption == AccountingPrinter::PrintNoAmount ){
                 AccountingBillItemPrivate::writeCell( cursor, table, rightSubTitleFormat, numBlockFormat );
             } else {
+                AccountingBillItemPrivate::writeCell( cursor, table, centralSubTitleFormat, numBlockFormat );
+                AccountingBillItemPrivate::writeCell( cursor, table, centralSubTitleFormat, numBlockFormat );
                 AccountingBillItemPrivate::writeCell( cursor, table, rightSubTitleFormat, numBlockFormat );
             }
 
             for( QList<AccountingBillItem *>::iterator i = m_d->childrenContainer.begin(); i != m_d->childrenContainer.end(); ++i){
-                (*i)->writeODTAccountingOnTable( cursor, prPPUDescOption, printAmounts );
+                (*i)->writeODTAccountingOnTable( cursor, prAmountsOption, prPPUDescOption );
             }
 
             table->appendRows(1);
@@ -2314,16 +2314,16 @@ void AccountingBillItem::writeODTAccountingOnTable( QTextCursor *cursor,
             AccountingBillItemPrivate::writeCell( cursor, table, centralSubTitleFormat, txtBlockFormat );
             AccountingBillItemPrivate::writeCell( cursor, table, centralSubTitleFormat, txtBlockFormat, trUtf8("Totale %1").arg( m_d->name ) );
             AccountingBillItemPrivate::writeCell( cursor, table, centralSubTitleFormat, tagBlockFormat );
-            if( printAmounts ){
+            if( prAmountsOption == AccountingPrinter::PrintNoAmount ){
+                AccountingBillItemPrivate::writeCell( cursor, table, rightSubTitleFormat, numBlockFormat );
+            } else {
                 AccountingBillItemPrivate::writeCell( cursor, table, centralSubTitleFormat, numBlockFormat );
                 AccountingBillItemPrivate::writeCell( cursor, table, centralSubTitleFormat, numBlockFormat );
                 AccountingBillItemPrivate::writeCell( cursor, table, rightSubTitleFormat, numBlockFormat, totalAmountToDiscountStr() );
-            } else {
-                AccountingBillItemPrivate::writeCell( cursor, table, rightSubTitleFormat, numBlockFormat );
             }
         } else { // !hasChildren()
-            writeODTBillLine( prPPUDescOption,
-                              true, printAmounts,
+            writeODTBillLine( prAmountsOption, prPPUDescOption,
+                              true,
                               cursor, table,
                               tagBlockFormat, txtBlockFormat, numBlockFormat,
                               leftFormat, centralFormat, rightFormat,
@@ -2334,8 +2334,8 @@ void AccountingBillItem::writeODTAccountingOnTable( QTextCursor *cursor,
 }
 
 void AccountingBillItem::writeODTSummaryOnTable( QTextCursor *cursor,
+                                                 AccountingPrinter::PrintAmountsOption prAmountsOption,
                                                  AccountingPrinter::PrintPPUDescOption prItemsOption,
-                                                 bool printAmounts,
                                                  bool writeDetails ) const {
     // spessore del bordo della tabella
     double borderWidth = 1.0f;
@@ -2441,7 +2441,7 @@ void AccountingBillItem::writeODTSummaryOnTable( QTextCursor *cursor,
 
     // numero complessivo colonne
     int cellCount = 4;
-    if( printAmounts ) {
+    if( prAmountsOption != AccountingPrinter::PrintNoAmount ) {
         cellCount += 2;
     }
 
@@ -2452,12 +2452,12 @@ void AccountingBillItem::writeODTSummaryOnTable( QTextCursor *cursor,
     AccountingBillItemPrivate::writeCell( cursor, table, leftHeaderFormat, headerBlockFormat, trUtf8("Codice"), false );
     AccountingBillItemPrivate::writeCell( cursor, table, centralHeaderFormat, headerBlockFormat, trUtf8("Denominazione"));
     AccountingBillItemPrivate::writeCell( cursor, table, centralHeaderFormat, headerBlockFormat, trUtf8("Unità di Misura"));
-    if( printAmounts ){
+    if( prAmountsOption == AccountingPrinter::PrintNoAmount ) {
+        AccountingBillItemPrivate::writeCell( cursor, table, rightHeaderFormat, headerBlockFormat, trUtf8("Quantità"));
+    } else {
         AccountingBillItemPrivate::writeCell( cursor, table, centralHeaderFormat, headerBlockFormat, trUtf8("Quantità"));
         AccountingBillItemPrivate::writeCell( cursor, table, centralHeaderFormat, headerBlockFormat, trUtf8("Costo Unitario"));
         AccountingBillItemPrivate::writeCell( cursor, table, rightHeaderFormat, headerBlockFormat, trUtf8("Importo"));
-    } else {
-        AccountingBillItemPrivate::writeCell( cursor, table, rightHeaderFormat, headerBlockFormat, trUtf8("Quantità"));
     }
 
     // *** riga vuota ***
@@ -2488,11 +2488,11 @@ void AccountingBillItem::writeODTSummaryOnTable( QTextCursor *cursor,
         if( writeDetails ){
             // *** termina la riga **
             AccountingBillItemPrivate::writeCell( cursor, table, centralFormat, tagBlockFormat );
-            if( printAmounts ){
-                AccountingBillItemPrivate::writeCell( cursor, table, centralFormat, numBlockFormat );
-                AccountingBillItemPrivate::writeCell( cursor, table, centralFormat, numBlockFormat );
+            if( prAmountsOption == AccountingPrinter::PrintNoAmount ) {
                 AccountingBillItemPrivate::writeCell( cursor, table, rightFormat, numBlockFormat );
             } else {
+                AccountingBillItemPrivate::writeCell( cursor, table, centralFormat, numBlockFormat );
+                AccountingBillItemPrivate::writeCell( cursor, table, centralFormat, numBlockFormat );
                 AccountingBillItemPrivate::writeCell( cursor, table, rightFormat, numBlockFormat );
             }
             table->appendRows(1);
@@ -2503,7 +2503,8 @@ void AccountingBillItem::writeODTSummaryOnTable( QTextCursor *cursor,
         fieldsAmount << 0.0 << 0.0 << 0.0;
         double itemTotalQuantity = 0.0;
         for( QList<AccountingBillItem *>::iterator j = m_d->childrenContainer.begin(); j != m_d->childrenContainer.end(); ++j ){
-            (*j)->writeODTSummaryLine( *i, cursor, &itemTotalQuantity, &fieldsAmount, printAmounts, writeDetails,
+            // TODO
+            (*j)->writeODTSummaryLine( *i, cursor, &itemTotalQuantity, &fieldsAmount, true, writeDetails,
                                        table,
                                        tagBlockFormat, txtBlockFormat, numBlockFormat,
                                        leftFormat, centralFormat, rightFormat );
@@ -2515,7 +2516,9 @@ void AccountingBillItem::writeODTSummaryOnTable( QTextCursor *cursor,
         }
         AccountingBillItemPrivate::writeCell( cursor, table, centralFormat, tagBlockFormat, unitMeasureTag );
 
-        if( printAmounts ){
+        if( prAmountsOption == AccountingPrinter::PrintNoAmount ) {
+            AccountingBillItemPrivate::writeCell( cursor, table, rightFormat, numBlockFormat, m_d->toString( itemTotalQuantity, 'f', unitMeasurePrec ));
+        } else {
             AccountingBillItemPrivate::writeCell( cursor, table, centralFormat, numBlockFormat, m_d->toString( itemTotalQuantity, 'f', unitMeasurePrec ));
             if( (*i)!= NULL ){
                 AccountingBillItemPrivate::writeCell( cursor, table, centralFormat, numBlockFormat, PPUTotalToDiscountStr() );
@@ -2523,8 +2526,6 @@ void AccountingBillItem::writeODTSummaryOnTable( QTextCursor *cursor,
                 AccountingBillItemPrivate::writeCell( cursor, table, centralFormat, numBlockFormat );
             }
             AccountingBillItemPrivate::writeCell( cursor, table, rightFormat, numBlockFormat, totalAmountToDiscountStr() );
-        } else {
-            AccountingBillItemPrivate::writeCell( cursor, table, rightFormat, numBlockFormat, m_d->toString( itemTotalQuantity, 'f', unitMeasurePrec ));
         }
 
         AccountingBillItemPrivate::insertEmptyRow( cellCount, cursor, leftFormat, centralFormat, rightFormat );
@@ -2532,7 +2533,7 @@ void AccountingBillItem::writeODTSummaryOnTable( QTextCursor *cursor,
 
     // *** Totale complessivo ***
     // *** riga dei totali complessivi
-    if( printAmounts ){
+    if( prAmountsOption != AccountingPrinter::PrintNoAmount ) {
         // riga vuota
         // AccountingBillItemPrivate::insertEmptyRow( cellCount, cursor, leftFormat, centralFormat, rightFormat );
 
@@ -2640,7 +2641,7 @@ void AccountingBillItem::writeODTSummaryLine(PriceItem * priceItem,
 void AccountingBillItem::writeODTAttributeAccountingOnTable( QTextCursor *cursor,
                                                              AccountingPrinter::AttributePrintOption prOption,
                                                              AccountingPrinter::PrintAmountsOption prAmountsOption,
-                                                             AccountingPrinter::PrintPPUDescOption prItemsOption,
+                                                             AccountingPrinter::PrintPPUDescOption prPPUDescOption,
                                                              const QList<Attribute *> &attrsToPrint ) const {
     // spessore del bordo della tabella
     double borderWidth = 1.0f;
@@ -2746,7 +2747,7 @@ void AccountingBillItem::writeODTAttributeAccountingOnTable( QTextCursor *cursor
 
     // numero complessivo colonne
     int cellCount = 4;
-    if( printAmounts ){
+    if( prAmountsOption != AccountingPrinter::PrintNoAmount ){
         cellCount += 2;
     }
 
@@ -2758,12 +2759,12 @@ void AccountingBillItem::writeODTAttributeAccountingOnTable( QTextCursor *cursor
     AccountingBillItemPrivate::writeCell( cursor, table, leftHeaderFormat, headerBlockFormat, trUtf8("Codice"), false );
     AccountingBillItemPrivate::writeCell( cursor, table, centralHeaderFormat, headerBlockFormat, trUtf8("Denominazione"));
     AccountingBillItemPrivate::writeCell( cursor, table, centralHeaderFormat, headerBlockFormat, trUtf8("Unità di Misura"));
-    if( printAmounts ){
+    if( prAmountsOption == AccountingPrinter::PrintNoAmount ){
+        AccountingBillItemPrivate::writeCell( cursor, table, rightHeaderFormat, headerBlockFormat, trUtf8("Quantità"));
+    } else {
         AccountingBillItemPrivate::writeCell( cursor, table, centralHeaderFormat, headerBlockFormat, trUtf8("Quantità"));
         AccountingBillItemPrivate::writeCell( cursor, table, centralHeaderFormat, headerBlockFormat, trUtf8("Costo Unitario"));
         AccountingBillItemPrivate::writeCell( cursor, table, rightHeaderFormat, headerBlockFormat, trUtf8("Importo"));
-    } else {
-        AccountingBillItemPrivate::writeCell( cursor, table, rightHeaderFormat, headerBlockFormat, trUtf8("Quantità"));
     }
 
     // *** riga vuota ***
@@ -2785,20 +2786,21 @@ void AccountingBillItem::writeODTAttributeAccountingOnTable( QTextCursor *cursor
             AccountingBillItemPrivate::writeCell( cursor, table, leftTitleFormat, txtBlockFormat );
             AccountingBillItemPrivate::writeCell( cursor, table, centralTitleFormat, txtBlockFormat, (*i)->name() );
             AccountingBillItemPrivate::writeCell( cursor, table, centralTitleFormat, tagBlockFormat );
-            if( printAmounts ){
-                AccountingBillItemPrivate::writeCell( cursor, table, centralTitleFormat, numBlockFormat );
-                AccountingBillItemPrivate::writeCell( cursor, table, centralTitleFormat, numBlockFormat );
+            if( prAmountsOption == AccountingPrinter::PrintNoAmount ){
                 AccountingBillItemPrivate::writeCell( cursor, table, rightTitleFormat, numBlockFormat );
             } else {
+                AccountingBillItemPrivate::writeCell( cursor, table, centralTitleFormat, numBlockFormat );
+                AccountingBillItemPrivate::writeCell( cursor, table, centralTitleFormat, numBlockFormat );
                 AccountingBillItemPrivate::writeCell( cursor, table, rightTitleFormat, numBlockFormat );
             }
 
             // *** riga vuota ***
             AccountingBillItemPrivate::insertEmptyRow( cellCount, cursor, leftFormat, centralFormat, rightFormat );
 
-            writeODTAttributeBillLineSimple( prItemsOption,
+            writeODTAttributeBillLineSimple( prAmountsOption,
+                                             prPPUDescOption,
                                              &fieldsAmounts,
-                                             *i, printAmounts,
+                                             *i,
                                              cursor, table, tagBlockFormat, txtBlockFormat, numBlockFormat,
                                              leftFormat, centralFormat, rightFormat, centralQuantityTotalFormat, rightQuantityTotalFormat,
                                              txtCharFormat, txtBoldCharFormat );
@@ -2810,12 +2812,12 @@ void AccountingBillItem::writeODTAttributeAccountingOnTable( QTextCursor *cursor
             AccountingBillItemPrivate::writeCell( cursor, table, leftTitleFormat, txtBlockFormat );
             AccountingBillItemPrivate::writeCell( cursor, table, centralTitleFormat, txtBlockFormat , trUtf8("Totale %1").arg((*i)->name()) );
             AccountingBillItemPrivate::writeCell( cursor, table, centralTitleFormat, tagBlockFormat );
-            if( printAmounts ){
+            if( prAmountsOption == AccountingPrinter::PrintNoAmount ){
+                AccountingBillItemPrivate::writeCell( cursor, table, rightTitleFormat, numBlockFormat );
+            } else {
                 AccountingBillItemPrivate::writeCell( cursor, table, centralTitleFormat, numBlockFormat );
                 AccountingBillItemPrivate::writeCell( cursor, table, centralTitleFormat, numBlockFormat );
                 AccountingBillItemPrivate::writeCell( cursor, table, rightTitleFormat, numBlockFormat, totalAmountToDiscountStr() );
-            } else {
-                AccountingBillItemPrivate::writeCell( cursor, table, rightTitleFormat, numBlockFormat );
             }
 
             if( i != -- attrsToPrint.end()){
@@ -2837,16 +2839,17 @@ void AccountingBillItem::writeODTAttributeAccountingOnTable( QTextCursor *cursor
         }
         AccountingBillItemPrivate::writeCell( cursor, table, centralHeaderFormat, headerBlockFormat, title );
         AccountingBillItemPrivate::writeCell( cursor, table, centralHeaderFormat, headerBlockFormat );
-        if( printAmounts ){
+        if( prAmountsOption == AccountingPrinter::PrintNoAmount ){
+            AccountingBillItemPrivate::writeCell( cursor, table, rightHeaderFormat, headerBlockFormat );
+        } else {
             AccountingBillItemPrivate::writeCell( cursor, table, centralHeaderFormat, headerBlockFormat );
             AccountingBillItemPrivate::writeCell( cursor, table, centralHeaderFormat, headerBlockFormat, trUtf8("Costo Unitario") );
             AccountingBillItemPrivate::writeCell( cursor, table, rightHeaderFormat, headerBlockFormat, trUtf8("Importo") );
-        } else {
-            AccountingBillItemPrivate::writeCell( cursor, table, rightHeaderFormat, headerBlockFormat );
         }
 
-        writeODTAttributeBillLineUnion( prItemsOption,
-                                        &fieldsAmounts, attrsToPrint, printAmounts,
+        writeODTAttributeBillLineUnion( prAmountsOption,
+                                        prPPUDescOption,
+                                        &fieldsAmounts, attrsToPrint,
                                         cursor, table, tagBlockFormat, txtBlockFormat, numBlockFormat,
                                         leftFormat, centralFormat, rightFormat, centralQuantityTotalFormat, rightQuantityTotalFormat,
                                         txtCharFormat, txtBoldCharFormat );
@@ -2857,12 +2860,12 @@ void AccountingBillItem::writeODTAttributeAccountingOnTable( QTextCursor *cursor
         AccountingBillItemPrivate::writeCell( cursor, table, leftTitleFormat, txtBlockFormat );
         AccountingBillItemPrivate::writeCell( cursor, table, centralTitleFormat, txtBlockFormat , title );
         AccountingBillItemPrivate::writeCell( cursor, table, centralTitleFormat, tagBlockFormat );
-        if( printAmounts ){
+        if( prAmountsOption == AccountingPrinter::PrintNoAmount ){
+            AccountingBillItemPrivate::writeCell( cursor, table, rightTitleFormat, numBlockFormat );
+        } else {
             AccountingBillItemPrivate::writeCell( cursor, table, centralTitleFormat, numBlockFormat );
             AccountingBillItemPrivate::writeCell( cursor, table, centralTitleFormat, numBlockFormat );
             AccountingBillItemPrivate::writeCell( cursor, table, rightTitleFormat, numBlockFormat, totalAmountToDiscountStr() );
-        } else {
-            AccountingBillItemPrivate::writeCell( cursor, table, rightTitleFormat, numBlockFormat );
         }
     } else if( prOption == AccountingPrinter::AttributePrintIntersection ){
         table->appendRows(1);
@@ -2876,16 +2879,17 @@ void AccountingBillItem::writeODTAttributeAccountingOnTable( QTextCursor *cursor
         }
         AccountingBillItemPrivate::writeCell( cursor, table, centralHeaderFormat, headerBlockFormat, title );
         AccountingBillItemPrivate::writeCell( cursor, table, centralHeaderFormat, headerBlockFormat );
-        if( printAmounts ){
+        if( prAmountsOption == AccountingPrinter::PrintNoAmount ){
+            AccountingBillItemPrivate::writeCell( cursor, table, rightHeaderFormat, headerBlockFormat );
+        } else {
             AccountingBillItemPrivate::writeCell( cursor, table, centralHeaderFormat, headerBlockFormat );
             AccountingBillItemPrivate::writeCell( cursor, table, centralHeaderFormat, headerBlockFormat, trUtf8("Costo Unitario") );
             AccountingBillItemPrivate::writeCell( cursor, table, rightHeaderFormat, headerBlockFormat, trUtf8("Importo") );
-        } else {
-            AccountingBillItemPrivate::writeCell( cursor, table, rightHeaderFormat, headerBlockFormat );
         }
 
-        writeODTAttributeBillLineIntersection( prItemsOption,
-                                               &fieldsAmounts, attrsToPrint, printAmounts,
+        writeODTAttributeBillLineIntersection( prAmountsOption,
+                                               prPPUDescOption,
+                                               &fieldsAmounts, attrsToPrint,
                                                cursor, table, tagBlockFormat, txtBlockFormat, numBlockFormat,
                                                leftFormat, centralFormat, rightFormat, centralQuantityTotalFormat, rightQuantityTotalFormat,
                                                txtCharFormat, txtBoldCharFormat );
@@ -2896,12 +2900,12 @@ void AccountingBillItem::writeODTAttributeAccountingOnTable( QTextCursor *cursor
         AccountingBillItemPrivate::writeCell( cursor, table, leftTitleFormat, txtBlockFormat );
         AccountingBillItemPrivate::writeCell( cursor, table, centralTitleFormat, txtBlockFormat , title );
         AccountingBillItemPrivate::writeCell( cursor, table, centralTitleFormat, tagBlockFormat );
-        if( printAmounts ){
+        if( prAmountsOption == AccountingPrinter::PrintNoAmount ){
+            AccountingBillItemPrivate::writeCell( cursor, table, rightTitleFormat, numBlockFormat );
+        } else {
             AccountingBillItemPrivate::writeCell( cursor, table, centralTitleFormat, numBlockFormat );
             AccountingBillItemPrivate::writeCell( cursor, table, centralTitleFormat, numBlockFormat );
             AccountingBillItemPrivate::writeCell( cursor, table, rightTitleFormat, numBlockFormat, totalAmountToDiscountStr() );
-        } else {
-            AccountingBillItemPrivate::writeCell( cursor, table, rightTitleFormat, numBlockFormat );
         }
     }
 
@@ -2915,6 +2919,7 @@ AccountingBillItem::ItemType AccountingBillItem::itemType() const {
 
 void AccountingBillItem::writeODTAttributeBillLineSimple( AccountingPrinter::PrintAmountsOption prAmountsOption,
                                                           AccountingPrinter::PrintPPUDescOption prPPUDescOption,
+                                                          QList<double> * fieldsAmounts,
                                                           Attribute *attrsToPrint,
                                                           QTextCursor *cursor,
                                                           QTextTable *table,
@@ -2941,8 +2946,9 @@ void AccountingBillItem::writeODTAttributeBillLineSimple( AccountingPrinter::Pri
             fieldsAmounts[1] += amountNotToDiscount();
             fieldsAmounts[2] += totalAmount();
 
-            writeODTBillLine( prPPUDescOption,
-                              false, printAmounts,
+            writeODTBillLine( prAmountsOption,
+                              prPPUDescOption,
+                              false,
                               cursor, table,
                               tagBlockFormat, txtBlockFormat, numBlockFormat,
                               leftFormat, centralFormat, rightFormat,
@@ -2951,8 +2957,8 @@ void AccountingBillItem::writeODTAttributeBillLineSimple( AccountingPrinter::Pri
         }
     } else {
         for( QList<AccountingBillItem *>::iterator i = m_d->childrenContainer.begin(); i != m_d->childrenContainer.end(); ++i ){
-            (*i)->writeODTAttributeBillLineSimple( prPPUDescOption,
-                                                   fieldsAmounts, attrsToPrint, printAmounts,
+            (*i)->writeODTAttributeBillLineSimple( prAmountsOption, prPPUDescOption,
+                                                   fieldsAmounts, attrsToPrint,
                                                    cursor, table,
                                                    tagBlockFormat, txtBlockFormat, numBlockFormat,
                                                    leftFormat, centralFormat, rightFormat,
@@ -2990,8 +2996,8 @@ void AccountingBillItem::writeODTAttributeBillLineUnion(AccountingPrinter::Print
             fieldsAmounts[0] += totalAmountToDiscount();
             fieldsAmounts[1] += amountNotToDiscount();
             fieldsAmounts[2] += totalAmount();
-            writeODTBillLine( prPPUDescOption,
-                              false, printAmounts,
+            writeODTBillLine( prAmountsOption, prPPUDescOption,
+                              false,
                               cursor, table,
                               tagBlockFormat, txtBlockFormat, numBlockFormat,
                               leftFormat, centralFormat, rightFormat,
@@ -3000,9 +3006,8 @@ void AccountingBillItem::writeODTAttributeBillLineUnion(AccountingPrinter::Print
         }
     } else {
         for( QList<AccountingBillItem *>::iterator i = m_d->childrenContainer.begin(); i != m_d->childrenContainer.end(); ++i ){
-            (*i)->writeODTAttributeBillLineUnion( prPPUDescOption,
+            (*i)->writeODTAttributeBillLineUnion( prAmountsOption, prPPUDescOption,
                                                   fieldsAmounts, attrsToPrint,
-                                                  printAmounts,
                                                   cursor, table,
                                                   tagBlockFormat, txtBlockFormat, numBlockFormat,
                                                   leftFormat, centralFormat, rightFormat,
@@ -3012,7 +3017,8 @@ void AccountingBillItem::writeODTAttributeBillLineUnion(AccountingPrinter::Print
     }
 }
 
-void AccountingBillItem::writeODTAttributeBillLineIntersection(AccountingPrinter::PrintAmountsOption prAmountsOption, AccountingPrinter::PrintPPUDescOption prPPUDescOption,
+void AccountingBillItem::writeODTAttributeBillLineIntersection(AccountingPrinter::PrintAmountsOption prAmountsOption,
+                                                               AccountingPrinter::PrintPPUDescOption prPPUDescOption,
                                                                QList<double> * fieldsAmounts,
                                                                const QList<Attribute *> &attrsToPrint,
                                                                QTextCursor *cursor,
@@ -3040,8 +3046,8 @@ void AccountingBillItem::writeODTAttributeBillLineIntersection(AccountingPrinter
             fieldsAmounts[0] += totalAmountToDiscount();
             fieldsAmounts[1] += amountNotToDiscount();
             fieldsAmounts[2] += totalAmount();
-            writeODTBillLine( prPPUDescOption,
-                              false, printAmounts,
+            writeODTBillLine( prAmountsOption, prPPUDescOption,
+                              false,
                               cursor, table,
                               tagBlockFormat, txtBlockFormat, numBlockFormat,
                               leftFormat, centralFormat, rightFormat,
@@ -3050,8 +3056,8 @@ void AccountingBillItem::writeODTAttributeBillLineIntersection(AccountingPrinter
         }
     } else {
         for( QList<AccountingBillItem *>::iterator i = m_d->childrenContainer.begin(); i != m_d->childrenContainer.end(); ++i ){
-            (*i)->writeODTAttributeBillLineIntersection( prPPUDescOption,
-                                                         fieldsAmounts, attrsToPrint, printAmounts,
+            (*i)->writeODTAttributeBillLineIntersection( prAmountsOption, prPPUDescOption,
+                                                         fieldsAmounts, attrsToPrint,
                                                          cursor, table,
                                                          tagBlockFormat, txtBlockFormat, numBlockFormat,
                                                          leftFormat, centralFormat, rightFormat,
@@ -3084,7 +3090,7 @@ void AccountingBillItem::writeODTBillLine( AccountingPrinter::PrintAmountsOption
     } else {
         colCount = 4;
     }
-    if( writeAmounts ){
+    if( prAmountsOption != AccountingPrinter::PrintNoAmount ){
         colCount += 2;
     }
 
@@ -3118,15 +3124,15 @@ void AccountingBillItem::writeODTBillLine( AccountingPrinter::PrintAmountsOption
         // tag unita misura
         AccountingBillItemPrivate::writeCell( cursor, table, centralFormat, tagBlockFormat );
 
-        if( writeAmounts ){
+        if( prAmountsOption == AccountingPrinter::PrintNoAmount ){
+            // quantita'
+            AccountingBillItemPrivate::writeCell( cursor, table, rightFormat, numBlockFormat );
+        } else {
             // quantita'
             AccountingBillItemPrivate::writeCell( cursor, table, centralFormat, numBlockFormat );
             // campi
             AccountingBillItemPrivate::writeCell( cursor, table, centralFormat, numBlockFormat );
             AccountingBillItemPrivate::writeCell( cursor, table, rightFormat, numBlockFormat  );
-        } else {
-            // quantita'
-            AccountingBillItemPrivate::writeCell( cursor, table, rightFormat, numBlockFormat );
         }
 
         table->appendRows(1);
@@ -3176,25 +3182,25 @@ void AccountingBillItem::writeODTBillLine( AccountingPrinter::PrintAmountsOption
                 AccountingBillItemPrivate::writeCell( cursor, table, centralFormat, tagBlockFormat );
 
                 // quantità
-                if( writeAmounts ){
-                    AccountingBillItemPrivate::writeCell( cursor, table, centralFormat, numBlockFormat );
-                } else {
+                if( prAmountsOption == AccountingPrinter::PrintNoAmount ){
                     AccountingBillItemPrivate::writeCell( cursor, table, rightFormat, numBlockFormat );
+                } else {
+                    AccountingBillItemPrivate::writeCell( cursor, table, centralFormat, numBlockFormat );
                 }
             } else {
                 // unita di misura
                 AccountingBillItemPrivate::writeCell( cursor, table, centralFormat, tagBlockFormat, unitMeasureTag );
 
                 // quantità
-                if( writeAmounts ){
-                    AccountingBillItemPrivate::writeCell( cursor, table, centralFormat, numBlockFormat, measure->quantityStr() );
-                } else {
+                if( prAmountsOption == AccountingPrinter::PrintNoAmount ){
                     AccountingBillItemPrivate::writeCell( cursor, table, rightFormat, numBlockFormat, measure->quantityStr() );
+                } else {
+                    AccountingBillItemPrivate::writeCell( cursor, table, centralFormat, numBlockFormat, measure->quantityStr() );
                 }
             }
 
             // celle vuote
-            if( writeAmounts ){
+            if( prAmountsOption != AccountingPrinter::PrintNoAmount ){
                 AccountingBillItemPrivate::writeCell( cursor, table, centralFormat, numBlockFormat );
                 AccountingBillItemPrivate::writeCell( cursor, table, rightFormat, numBlockFormat  );
             }
@@ -3220,12 +3226,12 @@ void AccountingBillItem::writeODTBillLine( AccountingPrinter::PrintAmountsOption
         AccountingBillItemPrivate::writeCell( cursor, table,  centralFormat, tagBlockFormat, unitMeasureTag );
 
         // quantita totale
-        if( writeAmounts ){
+        if( prAmountsOption == AccountingPrinter::PrintNoAmount ){
+            AccountingBillItemPrivate::writeCell( cursor, table, rightQuantityTotalFormat, numBlockFormat, quantityStr() );
+        } else {
             AccountingBillItemPrivate::writeCell( cursor, table, centralQuantityTotalFormat, numBlockFormat, quantityStr() );
             AccountingBillItemPrivate::writeCell( cursor, table, centralFormat, numBlockFormat, PPUTotalToDiscountStr() );
             AccountingBillItemPrivate::writeCell( cursor, table, rightFormat, numBlockFormat, totalAmountToDiscountStr() );
-        } else {
-            AccountingBillItemPrivate::writeCell( cursor, table, rightQuantityTotalFormat, numBlockFormat, quantityStr() );
         }
 
     } else { // m_d->linesModel == NULL
@@ -3237,13 +3243,12 @@ void AccountingBillItem::writeODTBillLine( AccountingPrinter::PrintAmountsOption
         }
         AccountingBillItemPrivate::writeCell( cursor, table, centralFormat, tagBlockFormat, unitMeasureTag );
 
-        if( writeAmounts ){
+        if( prAmountsOption == AccountingPrinter::PrintNoAmount ){
+            AccountingBillItemPrivate::writeCell( cursor, table, rightFormat, numBlockFormat, quantityStr() );
+        } else {
             AccountingBillItemPrivate::writeCell( cursor, table, centralFormat, numBlockFormat, quantityStr() );
             AccountingBillItemPrivate::writeCell( cursor, table, centralFormat, numBlockFormat, PPUTotalToDiscountStr() );
             AccountingBillItemPrivate::writeCell( cursor, table, rightFormat, numBlockFormat, totalAmountToDiscountStr() );
-        } else {
-            AccountingBillItemPrivate::writeCell( cursor, table, rightFormat, numBlockFormat, quantityStr() );
         }
-
     }
 }

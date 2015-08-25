@@ -820,7 +820,7 @@ void AccountingBill::writeODTSummaryOnTable( QTextCursor *cursor,
                                              AccountingPrinter::PrintAmountsOption prAmountsOption,
                                              AccountingPrinter::PrintPPUDescOption prItemsOption,
                                              bool writeDetails ) const {
-    m_d->rootItem->writeODTSummaryOnTable(cursor, prItemsOption, printAmounts, writeDetails );
+    m_d->rootItem->writeODTSummaryOnTable( cursor, prAmountsOption, prItemsOption, writeDetails );
 }
 void AccountingBill::loadTmpData(ProjectPriceListParentItem * priceLists, AccountingLSBills * lsBills, AccountingTAMBill * tamBill ) {
     m_d->priceList = priceLists->priceListId( m_d->priceListIdTmp );

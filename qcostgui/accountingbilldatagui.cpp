@@ -227,7 +227,6 @@ bool AccountingBillDataGUI::printAttributeAccountingODT(){
                                                 &prAttrs,
                                                 &paperWidth, &paperHeight,
                                                 &paperOrientation,
-                                                &printAmounts,
                                                 m_d->accounting->attributeModel(),
                                                 this );
         if( printGUI.exec() == QDialog::Accepted ){
@@ -241,7 +240,7 @@ bool AccountingBillDataGUI::printAttributeAccountingODT(){
                     fileName.append( ".odt" );
                 }
                 AccountingPrinter printer( m_d->accounting, m_d->parser );
-                bool ret = printer.printAttributeODT( prAmountsOption, prAccountingMeasureOption, prOption, prAttrs, fileName, paperWidth, paperHeight, paperOrientation, printAmounts );
+                bool ret = printer.printAttributeODT( prOption, prAmountsOption, prAccountingMeasureOption, prAttrs, fileName, paperWidth, paperHeight, paperOrientation );
                 if( m_d->wordProcessorFile != NULL ){
                     if( !m_d->wordProcessorFile->isEmpty() ){
                         if( QFileInfo(*(m_d->wordProcessorFile)).exists() ){

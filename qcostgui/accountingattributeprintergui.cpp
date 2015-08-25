@@ -34,7 +34,6 @@ public:
                                           double * pWidth,
                                           double * pHeight,
                                           Qt::Orientation * pOrient,
-                                          bool *prAmounts,
                                           AttributeModel * bam ):
         ui(new Ui::AccountingAttributePrinterGUI),
         printItemsOption(prItemsOption),
@@ -44,8 +43,7 @@ public:
         accountingAttributeModel(bam),
         paperWidth( pWidth ),
         paperHeight( pHeight ),
-        paperOrientation( pOrient ),
-        printAmounts( prAmounts ){
+        paperOrientation( pOrient ) {
         pageSizeList << QPageSize( QPageSize::A4 ) << QPageSize( QPageSize::A3 );
     }
     ~AccountingAttributePrinterGUIPrivate(){
@@ -61,28 +59,24 @@ public:
     double *paperWidth;
     double *paperHeight;
     Qt::Orientation * paperOrientation;
-    bool * printAmounts;
     QList<QPageSize> pageSizeList;
 };
 
-AccountingAttributePrinterGUI::AccountingAttributePrinterGUI( AccountingPrinter::PrintPPUDescOption *prItemsOption,
+AccountingAttributePrinterGUI::AccountingAttributePrinterGUI(AccountingPrinter::PrintPPUDescOption *prItemsOption,
                                                               AccountingPrinter::PrintAmountsOption *prAmountsOption,
                                                               AccountingPrinter::AttributePrintOption *prOption,
                                                               QList<Attribute *> * pAttrs,
                                                               double * pWidth,
                                                               double * pHeight,
                                                               Qt::Orientation * pOrient,
-                                                              bool *printAmounts,
                                                               AttributeModel * bam,
                                                               QWidget *parent ) :
     QDialog(parent),
-    m_d( new AccountingAttributePrinterGUIPrivate( prItemsOption, prAmountsOption, prOption, pAttrs, pWidth, pHeight, pOrient, printAmounts, bam) ) {
+    m_d( new AccountingAttributePrinterGUIPrivate( prItemsOption, prAmountsOption, prOption, pAttrs, pWidth, pHeight, pOrient, bam) ) {
     m_d->ui->setupUi(this);
     m_d->ui->attributesTableView->setModel( m_d->accountingAttributeModel );
 
     connect( this, &AccountingAttributePrinterGUI::accepted, this, &AccountingAttributePrinterGUI::setPrintData );
-
-    m_d->ui->printAmountsCheckBox->setChecked( *printAmounts );
 
     for( int i=0; i < m_d->pageSizeList.size(); ++i ){
         m_d->ui->paperDimensionsComboBox->addItem( m_d->pageSizeList.at(i).name() );
@@ -144,5 +138,4 @@ void AccountingAttributePrinterGUI::setPrintData(){
         *(m_d->printItemsOption) = AccountingPrinter::PrintShortLongDescOpt;
     }
 
-    *(m_d->printAmounts) = m_d->ui->printAmountsCheckBox->isChecked();
 }

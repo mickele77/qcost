@@ -19,7 +19,6 @@ public:
                                            QList<Attribute *> *pAttrs,
                                            double *pWidth, double *pHeight,
                                            Qt::Orientation *pOrient,
-                                           bool * printAmounts,
                                            AttributeModel * bam,
                                            QWidget *parent = 0);
     ~AccountingAttributePrinterGUI();

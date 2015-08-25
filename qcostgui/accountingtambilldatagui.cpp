@@ -202,14 +202,12 @@ bool AccountingTAMBillDataGUI::printAttributeAccountingODT(){
         QList<Attribute *> prAttrs;
         double paperWidth = 210.0, paperHeight = 297.0;
         Qt::Orientation paperOrientation;
-        bool printAmounts = true;
         AccountingAttributePrinterGUI printGUI( &prAccountingMeasureOption,
                                                 &prAmountsOption,
                                                 &prOption,
                                                 &prAttrs,
                                                 &paperWidth, &paperHeight,
                                                 &paperOrientation,
-                                                &printAmounts,
                                                 m_d->accounting->attributeModel(),
                                                 this );
         if( printGUI.exec() == QDialog::Accepted ){
