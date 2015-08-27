@@ -580,13 +580,14 @@ bool QCostGUI::printODT() {
 
     AccountingBill * bill = dynamic_cast<AccountingBill *> (m_d->projectItemsView->currentItem());
     if( bill != NULL ){
-        AccountingPrinter::PrintPPUDescOption prPPUDescOption = AccountingPrinter::PrintShortDesc;
         AccountingPrinter::PrintOption prOptions = AccountingPrinter::PrintRawMeasures;
         AccountingPrinter::PrintAmountsOption prAmountsOptions = AccountingPrinter::PrintAllAmounts;
-        int payToPrint;
-        double paperWidth = 210.0, paperHeight = 297.0;
+        AccountingPrinter::PrintPPUDescOption prPPUDescOption = AccountingPrinter::PrintShortDesc;
+        int payToPrint; // SAL da stampare
+        double paperWidth = 210.0, paperHeight = 297.0; // dimensioni foglio
         Qt::Orientation paperOrientation = Qt::Vertical;
-        AccountingPrinterGUI gui( m_d->project->accounting()->dataModel(), &prPPUDescOption, &prOptions, &prAmountsOptions, &payToPrint, &paperWidth, &paperHeight, &paperOrientation,  this );
+        AccountingPrinterGUI gui( m_d->project->accounting()->dataModel(), &prPPUDescOption, &prOptions, &prAmountsOptions, &payToPrint,
+                                  &paperWidth, &paperHeight, &paperOrientation,  this );
         if( gui.exec() == QDialog::Accepted ){
             QString fileName = QFileDialog::getSaveFileName(this,
                                                             trUtf8("Stampa Contabilità"), ".",

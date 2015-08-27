@@ -42,6 +42,7 @@ public:
     ~AccountingPrinterGUI();
 private slots:
     void setPrintData();
+    void updateOptionsAvailable();
 private:
     AccountingPrinterGUIPrivate * m_d;
 };

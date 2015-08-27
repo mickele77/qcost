@@ -103,12 +103,20 @@ AccountingPrinterGUI::AccountingPrinterGUI(PaymentDataModel * dataModel,
         m_d->ui->printRawBillButton->setChecked( true );
     }
 
+    connect( m_d->ui->printBillButton, &QRadioButton::toggled, this, &AccountingPrinterGUI::updateOptionsAvailable );
+    connect( m_d->ui->printPaymentButton, &QRadioButton::toggled, this, &AccountingPrinterGUI::updateOptionsAvailable );
+    connect( m_d->ui->printAccountingButton, &QRadioButton::toggled, this, &AccountingPrinterGUI::updateOptionsAvailable );
+    connect( m_d->ui->printAccountingSummaryButton, &QRadioButton::toggled, this, &AccountingPrinterGUI::updateOptionsAvailable );
+    connect( m_d->ui->printRawBillButton, &QRadioButton::toggled, this, &AccountingPrinterGUI::updateOptionsAvailable );
+
     if( *(m_d->printAmountsOption) == AccountingPrinter::PrintTotalAmountsToDiscount ){
         m_d->ui->printTotalAmountsToDiscountRadioButton->setChecked( true );
     } else if( *(m_d->printAmountsOption) == AccountingPrinter::PrintAmountsNotToDiscount ){
         m_d->ui->printAmountsNotToDiscountRadioButton->setChecked( true );
     } else if( *(m_d->printAmountsOption) == AccountingPrinter::PrintAllAmounts ){
         m_d->ui->printAllAmountsRadioButton->setChecked( true );
+    } else if( *(m_d->printAmountsOption) == AccountingPrinter::PrintNoAmount ){
+        m_d->ui->printNoAmountsRadioButton->setChecked( true );
     }
 
     m_d->ui->billToPrintComboBox->insertItem(0, trUtf8("Tutti"));
@@ -116,7 +124,6 @@ AccountingPrinterGUI::AccountingPrinterGUI(PaymentDataModel * dataModel,
         m_d->ui->billToPrintComboBox->insertItem((i+1), m_d->dataModel->billData(i)->name() );
     }
     m_d->ui->billToPrintComboBox->setCurrentIndex(0);
-
 
     Qt::WindowFlags flags = windowFlags();
     flags |= Qt::WindowMaximizeButtonHint;
@@ -127,6 +134,29 @@ AccountingPrinterGUI::~AccountingPrinterGUI() {
     delete m_d;
 }
 
+void AccountingPrinterGUI::updateOptionsAvailable(){
+    if( m_d->ui->printBillButton->isChecked() ){
+        m_d->ui->printNoAmountsRadioButton->setEnabled( true );
+        m_d->ui->printNoAmountsRadioButton->setChecked(true);
+        m_d->ui->printTotalAmountsToDiscountRadioButton->setDisabled( true );
+        m_d->ui->printAmountsNotToDiscountRadioButton->setDisabled( true );
+        m_d->ui->printAllAmountsRadioButton->setDisabled( true );
+    } else if( m_d->ui->printPaymentButton->isChecked() ||
+               m_d->ui->printAccountingButton->isChecked() ){
+        m_d->ui->printNoAmountsRadioButton->setDisabled( true );
+        m_d->ui->printTotalAmountsToDiscountRadioButton->setDisabled( true );
+        m_d->ui->printAmountsNotToDiscountRadioButton->setDisabled( true );
+        m_d->ui->printAllAmountsRadioButton->setEnabled( true );
+        m_d->ui->printAllAmountsRadioButton->setChecked(true);
+    } else {
+        m_d->ui->printNoAmountsRadioButton->setEnabled( true );
+        m_d->ui->printTotalAmountsToDiscountRadioButton->setEnabled( true );
+        m_d->ui->printAmountsNotToDiscountRadioButton->setEnabled( true );
+        m_d->ui->printAllAmountsRadioButton->setEnabled( true );
+        m_d->ui->printAllAmountsRadioButton->setEnabled( true );
+    }
+}
+
 void AccountingPrinterGUI::setPrintData(){
     if( m_d->ui->printTotalAmountsToDiscountRadioButton->isChecked() ){
         *(m_d->printAmountsOption) = AccountingPrinter::PrintTotalAmountsToDiscount;
@@ -134,6 +164,8 @@ void AccountingPrinterGUI::setPrintData(){
         *(m_d->printAmountsOption) = AccountingPrinter::PrintAmountsNotToDiscount;
     } else if( m_d->ui->printAllAmountsRadioButton->isChecked() ){
         *(m_d->printAmountsOption) = AccountingPrinter::PrintAllAmounts;
+    } else if( m_d->ui->printNoAmountsRadioButton->isChecked() ){
+        *(m_d->printAmountsOption) = AccountingPrinter::PrintNoAmount;
     }
 
     if( m_d->ui->printAccountingButton->isChecked() ){

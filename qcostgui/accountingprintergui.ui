@@ -110,27 +110,34 @@
         <string>Stampa importi</string>
        </property>
        <layout class="QGridLayout" name="gridLayout_8">
-        <item row="0" column="0">
-         <widget class="QRadioButton" name="printTotalAmountsToDiscountRadioButton">
-          <property name="text">
-           <string>Importi al lordo del ribasso</string>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="0">
-         <widget class="QRadioButton" name="printAmountsNotToDiscountRadioButton">
-          <property name="text">
-           <string>Importi non soggetti a ribasso</string>
-          </property>
-         </widget>
-        </item>
-        <item row="2" column="0">
+        <item row="3" column="0">
          <widget class="QRadioButton" name="printAllAmountsRadioButton">
           <property name="text">
            <string>Tutti gli importi</string>
           </property>
           <property name="checked">
            <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="0">
+         <widget class="QRadioButton" name="printTotalAmountsToDiscountRadioButton">
+          <property name="text">
+           <string>Importi al lordo del ribasso</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="0">
+         <widget class="QRadioButton" name="printAmountsNotToDiscountRadioButton">
+          <property name="text">
+           <string>Importi non soggetti a ribasso</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="0">
+         <widget class="QRadioButton" name="printNoAmountsRadioButton">
+          <property name="text">
+           <string>Non stampare importi</string>
           </property>
          </widget>
         </item>
