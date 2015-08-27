@@ -598,7 +598,7 @@ bool QCostGUI::printODT() {
                     fileName.append( ".odt" );
                 }
                 AccountingPrinter writer( bill, &(m_d->parser) );
-                bool ret = writer.printODT( prOptions, prAmountsOptions, prPPUDescOption, fileName, paperWidth, paperHeight, paperOrientation );
+                bool ret = writer.printODT( payToPrint, prOptions, prAmountsOptions, prPPUDescOption, fileName, paperWidth, paperHeight, paperOrientation );
                 if( !m_d->sWordProcessorFile.isEmpty() ){
                     if( QFileInfo(m_d->sWordProcessorFile).exists() ){
                         QStringList args;

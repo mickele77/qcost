@@ -78,7 +78,7 @@ AccountingPrinter::~AccountingPrinter() {
     delete m_d;
 }
 
-bool AccountingPrinter::printODT( AccountingPrinter::PrintOption prOption,
+bool AccountingPrinter::printODT( int payToPrint, AccountingPrinter::PrintOption prOption,
                                   PrintAmountsOption prAmountsOption,
                                   AccountingPrinter::PrintPPUDescOption prPPUDescOption,
                                   const QString &fileName,
@@ -86,9 +86,9 @@ bool AccountingPrinter::printODT( AccountingPrinter::PrintOption prOption,
                                   double paperHeight,
                                   Qt::Orientation paperOrientation ) const {
     if( prOption == PrintAccounting ){
-        return printAccountingODT( prOption, prAmountsOption, prPPUDescOption, fileName, paperWidth, paperHeight, paperOrientation );
+        return printAccountingODT( payToPrint, prOption, prAmountsOption, prPPUDescOption, fileName, paperWidth, paperHeight, paperOrientation );
     } else if( prOption == PrintAccountingSummary ){
-        return printAccountingSummaryODT( prAmountsOption, prPPUDescOption, fileName, paperWidth, paperHeight, paperOrientation, false );
+        return printAccountingSummaryODT( payToPrint, prAmountsOption, prPPUDescOption, fileName, paperWidth, paperHeight, paperOrientation, false );
     } else if( prOption == PrintMeasures ){
         // return printMeasuresODT( prAccountingMeasuresOption, fileName, paperWidth, paperHeight, paperOrientation, printAmounts, true );
     } else if( prOption == PrintRawMeasures ){
@@ -319,7 +319,8 @@ bool AccountingPrinter::printAttributeODT( AccountingPrinter::AttributePrintOpti
     return false;
 }
 
-bool AccountingPrinter::printAccountingODT( AccountingPrinter::PrintOption prOption,
+bool AccountingPrinter::printAccountingODT( int payToPrint,
+                                            AccountingPrinter::PrintOption prOption,
                                             AccountingPrinter::PrintAmountsOption prAmountsOption,
                                             AccountingPrinter::PrintPPUDescOption prPPDescOption,
                                             const QString &fileName,
@@ -569,7 +570,8 @@ bool AccountingPrinter::printAccountingODT( AccountingPrinter::PrintOption prOpt
     return false;
 }
 
-bool AccountingPrinter::printAccountingSummaryODT( PrintAmountsOption prAmountsOption,
+bool AccountingPrinter::printAccountingSummaryODT( int payToPrint,
+                                                   PrintAmountsOption prAmountsOption,
                                                    PrintPPUDescOption prPPUDescOption,
                                                    const QString &fileName,
                                                    double paperWidth, double paperHeight,

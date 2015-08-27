@@ -66,7 +66,8 @@ public:
     AccountingPrinter(AccountingLSBill *b, MathParser *prs);
     ~AccountingPrinter();
 
-    bool printODT( PrintOption prOption, PrintAmountsOption prAmountsOption, PrintPPUDescOption prPPUDescOption,
+    bool printODT( int payToPrint,
+                   PrintOption prOption, PrintAmountsOption prAmountsOption, PrintPPUDescOption prPPUDescOption,
                    const QString &fileName,
                    double paperWidth = 210.0, double paperHeight = 297.0,
                    Qt::Orientation paperOrientation = Qt::Vertical) const;
@@ -82,14 +83,16 @@ public:
 private:
     AccountingPrinterPrivate * m_d;
 
-    bool printAccountingODT( AccountingPrinter::PrintOption prOption,
+    bool printAccountingODT( int payToPrint,
+                             AccountingPrinter::PrintOption prOption,
                              PrintAmountsOption prAmountOption,
                              PrintPPUDescOption prPPDescOption,
                              const QString &fileName,
                              double paperWidth = 210.0, double paperHeight = 297.0,
                              Qt::Orientation paperOrientation = Qt::Vertical ) const;
 
-    bool printAccountingSummaryODT( PrintAmountsOption prAmountsOption,
+    bool printAccountingSummaryODT( int payToPrint,
+                                    PrintAmountsOption prAmountsOption,
                                     PrintPPUDescOption prPPUDescOption,
                                     const QString &fileName,
                                     double paperWidth = 210.0, double paperHeight = 297.0,
