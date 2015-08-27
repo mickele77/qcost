@@ -434,7 +434,7 @@ bool AccountingPrinter::printAccountingODT( int payToPrint,
         tableFormat.setColumnWidthConstraints( colWidths );
         cursor.insertTable(1, colWidths.size(), tableFormat );
 
-        m_d->accountingBill->writeODTAccountingOnTable( &cursor, prAmountsOption, prPPDescOption );
+        m_d->accountingBill->writeODTAccountingOnTable( &cursor, payToPrint, prAmountsOption, prPPDescOption );
 
         QFile *file = new QFile(fileName);
         QString suf = QFileInfo(file->fileName()).suffix().toLower().toLatin1();
@@ -554,7 +554,7 @@ bool AccountingPrinter::printAccountingODT( int payToPrint,
         tableFormat.setColumnWidthConstraints( colWidths );
         cursor.insertTable(1, colWidths.size(), tableFormat );
 
-        m_d->accountingTAMBill->writeODTAccountingOnTable( &cursor, prAmountsOption, prPPDescOption );
+        m_d->accountingTAMBill->writeODTAccountingOnTable( &cursor, payToPrint, prAmountsOption, prPPDescOption );
 
         QFile *file = new QFile(fileName);
         QString suf = QFileInfo(file->fileName()).suffix().toLower().toLatin1();
@@ -671,7 +671,7 @@ bool AccountingPrinter::printAccountingSummaryODT( int payToPrint,
         tableFormat.setColumnWidthConstraints( colWidths );
         cursor.insertTable(1, colWidths.size(), tableFormat );
 
-        m_d->accountingBill->writeODTSummaryOnTable( &cursor, prAmountsOption, prPPUDescOption, writeDetails );
+        m_d->accountingBill->writeODTSummaryOnTable( &cursor, payToPrint, prAmountsOption, prPPUDescOption, writeDetails );
 
         QFile *file = new QFile(fileName);
         QString suf = QFileInfo(file->fileName()).suffix().toLower().toLatin1();
@@ -778,7 +778,7 @@ bool AccountingPrinter::printAccountingSummaryODT( int payToPrint,
         tableFormat.setColumnWidthConstraints( colWidths );
         cursor.insertTable(1, colWidths.size(), tableFormat );
 
-        m_d->accountingTAMBill->writeODTSummaryOnTable( &cursor, prAmountsOption, prPPUDescOption, writeDetails );
+        m_d->accountingTAMBill->writeODTSummaryOnTable( &cursor, payToPrint, prAmountsOption, prPPUDescOption, writeDetails );
 
         QFile *file = new QFile(fileName);
         QString suf = QFileInfo(file->fileName()).suffix().toLower().toLatin1();

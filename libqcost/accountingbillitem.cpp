@@ -2126,9 +2126,9 @@ void AccountingBillItem::removeMeasuresModel() {
 
 #include "qtextformatuserdefined.h"
 
-void AccountingBillItem::writeODTAccountingOnTable( QTextCursor *cursor,
-                                                    AccountingPrinter::PrintAmountsOption prAmountsOption,
-                                                    AccountingPrinter::PrintPPUDescOption prPPUDescOption  ) const {
+void AccountingBillItem::writeODTAccountingOnTable(QTextCursor *cursor, int payToPrint,
+                                                   AccountingPrinter::PrintAmountsOption prAmountsOption,
+                                                   AccountingPrinter::PrintPPUDescOption prPPUDescOption  ) const {
     // spessore del bordo della tabella
     double borderWidth = 1.0f;
 
@@ -2259,8 +2259,14 @@ void AccountingBillItem::writeODTAccountingOnTable( QTextCursor *cursor,
         AccountingBillItemPrivate::insertEmptyRow( cellCount, cursor, leftFormat, centralFormat, rightFormat );
 
         // *** Scrive il computo dei sottoarticoli ***
-        for( QList<AccountingBillItem *>::iterator i = m_d->childrenContainer.begin(); i != m_d->childrenContainer.end(); ++i){
-            (*i)->writeODTAccountingOnTable( cursor, prAmountsOption, prPPUDescOption );
+        if( payToPrint < 0 ){
+            for( QList<AccountingBillItem *>::iterator i = m_d->childrenContainer.begin(); i != m_d->childrenContainer.end(); ++i){
+                (*i)->writeODTAccountingOnTable( cursor, 0, prAmountsOption, prPPUDescOption );
+            }
+        } else {
+            if( payToPrint < m_d->childrenContainer.size() ){
+                m_d->childrenContainer.at(payToPrint)->writeODTAccountingOnTable( cursor, 0, prAmountsOption, prPPUDescOption );
+            }
         }
 
         // *** riga dei totali complessivi
@@ -2304,7 +2310,7 @@ void AccountingBillItem::writeODTAccountingOnTable( QTextCursor *cursor,
             }
 
             for( QList<AccountingBillItem *>::iterator i = m_d->childrenContainer.begin(); i != m_d->childrenContainer.end(); ++i){
-                (*i)->writeODTAccountingOnTable( cursor, prAmountsOption, prPPUDescOption );
+                (*i)->writeODTAccountingOnTable( cursor, 0, prAmountsOption, prPPUDescOption );
             }
 
             table->appendRows(1);
@@ -2334,6 +2340,7 @@ void AccountingBillItem::writeODTAccountingOnTable( QTextCursor *cursor,
 }
 
 void AccountingBillItem::writeODTSummaryOnTable( QTextCursor *cursor,
+                                                 int payToPrint,
                                                  AccountingPrinter::PrintAmountsOption prAmountsOption,
                                                  AccountingPrinter::PrintPPUDescOption prItemsOption,
                                                  bool writeDetails ) const {
@@ -2502,12 +2509,19 @@ void AccountingBillItem::writeODTSummaryOnTable( QTextCursor *cursor,
         QList<double> fieldsAmount;
         fieldsAmount << 0.0 << 0.0 << 0.0;
         double itemTotalQuantity = 0.0;
-        for( QList<AccountingBillItem *>::iterator j = m_d->childrenContainer.begin(); j != m_d->childrenContainer.end(); ++j ){
-            // TODO
-            (*j)->writeODTSummaryLine( *i, cursor, &itemTotalQuantity, &fieldsAmount, true, writeDetails,
-                                       table,
-                                       tagBlockFormat, txtBlockFormat, numBlockFormat,
-                                       leftFormat, centralFormat, rightFormat );
+        if( payToPrint < 0 ){
+            for( QList<AccountingBillItem *>::iterator j = m_d->childrenContainer.begin(); j != m_d->childrenContainer.end(); ++j ){
+                // TODO
+                (*j)->writeODTSummaryLine( *i, cursor, &itemTotalQuantity, &fieldsAmount, true, writeDetails,
+                                           table,
+                                           tagBlockFormat, txtBlockFormat, numBlockFormat,
+                                           leftFormat, centralFormat, rightFormat );
+            }
+        } else if( payToPrint < m_d->childrenContainer.size() ){
+            m_d->childrenContainer.at(payToPrint)->writeODTSummaryLine( *i, cursor, &itemTotalQuantity, &fieldsAmount, true, writeDetails,
+                                                                        table,
+                                                                        tagBlockFormat, txtBlockFormat, numBlockFormat,
+                                                                        leftFormat, centralFormat, rightFormat );
         }
 
         if( writeDetails ){

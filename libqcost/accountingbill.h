@@ -176,10 +176,27 @@ public:
 
     QList<PriceItem *> connectedPriceItems();
 
-    void writeODTAccountingOnTable(QTextCursor * cursor,
-                                   AccountingPrinter::PrintAmountsOption prAmountsOption,
-                                   AccountingPrinter::PrintPPUDescOption prPPUDescOption) const;
-    void writeODTSummaryOnTable(QTextCursor * cursor,
+    /**
+     * @brief Stampa il libretto delle misure
+     * @param cursor
+     * @param payToPrint S.A.L. da stampare (se è < 0 li stampa tutti)
+     * @param prAmountsOption opzione per la stampa degli importi
+     * @param prPPUDescOption opzione per la stampa dei prezzi
+     */
+    void writeODTAccountingOnTable( QTextCursor * cursor,
+                                    int payToPrint,
+                                    AccountingPrinter::PrintAmountsOption prAmountsOption,
+                                    AccountingPrinter::PrintPPUDescOption prPPUDescOption) const;
+    /**
+     * @brief Stampa il sommario della contabilità
+     * @param cursor
+     * #param payToPrint S.A.L. da stampare (se è < 0 li stampa tutti)
+     * @param prAmountsOption
+     * @param prItemsOption
+     * @param writeDetails scrive i dettaglio del sommario
+     */
+    void writeODTSummaryOnTable( QTextCursor * cursor,
+                                 int payToPrint,
                                  AccountingPrinter::PrintAmountsOption prAmountsOption,
                                  AccountingPrinter::PrintPPUDescOption prItemsOption,
                                  bool writeDetails = true ) const;
@@ -189,6 +206,7 @@ public:
                                              AccountingPrinter::PrintAmountsOption prAmountsOption,
                                              AccountingPrinter::PrintPPUDescOption prItemsOption,
                                              const QList<Attribute *> &attrsToPrint ) const;
+
     void insertStandardAttributes();
 
 public slots:

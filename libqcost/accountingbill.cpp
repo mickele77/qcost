@@ -802,25 +802,27 @@ QList<PriceItem *> AccountingBill::connectedPriceItems() {
 }
 
 void AccountingBill::writeODTAccountingOnTable( QTextCursor *cursor,
+                                                int payToPrint,
                                                 AccountingPrinter::PrintAmountsOption prAmountsOption,
                                                 AccountingPrinter::PrintPPUDescOption prPPUDescOption ) const {
-    m_d->rootItem->writeODTAccountingOnTable(cursor, prAmountsOption, prPPUDescOption );
+    m_d->rootItem->writeODTAccountingOnTable(cursor, payToPrint, prAmountsOption, prPPUDescOption );
 }
 
-void AccountingBill::writeODTAttributeAccountingOnTable(QTextCursor *cursor,
-                                                        AccountingPrinter::AttributePrintOption prOption,
-                                                        AccountingPrinter::PrintAmountsOption prAmountsOption,
-                                                        AccountingPrinter::PrintPPUDescOption prItemsOption,
-                                                        const QList<Attribute *> &attrsToPrint ) const {
+void AccountingBill::writeODTAttributeAccountingOnTable( QTextCursor *cursor,
+                                                         AccountingPrinter::AttributePrintOption prOption,
+                                                         AccountingPrinter::PrintAmountsOption prAmountsOption,
+                                                         AccountingPrinter::PrintPPUDescOption prItemsOption,
+                                                         const QList<Attribute *> &attrsToPrint ) const {
     m_d->rootItem->writeODTAttributeAccountingOnTable( cursor, prOption, prAmountsOption, prItemsOption, attrsToPrint );
 }
 
 
 void AccountingBill::writeODTSummaryOnTable( QTextCursor *cursor,
+                                             int payToPrint,
                                              AccountingPrinter::PrintAmountsOption prAmountsOption,
                                              AccountingPrinter::PrintPPUDescOption prItemsOption,
                                              bool writeDetails ) const {
-    m_d->rootItem->writeODTSummaryOnTable( cursor, prAmountsOption, prItemsOption, writeDetails );
+    m_d->rootItem->writeODTSummaryOnTable( cursor, payToPrint, prAmountsOption, prItemsOption, writeDetails );
 }
 void AccountingBill::loadTmpData(ProjectPriceListParentItem * priceLists, AccountingLSBills * lsBills, AccountingTAMBill * tamBill ) {
     m_d->priceList = priceLists->priceListId( m_d->priceListIdTmp );

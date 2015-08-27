@@ -67,12 +67,14 @@ public:
     ~AccountingPrinter();
 
     bool printODT( int payToPrint,
-                   PrintOption prOption, PrintAmountsOption prAmountsOption, PrintPPUDescOption prPPUDescOption,
+                   PrintOption prOption,
+                   PrintAmountsOption prAmountsOption,
+                   PrintPPUDescOption prPPUDescOption,
                    const QString &fileName,
                    double paperWidth = 210.0, double paperHeight = 297.0,
                    Qt::Orientation paperOrientation = Qt::Vertical) const;
 
-    bool printAttributeODT( AccountingPrinter::AttributePrintOption prOption,
+    bool printAttributeODT( AttributePrintOption prOption,
                             PrintAmountsOption prAmountsOption,
                             PrintPPUDescOption prPPUDescOption,
                             const QList<Attribute *> &attrsToPrint,

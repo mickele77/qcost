@@ -162,17 +162,22 @@ public:
 
     QList<PriceItem *> connectedPriceItems();
 
-    void writeODTAccountingOnTable(QTextCursor * cursor, AccountingPrinter::PrintAmountsOption prAmountsOption,
+    void writeODTAccountingOnTable( QTextCursor * cursor,
+                                    int payToPrint,
+                                    AccountingPrinter::PrintAmountsOption prAmountsOption,
                                     AccountingPrinter::PrintPPUDescOption prItemsOption ) const;
-    void writeODTSummaryOnTable(QTextCursor * cursor, AccountingPrinter::PrintAmountsOption prAmountsOption,
-                                AccountingPrinter::PrintPPUDescOption prItemsOption,
-                                bool writeDetails = true ) const;
 
-    void writeODTAttributeAccountingOnTable(QTextCursor *cursor,
-                                            AccountingPrinter::AttributePrintOption prOption,
-                                            AccountingPrinter::PrintAmountsOption printAmountsOption,
-                                            AccountingPrinter::PrintPPUDescOption prItemsOption,
-                                            const QList<Attribute *> &attrsToPrint ) const;
+    void writeODTSummaryOnTable( QTextCursor * cursor,
+                                 int payToPrint,
+                                 AccountingPrinter::PrintAmountsOption prAmountsOption,
+                                 AccountingPrinter::PrintPPUDescOption prItemsOption,
+                                 bool writeDetails = true ) const;
+
+    void writeODTAttributeAccountingOnTable( QTextCursor *cursor,
+                                             AccountingPrinter::AttributePrintOption prOption,
+                                             AccountingPrinter::PrintAmountsOption printAmountsOption,
+                                             AccountingPrinter::PrintPPUDescOption prItemsOption,
+                                             const QList<Attribute *> &attrsToPrint ) const;
     void insertStandardAttributes();
 
 public slots:

@@ -184,16 +184,35 @@ public:
     double totalAmountAttribute( Attribute * attr ) const;
     QString totalAmountAttributeStr( Attribute * attr ) const;
 
-    void writeODTAccountingOnTable(QTextCursor * cursor,
-                                   AccountingPrinter::PrintAmountsOption prAmountsOption,
-                                   AccountingPrinter::PrintPPUDescOption prPPUDescOption) const;
-    void writeODTSummaryOnTable(QTextCursor *cursor, AccountingPrinter::PrintAmountsOption prAmountsOption,
+    /**
+     * @brief Stampa il libretto delle misure.
+     * @param cursor
+     * @param payToPrint
+     * @param prAmountsOption
+     * @param prPPUDescOption
+     */
+    void writeODTAccountingOnTable( QTextCursor * cursor,
+                                    int payToPrint,
+                                    AccountingPrinter::PrintAmountsOption prAmountsOption,
+                                    AccountingPrinter::PrintPPUDescOption prPPUDescOption) const;
+    /**
+     * @brief Stampa il sommario del registro della contabilità
+     * @param cursor
+     * @param payToPrint
+     * @param prAmountsOption
+     * @param prItemsOption
+     * @param writeDetails
+     */
+    void writeODTSummaryOnTable( QTextCursor *cursor,
+                                 int payToPrint,
+                                 AccountingPrinter::PrintAmountsOption prAmountsOption,
                                  AccountingPrinter::PrintPPUDescOption prItemsOption,
                                  bool writeDetails = true) const;
-    void writeODTAttributeAccountingOnTable(QTextCursor *cursor,
-                                            AccountingPrinter::AttributePrintOption prOption, AccountingPrinter::PrintAmountsOption prAmountsOption,
-                                            AccountingPrinter::PrintPPUDescOption prPPUDescOption,
-                                            const QList<Attribute *> &attrsToPrint) const;
+    void writeODTAttributeAccountingOnTable( QTextCursor *cursor,
+                                             AccountingPrinter::AttributePrintOption prOption,
+                                             AccountingPrinter::PrintAmountsOption prAmountsOption,
+                                             AccountingPrinter::PrintPPUDescOption prPPUDescOption,
+                                             const QList<Attribute *> &attrsToPrint ) const;
     /** Il tipo di elemento */
     ItemType itemType() const;
     /** Nel caso di lista, il titolo della lista */

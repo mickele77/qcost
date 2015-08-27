@@ -710,9 +710,10 @@ QList<PriceItem *> AccountingTAMBill::connectedPriceItems() {
 }
 
 void AccountingTAMBill::writeODTAccountingOnTable(QTextCursor *cursor,
+                                                  int payToPrint,
                                                   AccountingPrinter::PrintAmountsOption prAmountsOption,
                                                   AccountingPrinter::PrintPPUDescOption prItemsOption) const {
-    m_d->rootItem->writeODTAccountingOnTable(cursor, prAmountsOption, prItemsOption );
+    m_d->rootItem->writeODTAccountingOnTable(cursor, payToPrint, prAmountsOption, prItemsOption );
 }
 
 void AccountingTAMBill::writeODTAttributeAccountingOnTable(QTextCursor *cursor,
@@ -724,11 +725,13 @@ void AccountingTAMBill::writeODTAttributeAccountingOnTable(QTextCursor *cursor,
 }
 
 
-void AccountingTAMBill::writeODTSummaryOnTable(QTextCursor *cursor,
+void AccountingTAMBill::writeODTSummaryOnTable( QTextCursor *cursor,
+                                                int payToPrint,
                                                AccountingPrinter::PrintAmountsOption prAmountsOption,
                                                AccountingPrinter::PrintPPUDescOption prItemsOption,
                                                bool writeDetails ) const {
-    m_d->rootItem->writeODTSummaryOnTable( cursor, prAmountsOption, prItemsOption, writeDetails );
+
+    m_d->rootItem->writeODTSummaryOnTable( cursor, payToPrint, prAmountsOption, prItemsOption, writeDetails );
 }
 
 void AccountingTAMBill::loadTmpData(ProjectPriceListParentItem * priceLists) {
