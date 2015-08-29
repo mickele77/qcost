@@ -45,10 +45,10 @@ public:
         EPAImportOptions(impOptions),
         EPAFileName(fileName),
         currentPriceDataSet(-1){
-    };
+    }
     ~PriceListTreeGUIPrivate(){
         delete ui;
-    };
+    }
 
     PriceList * priceList;
     MathParser * parser;
@@ -422,7 +422,7 @@ void PriceListTreeGUI::loadMultiPriceItemDB( const QList<QList<QPair<QString, QV
 
     while (currI > -1 ) {
 
-        if( m_d->priceList->insertRow( row, parent ) ){
+        if( m_d->priceList->insertPriceItem( row, parent ) ){
             QModelIndex currIndex = m_d->priceList->index( row, 0, parent );
             PriceItem * currItem = m_d->priceList->priceItem( currIndex );
             currItem->setInheritCodeFromParent( false );

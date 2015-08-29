@@ -220,7 +220,6 @@ bool AccountingBillDataGUI::printAttributeAccountingODT(){
         QList<Attribute *> prAttrs;
         double paperWidth = 210.0, paperHeight = 297.0;
         Qt::Orientation paperOrientation;
-        bool printAmounts = false;
         AccountingAttributePrinterGUI printGUI( &prAccountingMeasureOption,
                                                 &prAmountsOption,
                                                 &prOption,

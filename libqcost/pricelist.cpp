@@ -229,6 +229,10 @@ bool PriceList::insertPriceItems(int inputPos, int count, const QModelIndex &par
     return success;
 }
 
+bool PriceList::insertPriceItem(int inputPos, const QModelIndex &parent) {
+    return insertPriceItems( inputPos, 1, parent );
+}
+
 PriceItem * PriceList::appendPriceItem() {
     insertRows( -1 , 1 );
     return m_d->rootItem->lastChild();

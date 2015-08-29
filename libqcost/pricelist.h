@@ -36,11 +36,11 @@ class QTextStream;
 #include "pricelistprinter.h"
 
 #include "projectitem.h"
-#include <QAbstractTableModel>
+#include <QAbstractItemModel>
 
 class PriceListPrivate;
 
-class EXPORT_LIB_OPT PriceList : public QAbstractTableModel, public ProjectItem {
+class EXPORT_LIB_OPT PriceList : public QAbstractItemModel, public ProjectItem {
     Q_OBJECT
 public:
     friend class Project;
@@ -73,7 +73,8 @@ public:
 
     Qt::ItemFlags flags(const QModelIndex &index) const;
     bool setData(const QModelIndex &index, const QVariant &value, int role = Qt::EditRole);
-    bool insertPriceItems(int position = -1, int rows = 1, const QModelIndex &parent = QModelIndex() );
+    bool insertPriceItems(int position = -1, int count = 1, const QModelIndex &parent = QModelIndex() );
+    bool insertPriceItem(int inputPos = -1, const QModelIndex &parent = QModelIndex() );
     PriceItem *appendPriceItem();
     bool removeRows(int position = -1, int rows = 1, const QModelIndex &parent = QModelIndex() );
     bool moveRows(const QModelIndex &sourceParent, int sourceRow, int count, const QModelIndex &destinationParent, int destinationRow);
