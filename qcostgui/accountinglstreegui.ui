@@ -27,7 +27,7 @@
        <item row="1" column="0">
         <widget class="QLabel" name="totalAmountAccountedLabel">
          <property name="text">
-          <string>Importo contabilizzato</string>
+          <string>Opere contabilizzate</string>
          </property>
         </widget>
        </item>
@@ -54,14 +54,14 @@
        <item row="0" column="0">
         <widget class="QLabel" name="totalAmountLabel">
          <property name="text">
-          <string>Importo progetto</string>
+          <string>Opere in progetto</string>
          </property>
         </widget>
        </item>
        <item row="2" column="0">
         <widget class="QLabel" name="percentageAccountedLabel">
          <property name="text">
-          <string>% contabilizzata</string>
+          <string>% avanzamento</string>
          </property>
         </widget>
        </item>

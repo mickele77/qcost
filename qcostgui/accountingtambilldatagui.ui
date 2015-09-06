@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>971</width>
-    <height>582</height>
+    <width>802</width>
+    <height>473</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -22,282 +22,232 @@
      <property name="currentIndex">
       <number>0</number>
      </property>
-     <widget class="QWidget" name="accountingAmountsTab">
+     <widget class="QWidget" name="generalDataTab">
       <attribute name="title">
-       <string>Contabilità</string>
+       <string>Dati Generali</string>
       </attribute>
-      <layout class="QGridLayout" name="gridLayout_8">
+      <layout class="QGridLayout" name="gridLayout_4">
        <item row="0" column="0">
-        <widget class="QGroupBox" name="amountsGroupBox">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="title">
-          <string>Importi</string>
-         </property>
-         <layout class="QGridLayout" name="gridLayout_4">
-          <item row="3" column="1">
-           <widget class="QLineEdit" name="amountDiscountedLineEdit">
-            <property name="readOnly">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-          <item row="3" column="0">
-           <widget class="QLabel" name="amountDiscountedLabel">
-            <property name="text">
-             <string>Totale ribassabile netto</string>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="1">
-           <widget class="QLineEdit" name="totalAmountToDiscountLineEdit">
-            <property name="readOnly">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="0">
-           <widget class="QLabel" name="amountToDiscountLabel">
-            <property name="text">
-             <string>Totale ribassabile lordo</string>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="1">
-           <widget class="QLineEdit" name="amountToDiscountLineEdit">
-            <property name="readOnly">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="0">
-           <widget class="QLabel" name="totalAmountToDiscountLabel">
-            <property name="text">
-             <string>Totale lordo</string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="0">
-           <widget class="QLabel" name="amountNotToDiscountLabel">
-            <property name="text">
-             <string>Totale non ribassabile</string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="1">
-           <widget class="QLineEdit" name="amountNotToDiscountLineEdit">
-            <property name="readOnly">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="2">
-           <widget class="QLabel" name="totalAmountLabel">
-            <property name="text">
-             <string>Totale</string>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="3">
-           <widget class="QLineEdit" name="totalAmountLineEdit">
-            <property name="readOnly">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </widget>
-       </item>
-       <item row="1" column="0">
-        <spacer name="verticalSpacer_2">
-         <property name="orientation">
-          <enum>Qt::Vertical</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>20</width>
-           <height>40</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-       <item row="0" column="1">
-        <spacer name="horizontalSpacer_2">
+        <widget class="QSplitter" name="generalDataSplitter">
          <property name="orientation">
           <enum>Qt::Horizontal</enum>
          </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>40</width>
-           <height>20</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-      </layout>
-     </widget>
-     <widget class="QWidget" name="pricesTab">
-      <attribute name="title">
-       <string>Costi Unitari</string>
-      </attribute>
-      <layout class="QGridLayout" name="gridLayout_13">
-       <item row="2" column="0" colspan="4">
-        <widget class="QGroupBox" name="groupBox">
-         <property name="title">
-          <string>Applicazione ribassi</string>
-         </property>
-         <layout class="QGridLayout" name="gridLayout_12">
-          <item row="0" column="0">
-           <widget class="QSplitter" name="splitter_2">
-            <property name="orientation">
-             <enum>Qt::Horizontal</enum>
-            </property>
-            <widget class="QGroupBox" name="totalPriceFieldGroupBox">
-             <property name="title">
-              <string>Campi importo lordo</string>
+         <widget class="QWidget" name="layoutWidget">
+          <layout class="QVBoxLayout" name="generalDataLeftVerticalLayout">
+           <item>
+            <widget class="QGroupBox" name="amountsGroupBox">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
              </property>
-             <layout class="QGridLayout" name="gridLayout_9">
+             <property name="title">
+              <string>Importi</string>
+             </property>
+             <layout class="QGridLayout" name="gridLayout_2">
               <item row="0" column="0">
-               <widget class="QTableView" name="totalPriceFieldTableView">
-                <property name="alternatingRowColors">
+               <widget class="QLabel" name="totalAmountToDiscountLabel">
+                <property name="text">
+                 <string>Totale lordo</string>
+                </property>
+               </widget>
+              </item>
+              <item row="0" column="1">
+               <widget class="QLineEdit" name="totalAmountToDiscountLineEdit">
+                <property name="readOnly">
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+              <item row="1" column="0">
+               <widget class="QLabel" name="amountNotToDiscountLabel">
+                <property name="text">
+                 <string>Totale non ribassabile</string>
+                </property>
+               </widget>
+              </item>
+              <item row="1" column="1">
+               <widget class="QLineEdit" name="amountNotToDiscountLineEdit">
+                <property name="readOnly">
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+              <item row="2" column="0">
+               <widget class="QLabel" name="amountToDiscountLabel">
+                <property name="text">
+                 <string>Totale ribassabile lordo</string>
+                </property>
+               </widget>
+              </item>
+              <item row="2" column="1">
+               <widget class="QLineEdit" name="amountToDiscountLineEdit">
+                <property name="readOnly">
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+              <item row="3" column="0">
+               <widget class="QLabel" name="amountDiscountedLabel">
+                <property name="text">
+                 <string>Totale ribassabile netto</string>
+                </property>
+               </widget>
+              </item>
+              <item row="3" column="1">
+               <widget class="QLineEdit" name="amountDiscountedLineEdit">
+                <property name="readOnly">
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+              <item row="4" column="0">
+               <widget class="QLabel" name="totalAmountLabel">
+                <property name="text">
+                 <string>Totale</string>
+                </property>
+               </widget>
+              </item>
+              <item row="4" column="1">
+               <widget class="QLineEdit" name="totalAmountLineEdit">
+                <property name="readOnly">
                  <bool>true</bool>
                 </property>
                </widget>
               </item>
              </layout>
             </widget>
-            <widget class="QGroupBox" name="noDiscountPriceFieldGroupBox">
-             <property name="title">
-              <string>Campi importo non ribassabile</string>
+           </item>
+           <item>
+            <widget class="QGroupBox" name="discountGroupBox">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
              </property>
-             <layout class="QGridLayout" name="gridLayout_5">
+             <property name="title">
+              <string>Ribasso</string>
+             </property>
+             <layout class="QGridLayout" name="gridLayout_10">
               <item row="0" column="0">
-               <widget class="QTableView" name="noDiscountPriceFieldTableView">
-                <property name="alternatingRowColors">
-                 <bool>true</bool>
+               <widget class="QLabel" name="discountLabel">
+                <property name="text">
+                 <string>Ribasso</string>
+                </property>
+               </widget>
+              </item>
+              <item row="0" column="1">
+               <widget class="QLineEdit" name="discountLineEdit">
+                <property name="alignment">
+                 <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                 </property>
                </widget>
               </item>
              </layout>
             </widget>
-           </widget>
-          </item>
-         </layout>
+           </item>
+           <item>
+            <spacer name="verticalSpacer">
+             <property name="orientation">
+              <enum>Qt::Vertical</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>20</width>
+               <height>40</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+          </layout>
+         </widget>
+         <widget class="QGroupBox" name="pricesGroupBox">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="title">
+           <string>Prezzi</string>
+          </property>
+          <layout class="QGridLayout" name="gridLayout_6">
+           <item row="1" column="1">
+            <widget class="QSpinBox" name="currentPriceDataSetSpinBox">
+             <property name="alignment">
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             </property>
+             <property name="minimum">
+              <number>1</number>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="1">
+            <widget class="QComboBox" name="priceListComboBox"/>
+           </item>
+           <item row="1" column="0">
+            <widget class="QLabel" name="currentPriceDataSetSpinBoxLabel">
+             <property name="text">
+              <string>N. Preventivo</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="0">
+            <widget class="QLabel" name="priceListComboBoxLabel">
+             <property name="text">
+              <string>Prezzario</string>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="0" colspan="2">
+            <widget class="QGroupBox" name="groupBox">
+             <property name="title">
+              <string>Campi</string>
+             </property>
+             <layout class="QGridLayout" name="gridLayout_12">
+              <item row="0" column="0">
+               <widget class="QSplitter" name="splitter_2">
+                <property name="orientation">
+                 <enum>Qt::Horizontal</enum>
+                </property>
+                <widget class="QGroupBox" name="totalPriceFieldGroupBox">
+                 <property name="title">
+                  <string>Importo lordo</string>
+                 </property>
+                 <layout class="QGridLayout" name="gridLayout_9">
+                  <item row="0" column="0">
+                   <widget class="QTableView" name="totalPriceFieldTableView">
+                    <property name="alternatingRowColors">
+                     <bool>true</bool>
+                    </property>
+                   </widget>
+                  </item>
+                 </layout>
+                </widget>
+                <widget class="QGroupBox" name="noDiscountPriceFieldGroupBox">
+                 <property name="title">
+                  <string>Importo non ribassabile</string>
+                 </property>
+                 <layout class="QGridLayout" name="gridLayout_5">
+                  <item row="0" column="0">
+                   <widget class="QTableView" name="noDiscountPriceFieldTableView">
+                    <property name="alternatingRowColors">
+                     <bool>true</bool>
+                    </property>
+                   </widget>
+                  </item>
+                 </layout>
+                </widget>
+               </widget>
+              </item>
+             </layout>
+            </widget>
+           </item>
+          </layout>
+         </widget>
         </widget>
-       </item>
-       <item row="1" column="3">
-        <spacer name="horizontalSpacer">
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>202</width>
-           <height>20</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-       <item row="1" column="0" colspan="2">
-        <widget class="QGroupBox" name="pricesGroupBox">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="title">
-          <string>Prezzi</string>
-         </property>
-         <layout class="QGridLayout" name="gridLayout_6">
-          <item row="0" column="0">
-           <widget class="QLabel" name="priceListComboBoxLabel">
-            <property name="text">
-             <string>Prezzario</string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="1">
-           <widget class="QSpinBox" name="currentPriceDataSetSpinBox">
-            <property name="alignment">
-             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-            </property>
-            <property name="minimum">
-             <number>1</number>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="1">
-           <widget class="QComboBox" name="priceListComboBox"/>
-          </item>
-          <item row="1" column="0">
-           <widget class="QLabel" name="currentPriceDataSetSpinBoxLabel">
-            <property name="text">
-             <string>N. Preventivo</string>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </widget>
-       </item>
-       <item row="1" column="2">
-        <widget class="QGroupBox" name="discountGroupBox">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="title">
-          <string>Ribasso</string>
-         </property>
-         <layout class="QGridLayout" name="gridLayout_10">
-          <item row="0" column="0">
-           <widget class="QLabel" name="discountLabel">
-            <property name="text">
-             <string>Ribasso</string>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="1">
-           <widget class="QLineEdit" name="discountLineEdit">
-            <property name="alignment">
-             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="0" colspan="2">
-           <spacer name="verticalSpacer">
-            <property name="orientation">
-             <enum>Qt::Vertical</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>20</width>
-              <height>40</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-         </layout>
-        </widget>
-       </item>
-       <item row="1" column="4" rowspan="2">
-        <spacer name="horizontalSpacer_3">
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>40</width>
-           <height>20</height>
-          </size>
-         </property>
-        </spacer>
        </item>
       </layout>
      </widget>

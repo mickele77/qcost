@@ -53,6 +53,9 @@ private slots:
 
     void setPriceList();
     void setPriceDataSet();
+
+    void setPPUTotalToDiscount();
+    void setPPUNotToDiscount();
 private:
     AccountingLSBillDataGUIPrivate * m_d;
 

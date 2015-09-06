@@ -82,7 +82,11 @@ public:
     PriceList * priceList;
     AttributeModel * attributeModel;
     unsigned int priceListIdTmp;
+
+    static int amountPrecision;
 };
+
+int AccountingLSBillPrivate::amountPrecision = 2;
 
 AccountingLSBill::AccountingLSBill( const QString &c, const QString &n,
                                     ProjectItem *parent, PriceFieldModel * pfm, MathParser * parser ):
@@ -175,9 +179,9 @@ double AccountingLSBill::PPUTotalToDiscount() const {
 
 QString AccountingLSBill::PPUTotalToDiscountStr() const {
     if( m_d->parser != NULL ){
-        return m_d->parser->toString( m_d->PPUTotalToDiscount );
+        return m_d->parser->toString( m_d->PPUTotalToDiscount, 'f', m_d->amountPrecision );
     }
-    return QString::number( m_d->PPUTotalToDiscount );
+    return QString::number( m_d->PPUTotalToDiscount, 'f', m_d->amountPrecision );
 }
 
 double AccountingLSBill::PPUNotToDiscount() const {
@@ -186,9 +190,9 @@ double AccountingLSBill::PPUNotToDiscount() const {
 
 QString AccountingLSBill::PPUNotToDiscountStr() const {
     if( m_d->parser != NULL ){
-        return m_d->parser->toString( m_d->PPUNotToDiscount );
+        return m_d->parser->toString( m_d->PPUNotToDiscount, 'f', m_d->amountPrecision );
     }
-    return QString::number( m_d->PPUNotToDiscount );
+    return QString::number( m_d->PPUNotToDiscount, 'f', m_d->amountPrecision );
 }
 
 void AccountingLSBill::setDescription(const QString &value) {

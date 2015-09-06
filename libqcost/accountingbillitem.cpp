@@ -555,26 +555,26 @@ QVariant AccountingBillItem::data(int col, int role) const {
         }
         if( role == Qt::TextAlignmentRole ){
             return Qt::AlignHCenter + Qt::AlignVCenter;
-        } else { // role == Qt::DisplayRole || role == Qt::EditRole
+        } else if(role == Qt::DisplayRole || role == Qt::EditRole){
             return QVariant();
         }
     } else if( m_d->itemType == PPU ){
         if( col == m_d->progNumberCol ) {
             if( role == Qt::TextAlignmentRole ){
                 return Qt::AlignLeft + Qt::AlignVCenter;
-            } else { // role == Qt::DisplayRole || role == Qt::EditRole
+            } else if(role == Qt::DisplayRole || role == Qt::EditRole) {
                 return QVariant( progressiveCode() );
             }
         } else if( col == m_d->dateCol) {
             if( role == Qt::TextAlignmentRole ){
                 return Qt::AlignHCenter + Qt::AlignVCenter;;
-            } else { // role == Qt::DisplayRole || role == Qt::EditRole
+            } else if(role == Qt::DisplayRole || role == Qt::EditRole) {
                 return QVariant( dateStr() );
             }
         } else if( col == m_d->priceCodeCol ) {
             if( role == Qt::TextAlignmentRole ){
                 return Qt::AlignLeft + Qt::AlignVCenter;;
-            } else { // role == Qt::DisplayRole || role == Qt::EditRole
+            } else if(role == Qt::DisplayRole || role == Qt::EditRole) {
                 if( m_d->priceItem != NULL ){
                     return QVariant( m_d->priceItem->codeFull() );
                 } else {
@@ -584,7 +584,7 @@ QVariant AccountingBillItem::data(int col, int role) const {
         } else if( col == m_d->priceShortDescCol ) {
             if( role == Qt::TextAlignmentRole ){
                 return Qt::AlignLeft + Qt::AlignVCenter;
-            } else { // role == Qt::DisplayRole || role == Qt::EditRole
+            } else if(role == Qt::DisplayRole || role == Qt::EditRole) {
                 if( m_d->priceItem != NULL ){
                     return QVariant(m_d->priceItem->shortDescriptionFull());
                 } else {
@@ -594,7 +594,7 @@ QVariant AccountingBillItem::data(int col, int role) const {
         } else if( col == m_d->priceUmCol ) {
             if( role == Qt::TextAlignmentRole ){
                 return Qt::AlignHCenter + Qt::AlignVCenter;
-            } else { // role == Qt::DisplayRole || role == Qt::EditRole
+            } else if(role == Qt::DisplayRole || role == Qt::EditRole) {
                 if( m_d->priceItem != NULL ){
                     if( m_d->priceItem->unitMeasure() != NULL ){
                         return QVariant(m_d->priceItem->unitMeasure()->tag() );
@@ -606,43 +606,43 @@ QVariant AccountingBillItem::data(int col, int role) const {
         } else if( col == m_d->quantityCol ) {
             if( role == Qt::TextAlignmentRole ){
                 return Qt::AlignRight + Qt::AlignVCenter;
-            } else { // role == Qt::DisplayRole || role == Qt::EditRole
+            } else if(role == Qt::DisplayRole || role == Qt::EditRole) {
                 return QVariant( quantityStr() );
             }
         } else if( col == m_d->PPUTotalToDiscountCol ) {
             if( role == Qt::TextAlignmentRole ){
                 return Qt::AlignRight + Qt::AlignVCenter;
-            } else { // role == Qt::DisplayRole || role == Qt::EditRole
+            } else if(role == Qt::DisplayRole || role == Qt::EditRole) {
                 return QVariant( PPUTotalToDiscountStr() );
             }
         } else if( col == m_d->totalAmountToDiscountCol ){
             if( role == Qt::TextAlignmentRole ){
                 return Qt::AlignRight + Qt::AlignVCenter;
-            } else { // role == Qt::DisplayRole || role == Qt::EditRole
+            } else if(role == Qt::DisplayRole || role == Qt::EditRole) {
                 return QVariant( totalAmountToDiscountStr() );
             }
         } else if( col == m_d->PPUNotToDiscountCol ) {
             if( role == Qt::TextAlignmentRole ){
                 return Qt::AlignRight + Qt::AlignVCenter;
-            } else { // role == Qt::DisplayRole || role == Qt::EditRole
+            } else if(role == Qt::DisplayRole || role == Qt::EditRole) {
                 return QVariant( PPUNotToDiscountStr() );
             }
         } else if( col == (m_d->amountNotToDiscountCol) ){
             if( role == Qt::TextAlignmentRole ){
                 return Qt::AlignRight + Qt::AlignVCenter;
-            } else { // role == Qt::DisplayRole || role == Qt::EditRole
+            } else if(role == Qt::DisplayRole || role == Qt::EditRole) {
                 return QVariant( amountNotToDiscountStr() );
             }
         } else if( col == m_d->totalAmountCol ){
             if( role == Qt::TextAlignmentRole ){
                 return Qt::AlignRight + Qt::AlignVCenter;
-            } else { // role == Qt::DisplayRole || role == Qt::EditRole
+            } else if(role == Qt::DisplayRole || role == Qt::EditRole) {
                 return QVariant( totalAmountStr() );
             }
         } else {
             if( role == Qt::TextAlignmentRole ){
                 return Qt::AlignLeft + Qt::AlignVCenter;
-            } else { // role == Qt::DisplayRole || role == Qt::EditRole
+            } else if(role == Qt::DisplayRole || role == Qt::EditRole) {
                 return QVariant();
             }
         }
@@ -650,19 +650,19 @@ QVariant AccountingBillItem::data(int col, int role) const {
         if( col == m_d->progNumberCol ) {
             if( role == Qt::TextAlignmentRole ){
                 return Qt::AlignLeft + Qt::AlignVCenter;
-            } else { // role == Qt::DisplayRole || role == Qt::EditRole
+            } else if(role == Qt::DisplayRole || role == Qt::EditRole) {
                 return QVariant( progressiveCode() );
             }
         } else if( col == m_d->dateCol) {
             if( role == Qt::TextAlignmentRole ){
                 return Qt::AlignHCenter + Qt::AlignVCenter;;
-            } else { // role == Qt::DisplayRole || role == Qt::EditRole
+            } else if(role == Qt::DisplayRole || role == Qt::EditRole) {
                 return QVariant( dateStr() );
             }
         } else if( col == m_d->priceCodeCol ) {
             if( role == Qt::TextAlignmentRole ){
                 return Qt::AlignLeft + Qt::AlignVCenter;;
-            } else { // role == Qt::DisplayRole || role == Qt::EditRole
+            } else if(role == Qt::DisplayRole || role == Qt::EditRole) {
                 if( m_d->lsBill != NULL ){
                     return QVariant( m_d->lsBill->code() );
                 } else {
@@ -672,7 +672,7 @@ QVariant AccountingBillItem::data(int col, int role) const {
         } else if( col == m_d->priceShortDescCol ) {
             if( role == Qt::TextAlignmentRole ){
                 return Qt::AlignLeft + Qt::AlignVCenter;
-            } else { // role == Qt::DisplayRole || role == Qt::EditRole
+            } else if(role == Qt::DisplayRole || role == Qt::EditRole) {
                 if( m_d->lsBill != NULL ){
                     return QVariant(m_d->lsBill->name());
                 } else {
@@ -682,49 +682,49 @@ QVariant AccountingBillItem::data(int col, int role) const {
         } else if( col == m_d->priceUmCol ) {
             if( role == Qt::TextAlignmentRole ){
                 return Qt::AlignHCenter + Qt::AlignVCenter;
-            } else { // role == Qt::DisplayRole || role == Qt::EditRole
+            } else if(role == Qt::DisplayRole || role == Qt::EditRole) {
                 return QVariant( trUtf8("%") );
             }
         } else if( col == m_d->quantityCol ) {
             if( role == Qt::TextAlignmentRole ){
                 return Qt::AlignRight + Qt::AlignVCenter;
-            } else { // role == Qt::DisplayRole || role == Qt::EditRole
+            } else if(role == Qt::DisplayRole || role == Qt::EditRole) {
                 return QVariant( quantityStr() );
             }
         } else if( col == m_d->PPUTotalToDiscountCol ) {
             if( role == Qt::TextAlignmentRole ){
                 return Qt::AlignRight + Qt::AlignVCenter;
-            } else { // role == Qt::DisplayRole || role == Qt::EditRole
+            } else if(role == Qt::DisplayRole || role == Qt::EditRole) {
                 return QVariant( PPUTotalToDiscountStr() );
             }
         } else if( col == m_d->totalAmountToDiscountCol ){
             if( role == Qt::TextAlignmentRole ){
                 return Qt::AlignRight + Qt::AlignVCenter;
-            } else { // role == Qt::DisplayRole || role == Qt::EditRole
+            } else if(role == Qt::DisplayRole || role == Qt::EditRole) {
                 return QVariant( totalAmountToDiscountStr() );
             }
         } else if( col == m_d->PPUNotToDiscountCol ) {
             if( role == Qt::TextAlignmentRole ){
                 return Qt::AlignRight + Qt::AlignVCenter;
-            } else { // role == Qt::DisplayRole || role == Qt::EditRole
+            } else if(role == Qt::DisplayRole || role == Qt::EditRole) {
                 return QVariant( PPUNotToDiscountStr() );
             }
         } else if( col == m_d->amountNotToDiscountCol ){
             if( role == Qt::TextAlignmentRole ){
                 return Qt::AlignRight + Qt::AlignVCenter;
-            } else { // role == Qt::DisplayRole || role == Qt::EditRole
+            } else if(role == Qt::DisplayRole || role == Qt::EditRole) {
                 return QVariant( amountNotToDiscountStr() );
             }
         } else if( col == m_d->totalAmountCol ){
             if( role == Qt::TextAlignmentRole ){
                 return Qt::AlignRight + Qt::AlignVCenter;
-            } else { // role == Qt::DisplayRole || role == Qt::EditRole
+            } else if(role == Qt::DisplayRole || role == Qt::EditRole) {
                 return QVariant( totalAmountStr() );
             }
         } else {
             if( role == Qt::TextAlignmentRole ){
                 return Qt::AlignLeft + Qt::AlignVCenter;
-            } else { // role == Qt::DisplayRole || role == Qt::EditRole
+            } else if(role == Qt::DisplayRole || role == Qt::EditRole) {
                 return QVariant();
             }
         }
@@ -732,25 +732,25 @@ QVariant AccountingBillItem::data(int col, int role) const {
         if( col == m_d->progNumberCol ) {
             if( role == Qt::TextAlignmentRole ){
                 return Qt::AlignLeft + Qt::AlignVCenter;
-            } else { // role == Qt::DisplayRole || role == Qt::EditRole
+            } else if(role == Qt::DisplayRole || role == Qt::EditRole) {
                 return QVariant( progressiveCode() );
             }
         } else if( col == m_d->dateCol) {
             if( role == Qt::TextAlignmentRole ){
                 return Qt::AlignHCenter + Qt::AlignVCenter;;
-            } else { // role == Qt::DisplayRole || role == Qt::EditRole
+            } else if(role == Qt::DisplayRole || role == Qt::EditRole) {
                 return QVariant( dateStr() );
             }
         } else if( col == m_d->priceCodeCol ) {
             if( role == Qt::TextAlignmentRole ){
                 return Qt::AlignLeft + Qt::AlignVCenter;;
-            } else { // role == Qt::DisplayRole || role == Qt::EditRole
+            } else if(role == Qt::DisplayRole || role == Qt::EditRole) {
                 return QVariant();
             }
         } else if( col == m_d->priceShortDescCol ) {
             if( role == Qt::TextAlignmentRole ){
                 return Qt::AlignLeft + Qt::AlignVCenter;
-            } else { // role == Qt::DisplayRole || role == Qt::EditRole
+            } else if(role == Qt::DisplayRole || role == Qt::EditRole) {
                 if( m_d->tamBillItem != NULL ){
                     return QVariant(m_d->tamBillItem->title() );
                 } else {
@@ -760,49 +760,49 @@ QVariant AccountingBillItem::data(int col, int role) const {
         } else if( col == m_d->priceUmCol ) {
             if( role == Qt::TextAlignmentRole ){
                 return Qt::AlignHCenter + Qt::AlignVCenter;
-            } else { // role == Qt::DisplayRole || role == Qt::EditRole
+            } else if(role == Qt::DisplayRole || role == Qt::EditRole) {
                 return QVariant();
             }
         } else if( col == m_d->quantityCol ) {
             if( role == Qt::TextAlignmentRole ){
                 return Qt::AlignRight + Qt::AlignVCenter;
-            } else { // role == Qt::DisplayRole || role == Qt::EditRole
+            } else if(role == Qt::DisplayRole || role == Qt::EditRole) {
                 return QVariant();
             }
         } else if( col == m_d->PPUTotalToDiscount ) {
             if( role == Qt::TextAlignmentRole ){
                 return Qt::AlignRight + Qt::AlignVCenter;
-            } else { // role == Qt::DisplayRole || role == Qt::EditRole
+            } else if(role == Qt::DisplayRole || role == Qt::EditRole) {
                 return QVariant();
             }
         } else if( col == m_d->totalAmountToDiscountCol ){
             if( role == Qt::TextAlignmentRole ){
                 return Qt::AlignRight + Qt::AlignVCenter;
-            } else { // role == Qt::DisplayRole || role == Qt::EditRole
+            } else if(role == Qt::DisplayRole || role == Qt::EditRole) {
                 return QVariant( totalAmountToDiscountStr() );
             }
         } else if( col == m_d->PPUNotToDiscountCol ) {
             if( role == Qt::TextAlignmentRole ){
                 return Qt::AlignRight + Qt::AlignVCenter;
-            } else { // role == Qt::DisplayRole || role == Qt::EditRole
+            } else if(role == Qt::DisplayRole || role == Qt::EditRole) {
                 return QVariant();
             }
         } else if( col == (m_d->amountNotToDiscountCol) ){
             if( role == Qt::TextAlignmentRole ){
                 return Qt::AlignRight + Qt::AlignVCenter;
-            } else { // role == Qt::DisplayRole || role == Qt::EditRole
+            } else if(role == Qt::DisplayRole || role == Qt::EditRole) {
                 return QVariant( amountNotToDiscountStr() );
             }
         } else if( col == m_d->totalAmountCol ){
             if( role == Qt::TextAlignmentRole ){
                 return Qt::AlignRight + Qt::AlignVCenter;
-            } else { // role == Qt::DisplayRole || role == Qt::EditRole
+            } else if(role == Qt::DisplayRole || role == Qt::EditRole) {
                 return QVariant( totalAmountStr() );
             }
         } else {
             if( role == Qt::TextAlignmentRole ){
                 return Qt::AlignLeft + Qt::AlignVCenter;
-            } else { // role == Qt::DisplayRole || role == Qt::EditRole
+            } else if(role == Qt::DisplayRole || role == Qt::EditRole) {
                 return QVariant();
             }
         }
@@ -815,31 +815,31 @@ QVariant AccountingBillItem::data(int col, int role) const {
         if( col == m_d->priceShortDescCol ){
             if( role == Qt::TextAlignmentRole ){
                 return Qt::AlignLeft + Qt::AlignVCenter;
-            } else { // role == Qt::DisplayRole || role == Qt::EditRole
+            } else if(role == Qt::DisplayRole || role == Qt::EditRole) {
                 return QVariant( title() );
             }
         } else if( col == m_d->totalAmountToDiscountCol ){
             if( role == Qt::TextAlignmentRole ){
                 return Qt::AlignRight + Qt::AlignVCenter;
-            } else { // role == Qt::DisplayRole || role == Qt::EditRole
+            } else if(role == Qt::DisplayRole || role == Qt::EditRole) {
                 return QVariant( totalAmountToDiscountStr() );
             }
         } else if( col == m_d->amountNotToDiscountCol ){
             if( role == Qt::TextAlignmentRole ){
                 return Qt::AlignRight + Qt::AlignVCenter;
-            } else { // role == Qt::DisplayRole || role == Qt::EditRole
+            } else if(role == Qt::DisplayRole || role == Qt::EditRole) {
                 return QVariant( amountNotToDiscountStr() );
             }
         } else if( col == ( m_d->totalAmountCol ) ){
             if( role == Qt::TextAlignmentRole ){
                 return Qt::AlignRight + Qt::AlignVCenter;
-            } else { // role == Qt::DisplayRole || role == Qt::EditRole
+            } else if(role == Qt::DisplayRole || role == Qt::EditRole) {
                 return QVariant( totalAmountStr() );
             }
         } else {
             if( role == Qt::TextAlignmentRole ){
                 return Qt::AlignHCenter + Qt::AlignVCenter;
-            } else { // role == Qt::DisplayRole || role == Qt::EditRole
+            } else if(role == Qt::DisplayRole || role == Qt::EditRole) {
                 return QVariant();
             }
         }
@@ -847,73 +847,73 @@ QVariant AccountingBillItem::data(int col, int role) const {
         if( col == m_d->progNumberCol) {
             if( role == Qt::TextAlignmentRole ){
                 return Qt::AlignHCenter + Qt::AlignVCenter;
-            } else { // role == Qt::DisplayRole || role == Qt::EditRole
+            } else if(role == Qt::DisplayRole || role == Qt::EditRole) {
                 return QVariant( trUtf8("N.") );
             }
         } else if( col == m_d->dateCol ) {
             if( role == Qt::TextAlignmentRole ){
                 return Qt::AlignHCenter + Qt::AlignVCenter;;
-            } else { // role == Qt::DisplayRole || role == Qt::EditRole
+            } else if(role == Qt::DisplayRole || role == Qt::EditRole) {
                 return QVariant( trUtf8("Data") );
             }
         } else if( col == m_d->priceCodeCol ) {
             if( role == Qt::TextAlignmentRole ){
                 return Qt::AlignHCenter + Qt::AlignVCenter;;
-            } else { // role == Qt::DisplayRole || role == Qt::EditRole
+            } else if(role == Qt::DisplayRole || role == Qt::EditRole) {
                 return QVariant( trUtf8("Codice") );
             }
         } else if( col == m_d->priceShortDescCol ) {
             if( role == Qt::TextAlignmentRole ){
                 return Qt::AlignHCenter + Qt::AlignVCenter;
-            } else { // role == Qt::DisplayRole || role == Qt::EditRole
+            } else if(role == Qt::DisplayRole || role == Qt::EditRole) {
                 return QVariant(QObject::trUtf8("Descrizione") );
             }
         }  else if( col == m_d->priceUmCol ) {
             if( role == Qt::TextAlignmentRole ){
                 return Qt::AlignHCenter + Qt::AlignVCenter;
-            } else { // role == Qt::DisplayRole || role == Qt::EditRole
+            } else if(role == Qt::DisplayRole || role == Qt::EditRole) {
                 return QVariant( trUtf8("UdM") );
             }
         } else if( col == m_d->quantityCol ) {
             if( role == Qt::TextAlignmentRole ){
                 return Qt::AlignHCenter + Qt::AlignVCenter;
-            } else { // role == Qt::DisplayRole || role == Qt::EditRole
+            } else if(role == Qt::DisplayRole || role == Qt::EditRole) {
                 return QVariant( trUtf8("Quantità") );
             }
         } else if( col == m_d->PPUTotalToDiscountCol ) {
             if( role == Qt::TextAlignmentRole ){
                 return Qt::AlignHCenter + Qt::AlignVCenter;
-            } else { // role == Qt::DisplayRole || role == Qt::EditRole
+            } else if(role == Qt::DisplayRole || role == Qt::EditRole) {
                 return QVariant( trUtf8("C.U. lordo") );
             }
         } else if( col == m_d->totalAmountToDiscountCol ){
             if( role == Qt::TextAlignmentRole ){
                 return Qt::AlignHCenter + Qt::AlignVCenter;
-            } else { // role == Qt::DisplayRole || role == Qt::EditRole
+            } else if(role == Qt::DisplayRole || role == Qt::EditRole) {
                 return QVariant( trUtf8("Imp. lordo") );
             }
         } else if( col == m_d->PPUNotToDiscountCol ) {
             if( role == Qt::TextAlignmentRole ){
                 return Qt::AlignHCenter + Qt::AlignVCenter;
-            } else { // role == Qt::DisplayRole || role == Qt::EditRole
+            } else if(role == Qt::DisplayRole || role == Qt::EditRole) {
                 return QVariant( trUtf8("C.U. non rib.") );
             }
         } else if( col == m_d->amountNotToDiscountCol ){
             if( role == Qt::TextAlignmentRole ){
                 return Qt::AlignHCenter + Qt::AlignVCenter;
-            } else { // role == Qt::DisplayRole || role == Qt::EditRole
+            } else if(role == Qt::DisplayRole || role == Qt::EditRole) {
                 return QVariant( trUtf8("Imp. non rib.") );
             }
         } else if( col == m_d->totalAmountCol ){
             if( role == Qt::TextAlignmentRole ){
                 return Qt::AlignHCenter + Qt::AlignVCenter;
-            } else { // role == Qt::DisplayRole || role == Qt::EditRole
+            } else if(role == Qt::DisplayRole || role == Qt::EditRole) {
                 return QVariant( trUtf8("Importo") );
             }
         } else {
             if( role == Qt::TextAlignmentRole ){
                 return Qt::AlignLeft + Qt::AlignVCenter;
-            } else { // role == Qt::DisplayRole || role == Qt::EditRole
+            } else if(role == Qt::DisplayRole || role == Qt::EditRole) {
                 return QVariant();
             }
         }
@@ -1727,6 +1727,7 @@ void AccountingBillItem::setLSBill(AccountingLSBill *newLSBill) {
         }
         m_d->lsBill = newLSBill;
         updateLSQuantity();
+        updatePPUs();
         if( m_d->lsBill != NULL ){
             connect( m_d->lsBill, &AccountingLSBill::modelChanged, this, &AccountingBillItem::updateLSQuantity );
             connect( m_d->lsBill, &AccountingLSBill::PPUTotalToDiscountChanged, this, &AccountingBillItem::updatePPUs );
@@ -1734,8 +1735,6 @@ void AccountingBillItem::setLSBill(AccountingLSBill *newLSBill) {
             connect( m_d->lsBill, &AccountingLSBill::aboutToBeDeleted, this, &AccountingBillItem::setLSBillNULL );
         }
         emit lsBillChanged( m_d->lsBill );
-        emit PPUTotalToDiscountChanged( PPUTotalToDiscountStr() );
-        emit PPUNotToDiscountChanged( PPUNotToDiscountStr() );
     }
 }
 

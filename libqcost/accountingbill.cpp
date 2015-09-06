@@ -32,8 +32,6 @@
 #include <QVariant>
 #include <QString>
 
-#include <QDebug>
-
 class AccountingBillPrivate{
 public:
     AccountingBillPrivate( const QString &n, AccountingBill * b, PriceFieldModel * pfm, MathParser * prs = NULL ):

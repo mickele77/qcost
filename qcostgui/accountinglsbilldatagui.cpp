@@ -72,6 +72,9 @@ AccountingLSBillDataGUI::AccountingLSBillDataGUI(PriceFieldModel * pfm, MathPars
     m_d->ui->attributesTableView->setContextMenuPolicy(Qt::CustomContextMenu);
     m_d->ui->attributesTableView->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
     connect(m_d->ui->attributesTableView, &QTableView::customContextMenuRequested, this, &AccountingLSBillDataGUI::attributesTableViewCustomMenuRequested );
+
+    connect( m_d->ui->PPUTotalToDiscountLineEdit, &QLineEdit::editingFinished, this, &AccountingLSBillDataGUI::setPPUTotalToDiscount );
+    connect( m_d->ui->PPUNotToDiscountLineEdit, &QLineEdit::editingFinished, this, &AccountingLSBillDataGUI::setPPUNotToDiscount );
 }
 
 AccountingLSBillDataGUI::~AccountingLSBillDataGUI(){
@@ -85,8 +88,8 @@ void AccountingLSBillDataGUI::setAccountingBill(AccountingLSBill *b) {
             disconnect( m_d->ui->nameLineEdit, &QLineEdit::textEdited, m_d->accounting, &AccountingLSBill::setName );
             disconnect( m_d->ui->descriptionTextEdit, &QPlainTextEdit::textChanged, this, &AccountingLSBillDataGUI::setDescription );
 
-            disconnect( m_d->accounting, &AccountingLSBill::projAmountChanged, m_d->ui->totalAmountLineEdit, &QLineEdit::setText );
-            disconnect( m_d->accounting, &AccountingLSBill::accAmountChanged, m_d->ui->totalAmountAccountedLineEdit, &QLineEdit::setText );
+            disconnect( m_d->accounting, &AccountingLSBill::PPUTotalToDiscountChanged, m_d->ui->PPUTotalToDiscountLineEdit, &QLineEdit::setText );
+            disconnect( m_d->accounting, &AccountingLSBill::PPUNotToDiscountChanged, m_d->ui->PPUNotToDiscountLineEdit, &QLineEdit::setText );
             disconnect( m_d->accounting, &AccountingLSBill::percentageAccountedChanged, m_d->ui->percentageAccountedLineEdit, &QLineEdit::setText );
 
             disconnect( m_d->accounting, &AccountingLSBill::aboutToBeDeleted, this, &AccountingLSBillDataGUI::clear );
@@ -100,8 +103,8 @@ void AccountingLSBillDataGUI::setAccountingBill(AccountingLSBill *b) {
         m_d->ui->codeLineEdit->clear();
         m_d->ui->nameLineEdit->clear();
         m_d->ui->descriptionTextEdit->clear();
-        m_d->ui->totalAmountLineEdit->clear();
-        m_d->ui->totalAmountAccountedLineEdit->clear();
+        m_d->ui->PPUTotalToDiscountLineEdit->clear();
+        m_d->ui->PPUNotToDiscountLineEdit->clear();
         m_d->ui->percentageAccountedLineEdit->clear();
         m_d->ui->totalPriceFieldTableView->setModel( NULL );
         m_d->ui->attributesTableView->setModel( NULL );
@@ -116,10 +119,11 @@ void AccountingLSBillDataGUI::setAccountingBill(AccountingLSBill *b) {
             m_d->ui->descriptionTextEdit->setPlainText( m_d->accounting->description() );
             connect( m_d->ui->descriptionTextEdit, &QPlainTextEdit::textChanged, this, &AccountingLSBillDataGUI::setDescription );
 
-            m_d->ui->totalAmountLineEdit->setText( m_d->accounting->projAmountStr() );
-            connect( m_d->accounting, &AccountingLSBill::projAmountChanged, m_d->ui->totalAmountLineEdit, &QLineEdit::setText );
-            m_d->ui->totalAmountAccountedLineEdit->setText( m_d->accounting->accAmountStr() );
-            connect( m_d->accounting, &AccountingLSBill::accAmountChanged, m_d->ui->totalAmountAccountedLineEdit, &QLineEdit::setText );
+            m_d->ui->PPUTotalToDiscountLineEdit->setText( m_d->accounting->PPUTotalToDiscountStr() );
+            connect( m_d->accounting, &AccountingLSBill::PPUTotalToDiscountChanged, m_d->ui->PPUTotalToDiscountLineEdit, &QLineEdit::setText );
+            QString s = m_d->accounting->PPUNotToDiscountStr();
+            m_d->ui->PPUNotToDiscountLineEdit->setText( m_d->accounting->PPUNotToDiscountStr() );
+            connect( m_d->accounting, &AccountingLSBill::PPUNotToDiscountChanged, m_d->ui->PPUNotToDiscountLineEdit, &QLineEdit::setText );
             m_d->ui->percentageAccountedLineEdit->setText( m_d->accounting->percentageAccountedStr() );
             connect( m_d->accounting, &AccountingLSBill::percentageAccountedChanged, m_d->ui->percentageAccountedLineEdit, &QLineEdit::setText );
 
@@ -317,7 +321,7 @@ void AccountingLSBillDataGUI::setPriceDataSetSpinBox() {
 void AccountingLSBillDataGUI::setPriceList() {
     QVariant v =  m_d->ui->priceListComboBox->itemData( m_d->ui->priceListComboBox->currentIndex() );
     PriceList * currentPriceList = (PriceList *) v.value<void *>();
-    if( m_d->accounting ){
+    if( m_d->accounting != NULL ){
         if( m_d->accounting->priceList() && m_d->accounting->rowCount() > 0 ){
             AccountingBillSetPriceListModeGUI modeGUI( this );
             AccountingLSBill::SetPriceListMode plMode = modeGUI.returnValueLSBill();
@@ -334,7 +338,7 @@ void AccountingLSBillDataGUI::setPriceList() {
 }
 
 void AccountingLSBillDataGUI::setPriceDataSet() {
-    if( m_d->accounting ){
+    if( m_d->accounting != NULL ){
         if( m_d->accounting->priceList() ){
             if( m_d->ui->currentPriceDataSetSpinBox->value() < 1 ){
                 m_d->ui->currentPriceDataSetSpinBox->setValue( 1 );
@@ -344,5 +348,17 @@ void AccountingLSBillDataGUI::setPriceDataSet() {
                 m_d->accounting->setPriceDataSet( m_d->ui->currentPriceDataSetSpinBox->value()-1 );
             }
         }
+    }
+}
+
+void AccountingLSBillDataGUI::setPPUTotalToDiscount(){
+    if( m_d->accounting != NULL ){
+        m_d->accounting->setPPUTotalToDiscount( m_d->ui->PPUTotalToDiscountLineEdit->text() );
+    }
+}
+
+void AccountingLSBillDataGUI::setPPUNotToDiscount(){
+    if( m_d->accounting != NULL ){
+        m_d->accounting->setPPUNotToDiscount( m_d->ui->PPUNotToDiscountLineEdit->text() );
     }
 }
