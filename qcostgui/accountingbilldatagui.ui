@@ -53,7 +53,7 @@
               <item row="2" column="0" colspan="2">
                <widget class="QLabel" name="amountNotToDiscountLabel">
                 <property name="text">
-                 <string>Totale non soggetto a ribasso</string>
+                 <string>Totale non ribassabile</string>
                 </property>
                </widget>
               </item>
@@ -80,7 +80,7 @@
               <item row="4" column="0">
                <widget class="QLabel" name="amountDiscountedLabel">
                 <property name="text">
-                 <string>Totale soggetto a ribasso netto</string>
+                 <string>Totale ribassabile netto</string>
                 </property>
                </widget>
               </item>
@@ -94,7 +94,7 @@
               <item row="3" column="0">
                <widget class="QLabel" name="amountToDiscountLabel">
                 <property name="text">
-                 <string>Totale soggetto a ribasso lordo</string>
+                 <string>Totale ribassabile</string>
                 </property>
                </widget>
               </item>
@@ -182,7 +182,7 @@
            </sizepolicy>
           </property>
           <property name="title">
-           <string>Prezzi</string>
+           <string>Opere a misura - Prezzi</string>
           </property>
           <layout class="QGridLayout" name="gridLayout">
            <item row="0" column="1">

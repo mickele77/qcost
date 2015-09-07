@@ -1040,7 +1040,7 @@ void AccountingBillItem::updateAmountNotToDiscount() {
     }
     if( v != m_d->amountNotToDiscount ){
         m_d->amountNotToDiscount = v;
-        emit amountNotToDiscountChanged( totalAmountToDiscountStr() );
+        emit amountNotToDiscountChanged( amountNotToDiscountStr() );
     }
 }
 

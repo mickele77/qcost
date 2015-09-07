@@ -250,7 +250,7 @@ void AccountingLSItemMeasure::loadFromXml(const QXmlStreamAttributes &attrs) {
         setAccFormula( f );
     }
     if( attrs.hasAttribute( "accFormulaFromProj" ) ){
-        QString f = attrs.value( "projFormula").toString();
+        QString f = attrs.value( "accFormulaFromProj").toString();
         if( f.toUpper() == "TRUE" ){
             setAccFormulaFromProj( true );
         }

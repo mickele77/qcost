@@ -531,8 +531,8 @@ void AccountingLSBillItem::updatePPU(){
         if( m_d->PPU != newP ){
             m_d->PPU = newP;
             emit PPUChanged( PPUStr() );
-            updateAccAmount();
             updateProjAmount();
+            updateAccAmount();
         }
     }
 }
@@ -1111,6 +1111,9 @@ void AccountingLSBillItem::loadFromXml(const QXmlStreamAttributes &attrs, PriceL
         if( priceList ){
             setPriceItem( priceList->priceItemId( attrs.value( "priceItem").toUInt() ) );
         }
+    }
+    if( attrs.hasAttribute( "priceDataSet" ) ){
+        setCurrentPriceDataSet( attrs.value( "priceDataSet").toInt() );
     }
 }
 
