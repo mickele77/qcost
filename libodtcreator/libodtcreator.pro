@@ -7,7 +7,14 @@ contains(DEFINES, BUILD_STATIC) {
   CONFIG += staticlib
 }
 
-LIBS += -lz
+win32 {
+    LIBS += -L"c:/zlib" -lz64
+    INCLUDEPATH += "c:/zlib"
+}
+
+linux {
+    LIBS += -lz
+}
 
 SOURCES += \
     zip.cpp \

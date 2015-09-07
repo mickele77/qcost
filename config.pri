@@ -4,7 +4,7 @@ OBJECTS_DIR = ../obj
 UI_DIR = ../ui
 QMAKE_LFLAGS += " -Wl,--no-undefined"
 
-# DEFINES += BUILD_RELEASE
+DEFINES += BUILD_RELEASE
 
 win32 {
     DEFINES += BUILD_SHARED_WIN

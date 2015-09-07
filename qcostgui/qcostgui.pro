@@ -2,7 +2,7 @@ include( ../config.pri )
 
 QT       += widgets sql
 
-TARGET = QCost
+TARGET = QCostGUI
 
 TEMPLATE = app
 
@@ -10,11 +10,17 @@ LIBS += \
     -L../bin \
     -lqcost \
     -lodtcreator \
-    -lmathparser \
-    -lz
+    -lmathparser
+
+win32 {
+    LIBS += -L"c:/zlib" -lz64
+}
+linux {
+    LIBS += -lz
+}
 
 DEPENDPATH += \
-    ../libmatparser \
+    ../libmathparser \
     ../libqcost
 
 INCLUDEPATH += \

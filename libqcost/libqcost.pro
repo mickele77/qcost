@@ -17,6 +17,14 @@ LIBS += \
     -lodtcreator \
     -lmathparser
 
+win32 {
+    LIBS += -L"c:/zlib" -lz64
+}
+
+linux {
+    LIBS += -lz
+}
+
 INCLUDEPATH += \
     ../libmathparser \
     ../libodtcreator

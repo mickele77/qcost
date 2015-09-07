@@ -66,12 +66,10 @@ AccountingPrinter::AccountingPrinter(AccountingBill * b, MathParser * prs ):
 
 AccountingPrinter::AccountingPrinter(AccountingTAMBill *b, MathParser *prs):
     m_d( new AccountingPrinterPrivate(b, prs) ) {
-
 }
 
 AccountingPrinter::AccountingPrinter(AccountingLSBill *b, MathParser *prs):
     m_d( new AccountingPrinterPrivate(b, prs) ) {
-
 }
 
 AccountingPrinter::~AccountingPrinter() {
