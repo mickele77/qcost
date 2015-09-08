@@ -19,6 +19,8 @@
 #ifndef MATHPARSER_H
 #define MATHPARSER_H
 
+#include "mathparser_export.h"
+
 class QString;
 class QDate;
 
@@ -26,7 +28,7 @@ class MathParserPrivate;
 
 #include <QLocale>
 
-class MathParser{
+class EXPORT_MATHPARSER_LIB_OPT MathParser{
 public:
     MathParser( const QLocale & loc );
 

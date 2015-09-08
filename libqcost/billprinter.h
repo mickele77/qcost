@@ -19,7 +19,7 @@
 #ifndef BILLPRINTER_H
 #define BILLPRINTER_H
 
-#include "library_common.h"
+#include "qcost_export.h"
 
 class Bill;
 class PriceFieldModel;
@@ -32,7 +32,7 @@ template <typename T> class QList;
 
 class BillPrinterPrivate;
 
-class EXPORT_LIB_OPT BillPrinter {
+class EXPORT_QCOST_LIB_OPT BillPrinter {
 public:
     enum PrintBillItemsOption{
         PrintShortDesc,

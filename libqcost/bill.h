@@ -19,7 +19,7 @@
 #ifndef BILL_H
 #define BILL_H
 
-#include "library_common.h"
+#include "qcost_export.h"
 
 class ProjectPriceListParentItem;
 class PriceList;
@@ -42,7 +42,7 @@ class QTextCursor;
 
 class BillPrivate;
 
-class EXPORT_LIB_OPT Bill : public QAbstractItemModel, public ProjectItem {
+class EXPORT_QCOST_LIB_OPT Bill : public QAbstractItemModel, public ProjectItem {
     Q_OBJECT
 public:
     enum SetPriceListMode{

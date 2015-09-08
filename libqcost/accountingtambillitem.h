@@ -19,13 +19,13 @@
 #ifndef ACCOUNTINGTAMBILLITEM_H
 #define ACCOUNTINGTAMBILLITEM_H
 
-#include "library_common.h"
+#include "qcost_export.h"
 
 #include "accountingbillitem.h"
 
 class AccountingTAMBillItemPrivate;
 
-class EXPORT_LIB_OPT AccountingTAMBillItem : public AccountingBillItem {
+class EXPORT_QCOST_LIB_OPT AccountingTAMBillItem : public AccountingBillItem {
     Q_OBJECT
 public:
     friend class AccountingTAMBill;

@@ -12,10 +12,10 @@ LIBS += \
     -lodtcreator \
     -lmathparser
 
-win32 {
+contains(DEFINES, BUILD_MSVC){
     LIBS += -L"c:/zlib" -lz64
-}
-linux {
+    INCLUDEPATH += "c:/zlib"
+} else {
     LIBS += -lz
 }
 

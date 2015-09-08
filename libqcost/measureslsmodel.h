@@ -1,7 +1,7 @@
 #ifndef MEASURESLSMODEL_H
 #define MEASURESLSMODEL_H
 
-#include "library_common.h"
+#include "qcost_export.h"
 
 class QXmlStreamWriter;
 class QXmlStreamReader;
@@ -13,7 +13,7 @@ class UnitMeasure;
 
 class MeasuresLSModelPrivate;
 
-class EXPORT_LIB_OPT MeasuresLSModel : public QAbstractTableModel
+class EXPORT_QCOST_LIB_OPT MeasuresLSModel : public QAbstractTableModel
 {
     Q_OBJECT
 public:

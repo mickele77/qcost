@@ -19,11 +19,11 @@
 #ifndef PROJECTDATAPARENTITEM_H
 #define PROJECTDATAPARENTITEM_H
 
-#include "library_common.h"
+#include "qcost_export.h"
 
 #include "projectitem.h"
 
-class EXPORT_LIB_OPT ProjectDataParentItem : public ProjectItem {
+class EXPORT_QCOST_LIB_OPT ProjectDataParentItem : public ProjectItem {
 public:
     ProjectDataParentItem(ProjectItem *parent);
 

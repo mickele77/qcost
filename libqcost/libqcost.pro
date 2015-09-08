@@ -9,7 +9,7 @@ contains(DEFINES, BUILD_STATIC) {
 }
 
 win32 {
-    DEFINES += BUILD_LIB
+    DEFINES += BUILD_QCOST_LIB
 }
 
 LIBS += \
@@ -17,11 +17,10 @@ LIBS += \
     -lodtcreator \
     -lmathparser
 
-win32 {
+contains(DEFINES, BUILD_MSVC){
     LIBS += -L"c:/zlib" -lz64
-}
-
-linux {
+    INCLUDEPATH += "c:/zlib"
+} else {
     LIBS += -lz
 }
 
@@ -75,7 +74,6 @@ SOURCES += \
     paymentdatamodel.cpp
 
 HEADERS  += \
-    library_common.h \
     projectpricelistparentitem.h \
     projectitem.h \
     projectbillparentitem.h \
@@ -112,4 +110,5 @@ HEADERS  += \
     accountinglsitemmeasure.h \
     measureslsmodel.h \
     paymentdata.h \
-    paymentadatamodel.h
+    paymentadatamodel.h \
+    qcost_export.h

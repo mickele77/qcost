@@ -26,13 +26,15 @@
 #ifndef ZIPREADER_H
 #define ZIPREADER_H
 
+#include "odtcreator_export.h"
+
 #include <QDateTime>
 #include <QFile>
 #include <QString>
 
 class ZipReaderPrivate;
 
-class ZipReader
+class EXPORT_ODTCREATOR_LIB_OPT ZipReader
 {
 public:
     explicit ZipReader(const QString &fileName, QIODevice::OpenMode mode = QIODevice::ReadOnly );

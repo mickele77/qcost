@@ -19,7 +19,7 @@
 #ifndef ATTRIBUTEMODEL_H
 #define ATTRIBUTEMODEL_H
 
-#include "library_common.h"
+#include "qcost_export.h"
 
 class AccountingLSBill;
 class AccountingTAMBill;
@@ -37,7 +37,7 @@ class QXmlStreamWriter;
 
 class AttributeModelPrivate;
 
-class EXPORT_LIB_OPT AttributeModel : public QAbstractTableModel {
+class EXPORT_QCOST_LIB_OPT AttributeModel : public QAbstractTableModel {
     Q_OBJECT
 public:
     friend class Project;

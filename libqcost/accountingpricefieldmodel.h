@@ -19,14 +19,14 @@
 #ifndef ACCOUNTINGPRICEFIELDMODEL_H
 #define ACCOUNTINGPRICEFIELDMODEL_H
 
-#include "library_common.h"
+#include "qcost_export.h"
 
 class AccountingPriceFieldModelPrivate;
 class PriceFieldModel;
 
 #include <QAbstractTableModel>
 
-class EXPORT_LIB_OPT AccountingPriceFieldModel : public QAbstractTableModel {
+class EXPORT_QCOST_LIB_OPT AccountingPriceFieldModel : public QAbstractTableModel {
     Q_OBJECT
 public:
     explicit AccountingPriceFieldModel(QList<int> *selList, PriceFieldModel * pfm, QObject *parent = 0);

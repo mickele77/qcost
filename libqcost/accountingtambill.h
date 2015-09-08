@@ -19,7 +19,7 @@
 #ifndef ACCOUNTINGTAMBILL_H
 #define ACCOUNTINGTAMBILL_H
 
-#include "library_common.h"
+#include "qcost_export.h"
 
 class ProjectPriceListParentItem;
 class PriceList;
@@ -47,7 +47,7 @@ class AccountingTAMBillPrivate;
 
 */
 
-class EXPORT_LIB_OPT AccountingTAMBill : public QAbstractItemModel, public ProjectItem {
+class EXPORT_QCOST_LIB_OPT AccountingTAMBill : public QAbstractItemModel, public ProjectItem {
     Q_OBJECT
 public:
     enum SetPriceListMode{

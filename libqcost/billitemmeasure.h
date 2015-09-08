@@ -1,7 +1,7 @@
 #ifndef BILLITEMMEASURE_H
 #define BILLITEMMEASURE_H
 
-#include "library_common.h"
+#include "qcost_export.h"
 
 class UnitMeasure;
 class MathParser;
@@ -13,7 +13,7 @@ class QXmlStreamAttributes;
 
 class BillItemMeasurePrivate;
 
-class EXPORT_LIB_OPT BillItemMeasure : public QObject
+class EXPORT_QCOST_LIB_OPT BillItemMeasure : public QObject
 {
     Q_OBJECT
 public:

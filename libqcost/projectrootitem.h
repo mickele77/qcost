@@ -19,14 +19,14 @@
 #ifndef PROJECTROOTITEM_H
 #define PROJECTROOTITEM_H
 
-#include "library_common.h"
+#include "qcost_export.h"
 
 #include <QObject>
 #include "projectitem.h"
 
 class ProjectRootItemPrivate;
 
-class EXPORT_LIB_OPT ProjectRootItem : public QObject, public ProjectItem {
+class EXPORT_QCOST_LIB_OPT ProjectRootItem : public QObject, public ProjectItem {
     Q_OBJECT
 public:
     ProjectRootItem(ProjectItem *parent=NULL);

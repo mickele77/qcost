@@ -19,7 +19,7 @@
 #ifndef PROJECTBILLPARENTITEM_H
 #define PROJECTBILLPARENTITEM_H
 
-#include "library_common.h"
+#include "qcost_export.h"
 
 class Bill;
 class ProjectPriceListParentItem;
@@ -37,7 +37,7 @@ class QTextStream;
 
 class ProjectBillParentItemPrivate;
 
-class EXPORT_LIB_OPT ProjectBillParentItem : public QObject, public ProjectItem {
+class EXPORT_QCOST_LIB_OPT ProjectBillParentItem : public QObject, public ProjectItem {
     Q_OBJECT
 public:
     ProjectBillParentItem( ProjectItem * parent, PriceFieldModel * pfm, MathParser * p = NULL );

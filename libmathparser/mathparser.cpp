@@ -312,7 +312,7 @@ public:
             errorMsg->append( trUtf8("Errore di sintassi nella parte %1.\n").arg(expr) );
         }
         return 0.0;
-    };
+    }
 };
 
 MathParser::MathParser( const QLocale & loc ):

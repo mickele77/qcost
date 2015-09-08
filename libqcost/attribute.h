@@ -19,7 +19,7 @@
 #ifndef ATTRIBUTE_H
 #define ATTRIBUTE_H
 
-#include "library_common.h"
+#include "qcost_export.h"
 
 class Bill;
 class BillItem;
@@ -33,7 +33,7 @@ class QString;
 
 class AttributePrivate;
 
-class EXPORT_LIB_OPT Attribute {
+class EXPORT_QCOST_LIB_OPT Attribute {
 
 public:
     // TODO rimuovere

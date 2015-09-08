@@ -19,7 +19,7 @@
 #ifndef PROJECTACCOUNTINGPARENTITEM_H
 #define PROJECTACCOUNTINGPARENTITEM_H
 
-#include "library_common.h"
+#include "qcost_export.h"
 
 class PaymentDataModel;
 class ProjectPriceListParentItem;
@@ -42,7 +42,7 @@ class QTextStream;
 
 class ProjectAccountingParentItemPrivate;
 
-class EXPORT_LIB_OPT ProjectAccountingParentItem : public ProjectRootItem {
+class EXPORT_QCOST_LIB_OPT ProjectAccountingParentItem : public ProjectRootItem {
     Q_OBJECT
 public:
     ProjectAccountingParentItem( ProjectItem * parent, PriceFieldModel * pfm, MathParser * p = NULL );

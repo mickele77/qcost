@@ -19,7 +19,7 @@
 #ifndef ACCOUNTINGPRINTER_H
 #define ACCOUNTINGPRINTER_H
 
-#include "library_common.h"
+#include "qcost_export.h"
 
 class AccountingBill;
 class AccountingTAMBill;
@@ -34,7 +34,7 @@ template <typename T> class QList;
 
 class AccountingPrinterPrivate;
 
-class EXPORT_LIB_OPT AccountingPrinter {
+class EXPORT_QCOST_LIB_OPT AccountingPrinter {
 public:
     enum PrintAmountsOption{
         PrintNoAmount,

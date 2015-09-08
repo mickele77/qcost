@@ -1,7 +1,7 @@
 #ifndef ACCOUNTINGLSITEMMEASURE_H
 #define ACCOUNTINGLSITEMMEASURE_H
 
-#include "library_common.h"
+#include "qcost_export.h"
 
 class UnitMeasure;
 class MathParser;
@@ -13,7 +13,7 @@ class QXmlStreamAttributes;
 
 class AccountingLSItemMeasurePrivate;
 
-class EXPORT_LIB_OPT AccountingLSItemMeasure : public QObject
+class EXPORT_QCOST_LIB_OPT AccountingLSItemMeasure : public QObject
 {
     Q_OBJECT
 public:

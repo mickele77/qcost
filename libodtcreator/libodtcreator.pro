@@ -7,12 +7,10 @@ contains(DEFINES, BUILD_STATIC) {
   CONFIG += staticlib
 }
 
-win32 {
+contains(DEFINES, BUILD_MSVC){
     LIBS += -L"c:/zlib" -lz64
     INCLUDEPATH += "c:/zlib"
-}
-
-linux {
+} else {
     LIBS += -lz
 }
 
@@ -24,4 +22,5 @@ HEADERS  += \
     zipwriter.h \
     zipreader.h \
     odtwriter.h \
-    qtextformatuserdefined.h
+    qtextformatuserdefined.h \
+    odtcreator_export.h

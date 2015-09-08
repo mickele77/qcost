@@ -19,7 +19,7 @@
 #ifndef BILLITEM_H
 #define BILLITEM_H
 
-#include "library_common.h"
+#include "qcost_export.h"
 
 class PriceList;
 class PriceItem;
@@ -46,7 +46,7 @@ class QXmlStreamReader;
 
 class BillItemPrivate;
 
-class EXPORT_LIB_OPT BillItem :  public QObject, public TreeItem {
+class EXPORT_QCOST_LIB_OPT BillItem :  public QObject, public TreeItem {
     Q_OBJECT
 public:
     friend class Bill;

@@ -19,7 +19,7 @@
 #ifndef PROJECTPRICELISTPARENTITEM_H
 #define PROJECTPRICELISTPARENTITEM_H
 
-#include "library_common.h"
+#include "qcost_export.h"
 
 class PriceList;
 class UnitMeasureModel;
@@ -34,7 +34,7 @@ class QTextStream;
 
 class ProjectPriceListParentItemPrivate;
 
-class EXPORT_LIB_OPT ProjectPriceListParentItem : public QObject, public ProjectItem {
+class EXPORT_QCOST_LIB_OPT ProjectPriceListParentItem : public QObject, public ProjectItem {
     Q_OBJECT
 public:
     friend class Project;

@@ -19,7 +19,7 @@
 #ifndef ACCOUNTINGLSBILL_H
 #define ACCOUNTINGLSBILL_H
 
-#include "library_common.h"
+#include "qcost_export.h"
 
 class AccountingPriceFieldModel;
 class ProjectPriceListParentItem;
@@ -43,7 +43,7 @@ class QTextCursor;
 
 class AccountingLSBillPrivate;
 
-class EXPORT_LIB_OPT AccountingLSBill : public QAbstractItemModel, public ProjectItem {
+class EXPORT_QCOST_LIB_OPT AccountingLSBill : public QAbstractItemModel, public ProjectItem {
     Q_OBJECT
 public:
     enum SetPriceListMode{

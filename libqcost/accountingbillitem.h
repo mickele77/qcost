@@ -19,7 +19,7 @@
 #ifndef ACCOUNTINGBILLITEM_H
 #define ACCOUNTINGBILLITEM_H
 
-#include "library_common.h"
+#include "qcost_export.h"
 
 class AccountingTAMBillItem;
 class AccountingPriceFieldModel;
@@ -60,7 +60,7 @@ class AccountingBillItemPrivate;
 *
 */
 
-class EXPORT_LIB_OPT AccountingBillItem :  public QObject, public TreeItem {
+class EXPORT_QCOST_LIB_OPT AccountingBillItem :  public QObject, public TreeItem {
     Q_OBJECT
 public:
     enum ItemType{

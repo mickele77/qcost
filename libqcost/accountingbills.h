@@ -19,7 +19,7 @@
 #ifndef ACCOUNTINGBILLS_H
 #define ACCOUNTINGBILLS_H
 
-#include "library_common.h"
+#include "qcost_export.h"
 
 class AccountingLSBills;
 class AccountingTAMBill;
@@ -39,7 +39,7 @@ class QTextStream;
 
 class AccountingBillsPrivate;
 
-class EXPORT_LIB_OPT AccountingBills : public QObject, public ProjectItem {
+class EXPORT_QCOST_LIB_OPT AccountingBills : public QObject, public ProjectItem {
     Q_OBJECT
 public:
     AccountingBills( ProjectItem * parent, PriceFieldModel * pfm, MathParser * p = NULL );

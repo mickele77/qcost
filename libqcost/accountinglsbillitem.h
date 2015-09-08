@@ -19,7 +19,7 @@
 #ifndef ACCOUNTINGLSBILLITEM_H
 #define ACCOUNTINGLSBILLITEM_H
 
-#include "library_common.h"
+#include "qcost_export.h"
 
 class AccountingPriceFieldModel;
 class PriceList;
@@ -47,7 +47,7 @@ class QXmlStreamReader;
 
 class AccountingLSBillItemPrivate;
 
-class EXPORT_LIB_OPT AccountingLSBillItem :  public QObject, public TreeItem {
+class EXPORT_QCOST_LIB_OPT AccountingLSBillItem :  public QObject, public TreeItem {
     Q_OBJECT
 public:
     AccountingLSBillItem( PriceItem * p, AccountingLSBillItem * parentItem, PriceFieldModel * pfm, MathParser * parser = NULL );
