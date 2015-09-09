@@ -1,4 +1,4 @@
-/*
+﻿/*
    QCost is a cost estimating software.
    Copyright (C) 2013-2014 Mocciola Michele
 
@@ -671,7 +671,7 @@ void QCostGUI::about() {
                               "<p>QCost è un software per la redazione di computi metrici estimativi e documenti contabili di cantiere."
                               "<p>Questo programma è software libero; puoi ridistribuirlo e/o modificarlo nei termini della GNU General Public License così come pubblicata dalla Free Software Foundation; sia nei termini della versione 3 della licenza che (a tua scelta) nei termini di qualsiasi altra versione successiva."
                               "<p>Questo programma è distribuito nella speranza che sia utile, ma SENZA ALCUNA GARANZIA; neanche l'implicita garanzia di COMMERCIABILITÀ o di IDONEITÀ AD UN PARTICOLARE IMPIEGO. Consulta la GNU General Public License per maggiori dettagli. "
-                              "<p>Con il programma dovresti aver ricevuto una copia della GNU General Public License; qualora non l'avessi ricevuta, scrivi alla Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA."
+                              "<p>Con il programma dovresti aver ricevuto una copia della GNU General Public License; qualora non l'avessi ricevuta, contatta la Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA."
                               "<p>Se incontri problemi nell'uso del programma, lascia un post nel <a href=\"http://ingegnerialibera.altervista.org/forum/viewforum.php?f=3\">forum di QCost</a>.<p>Il sito di riferimento è <a href=\"http://ingegnerialibera.altervista.org/wiki/doku.php/qcost:indice\">ingegnerialibera.altervista.org/wiki/doku.php/qcost:indice</a>." ) );
 }
 
