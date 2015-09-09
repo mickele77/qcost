@@ -10,9 +10,13 @@ contains(DEFINES, BUILD_STATIC) {
 }
 
 contains(DEFINES, BUILD_MSVC){
-    INCLUDEPATH += "c:/zlib"
+    INCLUDEPATH += $$ZLIB_INCLUDE
 } else {
     LIBS += -lz
+}
+
+win32 {
+    DEFINES += BUILD_ODTCREATOR_LIB
 }
 
 SOURCES += \

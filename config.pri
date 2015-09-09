@@ -13,6 +13,7 @@ win32 {
         QMAKE_LFLAGS -= " -Wl,--no-undefined"
         # path to static zlib library
         ZLIB_STATIC_LIB = c:/zlib/x64/zlibstat.lib
+        ZLIB_INCLUDE = c:/zlib
     } else {
         QMAKE_LFLAGS = " -Wl,-enable-stdcall-fixup -Wl,-enable-auto-import -Wl,-enable-runtime-pseudo-reloc"
         !contains(DEFINES, BUILD_RELEASE){
