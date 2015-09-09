@@ -6,17 +6,20 @@ TARGET = QCostGUI
 
 TEMPLATE = app
 
-LIBS += \
-    -L../bin \
-    -lqcost \
-    -lodtcreator \
-    -lmathparser
-
 contains(DEFINES, BUILD_MSVC){
-    LIBS += -L"c:/zlib" -lz64
-    INCLUDEPATH += "c:/zlib"
+    LIBS += \
+        ../bin/qcost.lib \
+        ../bin/odtcreator.lib \
+        $$ZLIB_STATIC_LIB \
+        ../bin/mathparser.lib
+    INCLUDEPATH += c:/zlib
 } else {
-    LIBS += -lz
+    LIBS += \
+        -L../bin \
+        -lqcost \
+        -lodtcreator \
+        -lmathparser \
+        -lz
 }
 
 DEPENDPATH += \

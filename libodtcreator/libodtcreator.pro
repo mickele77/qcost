@@ -4,11 +4,12 @@ TARGET = odtcreator
 TEMPLATE = lib
 
 contains(DEFINES, BUILD_STATIC) {
-  CONFIG += staticlib
+    CONFIG += staticlib
+} else {
+    CONFIG += shared
 }
 
 contains(DEFINES, BUILD_MSVC){
-    LIBS += -L"c:/zlib" -lz64
     INCLUDEPATH += "c:/zlib"
 } else {
     LIBS += -lz

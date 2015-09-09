@@ -913,7 +913,8 @@ void OdtWriter::writeTableFormat(QXmlStreamWriter &writer, QTextTableFormat form
         if( format.width().type() == QTextLength::FixedLength ){
             writer.writeAttribute(styleNS, QString::fromLatin1("width"), QString("%1mm").arg(format.width().value( 1000 ) ) );
         } else if( format.width().type() == QTextLength::PercentageLength ){
-            writer.writeAttribute(styleNS, QString::fromLatin1("rel-width"), QString("%1\%").arg(format.width().value(100)) );
+            writer.writeAttribute(styleNS, QString::fromLatin1("rel-width"), QString("%1%").arg(format.width().value(100)) );
+            // writer.writeAttribute(styleNS, QString::fromLatin1("rel-width"), QString("%1\%").arg(format.width().value(100)) );
         }
     }
     writer.writeEndElement();

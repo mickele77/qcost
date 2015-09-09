@@ -5,23 +5,23 @@ TARGET = qcost
 TEMPLATE = lib
 
 contains(DEFINES, BUILD_STATIC) {
-  CONFIG += staticlib
+    CONFIG += staticlib
+} else {
+    CONFIG += shared
 }
 
 win32 {
     DEFINES += BUILD_QCOST_LIB
 }
 
-LIBS += \
-    -L../bin \
-    -lodtcreator \
-    -lmathparser
-
 contains(DEFINES, BUILD_MSVC){
-    LIBS += -L"c:/zlib" -lz64
     INCLUDEPATH += "c:/zlib"
 } else {
-    LIBS += -lz
+    LIBS += \
+        -L../bin \
+        -lodtcreator \
+        -lmathparser \
+        -lz
 }
 
 INCLUDEPATH += \

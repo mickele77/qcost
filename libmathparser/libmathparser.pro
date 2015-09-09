@@ -5,11 +5,13 @@ TARGET = mathparser
 TEMPLATE = lib
 
 contains(DEFINES, BUILD_STATIC) {
-  CONFIG += staticlib
+    CONFIG += staticlib
+} else {
+    CONFIG += shared
 }
 
 win32 {
-   DEFINES += BUILD_MATHPARSER_LIB
+    DEFINES += BUILD_MATHPARSER_LIB
 }
 
 SOURCES += \
