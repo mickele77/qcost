@@ -76,6 +76,7 @@ private slots:
     void cutToClipboard();
     void resizeColumnsToContents();
 
+    void updateActiveActions();
 private:
     AccountingTreeGUIPrivate * m_d;
 

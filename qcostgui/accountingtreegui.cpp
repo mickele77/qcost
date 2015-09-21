@@ -466,8 +466,12 @@ void AccountingTreeGUI::setAccountingBill(AccountingBill *b ) {
             connect( m_d->accountingBill, &AccountingBill::aboutToBeDeleted, this, &AccountingTreeGUI::clear );
         }
         if( m_d->ui->treeView->selectionModel() ){
-            connect( m_d->ui->treeView->selectionModel(), &QItemSelectionModel::currentChanged, this, &AccountingTreeGUI::changeCurrentItem  );
+            connect( m_d->ui->treeView->selectionModel(), &QItemSelectionModel::currentChanged, this, &AccountingTreeGUI::changeCurrentItem );
         }
+    }
+    if( m_d->ui->treeView->selectionModel() ){
+        connect( m_d->ui->treeView->selectionModel(), &QItemSelectionModel::currentChanged, this, &AccountingTreeGUI::updateActiveActions );
+        updateActiveActions();
     }
 }
 
@@ -522,6 +526,10 @@ void AccountingTreeGUI::setAccountingTAMBill(AccountingTAMBill *b ) {
             connect( m_d->ui->treeView->selectionModel(), &QItemSelectionModel::currentChanged, this, &AccountingTreeGUI::changeCurrentItem  );
         }
     }
+    if( m_d->ui->treeView->selectionModel() ){
+        connect( m_d->ui->treeView->selectionModel(), &QItemSelectionModel::currentChanged, this, &AccountingTreeGUI::updateActiveActions );
+        updateActiveActions();
+    }
 }
 
 void AccountingTreeGUI::clear(){
@@ -558,6 +566,62 @@ void AccountingTreeGUI::changeCurrentItem(const QModelIndex &currentIndex  ) {
         }
     }
     emit currentBillItemChanged( NULL );
+}
+
+void AccountingTreeGUI::updateActiveActions() {
+    if( m_d->accountingBill != NULL ){
+        if( m_d->ui->treeView->selectionModel() ){
+            AccountingBillItem * currItem = m_d->accountingBill->item( m_d->ui->treeView->selectionModel()->currentIndex() );
+            if( currItem->itemType() == AccountingBillItem::Root ){
+                m_d->addCommentAction->setEnabled( false );
+                m_d->addLSAction->setEnabled( false );
+                m_d->addPPUAction->setEnabled( false );
+                m_d->addTAMAction->setEnabled( false );
+                m_d->addPaymentAction->setEnabled( true );
+            } else if( currItem->itemType() == AccountingBillItem::Payment ) {
+                m_d->addCommentAction->setEnabled( true );
+                m_d->addLSAction->setEnabled( true );
+                m_d->addPPUAction->setEnabled( true );
+                m_d->addTAMAction->setEnabled( true );
+                m_d->addPaymentAction->setEnabled( true );
+            } else if( (currItem->itemType() == AccountingBillItem::Comment) ||
+                       (currItem->itemType() == AccountingBillItem::PPU) ||
+                       (currItem->itemType() == AccountingBillItem::LumpSum) ||
+                       (currItem->itemType() == AccountingBillItem::TimeAndMaterials) ) {
+                m_d->addCommentAction->setEnabled( true );
+                m_d->addLSAction->setEnabled( true );
+                m_d->addPPUAction->setEnabled( true );
+                m_d->addTAMAction->setEnabled( true );
+                m_d->addPaymentAction->setEnabled( false );
+            }
+        } else {
+            m_d->addCommentAction->setEnabled( false );
+            m_d->addLSAction->setEnabled( false );
+            m_d->addPPUAction->setEnabled( false );
+            m_d->addTAMAction->setEnabled( false );
+            m_d->addPaymentAction->setEnabled( false );
+        }
+    } else if( m_d->accountingTAMBill != NULL ){
+        AccountingTAMBillItem * currItem = m_d->accountingTAMBill->item( m_d->ui->treeView->selectionModel()->currentIndex() );
+        if( currItem->itemType() == AccountingBillItem::Root ){
+            m_d->addTAMBillAction->setEnabled( true );
+            m_d->addTAMPPUAction->setEnabled( false );
+            m_d->addTAMCommentAction->setEnabled( false );
+        } else if( currItem->itemType() == AccountingBillItem::Payment ) {
+            m_d->addTAMBillAction->setEnabled( true );
+            m_d->addTAMPPUAction->setEnabled( true );
+            m_d->addTAMCommentAction->setEnabled( true );
+        } else if( (currItem->itemType() == AccountingBillItem::Comment) ||
+                   (currItem->itemType() == AccountingBillItem::PPU) ) {
+            m_d->addTAMBillAction->setEnabled( false );
+            m_d->addTAMPPUAction->setEnabled( true );
+            m_d->addTAMCommentAction->setEnabled( true );
+        }
+    } else {
+        m_d->addTAMBillAction->setEnabled( false );
+        m_d->addTAMPPUAction->setEnabled( false );
+        m_d->addTAMCommentAction->setEnabled( false );
+    }
 }
 
 void AccountingTreeGUI::setPriceList() {
