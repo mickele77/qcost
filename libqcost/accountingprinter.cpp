@@ -83,14 +83,12 @@ bool AccountingPrinter::printODT( int payToPrint, AccountingPrinter::PrintOption
                                   double paperWidth,
                                   double paperHeight,
                                   Qt::Orientation paperOrientation ) const {
-    if( prOption == PrintAccounting ){
+    if( (prOption == PrintAccounting) ||
+            (prOption == PrintMeasures) ||
+            (prOption == PrintRawMeasures) ){
         return printAccountingODT( payToPrint, prOption, prAmountsOption, prPPUDescOption, fileName, paperWidth, paperHeight, paperOrientation );
     } else if( prOption == PrintAccountingSummary ){
         return printAccountingSummaryODT( payToPrint, prAmountsOption, prPPUDescOption, fileName, paperWidth, paperHeight, paperOrientation, false );
-    } else if( prOption == PrintMeasures ){
-        // return printMeasuresODT( prAccountingMeasuresOption, fileName, paperWidth, paperHeight, paperOrientation, printAmounts, true );
-    } else if( prOption == PrintRawMeasures ){
-        // return printMeasuresODT( prAccountingMeasuresOption, fileName, paperWidth, paperHeight, paperOrientation, printAmounts, true );
     }
     return false;
 }

@@ -582,8 +582,8 @@ bool QCostGUI::printODT() {
     if( bill != NULL ){
         AccountingPrinter::PrintOption prOptions = AccountingPrinter::PrintRawMeasures;
         AccountingPrinter::PrintAmountsOption prAmountsOptions = AccountingPrinter::PrintAllAmounts;
-        AccountingPrinter::PrintPPUDescOption prPPUDescOption = AccountingPrinter::PrintShortDesc;
-        int payToPrint; // SAL da stampare
+        AccountingPrinter::PrintPPUDescOption prPPUDescOption = AccountingPrinter::PrintLongDesc;
+        int payToPrint = -1; // SAL da stampare
         double paperWidth = 210.0, paperHeight = 297.0; // dimensioni foglio
         Qt::Orientation paperOrientation = Qt::Vertical;
         AccountingPrinterGUI gui( m_d->project->accounting()->dataModel(), &prPPUDescOption, &prOptions, &prAmountsOptions, &payToPrint,

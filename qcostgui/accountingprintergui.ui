@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>574</width>
+    <width>646</width>
     <height>578</height>
    </rect>
   </property>
@@ -23,11 +23,7 @@
        </property>
        <layout class="QGridLayout" name="gridLayout_6">
         <item row="0" column="1">
-         <widget class="QComboBox" name="billToPrintComboBox">
-          <property name="layoutDirection">
-           <enum>Qt::RightToLeft</enum>
-          </property>
-         </widget>
+         <widget class="QComboBox" name="billToPrintComboBox"/>
         </item>
         <item row="0" column="0">
          <widget class="QLabel" name="billToPrintLabel">
@@ -113,7 +109,7 @@
         <item row="3" column="0">
          <widget class="QRadioButton" name="printAllAmountsRadioButton">
           <property name="text">
-           <string>Tutti gli importi</string>
+           <string>Tutti &amp;gli importi</string>
           </property>
           <property name="checked">
            <bool>true</bool>
@@ -137,7 +133,7 @@
         <item row="0" column="0">
          <widget class="QRadioButton" name="printNoAmountsRadioButton">
           <property name="text">
-           <string>Non stampare importi</string>
+           <string>&amp;Non stampare importi</string>
           </property>
          </widget>
         </item>

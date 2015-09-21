@@ -123,7 +123,7 @@ AccountingPrinterGUI::AccountingPrinterGUI(PaymentDataModel * dataModel,
     for( int i=0; i < m_d->dataModel->paymentsCount(); ++i ){
         m_d->ui->billToPrintComboBox->insertItem((i+1), m_d->dataModel->billData(i)->name() );
     }
-    m_d->ui->billToPrintComboBox->setCurrentIndex(0);
+    m_d->ui->billToPrintComboBox->setCurrentIndex(*(payToPrint)+1);
 
     Qt::WindowFlags flags = windowFlags();
     flags |= Qt::WindowMaximizeButtonHint;
