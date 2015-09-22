@@ -61,6 +61,9 @@ AccountingBillItem::AccountingBillItem(AccountingBillItem *parentItem, Accountin
     }
 
     connect( this, static_cast<void(AccountingBillItem::*)( AccountingBillItem *, QList<int> )>(&AccountingBillItem::hasChildrenChanged), this, &AccountingBillItem::itemChanged );
+    connect( this, &AccountingBillItem::dateChanged, this, &AccountingBillItem::itemChanged );
+    connect( this, &AccountingBillItem::dateBeginChanged, this, &AccountingBillItem::itemChanged );
+    connect( this, &AccountingBillItem::dateEndChanged, this, &AccountingBillItem::itemChanged );
     connect( this, &AccountingBillItem::nameChanged, this, &AccountingBillItem::itemChanged );
     connect( this, &AccountingBillItem::textChanged, this, &AccountingBillItem::itemChanged );
     connect( this, &AccountingBillItem::titleChanged, this, &AccountingBillItem::itemChanged );
@@ -1437,13 +1440,13 @@ void AccountingBillItem::loadFromXml( const QXmlStreamAttributes &attrs,
         m_d->id = attrs.value( "id").toUInt();
     }
     if( attrs.hasAttribute( "date" ) ){
-        m_d->date = QDate::fromString( attrs.value( "date").toString() );
+        m_d->date = QDate::fromJulianDay( attrs.value( "date").toString().toLongLong() );
     }
     if( attrs.hasAttribute( "dateBegin" ) ){
-        m_d->date = QDate::fromString( attrs.value( "dateBegin").toString() );
+        m_d->date = QDate::fromJulianDay( attrs.value( "dateBegin").toString().toLongLong() );
     }
     if( attrs.hasAttribute( "dateEnd" ) ){
-        m_d->date = QDate::fromString( attrs.value( "dateEnd").toString() );
+        m_d->date = QDate::fromJulianDay( attrs.value( "dateEnd").toString().toLongLong() );
     }
     if( attrs.hasAttribute( "name" ) ){
         m_d->name = attrs.value( "name").toString();
@@ -1795,6 +1798,11 @@ QDate AccountingBillItem::date() const {
 }
 
 QString AccountingBillItem::dateStr() const {
+    if( (m_d->itemType == Root) ||
+        (m_d->itemType == Comment) ||
+        (m_d->itemType == Payment) ){
+        return QString();
+    }
     if( m_d->parser != NULL ){
         return m_d->parser->toString( m_d->date, QLocale::NarrowFormat );
     }
@@ -2277,6 +2285,7 @@ void AccountingBillItem::writeODTAccountingOnTable(QTextCursor *cursor, int payT
             cursor->movePosition(QTextCursor::PreviousRow );
 
             AccountingBillItemPrivate::writeCell( cursor, table, leftTitleFormat, tagBlockFormat );
+            AccountingBillItemPrivate::writeCell( cursor, table, centralTitleFormat, tagBlockFormat );
             AccountingBillItemPrivate::writeCell( cursor, table, centralTitleFormat, txtBlockFormat );
             AccountingBillItemPrivate::writeCell( cursor, table, centralTitleFormat, txtBlockFormat, trUtf8("Totale complessivo") );
             AccountingBillItemPrivate::writeCell( cursor, table, centralTitleFormat, tagBlockFormat );
@@ -2297,6 +2306,7 @@ void AccountingBillItem::writeODTAccountingOnTable(QTextCursor *cursor, int payT
             cursor->movePosition(QTextCursor::PreviousRow );
 
             AccountingBillItemPrivate::writeCell( cursor, table, leftSubTitleFormat, tagBlockFormat, progressiveCode() );
+            AccountingBillItemPrivate::writeCell( cursor, table, centralSubTitleFormat, tagBlockFormat );
             AccountingBillItemPrivate::writeCell( cursor, table, centralSubTitleFormat, txtBlockFormat );
             AccountingBillItemPrivate::writeCell( cursor, table, centralSubTitleFormat, txtBlockFormat, m_d->name );
             AccountingBillItemPrivate::writeCell( cursor, table, centralSubTitleFormat, tagBlockFormat );
@@ -2316,6 +2326,7 @@ void AccountingBillItem::writeODTAccountingOnTable(QTextCursor *cursor, int payT
             cursor->movePosition(QTextCursor::PreviousRow );
 
             AccountingBillItemPrivate::writeCell( cursor, table, leftSubTitleFormat, tagBlockFormat );
+            AccountingBillItemPrivate::writeCell( cursor, table, centralSubTitleFormat, tagBlockFormat );
             AccountingBillItemPrivate::writeCell( cursor, table, centralSubTitleFormat, txtBlockFormat );
             AccountingBillItemPrivate::writeCell( cursor, table, centralSubTitleFormat, txtBlockFormat, trUtf8("Totale %1").arg( m_d->name ) );
             AccountingBillItemPrivate::writeCell( cursor, table, centralSubTitleFormat, tagBlockFormat );
@@ -3103,6 +3114,7 @@ void AccountingBillItem::writeODTBillLine( AccountingPrinter::PrintAmountsOption
     } else {
         colCount = 4;
     }
+
     if( prAmountsOption != AccountingPrinter::PrintNoAmount ){
         colCount += 2;
     }
@@ -3112,23 +3124,21 @@ void AccountingBillItem::writeODTBillLine( AccountingPrinter::PrintAmountsOption
     cursor->movePosition(QTextCursor::PreviousRow );
 
     if( writeProgCode ){
+        // codice progressivo
         AccountingBillItemPrivate::writeCell( cursor, table, leftFormat, tagBlockFormat, progressiveCode()  );
+        // data
+        AccountingBillItemPrivate::writeCell( cursor, table, centralFormat, tagBlockFormat, dateStr()  );
+    } else {
+        // data
+        AccountingBillItemPrivate::writeCell( cursor, table, leftFormat, tagBlockFormat, dateStr()  );
     }
 
+
     if( m_d->priceItem ){
-        if( writeProgCode ){
-            AccountingBillItemPrivate::writeCell( cursor, table, centralFormat, txtBlockFormat, m_d->priceItem->codeFull() );
-        } else {
-            AccountingBillItemPrivate::writeCell( cursor, table, leftFormat, txtBlockFormat, m_d->priceItem->codeFull() );
-        }
+        AccountingBillItemPrivate::writeCell( cursor, table, centralFormat, txtBlockFormat, m_d->priceItem->codeFull() );
         m_d->writeDescriptionCell( cursor, table, centralFormat, txtBlockFormat, txtCharFormat, txtBoldCharFormat, prItemsOption );
-        // AccountingBillItemPrivate::writeCell( cursor, table, centralFormat, txtBlockFormat, m_d->priceItem->shortDescriptionFull() );
     } else {
-        if( writeProgCode ){
-            AccountingBillItemPrivate::writeCell( cursor, table, centralFormat, txtBlockFormat );
-        } else {
-            AccountingBillItemPrivate::writeCell( cursor, table, leftFormat, txtBlockFormat );
-        }
+        AccountingBillItemPrivate::writeCell( cursor, table, centralFormat, txtBlockFormat );
         AccountingBillItemPrivate::writeCell( cursor, table, centralFormat, txtBlockFormat );
     }
 
@@ -3143,8 +3153,9 @@ void AccountingBillItem::writeODTBillLine( AccountingPrinter::PrintAmountsOption
         } else {
             // quantita'
             AccountingBillItemPrivate::writeCell( cursor, table, centralFormat, numBlockFormat );
-            // campi
+            // prezzo
             AccountingBillItemPrivate::writeCell( cursor, table, centralFormat, numBlockFormat );
+            // importo
             AccountingBillItemPrivate::writeCell( cursor, table, rightFormat, numBlockFormat  );
         }
 
@@ -3154,12 +3165,15 @@ void AccountingBillItem::writeODTBillLine( AccountingPrinter::PrintAmountsOption
         if( writeProgCode ){
             // numero progressivo
             AccountingBillItemPrivate::writeCell( cursor, table, leftFormat, tagBlockFormat );
-            // codice
-            AccountingBillItemPrivate::writeCell( cursor, table, centralFormat, txtBlockFormat );
+            // data
+            AccountingBillItemPrivate::writeCell( cursor, table, centralFormat, tagBlockFormat );
         } else {
-            // codice
-            AccountingBillItemPrivate::writeCell( cursor, table, leftFormat, txtBlockFormat );
+            // data
+            AccountingBillItemPrivate::writeCell( cursor, table, leftFormat, tagBlockFormat );
         }
+
+        // codice
+        AccountingBillItemPrivate::writeCell( cursor, table, centralFormat, txtBlockFormat );
 
         // tag unita di misura
         QString unitMeasureTag;
@@ -3225,14 +3239,19 @@ void AccountingBillItem::writeODTBillLine( AccountingPrinter::PrintAmountsOption
             if( writeProgCode ){
                 // numero progressivo
                 AccountingBillItemPrivate::writeCell( cursor, table, leftFormat, tagBlockFormat );
+                // data
+                AccountingBillItemPrivate::writeCell( cursor, table, centralFormat, tagBlockFormat );
                 // codice
                 AccountingBillItemPrivate::writeCell( cursor, table, centralFormat, txtBlockFormat );
             } else {
-                AccountingBillItemPrivate::writeCell( cursor, table, leftFormat, txtBlockFormat );
+                // data
+                AccountingBillItemPrivate::writeCell( cursor, table, leftFormat, tagBlockFormat );
+                // codice
+                AccountingBillItemPrivate::writeCell( cursor, table, centralFormat, txtBlockFormat );
             }
         }
 
-        // descrizione breve
+        // descrizione
         AccountingBillItemPrivate::writeCell( cursor, table, centralFormat, txtBlockFormat );
 
         // tag unita di misura

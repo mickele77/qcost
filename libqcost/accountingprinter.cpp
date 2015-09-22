@@ -322,38 +322,90 @@ bool AccountingPrinter::printAccountingODT( int payToPrint,
                                             const QString &fileName,
                                             double paperWidth, double paperHeight,
                                             Qt::Orientation paperOrientation) const {
-    if( m_d->accountingBill != NULL ){
-        if( paperOrientation == Qt::Horizontal ){
-            if( paperHeight > paperWidth ){
-                double com = paperHeight;
-                paperHeight = paperWidth;
-                paperWidth = com;
-            }
+    if( paperOrientation == Qt::Horizontal ){
+        if( paperHeight > paperWidth ){
+            double com = paperHeight;
+            paperHeight = paperWidth;
+            paperWidth = com;
+        }
+    } else {
+        if( paperHeight < paperWidth ){
+            double com = paperHeight;
+            paperHeight = paperWidth;
+            paperWidth = com;
+        }
+    }
+    double margin = 10.0;
+    double tableWidth = paperWidth - 2.0 * margin;
+
+    // numero progressivo + codice + descrizione + unità di misura + quantità + [ prezzo campo, importo campo ]
+    QVector<QTextLength> colWidths;
+    int dataCols = 1;
+    if( prAmountsOption != PrintNoAmount ){
+        dataCols += 2;
+    }
+    if( paperOrientation == Qt::Horizontal ){
+        if( prAmountsOption == PrintNoAmount ){
+            double descWidth = tableWidth - (10.0 + 15.0 + 30.0 + 20.0 + 30.0);
+            colWidths << QTextLength( QTextLength::FixedLength, 10.0 )
+                      << QTextLength( QTextLength::FixedLength, 15.0 )
+                      << QTextLength( QTextLength::FixedLength, 30.0 )
+                      << QTextLength( QTextLength::FixedLength, descWidth )
+                      << QTextLength( QTextLength::FixedLength, 20.0 )
+                      << QTextLength( QTextLength::FixedLength, 30.0 );
         } else {
-            if( paperHeight < paperWidth ){
-                double com = paperHeight;
-                paperHeight = paperWidth;
-                paperWidth = com;
+            colWidths << QTextLength( QTextLength::FixedLength, 10.0 )
+                      << QTextLength( QTextLength::FixedLength, 15.0 )
+                      << QTextLength( QTextLength::FixedLength, 30.0 )
+                      << QTextLength( QTextLength::FixedLength, 60.0 )
+                      << QTextLength( QTextLength::FixedLength, 20.0 );
+            double usedWidth =  10.0 + 15.0 + 30.0 + 60.0 + 20.0;
+            double colEqualWidth = (tableWidth - usedWidth ) / dataCols;
+            for( int i=0; i < dataCols; ++i ){
+                colWidths << QTextLength( QTextLength::FixedLength, colEqualWidth );
             }
         }
-        double margin = 10.0;
-        double tableWidth = paperWidth - 2.0 * margin;
+    } else { // pageOrientation == Qt::Vertical
+        if( prAmountsOption == PrintNoAmount ){
+            double descWidth = tableWidth - (10.0 + 15.0 + 30.0 + 20.0 + 30.0);
+            colWidths << QTextLength( QTextLength::FixedLength, 10.0 )
+                      << QTextLength( QTextLength::FixedLength, 15.0 )
+                      << QTextLength( QTextLength::FixedLength, 30.0 )
+                      << QTextLength( QTextLength::FixedLength, descWidth )
+                      << QTextLength( QTextLength::FixedLength, 20.0 )
+                      << QTextLength( QTextLength::FixedLength, 30.0 );
+        } else {
+            double usedWidth = 0.0;
+            colWidths << QTextLength( QTextLength::FixedLength, 10.0 )
+                      << QTextLength( QTextLength::FixedLength, 15.0 )
+                      << QTextLength( QTextLength::FixedLength, 25.0 )
+                      << QTextLength( QTextLength::FixedLength, 60.0 )
+                      << QTextLength( QTextLength::FixedLength, 15.0 );
+            usedWidth =  10.0 + 15.0 + 25.0 + 60.0 + 15.0;
+            double colEqualWidth = (tableWidth - usedWidth ) / dataCols;
+            for( int i=0; i<dataCols; ++i ){
+                colWidths << QTextLength( QTextLength::FixedLength, colEqualWidth );
+            }
+        }
+    }
 
-        QTextDocument doc;
-        QTextCursor cursor(&doc);
+    QTextDocument doc;
+    QTextCursor cursor(&doc);
 
-        QTextCharFormat headerBlockCharFormat;
-        headerBlockCharFormat.setFontCapitalization( QFont::AllUppercase );
-        headerBlockCharFormat.setFontWeight( QFont::Bold );
+    // creiamo i vari stili necessari
+    QTextCharFormat headerBlockCharFormat;
+    headerBlockCharFormat.setFontCapitalization( QFont::AllUppercase );
+    headerBlockCharFormat.setFontWeight( QFont::Bold );
 
-        QTextBlockFormat headerBlockFormat;
-        headerBlockFormat.setAlignment( Qt::AlignHCenter );
+    QTextBlockFormat headerBlockFormat;
+    headerBlockFormat.setAlignment( Qt::AlignHCenter );
 
-        QTextBlockFormat headerWithPBBlockFormat = headerBlockFormat;
-        headerWithPBBlockFormat.setPageBreakPolicy( QTextFormat::PageBreak_AlwaysBefore );
+    QTextBlockFormat headerWithPBBlockFormat = headerBlockFormat;
+    headerWithPBBlockFormat.setPageBreakPolicy( QTextFormat::PageBreak_AlwaysBefore );
 
-        QTextBlockFormat parBlockFormat;
+    QTextBlockFormat parBlockFormat;
 
+    if( m_d->accountingBill != NULL ){
         cursor.setBlockFormat( headerWithPBBlockFormat );
         cursor.setBlockCharFormat( headerBlockCharFormat );
         cursor.insertText( m_d->accountingBill->name() );
@@ -369,8 +421,6 @@ bool AccountingPrinter::printAccountingODT( int payToPrint,
             cursor.insertText(QObject::trUtf8("Stato Avanzamento Lavori") );
         } else if( prOption == PrintAccounting ){
             cursor.insertText(QObject::trUtf8("Registro di contabilità") );
-        } else if( prOption == PrintAccountingSummary ){
-            cursor.insertText(QObject::trUtf8("Sommario del registro di contabilità") );
         }
 
         cursor.insertBlock( parBlockFormat );
@@ -381,52 +431,6 @@ bool AccountingPrinter::printAccountingODT( int payToPrint,
         tableFormat.setBorderStyle( QTextFrameFormat::BorderStyle_Solid);
         // tableFormat.setBorder(borderWidth);
         tableFormat.setWidth( QTextLength( QTextLength::FixedLength, tableWidth-2.0*margin ) );
-        // numero progressivo + codice + descrizione + unità di misura + quantità + [ prezzo campo, importo campo ]
-        QVector<QTextLength> colWidths;
-        int dataCols = 1;
-        if( prAmountsOption != PrintNoAmount ){
-            dataCols += 2;
-        }
-        if( paperOrientation == Qt::Horizontal ){
-            if( prAmountsOption == PrintNoAmount ){
-                double descWidth = tableWidth - (10.0 + 30.0 + 20.0 + 30.0);
-                colWidths << QTextLength( QTextLength::FixedLength, 10.0 )
-                          << QTextLength( QTextLength::FixedLength, 30.0 )
-                          << QTextLength( QTextLength::FixedLength, descWidth )
-                          << QTextLength( QTextLength::FixedLength, 20.0 )
-                          << QTextLength( QTextLength::FixedLength, 30.0 );
-            } else {
-                colWidths << QTextLength( QTextLength::FixedLength, 10.0 )
-                          << QTextLength( QTextLength::FixedLength, 30.0 )
-                          << QTextLength( QTextLength::FixedLength, 70.0 )
-                          << QTextLength( QTextLength::FixedLength, 20.0 );
-                double usedWidth =  10.0 + 30.0 + 70.0 + 20.0;
-                double colEqualWidth = (tableWidth - usedWidth ) / dataCols;
-                for( int i=0; i < dataCols; ++i ){
-                    colWidths << QTextLength( QTextLength::FixedLength, colEqualWidth );
-                }
-            }
-        } else { // pageOrientation == Qt::Vertical
-            if( prAmountsOption == PrintNoAmount ){
-                double descWidth = tableWidth - (10.0 + 30.0 + 20.0 + 30.0);
-                colWidths << QTextLength( QTextLength::FixedLength, 10.0 )
-                          << QTextLength( QTextLength::FixedLength, 30.0 )
-                          << QTextLength( QTextLength::FixedLength, descWidth )
-                          << QTextLength( QTextLength::FixedLength, 20.0 )
-                          << QTextLength( QTextLength::FixedLength, 30.0 );
-            } else {
-                double usedWidth = 0.0;
-                colWidths << QTextLength( QTextLength::FixedLength, 10.0 )
-                          << QTextLength( QTextLength::FixedLength, 25.0 )
-                          << QTextLength( QTextLength::FixedLength, 65.0 )
-                          << QTextLength( QTextLength::FixedLength, 15.0 );
-                usedWidth =  10.0 + 25.0 + 65.0 + 15.0;
-                double colEqualWidth = (tableWidth - usedWidth ) / dataCols;
-                for( int i=0; dataCols; ++i ){
-                    colWidths << QTextLength( QTextLength::FixedLength, colEqualWidth );
-                }
-            }
-        }
         tableFormat.setColumnWidthConstraints( colWidths );
         cursor.insertTable(1, colWidths.size(), tableFormat );
 
@@ -443,54 +447,18 @@ bool AccountingPrinter::printAccountingODT( int payToPrint,
             return writer.writeAll();
         }
     } else if( m_d->accountingTAMBill != NULL ){
-        if( paperOrientation == Qt::Horizontal ){
-            if( paperHeight > paperWidth ){
-                double com = paperHeight;
-                paperHeight = paperWidth;
-                paperWidth = com;
-            }
-        } else {
-            if( paperHeight < paperWidth ){
-                double com = paperHeight;
-                paperHeight = paperWidth;
-                paperWidth = com;
-            }
-        }
-        double margin = 10.0;
-        double tableWidth = paperWidth - 2.0 * margin;
-
-        QTextDocument doc;
-        QTextCursor cursor(&doc);
-
-        QTextCharFormat headerBlockCharFormat;
-        headerBlockCharFormat.setFontCapitalization( QFont::AllUppercase );
-        headerBlockCharFormat.setFontWeight( QFont::Bold );
-
-        QTextBlockFormat headerBlockFormat;
-        headerBlockFormat.setAlignment( Qt::AlignHCenter );
-
-        QTextBlockFormat headerWithPBBlockFormat = headerBlockFormat;
-        headerWithPBBlockFormat.setPageBreakPolicy( QTextFormat::PageBreak_AlwaysBefore );
-
-        QTextBlockFormat parBlockFormat;
 
         cursor.setBlockFormat( headerWithPBBlockFormat );
         cursor.setBlockCharFormat( headerBlockCharFormat );
-        cursor.insertText( m_d->accountingBill->name() );
+        cursor.insertText( m_d->accountingTAMBill->name() );
 
         cursor.insertBlock( headerBlockFormat );
         cursor.setBlockCharFormat( headerBlockCharFormat );
 
         if( prOption == PrintRawMeasures ){
-            cursor.insertText(QObject::trUtf8("Brogliaccio del Libretto delle Misure") );
-        } else if( prOption == PrintMeasures ){
-            cursor.insertText(QObject::trUtf8("Libretto delle Misure") );
-        } else if( prOption == PrintPayment ){
-            cursor.insertText(QObject::trUtf8("Stato Avanzamento Lavori") );
+            cursor.insertText(QObject::trUtf8("Brogliaccio della lista settimanale") );
         } else if( prOption == PrintAccounting ){
-            cursor.insertText(QObject::trUtf8("Registro di contabilità") );
-        } else if( prOption == PrintAccountingSummary ){
-            cursor.insertText(QObject::trUtf8("Sommario del registro di contabilità") );
+            cursor.insertText(QObject::trUtf8("Lista in Economia") );
         }
 
         cursor.insertBlock( parBlockFormat );
@@ -501,52 +469,6 @@ bool AccountingPrinter::printAccountingODT( int payToPrint,
         tableFormat.setBorderStyle( QTextFrameFormat::BorderStyle_Solid);
         // tableFormat.setBorder(borderWidth);
         tableFormat.setWidth( QTextLength( QTextLength::FixedLength, tableWidth-2.0*margin ) );
-        // numero progressivo + codice + descrizione + unità di misura + quantità + [ prezzo campo, importo campo ]
-        QVector<QTextLength> colWidths;
-        int dataCols = 1;
-        if( prAmountsOption != PrintNoAmount ){
-            dataCols += 2;
-        }
-        if( paperOrientation == Qt::Horizontal ){
-            if( prAmountsOption == PrintNoAmount ){
-                double descWidth = tableWidth - (10.0 + 30.0 + 20.0 + 30.0);
-                colWidths << QTextLength( QTextLength::FixedLength, 10.0 )
-                          << QTextLength( QTextLength::FixedLength, 30.0 )
-                          << QTextLength( QTextLength::FixedLength, descWidth )
-                          << QTextLength( QTextLength::FixedLength, 20.0 )
-                          << QTextLength( QTextLength::FixedLength, 30.0 );
-            } else {
-                colWidths << QTextLength( QTextLength::FixedLength, 10.0 )
-                          << QTextLength( QTextLength::FixedLength, 30.0 )
-                          << QTextLength( QTextLength::FixedLength, 70.0 )
-                          << QTextLength( QTextLength::FixedLength, 20.0 );
-                double usedWidth =  10.0 + 30.0 + 70.0 + 20.0;
-                double colEqualWidth = (tableWidth - usedWidth ) / dataCols;
-                for( int i=0; i < dataCols; ++i ){
-                    colWidths << QTextLength( QTextLength::FixedLength, colEqualWidth );
-                }
-            }
-        } else { // pageOrientation == Qt::Vertical
-            if( prAmountsOption == PrintNoAmount ){
-                double descWidth = tableWidth - (10.0 + 30.0 + 20.0 + 30.0);
-                colWidths << QTextLength( QTextLength::FixedLength, 10.0 )
-                          << QTextLength( QTextLength::FixedLength, 30.0 )
-                          << QTextLength( QTextLength::FixedLength, descWidth )
-                          << QTextLength( QTextLength::FixedLength, 20.0 )
-                          << QTextLength( QTextLength::FixedLength, 30.0 );
-            } else {
-                double usedWidth = 0.0;
-                colWidths << QTextLength( QTextLength::FixedLength, 10.0 )
-                          << QTextLength( QTextLength::FixedLength, 25.0 )
-                          << QTextLength( QTextLength::FixedLength, 65.0 )
-                          << QTextLength( QTextLength::FixedLength, 15.0 );
-                usedWidth =  10.0 + 25.0 + 65.0 + 15.0;
-                double colEqualWidth = (tableWidth - usedWidth ) / dataCols;
-                for( int i=0; dataCols; ++i ){
-                    colWidths << QTextLength( QTextLength::FixedLength, colEqualWidth );
-                }
-            }
-        }
         tableFormat.setColumnWidthConstraints( colWidths );
         cursor.insertTable(1, colWidths.size(), tableFormat );
 
