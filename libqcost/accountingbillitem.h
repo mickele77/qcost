@@ -401,7 +401,7 @@ protected:
                                          QTextTableCellFormat & rightQuantityTotalFormat,
                                          QTextCharFormat &txtCharFormat,
                                          QTextCharFormat &txtBoldCharFormat) const;
-    void writeODTBillLine( AccountingPrinter::PrintAmountsOption prAmountsOption,
+    void writeODTBillLine(AccountingPrinter::PrintAmountsOption prAmountsOption,
                            AccountingPrinter::PrintPPUDescOption prItemsOption,
                            bool writeProgCode,
                            QTextCursor *cursor,
@@ -415,7 +415,7 @@ protected:
                            QTextTableCellFormat & centralQuantityTotalFormat,
                            QTextTableCellFormat & rightQuantityTotalFormat,
                            QTextCharFormat & txtCharFormat,
-                           QTextCharFormat & txtBoldCharFormat ) const;
+                           QTextCharFormat & txtBoldCharFormat , QTextCharFormat &txtCommentCharFormat) const;
 
     /** restituisce tutti gli attributi dell'elemento; se la var bool è false,
         vuol dire che l'attribute è ereditato, se è true vuol dire che è un

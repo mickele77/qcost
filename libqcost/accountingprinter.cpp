@@ -346,20 +346,20 @@ bool AccountingPrinter::printAccountingODT( int payToPrint,
     }
     if( paperOrientation == Qt::Horizontal ){
         if( prAmountsOption == PrintNoAmount ){
-            double descWidth = tableWidth - (10.0 + 15.0 + 30.0 + 20.0 + 30.0);
-            colWidths << QTextLength( QTextLength::FixedLength, 10.0 )
-                      << QTextLength( QTextLength::FixedLength, 15.0 )
+            double descWidth = tableWidth - (8.0 + 18.0 + 30.0 + 20.0 + 30.0);
+            colWidths << QTextLength( QTextLength::FixedLength, 8.0 )
+                      << QTextLength( QTextLength::FixedLength, 18.0 )
                       << QTextLength( QTextLength::FixedLength, 30.0 )
                       << QTextLength( QTextLength::FixedLength, descWidth )
                       << QTextLength( QTextLength::FixedLength, 20.0 )
                       << QTextLength( QTextLength::FixedLength, 30.0 );
         } else {
-            colWidths << QTextLength( QTextLength::FixedLength, 10.0 )
-                      << QTextLength( QTextLength::FixedLength, 15.0 )
+            double usedWidth =  8.0 + 18.0 + 30.0 + 60.0 + 20.0;
+            colWidths << QTextLength( QTextLength::FixedLength, 8.0 )
+                      << QTextLength( QTextLength::FixedLength, 18.0 )
                       << QTextLength( QTextLength::FixedLength, 30.0 )
                       << QTextLength( QTextLength::FixedLength, 60.0 )
                       << QTextLength( QTextLength::FixedLength, 20.0 );
-            double usedWidth =  10.0 + 15.0 + 30.0 + 60.0 + 20.0;
             double colEqualWidth = (tableWidth - usedWidth ) / dataCols;
             for( int i=0; i < dataCols; ++i ){
                 colWidths << QTextLength( QTextLength::FixedLength, colEqualWidth );
@@ -367,21 +367,21 @@ bool AccountingPrinter::printAccountingODT( int payToPrint,
         }
     } else { // pageOrientation == Qt::Vertical
         if( prAmountsOption == PrintNoAmount ){
-            double descWidth = tableWidth - (10.0 + 15.0 + 30.0 + 20.0 + 30.0);
-            colWidths << QTextLength( QTextLength::FixedLength, 10.0 )
-                      << QTextLength( QTextLength::FixedLength, 15.0 )
+            double descWidth = tableWidth - (8.0 + 18.0 + 30.0 + 20.0 + 30.0);
+            colWidths << QTextLength( QTextLength::FixedLength, 8.0 )
+                      << QTextLength( QTextLength::FixedLength, 18.0 )
                       << QTextLength( QTextLength::FixedLength, 30.0 )
                       << QTextLength( QTextLength::FixedLength, descWidth )
                       << QTextLength( QTextLength::FixedLength, 20.0 )
                       << QTextLength( QTextLength::FixedLength, 30.0 );
         } else {
             double usedWidth = 0.0;
-            colWidths << QTextLength( QTextLength::FixedLength, 10.0 )
-                      << QTextLength( QTextLength::FixedLength, 15.0 )
+            colWidths << QTextLength( QTextLength::FixedLength, 8.0 )
+                      << QTextLength( QTextLength::FixedLength, 18.0 )
                       << QTextLength( QTextLength::FixedLength, 25.0 )
                       << QTextLength( QTextLength::FixedLength, 60.0 )
                       << QTextLength( QTextLength::FixedLength, 15.0 );
-            usedWidth =  10.0 + 15.0 + 25.0 + 60.0 + 15.0;
+            usedWidth =  8.0 + 18.0 + 25.0 + 60.0 + 15.0;
             double colEqualWidth = (tableWidth - usedWidth ) / dataCols;
             for( int i=0; i<dataCols; ++i ){
                 colWidths << QTextLength( QTextLength::FixedLength, colEqualWidth );

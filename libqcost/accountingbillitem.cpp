@@ -2168,6 +2168,8 @@ void AccountingBillItem::writeODTAccountingOnTable(QTextCursor *cursor, int payT
     static QTextCharFormat txtCharFormat;
     static QTextCharFormat txtBoldCharFormat = txtCharFormat;
     txtBoldCharFormat.setFontWeight( QFont::Bold );
+    static QTextCharFormat txtCommentCharFormat = txtCharFormat;
+    txtCommentCharFormat.setFontItalic(true);
     // numeri
     static QTextBlockFormat numBlockFormat;
     numBlockFormat.setAlignment( Qt::AlignRight );
@@ -2293,8 +2295,6 @@ void AccountingBillItem::writeODTAccountingOnTable(QTextCursor *cursor, int payT
 
         // *** riga dei totali complessivi
         if( prAmountsOption != AccountingPrinter::PrintNoAmount ){
-            // riga vuota
-            AccountingBillItemPrivate::insertEmptyRow( cellCount, cursor, leftFormat, centralFormat, rightFormat );
 
             table->appendRows(1);
             cursor->movePosition(QTextCursor::PreviousRow );
@@ -2337,6 +2337,9 @@ void AccountingBillItem::writeODTAccountingOnTable(QTextCursor *cursor, int payT
                 (*i)->writeODTAccountingOnTable( cursor, 0, prAmountsOption, prPPUDescOption );
             }
 
+            // *** Riga vuota ***
+            AccountingBillItemPrivate::insertEmptyRow( cellCount, cursor, leftFormat, centralFormat, rightFormat );
+
             table->appendRows(1);
             cursor->movePosition(QTextCursor::PreviousRow );
 
@@ -2352,6 +2355,8 @@ void AccountingBillItem::writeODTAccountingOnTable(QTextCursor *cursor, int payT
                 AccountingBillItemPrivate::writeCell( cursor, table, centralSubTitleFormat, numBlockFormat );
                 AccountingBillItemPrivate::writeCell( cursor, table, rightSubTitleFormat, numBlockFormat, totalAmountToDiscountStr() );
             }
+            // *** Riga vuota ***
+            AccountingBillItemPrivate::insertEmptyRow( cellCount, cursor, leftFormat, centralFormat, rightFormat );
         } else { // !hasChildren()
             writeODTBillLine( prAmountsOption, prPPUDescOption,
                               true,
@@ -2359,7 +2364,10 @@ void AccountingBillItem::writeODTAccountingOnTable(QTextCursor *cursor, int payT
                               tagBlockFormat, txtBlockFormat, numBlockFormat,
                               leftFormat, centralFormat, rightFormat,
                               centralQuantityTotalFormat, rightQuantityTotalFormat,
-                              txtCharFormat, txtBoldCharFormat );
+                              txtCharFormat, txtBoldCharFormat, txtCommentCharFormat );
+
+            // *** Riga vuota ***
+            AccountingBillItemPrivate::insertEmptyRow( cellCount, cursor, leftFormat, centralFormat, rightFormat );
         }
     }
 }
@@ -3120,7 +3128,8 @@ void AccountingBillItem::writeODTBillLine( AccountingPrinter::PrintAmountsOption
                                            QTextTableCellFormat & centralQuantityTotalFormat,
                                            QTextTableCellFormat & rightQuantityTotalFormat,
                                            QTextCharFormat & txtCharFormat,
-                                           QTextCharFormat & txtBoldCharFormat) const {
+                                           QTextCharFormat & txtBoldCharFormat,
+                                           QTextCharFormat & txtCommentCharFormat ) const {
     // Numero di colonne contenute
     int colCount = 0;
 
