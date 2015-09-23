@@ -1799,8 +1799,8 @@ QDate AccountingBillItem::date() const {
 
 QString AccountingBillItem::dateStr() const {
     if( (m_d->itemType == Root) ||
-        (m_d->itemType == Comment) ||
-        (m_d->itemType == Payment) ){
+            (m_d->itemType == Comment) ||
+            (m_d->itemType == Payment) ){
         return QString();
     }
     if( m_d->parser != NULL ){
@@ -1932,22 +1932,37 @@ double AccountingBillItem::totalAmount(AccountingBillItem::ItemType iType) const
 }
 
 QString AccountingBillItem::totalAmountToDiscountStr() const {
+    if( m_d->itemType == Comment ){
+        return QString();
+    }
     return m_d->toString( m_d->totalAmountToDiscount, 'f', m_d->amountPrecision );
 }
 
 QString AccountingBillItem::amountNotToDiscountStr() const{
+    if( m_d->itemType == Comment ){
+        return QString();
+    }
     return m_d->toString( m_d->amountNotToDiscount, 'f', m_d->amountPrecision );
 }
 
 QString AccountingBillItem::amountToDiscountStr() const {
+    if( m_d->itemType == Comment ){
+        return QString();
+    }
     return m_d->toString( m_d->amountToDiscount, 'f', m_d->amountPrecision );
 }
 
 QString AccountingBillItem::amountDiscountedStr() const {
+    if( m_d->itemType == Comment ){
+        return QString();
+    }
     return m_d->toString( m_d->amountDiscounted, 'f', m_d->amountPrecision );
 }
 
 QString AccountingBillItem::totalAmountStr() const {
+    if( m_d->itemType == Comment ){
+        return QString();
+    }
     return m_d->toString( m_d->totalAmount, 'f', m_d->amountPrecision );
 }
 
@@ -3119,120 +3134,48 @@ void AccountingBillItem::writeODTBillLine( AccountingPrinter::PrintAmountsOption
         colCount += 2;
     }
 
-    // non ci sono sottoarticoli
+    // si suppone che non ci sono sottoarticoli
     table->appendRows(1);
     cursor->movePosition(QTextCursor::PreviousRow );
 
-    if( writeProgCode ){
-        // codice progressivo
-        AccountingBillItemPrivate::writeCell( cursor, table, leftFormat, tagBlockFormat, progressiveCode()  );
-        // data
-        AccountingBillItemPrivate::writeCell( cursor, table, centralFormat, tagBlockFormat, dateStr()  );
-    } else {
-        // data
-        AccountingBillItemPrivate::writeCell( cursor, table, leftFormat, tagBlockFormat, dateStr()  );
-    }
 
-
-    if( m_d->priceItem ){
-        AccountingBillItemPrivate::writeCell( cursor, table, centralFormat, txtBlockFormat, m_d->priceItem->codeFull() );
-        m_d->writeDescriptionCell( cursor, table, centralFormat, txtBlockFormat, txtCharFormat, txtBoldCharFormat, prItemsOption );
-    } else {
-        AccountingBillItemPrivate::writeCell( cursor, table, centralFormat, txtBlockFormat );
-        AccountingBillItemPrivate::writeCell( cursor, table, centralFormat, txtBlockFormat );
-    }
-
-    if( m_d->measuresModel != NULL ){
-        // celle vuote
-        // tag unita misura
-        AccountingBillItemPrivate::writeCell( cursor, table, centralFormat, tagBlockFormat );
-
-        if( prAmountsOption == AccountingPrinter::PrintNoAmount ){
-            // quantita'
-            AccountingBillItemPrivate::writeCell( cursor, table, rightFormat, numBlockFormat );
-        } else {
-            // quantita'
-            AccountingBillItemPrivate::writeCell( cursor, table, centralFormat, numBlockFormat );
-            // prezzo
-            AccountingBillItemPrivate::writeCell( cursor, table, centralFormat, numBlockFormat );
-            // importo
-            AccountingBillItemPrivate::writeCell( cursor, table, rightFormat, numBlockFormat  );
-        }
-
-        table->appendRows(1);
-        cursor->movePosition(QTextCursor::PreviousRow );
-
+    if( m_d->itemType == PPU ){
         if( writeProgCode ){
-            // numero progressivo
-            AccountingBillItemPrivate::writeCell( cursor, table, leftFormat, tagBlockFormat );
+            // codice progressivo
+            AccountingBillItemPrivate::writeCell( cursor, table, leftFormat, tagBlockFormat, progressiveCode()  );
             // data
-            AccountingBillItemPrivate::writeCell( cursor, table, centralFormat, tagBlockFormat );
+            AccountingBillItemPrivate::writeCell( cursor, table, centralFormat, tagBlockFormat, dateStr()  );
         } else {
             // data
-            AccountingBillItemPrivate::writeCell( cursor, table, leftFormat, tagBlockFormat );
+            AccountingBillItemPrivate::writeCell( cursor, table, leftFormat, tagBlockFormat, dateStr()  );
         }
 
-        // codice
-        AccountingBillItemPrivate::writeCell( cursor, table, centralFormat, txtBlockFormat );
 
-        // tag unita di misura
-        QString unitMeasureTag;
         if( m_d->priceItem ){
-            if( m_d->priceItem->unitMeasure()){
-                unitMeasureTag = m_d->priceItem->unitMeasure()->tag();
-            }
+            AccountingBillItemPrivate::writeCell( cursor, table, centralFormat, txtBlockFormat, m_d->priceItem->codeFull() );
+            m_d->writeDescriptionCell( cursor, table, centralFormat, txtBlockFormat, txtCharFormat, txtBoldCharFormat, prItemsOption );
+        } else {
+            AccountingBillItemPrivate::writeCell( cursor, table, centralFormat, txtBlockFormat );
+            AccountingBillItemPrivate::writeCell( cursor, table, centralFormat, txtBlockFormat );
         }
 
-        for( int i=0; i < m_d->measuresModel->billItemMeasureCount(); ++i ){
-            BillItemMeasure * measure = m_d->measuresModel->measure(i);
-
-            // formula senza spazi bianchi
-            QString realFormula;
-            if( measure != NULL ){
-                realFormula = measure->formula();
-                realFormula.remove(" ");
-            }
-
-            // misure
-            if( measure != NULL ){
-                if( realFormula.isEmpty() ){
-                    AccountingBillItemPrivate::writeCell( cursor, table, centralFormat, txtBlockFormat, measure->comment() );
-                } else {
-                    AccountingBillItemPrivate::writeCell( cursor, table, centralFormat, txtBlockFormat, measure->comment() + " (" + measure->formula() + ")");
-                }
-            } else {
-                AccountingBillItemPrivate::writeCell( cursor, table, centralFormat, txtBlockFormat);
-            }
-
-            if( realFormula.isEmpty() || measure == NULL ){
-                // unita di misura
-                AccountingBillItemPrivate::writeCell( cursor, table, centralFormat, tagBlockFormat );
-
-                // quantità
-                if( prAmountsOption == AccountingPrinter::PrintNoAmount ){
-                    AccountingBillItemPrivate::writeCell( cursor, table, rightFormat, numBlockFormat );
-                } else {
-                    AccountingBillItemPrivate::writeCell( cursor, table, centralFormat, numBlockFormat );
-                }
-            } else {
-                // unita di misura
-                AccountingBillItemPrivate::writeCell( cursor, table, centralFormat, tagBlockFormat, unitMeasureTag );
-
-                // quantità
-                if( prAmountsOption == AccountingPrinter::PrintNoAmount ){
-                    AccountingBillItemPrivate::writeCell( cursor, table, rightFormat, numBlockFormat, measure->quantityStr() );
-                } else {
-                    AccountingBillItemPrivate::writeCell( cursor, table, centralFormat, numBlockFormat, measure->quantityStr() );
-                }
-            }
-
+        if( m_d->measuresModel != NULL ){
             // celle vuote
-            if( prAmountsOption != AccountingPrinter::PrintNoAmount ){
+            // tag unita misura
+            AccountingBillItemPrivate::writeCell( cursor, table, centralFormat, tagBlockFormat );
+
+            if( prAmountsOption == AccountingPrinter::PrintNoAmount ){
+                // quantita'
+                AccountingBillItemPrivate::writeCell( cursor, table, rightFormat, numBlockFormat );
+            } else {
+                // quantita'
                 AccountingBillItemPrivate::writeCell( cursor, table, centralFormat, numBlockFormat );
+                // prezzo
+                AccountingBillItemPrivate::writeCell( cursor, table, centralFormat, numBlockFormat );
+                // importo
                 AccountingBillItemPrivate::writeCell( cursor, table, rightFormat, numBlockFormat  );
             }
 
-            // inserisce riga
             table->appendRows(1);
             cursor->movePosition(QTextCursor::PreviousRow );
 
@@ -3241,39 +3184,162 @@ void AccountingBillItem::writeODTBillLine( AccountingPrinter::PrintAmountsOption
                 AccountingBillItemPrivate::writeCell( cursor, table, leftFormat, tagBlockFormat );
                 // data
                 AccountingBillItemPrivate::writeCell( cursor, table, centralFormat, tagBlockFormat );
-                // codice
-                AccountingBillItemPrivate::writeCell( cursor, table, centralFormat, txtBlockFormat );
             } else {
                 // data
                 AccountingBillItemPrivate::writeCell( cursor, table, leftFormat, tagBlockFormat );
-                // codice
-                AccountingBillItemPrivate::writeCell( cursor, table, centralFormat, txtBlockFormat );
+            }
+
+            // codice
+            AccountingBillItemPrivate::writeCell( cursor, table, centralFormat, txtBlockFormat );
+
+            // tag unita di misura
+            QString unitMeasureTag;
+            if( m_d->priceItem ){
+                if( m_d->priceItem->unitMeasure()){
+                    unitMeasureTag = m_d->priceItem->unitMeasure()->tag();
+                }
+            }
+
+            for( int i=0; i < m_d->measuresModel->billItemMeasureCount(); ++i ){
+                BillItemMeasure * measure = m_d->measuresModel->measure(i);
+
+                // formula senza spazi bianchi
+                QString realFormula;
+                if( measure != NULL ){
+                    realFormula = measure->formula();
+                    realFormula.remove(" ");
+                }
+
+                // misure
+                if( measure != NULL ){
+                    if( realFormula.isEmpty() ){
+                        AccountingBillItemPrivate::writeCell( cursor, table, centralFormat, txtBlockFormat, measure->comment() );
+                    } else {
+                        AccountingBillItemPrivate::writeCell( cursor, table, centralFormat, txtBlockFormat, measure->comment() + " (" + measure->formula() + ")");
+                    }
+                } else {
+                    AccountingBillItemPrivate::writeCell( cursor, table, centralFormat, txtBlockFormat);
+                }
+
+                if( realFormula.isEmpty() || measure == NULL ){
+                    // unita di misura
+                    AccountingBillItemPrivate::writeCell( cursor, table, centralFormat, tagBlockFormat );
+
+                    // quantità
+                    if( prAmountsOption == AccountingPrinter::PrintNoAmount ){
+                        AccountingBillItemPrivate::writeCell( cursor, table, rightFormat, numBlockFormat );
+                    } else {
+                        AccountingBillItemPrivate::writeCell( cursor, table, centralFormat, numBlockFormat );
+                    }
+                } else {
+                    // unita di misura
+                    AccountingBillItemPrivate::writeCell( cursor, table, centralFormat, tagBlockFormat, unitMeasureTag );
+
+                    // quantità
+                    if( prAmountsOption == AccountingPrinter::PrintNoAmount ){
+                        AccountingBillItemPrivate::writeCell( cursor, table, rightFormat, numBlockFormat, measure->quantityStr() );
+                    } else {
+                        AccountingBillItemPrivate::writeCell( cursor, table, centralFormat, numBlockFormat, measure->quantityStr() );
+                    }
+                }
+
+                // celle vuote
+                if( prAmountsOption != AccountingPrinter::PrintNoAmount ){
+                    AccountingBillItemPrivate::writeCell( cursor, table, centralFormat, numBlockFormat );
+                    AccountingBillItemPrivate::writeCell( cursor, table, rightFormat, numBlockFormat  );
+                }
+
+                // inserisce riga
+                table->appendRows(1);
+                cursor->movePosition(QTextCursor::PreviousRow );
+
+                if( writeProgCode ){
+                    // numero progressivo
+                    AccountingBillItemPrivate::writeCell( cursor, table, leftFormat, tagBlockFormat );
+                    // data
+                    AccountingBillItemPrivate::writeCell( cursor, table, centralFormat, tagBlockFormat );
+                    // codice
+                    AccountingBillItemPrivate::writeCell( cursor, table, centralFormat, txtBlockFormat );
+                } else {
+                    // data
+                    AccountingBillItemPrivate::writeCell( cursor, table, leftFormat, tagBlockFormat );
+                    // codice
+                    AccountingBillItemPrivate::writeCell( cursor, table, centralFormat, txtBlockFormat );
+                }
+            }
+
+            // descrizione
+            AccountingBillItemPrivate::writeCell( cursor, table, centralFormat, txtBlockFormat );
+
+            // tag unita di misura
+            AccountingBillItemPrivate::writeCell( cursor, table,  centralFormat, tagBlockFormat, unitMeasureTag );
+
+            // quantita totale
+            if( prAmountsOption == AccountingPrinter::PrintNoAmount ){
+                AccountingBillItemPrivate::writeCell( cursor, table, rightQuantityTotalFormat, numBlockFormat, quantityStr() );
+            } else {
+                AccountingBillItemPrivate::writeCell( cursor, table, centralQuantityTotalFormat, numBlockFormat, quantityStr() );
+                AccountingBillItemPrivate::writeCell( cursor, table, centralFormat, numBlockFormat, PPUTotalToDiscountStr() );
+                AccountingBillItemPrivate::writeCell( cursor, table, rightFormat, numBlockFormat, totalAmountToDiscountStr() );
+            }
+
+        } else { // m_d->linesModel == NULL
+            QString unitMeasureTag;
+            if( m_d->priceItem ){
+                if( m_d->priceItem->unitMeasure()){
+                    unitMeasureTag = m_d->priceItem->unitMeasure()->tag();
+                }
+            }
+            AccountingBillItemPrivate::writeCell( cursor, table, centralFormat, tagBlockFormat, unitMeasureTag );
+
+            if( prAmountsOption == AccountingPrinter::PrintNoAmount ){
+                AccountingBillItemPrivate::writeCell( cursor, table, rightFormat, numBlockFormat, quantityStr() );
+            } else {
+                AccountingBillItemPrivate::writeCell( cursor, table, centralFormat, numBlockFormat, quantityStr() );
+                AccountingBillItemPrivate::writeCell( cursor, table, centralFormat, numBlockFormat, PPUTotalToDiscountStr() );
+                AccountingBillItemPrivate::writeCell( cursor, table, rightFormat, numBlockFormat, totalAmountToDiscountStr() );
             }
         }
+    } else if( m_d->itemType == Comment ){
+        if( writeProgCode ){
+            // codice progressivo
+            AccountingBillItemPrivate::writeCell( cursor, table, leftFormat, tagBlockFormat  );
+            // data
+            AccountingBillItemPrivate::writeCell( cursor, table, centralFormat, tagBlockFormat  );
+        } else {
+            // data
+            AccountingBillItemPrivate::writeCell( cursor, table, leftFormat, tagBlockFormat  );
+        }
 
-        // descrizione
+
+        AccountingBillItemPrivate::writeCell( cursor, table, centralFormat, txtBlockFormat );
+        AccountingBillItemPrivate::writeCell( cursor, table, centralFormat, txtBlockFormat, text() );
+
+        AccountingBillItemPrivate::writeCell( cursor, table, centralFormat, tagBlockFormat );
+
+        if( prAmountsOption == AccountingPrinter::PrintNoAmount ){
+            AccountingBillItemPrivate::writeCell( cursor, table, rightFormat, numBlockFormat );
+        } else {
+            AccountingBillItemPrivate::writeCell( cursor, table, centralFormat, numBlockFormat );
+            AccountingBillItemPrivate::writeCell( cursor, table, centralFormat, numBlockFormat );
+            AccountingBillItemPrivate::writeCell( cursor, table, rightFormat, numBlockFormat );
+        }
+    } else if( (m_d->itemType == LumpSum) || ( m_d->itemType == TimeAndMaterials )){
+        if( writeProgCode ){
+            // codice progressivo
+            AccountingBillItemPrivate::writeCell( cursor, table, leftFormat, tagBlockFormat, progressiveCode()  );
+            // data
+            AccountingBillItemPrivate::writeCell( cursor, table, centralFormat, tagBlockFormat, dateStr()  );
+        } else {
+            // data
+            AccountingBillItemPrivate::writeCell( cursor, table, leftFormat, tagBlockFormat, dateStr()  );
+        }
+
+
+        AccountingBillItemPrivate::writeCell( cursor, table, centralFormat, txtBlockFormat, title() );
         AccountingBillItemPrivate::writeCell( cursor, table, centralFormat, txtBlockFormat );
 
-        // tag unita di misura
-        AccountingBillItemPrivate::writeCell( cursor, table,  centralFormat, tagBlockFormat, unitMeasureTag );
-
-        // quantita totale
-        if( prAmountsOption == AccountingPrinter::PrintNoAmount ){
-            AccountingBillItemPrivate::writeCell( cursor, table, rightQuantityTotalFormat, numBlockFormat, quantityStr() );
-        } else {
-            AccountingBillItemPrivate::writeCell( cursor, table, centralQuantityTotalFormat, numBlockFormat, quantityStr() );
-            AccountingBillItemPrivate::writeCell( cursor, table, centralFormat, numBlockFormat, PPUTotalToDiscountStr() );
-            AccountingBillItemPrivate::writeCell( cursor, table, rightFormat, numBlockFormat, totalAmountToDiscountStr() );
-        }
-
-    } else { // m_d->linesModel == NULL
-        QString unitMeasureTag;
-        if( m_d->priceItem ){
-            if( m_d->priceItem->unitMeasure()){
-                unitMeasureTag = m_d->priceItem->unitMeasure()->tag();
-            }
-        }
-        AccountingBillItemPrivate::writeCell( cursor, table, centralFormat, tagBlockFormat, unitMeasureTag );
+        AccountingBillItemPrivate::writeCell( cursor, table, centralFormat, tagBlockFormat );
 
         if( prAmountsOption == AccountingPrinter::PrintNoAmount ){
             AccountingBillItemPrivate::writeCell( cursor, table, rightFormat, numBlockFormat, quantityStr() );
