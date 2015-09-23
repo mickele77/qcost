@@ -616,11 +616,11 @@ void AccountingTreeGUI::updateActiveActions() {
             m_d->addTAMBillAction->setEnabled( false );
             m_d->addTAMPPUAction->setEnabled( true );
             m_d->addTAMCommentAction->setEnabled( true );
+        } else {
+            m_d->addTAMBillAction->setEnabled( false );
+            m_d->addTAMPPUAction->setEnabled( false );
+            m_d->addTAMCommentAction->setEnabled( false );
         }
-    } else {
-        m_d->addTAMBillAction->setEnabled( false );
-        m_d->addTAMPPUAction->setEnabled( false );
-        m_d->addTAMCommentAction->setEnabled( false );
     }
 }
 

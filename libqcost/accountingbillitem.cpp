@@ -2323,7 +2323,7 @@ void AccountingBillItem::writeODTAccountingOnTable(QTextCursor *cursor, int payT
             AccountingBillItemPrivate::writeCell( cursor, table, leftSubTitleFormat, tagBlockFormat, progressiveCode() );
             AccountingBillItemPrivate::writeCell( cursor, table, centralSubTitleFormat, tagBlockFormat );
             AccountingBillItemPrivate::writeCell( cursor, table, centralSubTitleFormat, txtBlockFormat );
-            AccountingBillItemPrivate::writeCell( cursor, table, centralSubTitleFormat, txtBlockFormat, m_d->name );
+            AccountingBillItemPrivate::writeCell( cursor, table, centralSubTitleFormat, txtBlockFormat, title() );
             AccountingBillItemPrivate::writeCell( cursor, table, centralSubTitleFormat, tagBlockFormat );
             if( prAmountsOption == AccountingPrinter::PrintNoAmount ){
                 AccountingBillItemPrivate::writeCell( cursor, table, rightSubTitleFormat, numBlockFormat );
@@ -2343,7 +2343,7 @@ void AccountingBillItem::writeODTAccountingOnTable(QTextCursor *cursor, int payT
             AccountingBillItemPrivate::writeCell( cursor, table, leftSubTitleFormat, tagBlockFormat );
             AccountingBillItemPrivate::writeCell( cursor, table, centralSubTitleFormat, tagBlockFormat );
             AccountingBillItemPrivate::writeCell( cursor, table, centralSubTitleFormat, txtBlockFormat );
-            AccountingBillItemPrivate::writeCell( cursor, table, centralSubTitleFormat, txtBlockFormat, trUtf8("Totale %1").arg( m_d->name ) );
+            AccountingBillItemPrivate::writeCell( cursor, table, centralSubTitleFormat, txtBlockFormat, trUtf8("Totale %1").arg( title() ) );
             AccountingBillItemPrivate::writeCell( cursor, table, centralSubTitleFormat, tagBlockFormat );
             if( prAmountsOption == AccountingPrinter::PrintNoAmount ){
                 AccountingBillItemPrivate::writeCell( cursor, table, rightSubTitleFormat, numBlockFormat );
@@ -3324,7 +3324,7 @@ void AccountingBillItem::writeODTBillLine( AccountingPrinter::PrintAmountsOption
             AccountingBillItemPrivate::writeCell( cursor, table, centralFormat, numBlockFormat );
             AccountingBillItemPrivate::writeCell( cursor, table, rightFormat, numBlockFormat );
         }
-    } else if( (m_d->itemType == LumpSum) || ( m_d->itemType == TimeAndMaterials )){
+    } else if( m_d->itemType == LumpSum){
         if( writeProgCode ){
             // codice progressivo
             AccountingBillItemPrivate::writeCell( cursor, table, leftFormat, tagBlockFormat, progressiveCode()  );
@@ -3346,6 +3346,29 @@ void AccountingBillItem::writeODTBillLine( AccountingPrinter::PrintAmountsOption
         } else {
             AccountingBillItemPrivate::writeCell( cursor, table, centralFormat, numBlockFormat, quantityStr() );
             AccountingBillItemPrivate::writeCell( cursor, table, centralFormat, numBlockFormat, PPUTotalToDiscountStr() );
+            AccountingBillItemPrivate::writeCell( cursor, table, rightFormat, numBlockFormat, totalAmountToDiscountStr() );
+        }
+    } else if( m_d->itemType == TimeAndMaterials ){
+        if( writeProgCode ){
+            // codice progressivo
+            AccountingBillItemPrivate::writeCell( cursor, table, leftFormat, tagBlockFormat, progressiveCode()  );
+            // data
+            AccountingBillItemPrivate::writeCell( cursor, table, centralFormat, tagBlockFormat, dateStr()  );
+        } else {
+            // data
+            AccountingBillItemPrivate::writeCell( cursor, table, leftFormat, tagBlockFormat, dateStr()  );
+        }
+
+        AccountingBillItemPrivate::writeCell( cursor, table, centralFormat, txtBlockFormat, title() );
+        AccountingBillItemPrivate::writeCell( cursor, table, centralFormat, txtBlockFormat );
+
+        AccountingBillItemPrivate::writeCell( cursor, table, centralFormat, tagBlockFormat );
+
+        if( prAmountsOption == AccountingPrinter::PrintNoAmount ){
+            AccountingBillItemPrivate::writeCell( cursor, table, rightFormat, numBlockFormat );
+        } else {
+            AccountingBillItemPrivate::writeCell( cursor, table, centralFormat, numBlockFormat );
+            AccountingBillItemPrivate::writeCell( cursor, table, centralFormat, numBlockFormat );
             AccountingBillItemPrivate::writeCell( cursor, table, rightFormat, numBlockFormat, totalAmountToDiscountStr() );
         }
     }
