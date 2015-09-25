@@ -100,6 +100,18 @@ private:
                                     double paperWidth = 210.0, double paperHeight = 297.0,
                                     Qt::Orientation paperOrientation = Qt::Vertical,
                                     bool writeDetails = true ) const;
+    bool printAccountingBillODT(int payToPrint,
+                                AccountingPrinter::PrintOption prOption,
+                                AccountingPrinter::PrintAmountsOption prAmountsOption,
+                                AccountingPrinter::PrintPPUDescOption prPPDescOption,
+                                const QString &fileName,
+                                double paperWidth, double paperHeight, Qt::Orientation paperOrientation) const;
+    bool printAccountingTAMBillODT(int payToPrint,
+                                   AccountingPrinter::PrintOption prOption,
+                                   AccountingPrinter::PrintAmountsOption prAmountsOption,
+                                   AccountingPrinter::PrintPPUDescOption prPPDescOption,
+                                   const QString &fileName,
+                                   double paperWidth, double paperHeight, Qt::Orientation paperOrientation) const;
 };
 
 #endif // ACCOUNTINGPRINTER_H
