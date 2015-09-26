@@ -27,8 +27,7 @@
 
 class AccountingBillPrinterGUIPrivate{
 public:
-    AccountingBillPrinterGUIPrivate( PaymentDataModel * dModel,
-                                     AccountingPrinter::PrintPPUDescOption * prPPUDescOption,
+    AccountingBillPrinterGUIPrivate( AccountingPrinter::PrintPPUDescOption * prPPUDescOption,
                                      AccountingPrinter::PrintOption *prOption,
                                      AccountingPrinter::PrintAmountsOption * prAmountsOption,
                                      int * payToPrint,
@@ -36,7 +35,6 @@ public:
                                      double *pHeight,
                                      Qt::Orientation * pOrient ):
         ui(new Ui::AccountingBillPrinterGUI),
-        dataModel(dModel),
         printPPUDescOption(prPPUDescOption),
         printOption(prOption),
         printAmountsOption(prAmountsOption),
@@ -51,7 +49,6 @@ public:
     }
 
     Ui::AccountingBillPrinterGUI *ui;
-    PaymentDataModel * dataModel;
     AccountingPrinter::PrintPPUDescOption * printPPUDescOption;
     AccountingPrinter::PrintOption *printOption;
     AccountingPrinter::PrintAmountsOption * printAmountsOption;
@@ -72,7 +69,7 @@ AccountingBillPrinterGUI::AccountingBillPrinterGUI(PaymentDataModel * dataModel,
                                                    Qt::Orientation * pOrient,
                                                    QWidget *parent ) :
     QDialog(parent),
-    m_d( new AccountingBillPrinterGUIPrivate( dataModel, prPPUDescOption, prOption, prAmountsOption, payToPrint, pWidth, pHeight, pOrient ) ) {
+    m_d( new AccountingBillPrinterGUIPrivate( prPPUDescOption, prOption, prAmountsOption, payToPrint, pWidth, pHeight, pOrient ) ) {
     m_d->ui->setupUi(this);
 
     connect( this, &AccountingBillPrinterGUI::accepted, this, &AccountingBillPrinterGUI::setPrintData );
@@ -120,8 +117,8 @@ AccountingBillPrinterGUI::AccountingBillPrinterGUI(PaymentDataModel * dataModel,
     }
 
     m_d->ui->billToPrintComboBox->insertItem(0, trUtf8("Tutti"));
-    for( int i=0; i < m_d->dataModel->paymentsCount(); ++i ){
-        m_d->ui->billToPrintComboBox->insertItem((i+1), m_d->dataModel->billData(i)->name() );
+    for( int i=0; i < dataModel->paymentsCount(); ++i ){
+        m_d->ui->billToPrintComboBox->insertItem((i+1), dataModel->billData(i)->name() );
     }
     m_d->ui->billToPrintComboBox->setCurrentIndex(*(payToPrint)+1);
 

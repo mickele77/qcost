@@ -19,16 +19,15 @@
 #include "accountingtambillprintergui.h"
 #include "ui_accountingtambillprintergui.h"
 
-#include "paymentadatamodel.h"
-#include "paymentdata.h"
+#include "accountingtambill.h"
+#include "accountingtambillitem.h"
 
 #include <QPageSize>
 #include <QComboBox>
 
 class AccountingTAMBillPrinterGUIPrivate{
 public:
-    AccountingTAMBillPrinterGUIPrivate( PaymentDataModel * dModel,
-                                        AccountingPrinter::PrintPPUDescOption * prPPUDescOption,
+    AccountingTAMBillPrinterGUIPrivate( AccountingPrinter::PrintPPUDescOption * prPPUDescOption,
                                         AccountingPrinter::PrintOption *prOption,
                                         AccountingPrinter::PrintAmountsOption * prAmountsOption,
                                         int * payToPrint,
@@ -36,7 +35,6 @@ public:
                                         double *pHeight,
                                         Qt::Orientation * pOrient ):
         ui(new Ui::AccountingTAMBillPrinterGUI),
-        dataModel(dModel),
         printPPUDescOption(prPPUDescOption),
         printOption(prOption),
         printAmountsOption(prAmountsOption),
@@ -51,7 +49,6 @@ public:
     }
 
     Ui::AccountingTAMBillPrinterGUI *ui;
-    PaymentDataModel * dataModel;
     AccountingPrinter::PrintPPUDescOption * printPPUDescOption;
     AccountingPrinter::PrintOption *printOption;
     AccountingPrinter::PrintAmountsOption * printAmountsOption;
@@ -62,17 +59,17 @@ public:
     QList<QPageSize> pageSizeList;
 };
 
-AccountingTAMBillPrinterGUI::AccountingTAMBillPrinterGUI(PaymentDataModel * dataModel,
+AccountingTAMBillPrinterGUI::AccountingTAMBillPrinterGUI(AccountingTAMBill *bill,
                                                          AccountingPrinter::PrintPPUDescOption * prPPUDescOption,
                                                          AccountingPrinter::PrintOption *prOption,
                                                          AccountingPrinter::PrintAmountsOption *prAmountsOption,
-                                                         int * payToPrint,
+                                                         int * billToPrint,
                                                          double *pWidth,
                                                          double *pHeight,
                                                          Qt::Orientation * pOrient,
                                                          QWidget *parent ) :
     QDialog(parent),
-    m_d( new AccountingTAMBillPrinterGUIPrivate( dataModel, prPPUDescOption, prOption, prAmountsOption, payToPrint, pWidth, pHeight, pOrient ) ) {
+    m_d( new AccountingTAMBillPrinterGUIPrivate( prPPUDescOption, prOption, prAmountsOption, billToPrint, pWidth, pHeight, pOrient ) ) {
     m_d->ui->setupUi(this);
 
     connect( this, &AccountingTAMBillPrinterGUI::accepted, this, &AccountingTAMBillPrinterGUI::setPrintData );
@@ -114,10 +111,12 @@ AccountingTAMBillPrinterGUI::AccountingTAMBillPrinterGUI(PaymentDataModel * data
     }
 
     m_d->ui->billToPrintComboBox->insertItem(0, trUtf8("Tutti"));
-    for( int i=0; i < m_d->dataModel->paymentsCount(); ++i ){
-        m_d->ui->billToPrintComboBox->insertItem((i+1), m_d->dataModel->billData(i)->name() );
+    int i = 0;
+    for( QList<AccountingTAMBillItem *>::iterator iter = bill->bills().begin(); iter != bill->bills().end(); ++iter ){
+        m_d->ui->billToPrintComboBox->insertItem((i+1), (*iter)->title() );
+        ++i;
     }
-    m_d->ui->billToPrintComboBox->setCurrentIndex(*(payToPrint)+1);
+    m_d->ui->billToPrintComboBox->setCurrentIndex(*(billToPrint)+1);
 
     Qt::WindowFlags flags = windowFlags();
     flags |= Qt::WindowMaximizeButtonHint;

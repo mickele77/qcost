@@ -19,7 +19,7 @@
 #ifndef ACCOUNTINGTAMBILLPRINTERGUI_H
 #define ACCOUNTINGTAMBILLPRINTERGUI_H
 
-class PaymentDataModel;
+class AccountingTAMBill;
 
 #include "accountingprinter.h"
 
@@ -30,15 +30,15 @@ class AccountingTAMBillPrinterGUIPrivate;
 class AccountingTAMBillPrinterGUI : public QDialog {
     Q_OBJECT
 public:
-    explicit AccountingTAMBillPrinterGUI(PaymentDataModel *dataModel,
-                                   AccountingPrinter::PrintPPUDescOption *prItemsOption,
-                                   AccountingPrinter::PrintOption * prOption,
-                                   AccountingPrinter::PrintAmountsOption * prAmountsOption,
-                                   int * payToPrint,
-                                   double *pWidth,
-                                   double *pHeight,
-                                   Qt::Orientation *pOrient,
-                                   QWidget *parent = 0);
+    explicit AccountingTAMBillPrinterGUI( AccountingTAMBill *bill,
+                                          AccountingPrinter::PrintPPUDescOption *prItemsOption,
+                                          AccountingPrinter::PrintOption * prOption,
+                                          AccountingPrinter::PrintAmountsOption * prAmountsOption,
+                                          int * billToPrint,
+                                          double *pWidth,
+                                          double *pHeight,
+                                          Qt::Orientation *pOrient,
+                                          QWidget *parent = 0);
     ~AccountingTAMBillPrinterGUI();
 private slots:
     void setPrintData();
