@@ -16,8 +16,8 @@
    along with this program; if not, write to the Free Software Foundation,
    Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 */
-#ifndef ACCOUNTINGPRINTERGUI_H
-#define ACCOUNTINGPRINTERGUI_H
+#ifndef ACCOUNTINGBILLPRINTERGUI_H
+#define ACCOUNTINGBILLPRINTERGUI_H
 
 class PaymentDataModel;
 
@@ -25,12 +25,12 @@ class PaymentDataModel;
 
 #include <QDialog>
 
-class AccountingPrinterGUIPrivate;
+class AccountingBillPrinterGUIPrivate;
 
-class AccountingPrinterGUI : public QDialog {
+class AccountingBillPrinterGUI : public QDialog {
     Q_OBJECT
 public:
-    explicit AccountingPrinterGUI(PaymentDataModel *dataModel,
+    explicit AccountingBillPrinterGUI(PaymentDataModel *dataModel,
                                    AccountingPrinter::PrintPPUDescOption *prItemsOption,
                                    AccountingPrinter::PrintOption * prOption,
                                    AccountingPrinter::PrintAmountsOption * prAmountsOption,
@@ -39,12 +39,12 @@ public:
                                    double *pHeight,
                                    Qt::Orientation *pOrient,
                                    QWidget *parent = 0);
-    ~AccountingPrinterGUI();
+    ~AccountingBillPrinterGUI();
 private slots:
     void setPrintData();
     void updateOptionsAvailable();
 private:
-    AccountingPrinterGUIPrivate * m_d;
+    AccountingBillPrinterGUIPrivate * m_d;
 };
 
-#endif // ACCOUNTINGPRINTERGUI_H
+#endif // ACCOUNTINGBILLPRINTERGUI_H

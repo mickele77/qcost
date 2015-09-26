@@ -19,7 +19,7 @@
 #include "qcostgui.h"
 
 #include "pricelistprintergui.h"
-#include "accountingprintergui.h"
+#include "accountingbillprintergui.h"
 #include "billprintergui.h"
 #include "settingsdialog.h"
 #include "generaldatagui.h"
@@ -586,7 +586,7 @@ bool QCostGUI::printODT() {
         int payToPrint = -1; // SAL da stampare
         double paperWidth = 210.0, paperHeight = 297.0; // dimensioni foglio
         Qt::Orientation paperOrientation = Qt::Vertical;
-        AccountingPrinterGUI gui( m_d->project->accounting()->dataModel(), &prPPUDescOption, &prOptions, &prAmountsOptions, &payToPrint,
+        AccountingBillPrinterGUI gui( m_d->project->accounting()->dataModel(), &prPPUDescOption, &prOptions, &prAmountsOptions, &payToPrint,
                                   &paperWidth, &paperHeight, &paperOrientation,  this );
         if( gui.exec() == QDialog::Accepted ){
             QString fileName = QFileDialog::getSaveFileName(this,

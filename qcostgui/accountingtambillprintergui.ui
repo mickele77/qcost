@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>AccountingPrinterGUI</class>
- <widget class="QDialog" name="AccountingPrinterGUI">
+ <class>AccountingTAMBillPrinterGUI</class>
+ <widget class="QDialog" name="AccountingTAMBillPrinterGUI">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -19,7 +19,7 @@
      <item>
       <widget class="QGroupBox" name="billToPrintGroupBox">
        <property name="title">
-        <string>S.A.L.</string>
+        <string>Liste da stampare</string>
        </property>
        <layout class="QGridLayout" name="gridLayout_6">
         <item row="0" column="1">
@@ -34,7 +34,7 @@
            </sizepolicy>
           </property>
           <property name="text">
-           <string>S.A.L.</string>
+           <string>Liste</string>
           </property>
          </widget>
         </item>
@@ -42,58 +42,29 @@
       </widget>
      </item>
      <item>
-      <widget class="QGroupBox" name="printDocGroupBox">
+      <widget class="QGroupBox" name="groupBox">
        <property name="title">
         <string>Documenti contabili</string>
        </property>
        <layout class="QGridLayout" name="gridLayout_3">
-        <item row="5" column="0">
-         <widget class="QRadioButton" name="printAccountingSummaryButton">
-          <property name="text">
-           <string>Sommario del registro di contabilità</string>
-          </property>
-          <property name="checked">
-           <bool>false</bool>
-          </property>
-         </widget>
-        </item>
-        <item row="3" column="0">
-         <widget class="QRadioButton" name="printAccountingButton">
-          <property name="text">
-           <string>Registro di contabilit&amp;à</string>
-          </property>
-          <property name="checked">
-           <bool>false</bool>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="0">
+        <item row="0" column="0">
          <widget class="QRadioButton" name="printBillButton">
           <property name="text">
-           <string>&amp;Libretto delle misure</string>
-          </property>
-          <property name="checked">
-           <bool>false</bool>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="0">
-         <widget class="QRadioButton" name="printRawBillButton">
-          <property name="text">
-           <string>Brogliaccio del libretto delle &amp;misure</string>
-          </property>
-          <property name="checked">
-           <bool>true</bool>
+           <string>Lista</string>
           </property>
          </widget>
         </item>
         <item row="2" column="0">
-         <widget class="QRadioButton" name="printPaymentButton">
+         <widget class="QRadioButton" name="printSummaryButton">
           <property name="text">
-           <string>S.A.L.</string>
+           <string>Sommario lista</string>
           </property>
-          <property name="checked">
-           <bool>false</bool>
+         </widget>
+        </item>
+        <item row="1" column="0">
+         <widget class="QRadioButton" name="printRawBillButton">
+          <property name="text">
+           <string>Brogliaccio lista</string>
           </property>
          </widget>
         </item>
@@ -119,14 +90,14 @@
         <item row="1" column="0">
          <widget class="QRadioButton" name="printTotalAmountsToDiscountRadioButton">
           <property name="text">
-           <string>Importi al lordo del ribasso</string>
+           <string>Importi al &amp;lordo del ribasso</string>
           </property>
          </widget>
         </item>
         <item row="2" column="0">
          <widget class="QRadioButton" name="printAmountsNotToDiscountRadioButton">
           <property name="text">
-           <string>Importi non soggetti a ribasso</string>
+           <string>I&amp;mporti non soggetti a ribasso</string>
           </property>
          </widget>
         </item>
@@ -139,6 +110,19 @@
         </item>
        </layout>
       </widget>
+     </item>
+     <item>
+      <spacer name="verticalSpacer_3">
+       <property name="orientation">
+        <enum>Qt::Vertical</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>20</width>
+         <height>40</height>
+        </size>
+       </property>
+      </spacer>
      </item>
     </layout>
    </item>
@@ -237,22 +221,9 @@
        </layout>
       </widget>
      </item>
-     <item>
-      <spacer name="verticalSpacer_3">
-       <property name="orientation">
-        <enum>Qt::Vertical</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>20</width>
-         <height>40</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
     </layout>
    </item>
-   <item row="2" column="0" colspan="2">
+   <item row="4" column="0" colspan="2">
     <widget class="QDialogButtonBox" name="buttonBox">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
@@ -262,7 +233,7 @@
      </property>
     </widget>
    </item>
-   <item row="1" column="0" colspan="2">
+   <item row="3" column="0" colspan="2">
     <spacer name="verticalSpacer">
      <property name="orientation">
       <enum>Qt::Vertical</enum>
@@ -278,11 +249,6 @@
   </layout>
  </widget>
  <tabstops>
-  <tabstop>printRawBillButton</tabstop>
-  <tabstop>printBillButton</tabstop>
-  <tabstop>printPaymentButton</tabstop>
-  <tabstop>printAccountingButton</tabstop>
-  <tabstop>printAccountingSummaryButton</tabstop>
   <tabstop>printShortDescRadioButton</tabstop>
   <tabstop>printLongDescRadioButton</tabstop>
   <tabstop>printShortLongDescRadioButton</tabstop>
@@ -297,7 +263,7 @@
   <connection>
    <sender>buttonBox</sender>
    <signal>accepted()</signal>
-   <receiver>AccountingPrinterGUI</receiver>
+   <receiver>AccountingTAMBillPrinterGUI</receiver>
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -313,7 +279,7 @@
   <connection>
    <sender>buttonBox</sender>
    <signal>rejected()</signal>
-   <receiver>AccountingPrinterGUI</receiver>
+   <receiver>AccountingTAMBillPrinterGUI</receiver>
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">

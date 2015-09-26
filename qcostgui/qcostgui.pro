@@ -92,8 +92,9 @@ SOURCES += \
     accountinglstreegui.cpp \
     accountinglsbillitemtitlegui.cpp \
     importlsitemmeasurestxt.cpp \
-    accountingprintergui.cpp \
-    accountingitempaymentgui.cpp
+    accountingitempaymentgui.cpp \
+    accountingbillprintergui.cpp \
+    accountingtambillprintergui.cpp
 
 HEADERS  += \
     projectitemsview.h \
@@ -150,8 +151,9 @@ HEADERS  += \
     accountinglstreegui.h \
     accountinglsbillitemtitlegui.h \
     importlsitemmeasurestxt.h \
-    accountingprintergui.h \
-    accountingitempaymentgui.h
+    accountingitempaymentgui.h \
+    accountingbillprintergui.h \
+    accountingtambillprintergui.h
 
 FORMS += \
     generaldatagui.ui \
@@ -170,7 +172,6 @@ FORMS += \
     settingsdialog.ui \
     importbillitemmeasurestxt.ui \
     accountingtreegui.ui \
-    accountingprintergui.ui \
     accountingattributeprintergui.ui \
     setpricelistmodegui.ui \
     attributechangedialog.ui \
@@ -187,7 +188,9 @@ FORMS += \
     accountinglstreegui.ui \
     accountinglsbillitemtitlegui.ui \
     importlsitemmeasurestxt.ui \
-    accountingitempaymentgui.ui
+    accountingitempaymentgui.ui \
+    accountingbillprintergui.ui \
+    accountingtambillprintergui.ui
 
 OTHER_FILES += \
     ../LICENSE \
