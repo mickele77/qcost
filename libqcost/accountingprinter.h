@@ -55,6 +55,11 @@ public:
         PrintAccounting,
         PrintAccountingSummary
     };
+    enum PrintLSOption{
+        PrintLSProj,
+        PrintLSAcc,
+        PrintLSProjAcc
+    };
     enum AttributePrintOption{
         AttributePrintSimple,
         AttributePrintUnion,

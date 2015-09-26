@@ -20,6 +20,7 @@
 
 #include "pricelistprintergui.h"
 #include "accountingtambillprintergui.h"
+#include "accountinglsbillprintergui.h"
 #include "accountingbillprintergui.h"
 #include "billprintergui.h"
 #include "settingsdialog.h"
@@ -43,6 +44,7 @@
 #include "accountingbills.h"
 #include "accountingbill.h"
 #include "accountingtambill.h"
+#include "accountinglsbills.h"
 #include "accountinglsbill.h"
 #include "bill.h"
 #include "pricelist.h"
@@ -588,7 +590,7 @@ bool QCostGUI::printODT() {
         double paperWidth = 210.0, paperHeight = 297.0; // dimensioni foglio
         Qt::Orientation paperOrientation = Qt::Vertical;
         AccountingBillPrinterGUI gui( m_d->project->accounting()->dataModel(), &prPPUDescOption, &prOptions, &prAmountsOptions, &payToPrint,
-                                  &paperWidth, &paperHeight, &paperOrientation,  this );
+                                      &paperWidth, &paperHeight, &paperOrientation,  this );
         if( gui.exec() == QDialog::Accepted ){
             QString fileName = QFileDialog::getSaveFileName(this,
                                                             trUtf8("Stampa Contabilità"), ".",
@@ -623,7 +625,7 @@ bool QCostGUI::printODT() {
         double paperWidth = 210.0, paperHeight = 297.0; // dimensioni foglio
         Qt::Orientation paperOrientation = Qt::Vertical;
         AccountingTAMBillPrinterGUI gui( tamBill, &prPPUDescOption, &prOptions, &prAmountsOptions, &billToPrint,
-                                  &paperWidth, &paperHeight, &paperOrientation,  this );
+                                         &paperWidth, &paperHeight, &paperOrientation,  this );
         if( gui.exec() == QDialog::Accepted ){
             QString fileName = QFileDialog::getSaveFileName(this,
                                                             trUtf8("Stampa Contabilità"), ".",
@@ -635,6 +637,82 @@ bool QCostGUI::printODT() {
                 }
                 AccountingPrinter writer( tamBill, &(m_d->parser) );
                 bool ret = writer.printODT( billToPrint, prOptions, prAmountsOptions, prPPUDescOption, fileName, paperWidth, paperHeight, paperOrientation );
+                if( !m_d->sWordProcessorFile.isEmpty() ){
+                    if( QFileInfo(m_d->sWordProcessorFile).exists() ){
+                        QStringList args;
+                        args << fileName;
+                        QProcess *proc = new QProcess(this);
+                        proc->start(m_d->sWordProcessorFile, args);
+                    }
+                }
+                return ret;
+            }
+        }
+        return false;
+    }
+
+    AccountingLSBills * lsBills = dynamic_cast<AccountingLSBills *> (m_d->projectItemsView->currentItem());
+    if( lsBills != NULL ){
+        AccountingPrinter::PrintOption prOptions = AccountingPrinter::PrintRawMeasures;
+        AccountingPrinter::PrintLSOption prLSOptions = AccountingPrinter::PrintLSProjAcc;
+        AccountingPrinter::PrintPPUDescOption prPPUDescOption = AccountingPrinter::PrintLongDesc;
+        bool printAmounts = true;
+        int billToPrint = -1; // SAL da stampare
+        double paperWidth = 210.0, paperHeight = 297.0; // dimensioni foglio
+        Qt::Orientation paperOrientation = Qt::Vertical;
+        AccountingLSBillPrinterGUI gui( m_d->project->accounting()->dataModel(), &prPPUDescOption, &prOptions, &prLSOptions, &printAmounts,
+                                        &billToPrint, &paperWidth, &paperHeight, &paperOrientation,  this );
+        if( gui.exec() == QDialog::Accepted ){
+            QString fileName = QFileDialog::getSaveFileName(this,
+                                                            trUtf8("Stampa Contabilità"), ".",
+                                                            trUtf8("Documento di testo (*.odt)"));
+            if (!fileName.isEmpty()){
+                QString suf = fileName.split(".").last().toLower();
+                if( suf != "odt"){
+                    fileName.append( ".odt" );
+                }
+                // TODO stampa opere a corpo
+                // AccountingPrinter writer( lsBills, &(m_d->parser) );
+                bool ret = false;
+                // bool ret = writer.printODT( billToPrint, prOptions, prAmountsOptions, prPPUDescOption, fileName, paperWidth, paperHeight, paperOrientation );
+                if( !m_d->sWordProcessorFile.isEmpty() ){
+                    if( QFileInfo(m_d->sWordProcessorFile).exists() ){
+                        QStringList args;
+                        args << fileName;
+                        QProcess *proc = new QProcess(this);
+                        proc->start(m_d->sWordProcessorFile, args);
+                    }
+                }
+                return ret;
+            }
+        }
+        return false;
+    }
+
+    AccountingLSBill * lsBill = dynamic_cast<AccountingLSBill *> (m_d->projectItemsView->currentItem());
+    if( lsBill != NULL ){
+        AccountingPrinter::PrintOption prOptions = AccountingPrinter::PrintRawMeasures;
+        AccountingPrinter::PrintLSOption prLSOptions = AccountingPrinter::PrintLSProjAcc;
+        AccountingPrinter::PrintPPUDescOption prPPUDescOption = AccountingPrinter::PrintLongDesc;
+        bool printAmounts = true;
+        int billToPrint = -1; // SAL da stampare
+        double paperWidth = 210.0, paperHeight = 297.0; // dimensioni foglio
+        Qt::Orientation paperOrientation = Qt::Vertical;
+        AccountingLSBillPrinterGUI gui( m_d->project->accounting()->dataModel(), &prPPUDescOption, &prOptions, &prLSOptions, &printAmounts,
+                                        &billToPrint, &paperWidth, &paperHeight, &paperOrientation,  this );
+        if( gui.exec() == QDialog::Accepted ){
+            QString fileName = QFileDialog::getSaveFileName(this,
+                                                            trUtf8("Stampa Contabilità"), ".",
+                                                            trUtf8("Documento di testo (*.odt)"));
+            if (!fileName.isEmpty()){
+                QString suf = fileName.split(".").last().toLower();
+                if( suf != "odt"){
+                    fileName.append( ".odt" );
+                }
+                // TODO stampa opere a corpo
+                // AccountingPrinter writer( lsBill, &(m_d->parser) );
+                bool ret = false;
+                // bool ret = writer.printODT( billToPrint, prOptions, prAmountsOptions, prPPUDescOption, fileName, paperWidth, paperHeight, paperOrientation );
                 if( !m_d->sWordProcessorFile.isEmpty() ){
                     if( QFileInfo(m_d->sWordProcessorFile).exists() ){
                         QStringList args;
