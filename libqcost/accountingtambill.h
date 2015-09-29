@@ -162,10 +162,10 @@ public:
 
     QList<PriceItem *> connectedPriceItems();
 
-    void writeODTAccountingOnTable( QTextCursor * cursor,
-                                    int payToPrint,
-                                    AccountingPrinter::PrintAmountsOption prAmountsOption,
-                                    AccountingPrinter::PrintPPUDescOption prItemsOption ) const;
+    void writeODTAccountingOnTable(QTextCursor * cursor,
+                                   int billToPrint,
+                                   AccountingPrinter::PrintAmountsOption prAmountsOption,
+                                   AccountingPrinter::PrintPPUDescOption prItemsOption ) const;
 
     void writeODTSummaryOnTable( QTextCursor * cursor,
                                  int payToPrint,

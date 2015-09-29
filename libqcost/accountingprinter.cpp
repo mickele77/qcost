@@ -472,13 +472,13 @@ bool AccountingPrinter::printAccountingBillODT( int payToPrint,
     return false;
 }
 
-bool AccountingPrinter::printAccountingTAMBillODT( int payToPrint,
-                                                AccountingPrinter::PrintOption prOption,
-                                                AccountingPrinter::PrintAmountsOption prAmountsOption,
-                                                AccountingPrinter::PrintPPUDescOption prPPDescOption,
-                                                const QString &fileName,
-                                                double paperWidth, double paperHeight,
-                                                Qt::Orientation paperOrientation) const {
+bool AccountingPrinter::printAccountingTAMBillODT( int billToPrint,
+                                                   AccountingPrinter::PrintOption prOption,
+                                                   AccountingPrinter::PrintAmountsOption prAmountsOption,
+                                                   AccountingPrinter::PrintPPUDescOption prPPDescOption,
+                                                   const QString &fileName,
+                                                   double paperWidth, double paperHeight,
+                                                   Qt::Orientation paperOrientation) const {
     if( m_d->accountingTAMBill != NULL ){
         double tableWidth = paperWidth - 2.0 * AccountingPrinterPrivate::margin;
 
@@ -557,10 +557,12 @@ bool AccountingPrinter::printAccountingTAMBillODT( int payToPrint,
         cursor.insertBlock( headerBlockFormat );
         cursor.setBlockCharFormat( headerBlockCharFormat );
 
-        if( prOption == PrintRawMeasures ){
-            cursor.insertText(QObject::trUtf8("Brogliaccio della lista settimanale") );
-        } else if( prOption == PrintAccounting ){
-            cursor.insertText(QObject::trUtf8("Lista in Economia") );
+        if( billToPrint < 0 ){
+            if( prOption == PrintRawMeasures ){
+                cursor.insertText(QObject::trUtf8("Brogliaccio delle liste in economia") );
+            } else if( prOption == PrintAccounting ){
+                cursor.insertText(QObject::trUtf8("Liste in Economia") );
+            }
         }
 
         cursor.insertBlock( parBlockFormat );
@@ -574,7 +576,7 @@ bool AccountingPrinter::printAccountingTAMBillODT( int payToPrint,
         tableFormat.setColumnWidthConstraints( colWidths );
         cursor.insertTable(1, colWidths.size(), tableFormat );
 
-        m_d->accountingTAMBill->writeODTAccountingOnTable( &cursor, payToPrint, prAmountsOption, prPPDescOption );
+        m_d->accountingTAMBill->writeODTAccountingOnTable( &cursor, billToPrint, prAmountsOption, prPPDescOption );
 
         QFile *file = new QFile(fileName);
         QString suf = QFileInfo(file->fileName()).suffix().toLower().toLatin1();

@@ -111,7 +111,7 @@ private:
                                 AccountingPrinter::PrintPPUDescOption prPPDescOption,
                                 const QString &fileName,
                                 double paperWidth, double paperHeight, Qt::Orientation paperOrientation) const;
-    bool printAccountingTAMBillODT(int payToPrint,
+    bool printAccountingTAMBillODT(int billToPrint,
                                    AccountingPrinter::PrintOption prOption,
                                    AccountingPrinter::PrintAmountsOption prAmountsOption,
                                    AccountingPrinter::PrintPPUDescOption prPPDescOption,
