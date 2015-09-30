@@ -607,6 +607,31 @@ void AccountingTAMBill::writeXml(QXmlStreamWriter *writer) {
     writer->writeAttribute( "priceDataSet", QString::number( m_d->rootItem->currentPriceDataSet() ) );
     writer->writeAttribute( "discount", QString::number( m_d->rootItem->discount() ) );
 
+    QString fields;
+    QList<int> fieldList = m_d->rootItem->totalAmountPriceFields();
+    QList<int>::iterator i= fieldList.begin();
+    if( i != fieldList.end() ){
+        fields += QString::number((*i));
+        ++i;
+    }
+    for( ; i != fieldList.end(); ++i ){
+        fields += ", ";
+        fields += QString::number((*i));
+    }
+    writer->writeAttribute( "totalAmountPriceFields", fields );
+
+    fields.clear();
+    fieldList = m_d->rootItem->noDiscountAmountPriceFields();
+    i= fieldList.begin();
+    if( i != fieldList.end() ){
+        fields += QString::number((*i));
+        ++i;
+    }
+    for( ; i != fieldList.end(); ++i ){
+        fields += ", " + QString::number((*i));
+    }
+    writer->writeAttribute( "noDiscountAmountPriceFields", fields );
+
     m_d->attributeModel->writeXml( writer );
 
     m_d->rootItem->writeXml( writer );
@@ -670,6 +695,30 @@ void AccountingTAMBill::loadFromXml(const QXmlStreamAttributes &attrs, ProjectPr
         }
         if( nameUp == "DATEEND" ){
             m_d->rootItem->setDateEnd( (*i).value().toString() );
+        }
+        if( nameUp == "TOTALAMOUNTPRICEFIELDS" ){
+            QStringList pFieldsStr = (*i).value().toString().split(",");
+            QList<int> pFields;
+            for(QStringList::const_iterator pStr = pFieldsStr.constBegin(); pStr != pFieldsStr.constEnd(); pStr++ ){
+                bool ok = false;
+                int p = (*pStr).toInt( &ok );
+                if( ok ){
+                    pFields << p;
+                }
+            }
+            m_d->rootItem->setTotalAmountPriceFields( pFields );
+        }
+        if( nameUp == "NODISCOUNTAMOUNTPRICEFIELDS" ){
+            QStringList pFieldsStr = (*i).value().toString().split(",");
+            QList<int> pFields;
+            for(QStringList::const_iterator pStr = pFieldsStr.constBegin(); pStr != pFieldsStr.constEnd(); pStr++ ){
+                bool ok = false;
+                int p = (*pStr).toInt( &ok );
+                if( ok ){
+                    pFields << p;
+                }
+            }
+            m_d->rootItem->setNoDiscountAmountPriceFields( pFields );
         }
     }
 }

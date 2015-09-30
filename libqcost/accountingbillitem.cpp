@@ -102,9 +102,11 @@ AccountingBillItem::AccountingBillItem(AccountingBillItem *parentItem, Accountin
 
     if( m_d->totalAmountPriceFieldModel != NULL ){
         connect( m_d->totalAmountPriceFieldModel, &AccountingPriceFieldModel::modelChanged, this, &AccountingBillItem::itemChanged );
+        connect( m_d->totalAmountPriceFieldModel, &AccountingPriceFieldModel::modelChanged, this, &AccountingBillItem::updateTotalAmountToDiscount );
     }
     if( m_d->noDiscountAmountPriceFieldModel != NULL ){
         connect( m_d->noDiscountAmountPriceFieldModel, &AccountingPriceFieldModel::modelChanged, this, &AccountingBillItem::itemChanged );
+        connect( m_d->noDiscountAmountPriceFieldModel, &AccountingPriceFieldModel::modelChanged, this, &AccountingBillItem::updateAmountNotToDiscount );
     }
 
     connect( this, &AccountingBillItem::attributesChanged, this, &AccountingBillItem::itemChanged );
@@ -1009,6 +1011,7 @@ void AccountingBillItem::updateTotalAmountToDiscount() {
     double v = 0.0;
     if( (m_d->itemType == Root) || (m_d->itemType == Payment)){
         for( QList<AccountingBillItem *>::iterator i = m_d->childrenContainer.begin(); i != m_d->childrenContainer.end(); ++i ){
+            (*i)->updateTotalAmountToDiscount();
             v += (*i)->totalAmountToDiscount();
         }
     } else if( (m_d->itemType == PPU) || (m_d->itemType == LumpSum) ) {
@@ -1030,6 +1033,7 @@ void AccountingBillItem::updateAmountNotToDiscount() {
     double v = 0.0;
     if( (m_d->itemType == Root) || (m_d->itemType == Payment)){
         for( QList<AccountingBillItem *>::iterator i = m_d->childrenContainer.begin(); i != m_d->childrenContainer.end(); ++i ){
+            (*i)->updateAmountNotToDiscount();
             v += (*i)->amountNotToDiscount();
         }
     } else if( (m_d->itemType == PPU) || (m_d->itemType == LumpSum) ) {
@@ -1306,7 +1310,6 @@ void AccountingBillItem::writeXml(QXmlStreamWriter *writer) {
         if( m_d->priceItem != NULL ){
             writer->writeAttribute( "priceItem", QString::number( m_d->priceItem->id() ) );
         }
-        writer->writeAttribute( "quantity", QString::number( m_d->quantity ) );
         QString attrs = m_d->attributesString();
         if( !attrs.isEmpty() ){
             writer->writeAttribute( "attributes", attrs );
@@ -1314,7 +1317,10 @@ void AccountingBillItem::writeXml(QXmlStreamWriter *writer) {
 
         if( m_d->measuresModel != NULL ){
             m_d->measuresModel->writeXml( writer );
+        } else {
+            writer->writeAttribute( "quantity", QString::number( m_d->quantity ) );
         }
+
         writer->writeEndElement();
     } else if( m_d->itemType == LumpSum ){
         writer->writeStartElement( "AccountingBillItem" );
@@ -1810,7 +1816,8 @@ QString AccountingBillItem::dateStr() const {
 }
 
 double AccountingBillItem::totalAmountToDiscount() const {
-    if( (m_d->itemType == PPU) || (m_d->itemType == LumpSum) ){
+    if( (m_d->itemType == PPU) || (m_d->itemType == LumpSum) ||
+            (m_d->itemType == Payment) || (m_d->itemType == Root) ){
         return m_d->totalAmountToDiscount;
     } else if( (m_d->itemType == TimeAndMaterials) && (m_d->tamBillItem != NULL) ){
         return m_d->tamBillItem->totalAmountToDiscount();
@@ -1832,7 +1839,8 @@ double AccountingBillItem::totalAmountToDiscount(AccountingBillItem::ItemType iT
 }
 
 double AccountingBillItem::amountNotToDiscount() const {
-    if( (m_d->itemType == PPU) || (m_d->itemType == LumpSum) ){
+    if( (m_d->itemType == PPU) || (m_d->itemType == LumpSum) ||
+            (m_d->itemType == Payment) || (m_d->itemType == Root) ){
         return m_d->amountNotToDiscount;
     } else if( (m_d->itemType == TimeAndMaterials) && (m_d->tamBillItem != NULL) ){
         return m_d->tamBillItem->amountNotToDiscount();
@@ -1854,7 +1862,8 @@ double AccountingBillItem::amountNotToDiscount(AccountingBillItem::ItemType iTyp
 }
 
 double AccountingBillItem::amountToDiscount() const {
-    if( (m_d->itemType == PPU) || (m_d->itemType == LumpSum) ){
+    if( (m_d->itemType == PPU) || (m_d->itemType == LumpSum) ||
+            (m_d->itemType == Payment) || (m_d->itemType == Root) ){
         return m_d->amountToDiscount;
     } else if( (m_d->itemType == TimeAndMaterials) && (m_d->tamBillItem != NULL) ){
         return m_d->tamBillItem->amountToDiscount();
@@ -1876,7 +1885,8 @@ double AccountingBillItem::amountToDiscount(AccountingBillItem::ItemType iType) 
 }
 
 double AccountingBillItem::amountDiscounted() const {
-    if( (m_d->itemType == PPU) || (m_d->itemType == LumpSum) ){
+    if( (m_d->itemType == PPU) || (m_d->itemType == LumpSum) ||
+            (m_d->itemType == Payment) || (m_d->itemType == Root) ){
         return m_d->amountDiscounted;
     } else if( (m_d->itemType == TimeAndMaterials) && (m_d->tamBillItem != NULL) ){
         return m_d->tamBillItem->amountDiscounted();
@@ -1898,7 +1908,8 @@ double AccountingBillItem::amountDiscounted(AccountingBillItem::ItemType iType) 
 }
 
 double AccountingBillItem::totalAmount() const {
-    if( (m_d->itemType == PPU) || (m_d->itemType == LumpSum) ){
+    if( (m_d->itemType == PPU) || (m_d->itemType == LumpSum) ||
+            (m_d->itemType == Payment) || (m_d->itemType == Root) ){
         return m_d->totalAmount;
     } else if( (m_d->itemType == TimeAndMaterials) && (m_d->tamBillItem != NULL) ){
         return m_d->tamBillItem->totalAmount();

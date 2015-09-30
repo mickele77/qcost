@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<QCostProject version="0.4">
+    <PriceFieldModel>
+        <PriceFieldData priceName="Costo Unitario" amountName="Importo" unitMeasure="€" precision="2" applyFormula="false" formula="" fieldType="PriceTotal"/>
+        <PriceFieldData priceName="Costo Unitario M.O." amountName="Importo M.O." unitMeasure="€" precision="2" applyFormula="false" formula="" fieldType="PriceHuman"/>
+        <PriceFieldData priceName="Costo Unitario Netto M.O." amountName="Importo Netto M.O." unitMeasure="€" precision="2" applyFormula="true" formula="$2$ / ((1 + $SG$) * (1 + $UI$))" fieldType="PriceHumanNet"/>
+        <PriceFieldData priceName="Costo Unitario sog. rib." amountName="Importo sogg. ribasso" unitMeasure="€" precision="2" applyFormula="true" formula="$1$ - $3$" fieldType="PriceNoHumanNet"/>
+    </PriceFieldModel>
+    <UnitMeasureModel>
+        <UnitMeasure id="3" tag="cad" description="Cadauno" precision="2"/>
+        <UnitMeasure id="2" tag="m" description="Metro" precision="2"/>
+        <UnitMeasure id="1" tag="m²" description="Metri quadrati" precision="2"/>
+        <UnitMeasure id="0" tag="m³" description="Metri cubi" precision="3"/>
+        <UnitMeasure id="4" tag="h" description="" precision="3"/>
+    </UnitMeasureModel>
+    <PriceLists>
+        <PriceList id="0" name="Prezzario 1" description="">
+            <PriceItemDataSet overheads="0.13" profits="0.1"/>
+            <PriceItem id="1" code="A001" inheritCodeFromParent="true" shortDescription="Denominazione 1" inheritShortDescFromParent="false" longDescription="Descrizione 1" inheritLongDescFromParent="false" unitMeasure="2">
+                <PriceItemDataSet value0="20" value1="3" value2="2.41" value3="17.59"/>
+            </PriceItem>
+            <PriceItem id="2" code="A002" inheritCodeFromParent="true" shortDescription="Denominazione 2" inheritShortDescFromParent="false" longDescription="Descrizione 2" inheritLongDescFromParent="false" unitMeasure="1">
+                <PriceItemDataSet value0="30" value1="2" value2="1.61" value3="28.39"/>
+            </PriceItem>
+            <PriceItem id="3" code="01.P01.A10" inheritCodeFromParent="false" shortDescription="Operaio specializzato " inheritShortDescFromParent="false" longDescription="Operaio specializzato " inheritLongDescFromParent="false">
+                <PriceItem id="4" code="01.P01.A10.005" inheritCodeFromParent="false" shortDescription="Ore normali" inheritShortDescFromParent="true" longDescription="Ore normali" inheritLongDescFromParent="true" unitMeasure="4">
+                    <PriceItemDataSet value0="27.58" value1="27.58" value2="22.19" value3="5.39"/>
+                </PriceItem>
+            </PriceItem>
+            <PriceItem id="5" code="01.P01.A20" inheritCodeFromParent="false" shortDescription="Operaio qualificato" inheritShortDescFromParent="false" longDescription="Operaio qualificato" inheritLongDescFromParent="false">
+                <PriceItem id="6" code="01.P01.A20.005" inheritCodeFromParent="false" shortDescription="Ore normali" inheritShortDescFromParent="true" longDescription="Ore normali" inheritLongDescFromParent="true" unitMeasure="4">
+                    <PriceItemDataSet value0="25.65" value1="25.65" value2="20.64" value3="5.01"/>
+                </PriceItem>
+            </PriceItem>
+            <PriceItem id="7" code="01.P01.A30" inheritCodeFromParent="false" shortDescription="Operaio comune" inheritShortDescFromParent="false" longDescription="Operaio comune" inheritLongDescFromParent="false">
+                <PriceItem id="8" code="01.P01.A30.005" inheritCodeFromParent="false" shortDescription="Ore normali" inheritShortDescFromParent="true" longDescription="Ore normali" inheritLongDescFromParent="true" unitMeasure="4">
+                    <PriceItemDataSet value0="23.13" value1="23.13" value2="18.61" value3="4.52"/>
+                </PriceItem>
+            </PriceItem>
+        </PriceList>
+    </PriceLists>
+    <Bills>
+        <Bill id="0" name="Computo 1" description="" priceList="0" priceDataSet="0">
+            <AttributeModel/>
+        </Bill>
+    </Bills>
+    <Accounting>
+        <PaymentDatas>
+            <PaymentData dateBegin="2457296" dateEnd="2457296"/>
+        </PaymentDatas>
+        <AccountingBills>
+            <AccountingBill id="0" name="Libretto 1" discount="0" totalAmountPriceFields="0" noDiscountAmountPriceFields="2" priceList="0" priceDataSet="0">
+                <AttributeModel/>
+                <AccountingBillItem itemType="Payment">
+                    <AccountingBillItem itemType="PPU" id="1" date="2457288" priceItem="1">
+                        <MeasuresModel>
+                            <Measure comment="" formula="25"/>
+                        </MeasuresModel>
+                    </AccountingBillItem>
+                    <AccountingBillItem itemType="Comment" id="2" text="Iniziamo"/>
+                    <AccountingBillItem itemType="PPU" id="3" date="2457288" priceItem="2">
+                        <MeasuresModel>
+                            <Measure comment="" formula="5"/>
+                            <Measure comment="proviamo" formula="2"/>
+                        </MeasuresModel>
+                    </AccountingBillItem>
+                    <AccountingBillItem itemType="TimeAndMaterials" id="4" date="2457296" timeAndMaterials="1"/>
+                </AccountingBillItem>
+            </AccountingBill>
+        </AccountingBills>
+        <AccountingLSBills/>
+        <AccountingTAMBill id="0" name="Opere in economia" description="" priceList="0" priceDataSet="0" discount="0" totalAmountPriceFields="0" noDiscountAmountPriceFields="2">
+            <AttributeModel/>
+            <AccountingBillItem itemType="Payment">
+                <AccountingBillItem itemType="Comment" id="2" text="Manodopera per assistenza scavi"/>
+                <AccountingBillItem itemType="PPU" id="3" date="2457296" priceItem="4">
+                    <MeasuresModel>
+                        <Measure comment="Mariano Giovanni" formula="8"/>
+                    </MeasuresModel>
+                </AccountingBillItem>
+                <AccountingBillItem itemType="PPU" id="4" date="2457296" priceItem="8">
+                    <MeasuresModel>
+                        <Measure comment="Del Campo Filippo" formula="8"/>
+                        <Measure comment="Rossi Giacomo" formula="8"/>
+                    </MeasuresModel>
+                </AccountingBillItem>
+                <AccountingBillItem itemType="PPU" id="5" date="2457296" priceItem="8">
+                    <MeasuresModel>
+                        <Measure comment="Bongiovanni Filippo" formula="8"/>
+                    </MeasuresModel>
+                </AccountingBillItem>
+            </AccountingBillItem>
+        </AccountingTAMBill>
+    </Accounting>
+</QCostProject>
