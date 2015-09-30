@@ -52,7 +52,7 @@ void AccountingItemCommentGUI::setAccountingItem(AccountingTAMBillItem *b) {
         m_d->TAMBillItem = b;
 
         if( m_d->TAMBillItem != NULL ){
-            m_d->ui->titleLineEdit->setText( m_d->TAMBillItem->name() );
+            m_d->ui->titleLineEdit->setText( m_d->TAMBillItem->text() );
             connect( m_d->TAMBillItem, &AccountingTAMBillItem::textChanged, this, &AccountingItemCommentGUI::updateTextLineEdit );
             connect( m_d->TAMBillItem, &AccountingTAMBillItem::aboutToBeDeleted, this, &AccountingItemCommentGUI::setAccountingItemNULL );
             connect( m_d->ui->titleLineEdit, &QLineEdit::textEdited, this, &AccountingItemCommentGUI::updateTextMeasure );

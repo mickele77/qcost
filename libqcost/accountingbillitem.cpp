@@ -1810,160 +1810,148 @@ QString AccountingBillItem::dateStr() const {
 }
 
 double AccountingBillItem::totalAmountToDiscount() const {
-    return m_d->totalAmountToDiscount;
+    if( (m_d->itemType == PPU) || (m_d->itemType == LumpSum) ){
+        return m_d->totalAmountToDiscount;
+    } else if( (m_d->itemType == TimeAndMaterials) && (m_d->tamBillItem != NULL) ){
+        return m_d->tamBillItem->totalAmountToDiscount();
+    }
+    return 0.0;
 }
 
 double AccountingBillItem::totalAmountToDiscount(AccountingBillItem::ItemType iType) const {
-    if( (iType == Root) || (iType == Payment) ){
-        return m_d->totalAmountToDiscount;
+    if( iType == m_d->itemType ){
+        return totalAmountToDiscount();
     } else {
         double ret = 0.0;
-        if( m_d->childrenContainer.size() > 0 ){
-            for( QList<AccountingBillItem *>::iterator i = m_d->childrenContainer.begin(); i != m_d->childrenContainer.end(); ++i ){
-                ret += (*i)->totalAmountToDiscount( iType );
-            }
-        } else {
-            if( (m_d->itemType == PPU) || (m_d->itemType == LumpSum) ){
-                ret = m_d->totalAmountToDiscount;
-            } else if( m_d->itemType == TimeAndMaterials ){
-                ret = m_d->tamBillItem->totalAmountToDiscount();
-            }
+        for( QList<AccountingBillItem *>::iterator i = m_d->childrenContainer.begin(); i != m_d->childrenContainer.end(); ++i ){
+            ret += (*i)->totalAmountToDiscount( iType );
         }
         return ret;
     }
+    return 0.0;
 }
 
 double AccountingBillItem::amountNotToDiscount() const {
-    return m_d->amountNotToDiscount;
+    if( (m_d->itemType == PPU) || (m_d->itemType == LumpSum) ){
+        return m_d->amountNotToDiscount;
+    } else if( (m_d->itemType == TimeAndMaterials) && (m_d->tamBillItem != NULL) ){
+        return m_d->tamBillItem->amountNotToDiscount();
+    }
+    return 0.0;
 }
 
 double AccountingBillItem::amountNotToDiscount(AccountingBillItem::ItemType iType) const {
-    if( (iType == Root) || (iType == Payment) ){
-        return m_d->amountNotToDiscount;
+    if( iType == m_d->itemType ){
+        return amountNotToDiscount();
     } else {
         double ret = 0.0;
-        if( m_d->childrenContainer.size() > 0 ){
-            for( QList<AccountingBillItem *>::iterator i = m_d->childrenContainer.begin(); i != m_d->childrenContainer.end(); ++i ){
-                ret += (*i)->amountNotToDiscount( iType );
-            }
-        } else {
-            if( (m_d->itemType == PPU) || (m_d->itemType == LumpSum) ){
-                ret = m_d->amountNotToDiscount;
-            } else if( m_d->itemType == TimeAndMaterials ){
-                ret = m_d->tamBillItem->amountNotToDiscount();
-            }
+        for( QList<AccountingBillItem *>::iterator i = m_d->childrenContainer.begin(); i != m_d->childrenContainer.end(); ++i ){
+            ret += (*i)->amountNotToDiscount( iType );
         }
         return ret;
     }
+    return 0.0;
 }
 
 double AccountingBillItem::amountToDiscount() const {
-    return m_d->amountToDiscount;
+    if( (m_d->itemType == PPU) || (m_d->itemType == LumpSum) ){
+        return m_d->amountToDiscount;
+    } else if( (m_d->itemType == TimeAndMaterials) && (m_d->tamBillItem != NULL) ){
+        return m_d->tamBillItem->amountToDiscount();
+    }
+    return 0.0;
 }
 
 double AccountingBillItem::amountToDiscount(AccountingBillItem::ItemType iType) const {
-    if( (iType == Root) || (iType == Payment) ){
-        return m_d->amountToDiscount;
+    if( iType == m_d->itemType ){
+        return amountToDiscount();
     } else {
         double ret = 0.0;
-        if( m_d->childrenContainer.size() > 0 ){
-            for( QList<AccountingBillItem *>::iterator i = m_d->childrenContainer.begin(); i != m_d->childrenContainer.end(); ++i ){
-                ret += (*i)->amountToDiscount( iType );
-            }
-        } else {
-            if( (m_d->itemType == PPU) || (m_d->itemType == LumpSum) ){
-                ret = m_d->amountToDiscount;
-            } else if( m_d->itemType == TimeAndMaterials ){
-                ret = m_d->tamBillItem->amountToDiscount();
-            }
+        for( QList<AccountingBillItem *>::iterator i = m_d->childrenContainer.begin(); i != m_d->childrenContainer.end(); ++i ){
+            ret += (*i)->amountToDiscount( iType );
         }
         return ret;
     }
+    return 0.0;
 }
 
 double AccountingBillItem::amountDiscounted() const {
-    return m_d->amountDiscounted;
+    if( (m_d->itemType == PPU) || (m_d->itemType == LumpSum) ){
+        return m_d->amountDiscounted;
+    } else if( (m_d->itemType == TimeAndMaterials) && (m_d->tamBillItem != NULL) ){
+        return m_d->tamBillItem->amountDiscounted();
+    }
+    return 0.0;
 }
 
 double AccountingBillItem::amountDiscounted(AccountingBillItem::ItemType iType) const {
-    if( (iType == Root) || (iType == Payment) ){
-        return m_d->amountDiscounted;
+    if( iType == m_d->itemType ){
+        return amountDiscounted();
     } else {
         double ret = 0.0;
-        if( m_d->childrenContainer.size() > 0 ){
-            for( QList<AccountingBillItem *>::iterator i = m_d->childrenContainer.begin(); i != m_d->childrenContainer.end(); ++i ){
-                ret += (*i)->amountDiscounted( iType );
-            }
-        } else {
-            if( m_d->itemType == PPU ){
-                ret = m_d->amountDiscounted;
-            } else if( m_d->itemType == LumpSum ){
-
-            } else if( m_d->itemType == TimeAndMaterials ){
-                ret = m_d->tamBillItem->amountDiscounted();
-            }
+        for( QList<AccountingBillItem *>::iterator i = m_d->childrenContainer.begin(); i != m_d->childrenContainer.end(); ++i ){
+            ret += (*i)->amountDiscounted( iType );
         }
         return ret;
     }
+    return 0.0;
 }
 
 double AccountingBillItem::totalAmount() const {
-    return m_d->totalAmount;
+    if( (m_d->itemType == PPU) || (m_d->itemType == LumpSum) ){
+        return m_d->totalAmount;
+    } else if( (m_d->itemType == TimeAndMaterials) && (m_d->tamBillItem != NULL) ){
+        return m_d->tamBillItem->totalAmount();
+    }
+    return 0.0;
 }
 
 double AccountingBillItem::totalAmount(AccountingBillItem::ItemType iType) const {
-    if( (iType == Root) || (iType == Payment) ){
-        return m_d->totalAmount;
+    if( iType == m_d->itemType ){
+        return totalAmount();
     } else {
         double ret = 0.0;
-        if( m_d->childrenContainer.size() > 0 ){
-            for( QList<AccountingBillItem *>::iterator i = m_d->childrenContainer.begin(); i != m_d->childrenContainer.end(); ++i ){
-                ret += (*i)->totalAmount( iType );
-            }
-        } else {
-            if( (m_d->itemType == PPU) || (m_d->itemType == LumpSum) ){
-                ret = m_d->totalAmount;
-            } else if( m_d->itemType == TimeAndMaterials ){
-                ret = m_d->tamBillItem->totalAmount();
-            }
+        for( QList<AccountingBillItem *>::iterator i = m_d->childrenContainer.begin(); i != m_d->childrenContainer.end(); ++i ){
+            ret += (*i)->totalAmount( iType );
         }
         return ret;
     }
+    return 0.0;
 }
 
 QString AccountingBillItem::totalAmountToDiscountStr() const {
     if( m_d->itemType == Comment ){
         return QString();
     }
-    return m_d->toString( m_d->totalAmountToDiscount, 'f', m_d->amountPrecision );
+    return m_d->toString( totalAmountToDiscount(), 'f', m_d->amountPrecision );
 }
 
 QString AccountingBillItem::amountNotToDiscountStr() const{
     if( m_d->itemType == Comment ){
         return QString();
     }
-    return m_d->toString( m_d->amountNotToDiscount, 'f', m_d->amountPrecision );
+    return m_d->toString( amountNotToDiscount(), 'f', m_d->amountPrecision );
 }
 
 QString AccountingBillItem::amountToDiscountStr() const {
     if( m_d->itemType == Comment ){
         return QString();
     }
-    return m_d->toString( m_d->amountToDiscount, 'f', m_d->amountPrecision );
+    return m_d->toString( amountToDiscount(), 'f', m_d->amountPrecision );
 }
 
 QString AccountingBillItem::amountDiscountedStr() const {
     if( m_d->itemType == Comment ){
         return QString();
     }
-    return m_d->toString( m_d->amountDiscounted, 'f', m_d->amountPrecision );
+    return m_d->toString( amountDiscounted(), 'f', m_d->amountPrecision );
 }
 
 QString AccountingBillItem::totalAmountStr() const {
     if( m_d->itemType == Comment ){
         return QString();
     }
-    return m_d->toString( m_d->totalAmount, 'f', m_d->amountPrecision );
+    return m_d->toString( totalAmount(), 'f', m_d->amountPrecision );
 }
 
 QString AccountingBillItem::title() const{
