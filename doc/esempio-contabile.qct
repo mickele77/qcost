@@ -15,7 +15,7 @@
     </UnitMeasureModel>
     <PriceLists>
         <PriceList id="0" name="Prezzario 1" description="">
-            <PriceItemDataSet overheads="0.13" profits="0.1"/>
+            <PriceItemDataSet/>
             <PriceItem id="1" code="A001" inheritCodeFromParent="true" shortDescription="Denominazione 1" inheritShortDescFromParent="false" longDescription="Descrizione 1" inheritLongDescFromParent="false" unitMeasure="2">
                 <PriceItemDataSet value0="20" value1="3" value2="2.41" value3="17.59"/>
             </PriceItem>
@@ -46,10 +46,10 @@
     </Bills>
     <Accounting>
         <PaymentDatas>
-            <PaymentData dateBegin="2457296" dateEnd="2457296"/>
+            <PaymentData dateBegin="2457298" dateEnd="2457298"/>
         </PaymentDatas>
         <AccountingBills>
-            <AccountingBill id="0" name="Libretto 1" discount="0" totalAmountPriceFields="0" noDiscountAmountPriceFields="2" priceList="0" priceDataSet="0">
+            <AccountingBill id="0" name="Libretto 1" discount="0.25" totalAmountPriceFields="0" noDiscountAmountPriceFields="2" priceList="0" priceDataSet="0">
                 <AttributeModel/>
                 <AccountingBillItem itemType="Payment">
                     <AccountingBillItem itemType="PPU" id="1" date="2457288" priceItem="1">
@@ -69,7 +69,7 @@
             </AccountingBill>
         </AccountingBills>
         <AccountingLSBills/>
-        <AccountingTAMBill id="0" name="Opere in economia" description="" priceList="0" priceDataSet="0" discount="0" totalAmountPriceFields="0" noDiscountAmountPriceFields="2">
+        <AccountingTAMBill id="0" name="Opere in economia" priceList="0" priceDataSet="0" discount="0.1" totalAmountPriceFields="0" noDiscountAmountPriceFields="2">
             <AttributeModel/>
             <AccountingBillItem itemType="Payment">
                 <AccountingBillItem itemType="Comment" id="2" text="Manodopera per assistenza scavi"/>

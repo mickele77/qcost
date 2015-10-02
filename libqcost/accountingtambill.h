@@ -67,7 +67,6 @@ public:
     virtual ~AccountingTAMBill();
 
     QString name();
-    QString description();
 
     ProjectItem *child(int number);
     int childCount() const;
@@ -97,7 +96,9 @@ public:
     int priceDataSet();
 
     double discount();
+    QString discountStr();
     void setDiscount(double newVal);
+    void setDiscount(const QString & newVal);
 
     QList<AccountingTAMBillItem *> bills();
 
@@ -182,7 +183,6 @@ public:
 
 public slots:
     void setName( const QString & n);
-    void setDescription( const QString & value );
     void setPriceDataSet( int );
 
 signals:
@@ -197,7 +197,7 @@ signals:
     void amountDiscountedChanged( const QString & newVal );
     void totalAmountChanged( const QString & newVal );
 
-    void discountChanged( double );
+    void discountChanged( const QString & );
     void modelChanged();
 
 

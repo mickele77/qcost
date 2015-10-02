@@ -74,6 +74,8 @@ AccountingTAMBillDataGUI::AccountingTAMBillDataGUI(PriceFieldModel * pfm, MathPa
     m_d->ui->attributesTableView->setContextMenuPolicy(Qt::CustomContextMenu);
     m_d->ui->attributesTableView->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
     connect(m_d->ui->attributesTableView, &QTableView::customContextMenuRequested, this, &AccountingTAMBillDataGUI::attributesTableViewCustomMenuRequested );
+
+    connect( m_d->ui->discountLineEdit, &QLineEdit::editingFinished, this, &AccountingTAMBillDataGUI::setDiscount );
 }
 
 AccountingTAMBillDataGUI::~AccountingTAMBillDataGUI(){
@@ -101,6 +103,7 @@ void AccountingTAMBillDataGUI::setAccountingTAMBill(AccountingTAMBill *b) {
                 m_d->amountLEditList.at(i)->clear();
             }
         }
+        m_d->ui->discountLineEdit->clear();
         m_d->ui->totalPriceFieldTableView->setModel( NULL );
         m_d->ui->noDiscountPriceFieldTableView->setModel( NULL );
         m_d->ui->attributesTableView->setModel( NULL );
@@ -119,6 +122,9 @@ void AccountingTAMBillDataGUI::setAccountingTAMBill(AccountingTAMBill *b) {
             m_d->ui->totalAmountLineEdit->setText( m_d->accounting->totalAmountStr() );
             connect( m_d->accounting, &AccountingTAMBill::totalAmountChanged, m_d->ui->totalAmountLineEdit, &QLineEdit::setText );
 
+            m_d->ui->discountLineEdit->setText( m_d->accounting->discountStr());
+            connect( m_d->accounting, &AccountingTAMBill::discountChanged, m_d->ui->discountLineEdit, &QLineEdit::setText );
+
             setPriceListComboBox();
             connect( m_d->ui->priceListComboBox, static_cast<void(QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this, &AccountingTAMBillDataGUI::setPriceList );
             setPriceDataSetSpinBox();
@@ -135,7 +141,7 @@ void AccountingTAMBillDataGUI::setAccountingTAMBill(AccountingTAMBill *b) {
 
 void AccountingTAMBillDataGUI::setDiscount() {
     if( m_d->accounting != NULL ){
-        // m_d->accounting->setDiscount( m_d->ui->discountLineEdit->text() );
+        m_d->accounting->setDiscount( m_d->ui->discountLineEdit->text() );
     }
 }
 

@@ -67,7 +67,6 @@ public:
     unsigned int id;
 
     QString name;
-    QString description;
 
     PriceFieldModel * priceFieldModel;
     MathParser * parser;
@@ -89,6 +88,7 @@ AccountingTAMBill::AccountingTAMBill( const QString &n, ProjectItem *parent, Pri
     connect( m_d->rootItem, &AccountingTAMBillItem::amountToDiscountChanged, this, &AccountingTAMBill::amountToDiscountChanged );
     connect( m_d->rootItem, &AccountingTAMBillItem::amountDiscountedChanged, this, &AccountingTAMBill::amountDiscountedChanged );
     connect( m_d->rootItem, &AccountingTAMBillItem::totalAmountChanged, this, &AccountingTAMBill::totalAmountChanged );
+    connect( m_d->rootItem, &AccountingTAMBillItem::discountChanged, this, &AccountingTAMBill::discountChanged );
 
     connect( m_d->rootItem, &AccountingTAMBillItem::itemChanged, this, &AccountingTAMBill::modelChanged );
 
@@ -135,7 +135,6 @@ AccountingTAMBill::~AccountingTAMBill(){
 
 AccountingTAMBill &AccountingTAMBill::operator=(const AccountingTAMBill &cp) {
     setName( cp.m_d->name );
-    setDescription( cp.m_d->description );
     setPriceList( cp.m_d->priceList );
     *(m_d->rootItem) = *(cp.m_d->rootItem);
     return *this;
@@ -152,17 +151,6 @@ void AccountingTAMBill::setName(const QString &value) {
         if( m_parentItem ){
             m_parentItem->setDataChanged( 0, this );
         }
-    }
-}
-
-QString AccountingTAMBill::description() {
-    return m_d->description;
-}
-
-void AccountingTAMBill::setDescription(const QString &value) {
-    if( m_d->description != value ){
-        m_d->description = value;
-        emit descriptionChanged( value );
     }
 }
 
@@ -330,7 +318,15 @@ double AccountingTAMBill::discount() {
     return m_d->rootItem->discount();
 }
 
+QString AccountingTAMBill::discountStr() {
+    return m_d->rootItem->discountStr();
+}
+
 void AccountingTAMBill::setDiscount(double newVal) {
+    m_d->rootItem->setDiscount( newVal );
+}
+
+void AccountingTAMBill::setDiscount( const QString & newVal) {
     m_d->rootItem->setDiscount( newVal );
 }
 
@@ -600,7 +596,6 @@ void AccountingTAMBill::writeXml(QXmlStreamWriter *writer) {
     writer->writeStartElement( "AccountingTAMBill" );
     writer->writeAttribute( "id", QString::number(m_d->id) );
     writer->writeAttribute( "name", m_d->name );
-    writer->writeAttribute( "description", m_d->description );
     if( m_d->priceList ){
         writer->writeAttribute( "priceList", QString::number( m_d->priceList->id() ) );
     }
@@ -681,9 +676,6 @@ void AccountingTAMBill::loadFromXml(const QXmlStreamAttributes &attrs, ProjectPr
         if( nameUp == "NAME" ){
             setName( (*i).value().toString() );
         }
-        if( nameUp == "DESCRIPTION" ){
-            setDescription( (*i).value().toString() );
-        }
         if( nameUp == "PRICELIST" ){
             m_d->priceList = priceLists->priceListId( (*i).value().toUInt() );
         }
@@ -695,6 +687,9 @@ void AccountingTAMBill::loadFromXml(const QXmlStreamAttributes &attrs, ProjectPr
         }
         if( nameUp == "DATEEND" ){
             m_d->rootItem->setDateEnd( (*i).value().toString() );
+        }
+        if( nameUp == "DISCOUNT" ){
+            m_d->rootItem->setDiscount( (*i).value().toDouble() );
         }
         if( nameUp == "TOTALAMOUNTPRICEFIELDS" ){
             QStringList pFieldsStr = (*i).value().toString().split(",");
@@ -731,9 +726,6 @@ void AccountingTAMBill::loadFromXmlTmp(const QXmlStreamAttributes &attrs) {
         }
         if( nameUp == "NAME" ){
             setName( (*i).value().toString() );
-        }
-        if( nameUp == "DESCRIPTION" ){
-            setDescription( (*i).value().toString() );
         }
         if( nameUp == "PRICELIST" ){
             m_d->priceListIdTmp = (*i).value().toUInt();

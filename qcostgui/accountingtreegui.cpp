@@ -453,8 +453,8 @@ void AccountingTreeGUI::setAccountingBill(AccountingBill *b ) {
         m_d->ui->treeView->setModel( b );
         if( m_d->accountingBill != NULL ){
             m_d->ui->totalAmountLineEdit->setText( m_d->accountingBill->totalAmountStr() );
-            m_d->ui->totalAmountToDiscountLineEdit->setText( m_d->accountingBill->amountNotToDiscountStr() );
-            m_d->ui->amountNotToDiscountLineEdit->setText( m_d->accountingBill->totalAmountToDiscountStr() );
+            m_d->ui->totalAmountToDiscountLineEdit->setText( m_d->accountingBill->totalAmountToDiscountStr() );
+            m_d->ui->amountNotToDiscountLineEdit->setText( m_d->accountingBill->amountNotToDiscountStr() );
             connect( m_d->accountingBill, &AccountingBill::totalAmountToDiscountChanged, m_d->ui->totalAmountToDiscountLineEdit, &QLineEdit::setText );
             connect( m_d->accountingBill, &AccountingBill::amountNotToDiscountChanged, m_d->ui->amountNotToDiscountLineEdit, &QLineEdit::setText );
             connect( m_d->accountingBill, &AccountingBill::totalAmountChanged, m_d->ui->totalAmountLineEdit, &QLineEdit::setText );
@@ -497,9 +497,11 @@ void AccountingTreeGUI::setAccountingTAMBill(AccountingTAMBill *b ) {
         m_d->ui->priceListComboBox->setCurrentIndex( 0 );
         m_d->ui->currentPriceDataSetSpinBox->setMaximum(1);
         m_d->ui->currentPriceDataSetSpinBox->setValue(1);
+
         m_d->ui->totalAmountLineEdit->clear();
         m_d->ui->totalAmountToDiscountLineEdit->clear();
         m_d->ui->amountNotToDiscountLineEdit->clear();
+
         if( m_d->ui->treeView->selectionModel() ){
             disconnect( m_d->ui->treeView->selectionModel(), &QItemSelectionModel::currentChanged, this, &AccountingTreeGUI::changeCurrentItem  );
         }
@@ -510,8 +512,8 @@ void AccountingTreeGUI::setAccountingTAMBill(AccountingTAMBill *b ) {
 
         if( m_d->accountingTAMBill != NULL ){
             m_d->ui->totalAmountLineEdit->setText( m_d->accountingTAMBill->totalAmountStr() );
-            m_d->ui->totalAmountToDiscountLineEdit->setText( m_d->accountingTAMBill->amountNotToDiscountStr() );
-            m_d->ui->amountNotToDiscountLineEdit->setText( m_d->accountingTAMBill->totalAmountToDiscountStr() );
+            m_d->ui->amountNotToDiscountLineEdit->setText( m_d->accountingTAMBill->amountNotToDiscountStr() );
+            m_d->ui->totalAmountToDiscountLineEdit->setText( m_d->accountingTAMBill->totalAmountToDiscountStr() );
             connect( m_d->accountingTAMBill, &AccountingTAMBill::totalAmountToDiscountChanged, m_d->ui->totalAmountToDiscountLineEdit, &QLineEdit::setText );
             connect( m_d->accountingTAMBill, &AccountingTAMBill::amountNotToDiscountChanged, m_d->ui->amountNotToDiscountLineEdit, &QLineEdit::setText );
             connect( m_d->accountingTAMBill, &AccountingTAMBill::totalAmountChanged, m_d->ui->totalAmountLineEdit, &QLineEdit::setText );

@@ -1788,6 +1788,8 @@ void AccountingBillItem::setTAMBillItem(AccountingTAMBillItem *newTAMBillItem) {
         emit tamBillItemChanged( m_d->tamBillItem );
         emit dateBeginChanged( dateBeginStr() );
         emit dateEndChanged( dateEndStr() );
+        updateTotalAmountToDiscount();
+        updateAmountToDiscount();
     }
 }
 
@@ -2387,6 +2389,9 @@ void AccountingBillItem::writeODTAccountingOnTable(QTextCursor *cursor, int payT
                 AccountingBillItemPrivate::writeCell( cursor, table, centralSubTitleFormat, numBlockFormat );
                 AccountingBillItemPrivate::writeCell( cursor, table, rightSubTitleFormat, numBlockFormat );
             }
+
+            // *** Riga vuota ***
+            AccountingBillItemPrivate::insertEmptyRow( cellCount, cursor, leftFormat, centralFormat, rightFormat );
 
             for( QList<AccountingBillItem *>::iterator i = m_d->childrenContainer.begin(); i != m_d->childrenContainer.end(); ++i){
                 (*i)->writeODTAccountingOnTable( cursor, 0, prAmountsOption, prPPUDescOption );
