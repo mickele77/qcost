@@ -18,7 +18,7 @@
 */
 #include "projectaccountingparentitem.h"
 
-#include "paymentadatamodel.h"
+#include "paymentdatamodel.h"
 #include "paymentdata.h"
 #include "accountingbills.h"
 #include "accountingbill.h"
@@ -116,7 +116,7 @@ int ProjectAccountingParentItem::workProgressBillsCount() {
 }
 
 PaymentData *ProjectAccountingParentItem::workProgressBillData(int pos) {
-    return m_d->dataModel->billData( pos );
+    return m_d->dataModel->paymentData( pos );
 }
 
 PaymentDataModel * ProjectAccountingParentItem::dataModel(){
@@ -305,7 +305,7 @@ void ProjectAccountingParentItem::insertPayments( int position, int count) {
         m_d->dataModel->insertPayments( position );
         for( int j=0; j<m_d->measuresBills->billCount(); ++j ){
             AccountingBillItem * addedItem = m_d->measuresBills->bill(j)->item(position);
-            m_d->dataModel->billData( position )->addBillItem( addedItem );
+            m_d->dataModel->paymentData( position )->addBillItem( addedItem );
         }
     }
 }

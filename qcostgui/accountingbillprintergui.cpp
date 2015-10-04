@@ -19,7 +19,7 @@
 #include "accountingbillprintergui.h"
 #include "ui_accountingbillprintergui.h"
 
-#include "paymentadatamodel.h"
+#include "paymentdatamodel.h"
 #include "paymentdata.h"
 
 #include <QPageSize>
@@ -118,7 +118,7 @@ AccountingBillPrinterGUI::AccountingBillPrinterGUI(PaymentDataModel * dataModel,
 
     m_d->ui->billToPrintComboBox->insertItem(0, trUtf8("Tutti"));
     for( int i=0; i < dataModel->paymentsCount(); ++i ){
-        m_d->ui->billToPrintComboBox->insertItem((i+1), dataModel->billData(i)->name() );
+        m_d->ui->billToPrintComboBox->insertItem((i+1), dataModel->paymentData(i)->name() );
     }
     m_d->ui->billToPrintComboBox->setCurrentIndex(*(payToPrint)+1);
 

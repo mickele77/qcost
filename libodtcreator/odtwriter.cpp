@@ -50,13 +50,13 @@ public:
         marginRight(10.0),
         marginTop(10.0),
         marginBottom(10.0),
-        defaultPointSize(9),
+        defaultPointSize(8),
         document(&doc),
         device(dev),
         strategy(0),
         codec(0),
         createArchive(true){
-    };
+    }
     double pageWidth;
     double pageHeight;
     double marginLeft;
@@ -645,8 +645,7 @@ void OdtWriter::writeBlockFormat(QXmlStreamWriter &writer, QTextBlockFormat form
     writer.writeEndElement(); // style
 }
 
-void OdtWriter::writeCharacterFormat(QXmlStreamWriter &writer, QTextCharFormat format, int formatIndex) const
-{
+void OdtWriter::writeCharacterFormat(QXmlStreamWriter &writer, QTextCharFormat format, int formatIndex) const {
     writer.writeStartElement(styleNS, QString::fromLatin1("style"));
     writer.writeAttribute(styleNS, QString::fromLatin1("name"), QString::fromLatin1("C%1").arg(formatIndex));
     writer.writeAttribute(styleNS, QString::fromLatin1("family"), QString::fromLatin1("text"));
@@ -951,8 +950,7 @@ OdtWriter::OdtWriter(const QTextDocument &document, QIODevice *device)
       m_d( new OdtWriterPrivate(document, device) ){
 }
 
-bool OdtWriter::writeAll()
-{
+bool OdtWriter::writeAll() {
     if (m_d->createArchive)
         m_d->strategy = new ZipStreamStrategy(m_d->device);
     else

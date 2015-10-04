@@ -148,18 +148,20 @@ public:
 
     QList<PriceItem *> connectedPriceItems();
 
-    void writeODTBillOnTable(QTextCursor * cursor,
-                              AccountingPrinter::PrintPPUDescOption prItemsOption,
-                              bool writeAmounts = true );
+    void writeODTAccountingOnTable( QTextCursor * cursor,
+                                    const QDate & dateBegin, const QDate & dateEnd,
+                                    AccountingPrinter::PrintLSOption prLSOption,
+                                    AccountingPrinter::PrintPPUDescOption prPPUOption,
+                                    bool writeAmounts = true );
 
     void writeODTSummaryOnTable( QTextCursor * cursor,
                                  AccountingPrinter::PrintPPUDescOption prItemsOption,
                                  bool writeAmounts = false ,
                                  bool writeDetails = true );
 
-    void writeODTAttributeBillOnTable(QTextCursor *cursor,
+    void writeODTAttributeBillOnTable( QTextCursor *cursor,
                                        AccountingPrinter::AttributePrintOption prOption,
-                                       AccountingPrinter::PrintPPUDescOption prItemsOption,
+                                       AccountingPrinter::PrintPPUDescOption prPPUOption,
                                        const QList<Attribute *> &attrsToPrint,
                                        bool writeAmounts = true );
 public slots:

@@ -698,18 +698,20 @@ QList<PriceItem *> AccountingLSBill::connectedPriceItems() {
     return m_d->rootItem->connectedPriceItems();
 }
 
-void AccountingLSBill::writeODTBillOnTable( QTextCursor *cursor,
-                                            AccountingPrinter::PrintPPUDescOption prItemsOption,
-                                            bool writeAmounts ) {
-    m_d->rootItem->writeODTBillOnTable( cursor, prItemsOption, writeAmounts );
+void AccountingLSBill::writeODTAccountingOnTable( QTextCursor *cursor,
+                                                  const QDate &dateBegin, const QDate &dateEnd,
+                                                  AccountingPrinter::PrintLSOption prLSOption,
+                                                  AccountingPrinter::PrintPPUDescOption prPPUOption,
+                                                  bool writeAmounts ) {
+    m_d->rootItem->printODTAccountingOnTable( cursor, dateBegin, dateEnd, prLSOption, prPPUOption, writeAmounts );
 }
 
 void AccountingLSBill::writeODTAttributeBillOnTable(QTextCursor *cursor,
                                                     AccountingPrinter::AttributePrintOption prOption,
-                                                    AccountingPrinter::PrintPPUDescOption prItemsOption,
+                                                    AccountingPrinter::PrintPPUDescOption prPPUOption,
                                                     const QList<Attribute *> &attrsToPrint,
                                                     bool writeAmounts) {
-    m_d->rootItem->writeODTAttributeBillOnTable( cursor, prOption, prItemsOption, attrsToPrint, writeAmounts );
+    m_d->rootItem->writeODTAttributeBillOnTable( cursor, prOption, prPPUOption, attrsToPrint, writeAmounts );
 }
 
 

@@ -33,7 +33,7 @@ public:
     bool hasChildren(const QModelIndex &parent = QModelIndex()) const;
 
     int paymentsCount() const;
-    PaymentData *billData(int pos);
+    PaymentData *paymentData(int pos);
 
     bool insertPayments( int position, int count=1 );
     bool removePayments(int position, int purpCount=1 );

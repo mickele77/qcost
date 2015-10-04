@@ -110,5 +110,5 @@ HEADERS  += \
     accountinglsitemmeasure.h \
     measureslsmodel.h \
     paymentdata.h \
-    paymentadatamodel.h \
-    qcost_export.h
+    qcost_export.h \
+    paymentdatamodel.h

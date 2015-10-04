@@ -1970,6 +1970,10 @@ QString AccountingBillItem::totalAmountStr() const {
 QString AccountingBillItem::title() const{
     if( m_d->itemType == Payment ){
         return trUtf8("S.A.L. N.%1 (%2-%3)").arg(QString::number(childNumber()+1), dateBeginStr(), dateEndStr() );
+    } else if( m_d->itemType == TimeAndMaterials ){
+        if( m_d->tamBillItem != NULL ){
+            return m_d->tamBillItem->title();
+        }
     }
     return QString();
 }
@@ -2283,7 +2287,7 @@ void AccountingBillItem::writeODTAccountingOnTable(QTextCursor *cursor, int payT
         AccountingBillItemPrivate::writeCell( cursor, table, leftHeaderFormat, headerBlockFormat, trUtf8("N."), false);
         AccountingBillItemPrivate::writeCell( cursor, table, centralHeaderFormat, headerBlockFormat, trUtf8("Data") );
         AccountingBillItemPrivate::writeCell( cursor, table, centralHeaderFormat, headerBlockFormat, trUtf8("Art.Elenco") );
-        AccountingBillItemPrivate::writeCell( cursor, table, centralHeaderFormat, headerBlockFormat, trUtf8("Indicazioni dei lavori"));
+        AccountingBillItemPrivate::writeCell( cursor, table, centralHeaderFormat, headerBlockFormat, trUtf8("Indicazione dei lavori"));
         AccountingBillItemPrivate::writeCell( cursor, table, centralHeaderFormat, headerBlockFormat, trUtf8("Unità di Misura"));
         if( prAmountsOption == AccountingPrinter::PrintNoAmount ){
             AccountingBillItemPrivate::writeCell( cursor, table, rightHeaderFormat, headerBlockFormat, trUtf8("Quantità"));

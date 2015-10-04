@@ -1,4 +1,4 @@
-#include "paymentadatamodel.h"
+#include "paymentdatamodel.h"
 
 #include "paymentdata.h"
 
@@ -17,7 +17,6 @@ public:
         }
         return rootData;
     }
-
     PaymentData * rootData;
 };
 
@@ -70,7 +69,7 @@ QModelIndex PaymentDataModel::index(int row, int col, const QModelIndex &parent)
     return QModelIndex();
 }
 
-PaymentData * PaymentDataModel::billData(int pos) {
+PaymentData * PaymentDataModel::paymentData(int pos) {
     if( pos >= 0 && pos < m_d->rootData->childrenCount() ){
         return m_d->rootData->child( pos );
     }

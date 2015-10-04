@@ -62,9 +62,9 @@ public:
     bool isDescending( AccountingLSBillItem * ancestor );
     void setParent(AccountingLSBillItem *newParent, int position);
 
-    unsigned int id();
+    unsigned int id() const;
     QString progressiveCode() const;
-    QString name();
+    QString name() const;
     int currentPriceDataSet() const;
     PriceItem * priceItem();
     // dice se il prezzo è usato dall'articolo di computo o da un suo sottoarticolo
@@ -78,7 +78,9 @@ public:
     double projQuantity() const;
     QString projQuantityStr() const;
     double accQuantity() const;
+    double accQuantity(const QDate &dateBegin, const QDate &dateEnd) const;
     QString accQuantityStr() const;
+    QString accQuantityStr(const QDate &dateBegin, const QDate &dateEnd) const;
 
     double PPU() const;
     QString PPUStr() const;
@@ -88,6 +90,7 @@ public:
     double accAmount() const;
     double accAmount(const QDate &dBegin, const QDate &dEnd) const;
     QString accAmountStr() const;
+    QString accAmountStr(const QDate &dateBegin, const QDate &dateEnd) const;
     double percentageAccounted() const;
     QString percentageAccountedStr() const;
 
@@ -136,9 +139,11 @@ public:
     double accAmountAttribute(Attribute * attr);
     QString accAmountAttributeStr( Attribute * attr );
 
-    void writeODTBillOnTable( QTextCursor * cursor,
-                              AccountingPrinter::PrintPPUDescOption prItemsOption,
-                              bool writeAmounts);
+    void printODTAccountingOnTable( QTextCursor * cursor,
+                                    const QDate & dateBegin, const QDate & dateEnd,
+                                    AccountingPrinter::PrintLSOption prLSOption,
+                                    AccountingPrinter::PrintPPUDescOption prPPUOption,
+                                    bool writeAmounts);
     void writeODTSummaryOnTable(QTextCursor *cursor,
                                 AccountingPrinter::PrintPPUDescOption prItemsOption,
                                 bool writeAmounts,
@@ -255,6 +260,17 @@ private:
                                          QTextTableCellFormat & rightQuantityTotalFormat,
                                          QTextCharFormat &txtCharFormat,
                                          QTextCharFormat &txtBoldCharFormat);
+
+    void writeODTBillLine( QTextCursor *cursor, QTextTable *table,
+                           const QDate &dateBegin, const QDate &dateEnd,
+                           AccountingPrinter::PrintLSOption prLSOption,
+                           AccountingPrinter::PrintPPUDescOption prPPUOption,
+                           bool writeAmounts, bool writeProgCode,
+                           QTextBlockFormat &tagBlockFormat, QTextBlockFormat &txtBlockFormat, QTextBlockFormat &numBlockFormat,
+                           QTextTableCellFormat &leftFormat, QTextTableCellFormat &centralFormat, QTextTableCellFormat &rightFormat,
+                           QTextTableCellFormat &centralQuantityTotalFormat, QTextTableCellFormat &rightQuantityTotalFormat,
+                           QTextCharFormat &txtCharFormat, QTextCharFormat &txtBoldCharFormat );
+
     void writeODTBillLine(AccountingPrinter::PrintPPUDescOption prItemsOption,
                           bool writeProgCode,
                           bool writeAmounts,

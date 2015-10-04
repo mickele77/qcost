@@ -2,7 +2,7 @@
 #include "ui_accountinggui.h"
 
 #include "projectaccountingparentitem.h"
-#include "paymentadatamodel.h"
+#include "paymentdatamodel.h"
 
 #include <QShowEvent>
 

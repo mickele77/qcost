@@ -34,9 +34,9 @@ class PriceListPrinterPrivate{
 public:
     PriceListPrinterPrivate(PriceList * b):
         priceList(b) {
-    };
+    }
     ~PriceListPrinterPrivate(){
-    };
+    }
 
     PriceList * priceList;
 };

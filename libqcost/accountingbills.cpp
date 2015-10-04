@@ -18,7 +18,7 @@
 */
 #include "accountingbills.h"
 
-#include "paymentadatamodel.h"
+#include "paymentdatamodel.h"
 #include "accountingbill.h"
 #include "paymentdata.h"
 #include "projectaccountingparentitem.h"
