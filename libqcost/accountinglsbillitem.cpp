@@ -1530,10 +1530,10 @@ void AccountingLSBillItem::printODTAccountingOnTable( QTextCursor *cursor,
                 AccountingLSBillItemPrivate::writeCell( cursor, table, centralTitleFormat, numBlockFormat );
             }
             AccountingLSBillItemPrivate::writeCell( cursor, table, rightTitleFormat, numBlockFormat, accAmountStr( dateBegin, dateEnd ) );
-        }
 
-        // *** Riga di chiusura ***
-        AccountingLSBillItemPrivate::insertEmptyRow( colCount, cursor, leftBottomFormat, centralBottomFormat, rightBottomFormat );
+            // *** Riga di chiusura ***
+            AccountingLSBillItemPrivate::insertEmptyRow( colCount, cursor, leftBottomFormat, centralBottomFormat, rightBottomFormat );
+        }
     } else {
         if( hasChildren() ){
             if( prLSOption == AccountingPrinter::PrintLSProj ){
@@ -1620,8 +1620,7 @@ void AccountingLSBillItem::printODTAccountingOnTable( QTextCursor *cursor,
                                                  prLSOption, prPPUOption, writeAmounts );
             }
 
-            // *** riga dei totali complessivi
-
+            // *** riga dei totali complessivi ***
             if( writeAmounts ){
 
                 table->appendRows(1);
@@ -1670,11 +1669,9 @@ void AccountingLSBillItem::printODTAccountingOnTable( QTextCursor *cursor,
                     AccountingLSBillItemPrivate::writeCell( cursor, table, centralSubTitleFormat, numBlockFormat );
                     AccountingLSBillItemPrivate::writeCell( cursor, table, rightSubTitleFormat, numBlockFormat, accAmountStr( dateBegin, dateEnd) );
                 }
+                // *** Riga di chiusura ***
+                AccountingLSBillItemPrivate::insertEmptyRow( colCount, cursor, leftFormat, centralFormat, rightFormat );
             }
-
-            // *** Riga di chiusura ***
-            AccountingLSBillItemPrivate::insertEmptyRow( colCount, cursor, leftFormat, centralFormat, rightFormat );
-
         } else { // !hasChildren()
 
             writeODTBillLine( cursor, table,
@@ -2401,13 +2398,11 @@ void AccountingLSBillItem::writeODTBillLine( QTextCursor *cursor,
                                              QTextTableCellFormat & rightQuantityTotalFormat,
                                              QTextCharFormat & txtCharFormat,
                                              QTextCharFormat & txtBoldCharFormat) {
-    // non ci sono sottoarticoli
-    table->appendRows(1);
-    cursor->movePosition(QTextCursor::PreviousRow );
-
-    // *** Intestazione tabella ***
-
+    // se abbiamo invicato questo metodo non ci sono sottoarticoli
     if( prLSOption == AccountingPrinter::PrintLSProj ){
+        table->appendRows(1);
+        cursor->movePosition(QTextCursor::PreviousRow );
+
         // [numero progressivo] + codice + descrizione + unità di misura + quantità [+ prezzo + importo ]
         if( writeProgCode ){
             AccountingLSBillItemPrivate::writeCell( cursor, table, leftFormat, tagBlockFormat, progressiveCode()  );
@@ -2540,6 +2535,9 @@ void AccountingLSBillItem::writeODTBillLine( QTextCursor *cursor,
         }
     } else if( prLSOption == AccountingPrinter::PrintLSAcc ){
         if( accQuantity(dateBegin, dateEnd) != 0.0 ){
+            table->appendRows(1);
+            cursor->movePosition(QTextCursor::PreviousRow );
+
             // [numero progressivo] + codice + descrizione + unità di misura + data cont. + quantità cont. [+ prezzo + importo cont.]
             if( writeProgCode ){
                 AccountingLSBillItemPrivate::writeCell( cursor, table, leftFormat, tagBlockFormat, progressiveCode()  );
@@ -2673,6 +2671,9 @@ void AccountingLSBillItem::writeODTBillLine( QTextCursor *cursor,
             }
         }
     } else if( prLSOption == AccountingPrinter::PrintLSProjAcc ){
+        table->appendRows(1);
+        cursor->movePosition(QTextCursor::PreviousRow );
+
         // numero progressivo + codice + descrizione + unità di misura [ + prezzo ] +
         // quantita' prog [+importo prog.] + data cont. + quantità cont. [+ importo cont.]
         if( writeProgCode ){
