@@ -266,6 +266,8 @@ void PaymentData::setDateEnd( const QString & newDate ) {
 void PaymentData::addBillItem(AccountingBillItem *billItem) {
     if( !m_d->billItemContainer.contains(billItem)){
         m_d->billItemContainer.append( billItem );
+        billItem->setDateBegin( m_d->dateBegin );
+        billItem->setDateEnd( m_d->dateEnd );
         connect( billItem, &AccountingBillItem::aboutToBeDeleted, this, static_cast<void(PaymentData::*)()>(&PaymentData::removeBillItem) );
     }
     updateAmounts();

@@ -46,6 +46,7 @@ public:
     void changePaymentDateBegin( const QDate & newDate, int position);
 
     void updateAmounts();
+
 signals:
     void insertPaymentsSignal( int position, int count );
     void removePaymentsSignal( int position, int count );
