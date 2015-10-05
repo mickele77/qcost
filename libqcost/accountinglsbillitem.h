@@ -144,11 +144,11 @@ public:
                                     AccountingPrinter::PrintLSOption prLSOption,
                                     AccountingPrinter::PrintPPUDescOption prPPUOption,
                                     bool writeAmounts);
-    void writeODTSummaryOnTable(QTextCursor *cursor,
+    void printODTSummaryOnTable(QTextCursor *cursor,
                                 AccountingPrinter::PrintPPUDescOption prItemsOption,
                                 bool writeAmounts,
                                 bool writeDetails);
-    void writeODTAttributeBillOnTable( QTextCursor *cursor,
+    void printODTAttributeBillOnTable( QTextCursor *cursor,
                                        AccountingPrinter::AttributePrintOption prOption,
                                        AccountingPrinter::PrintPPUDescOption prItemsOption,
                                        const QList<Attribute *> &attrsToPrint,

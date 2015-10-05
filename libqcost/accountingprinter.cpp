@@ -673,9 +673,9 @@ QVector<QTextLength> AccountingPrinter::printAccountingLSColWidth( double tableW
             dataCols += 1; // prezzo
             dataCols += 1; // importo
         }
-        double dataColWidth = 30.0; // larghezza della colonna con dati
+        double dataColWidth = 20.0; // larghezza della colonna con dati
         if( paperOrientation == Qt::Horizontal ){
-            dataColWidth = 35.0;
+            dataColWidth = 30.0;
         }
 
         // inseriamo le colonne con dati
@@ -708,9 +708,9 @@ QVector<QTextLength> AccountingPrinter::printAccountingLSColWidth( double tableW
             dataCols += 1; // prezzo
             dataCols += 1; // importo
         }
-        double dataColWidth = 30.0; // larghezza della colonna con dati
+        double dataColWidth = 20.0; // larghezza della colonna con dati
         if( paperOrientation == Qt::Horizontal ){
-            dataColWidth = 35.0;
+            dataColWidth = 30.0;
         }
 
         // inseriamo le colonne con dati
@@ -753,7 +753,7 @@ QVector<QTextLength> AccountingPrinter::printAccountingLSColWidth( double tableW
         }
         double dataColWidth = 18.0;   // larghezza della colonna con dati per orientamento verticale
         if( paperOrientation == Qt::Horizontal ){
-            dataColWidth = 35.0;      // larghezza della colonna con dati per orientamento orizzontale
+            dataColWidth = 30.0;      // larghezza della colonna con dati per orientamento orizzontale
         }
 
         // inseriamo le colonne con dati

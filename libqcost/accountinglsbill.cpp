@@ -711,7 +711,7 @@ void AccountingLSBill::writeODTAttributeBillOnTable(QTextCursor *cursor,
                                                     AccountingPrinter::PrintPPUDescOption prPPUOption,
                                                     const QList<Attribute *> &attrsToPrint,
                                                     bool writeAmounts) {
-    m_d->rootItem->writeODTAttributeBillOnTable( cursor, prOption, prPPUOption, attrsToPrint, writeAmounts );
+    m_d->rootItem->printODTAttributeBillOnTable( cursor, prOption, prPPUOption, attrsToPrint, writeAmounts );
 }
 
 
@@ -719,7 +719,7 @@ void AccountingLSBill::writeODTSummaryOnTable(QTextCursor *cursor,
                                               AccountingPrinter::PrintPPUDescOption prItemsOption,
                                               bool writeAmounts,
                                               bool writeDetails ) {
-    m_d->rootItem->writeODTSummaryOnTable( cursor, prItemsOption, writeAmounts, writeDetails );
+    m_d->rootItem->printODTSummaryOnTable( cursor, prItemsOption, writeAmounts, writeDetails );
 }
 
 void AccountingLSBill::loadTmpData(ProjectPriceListParentItem * priceLists) {

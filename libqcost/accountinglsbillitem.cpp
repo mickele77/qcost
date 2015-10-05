@@ -1515,15 +1515,16 @@ void AccountingLSBillItem::printODTAccountingOnTable( QTextCursor *cursor,
         // *** riga dei totali complessivi
 
         if( writeAmounts ){
-            // riga vuota
-            AccountingLSBillItemPrivate::insertEmptyRow( colCount, cursor, leftFormat, centralFormat, rightFormat );
-
             table->appendRows(1);
             cursor->movePosition(QTextCursor::PreviousRow );
 
+            // n prog.
             AccountingLSBillItemPrivate::writeCell( cursor, table, leftTitleFormat, tagBlockFormat );
+            // codice
             AccountingLSBillItemPrivate::writeCell( cursor, table, centralTitleFormat, txtBlockFormat );
+            // descrizione
             AccountingLSBillItemPrivate::writeCell( cursor, table, centralTitleFormat, txtBlockFormat, trUtf8("Totale complessivo") );
+            // unita di misura
             AccountingLSBillItemPrivate::writeCell( cursor, table, centralTitleFormat, tagBlockFormat );
             for( int i=4; i<(colCount-1); ++i ){
                 AccountingLSBillItemPrivate::writeCell( cursor, table, centralTitleFormat, numBlockFormat );
@@ -1533,16 +1534,19 @@ void AccountingLSBillItem::printODTAccountingOnTable( QTextCursor *cursor,
 
         // *** Riga di chiusura ***
         AccountingLSBillItemPrivate::insertEmptyRow( colCount, cursor, leftBottomFormat, centralBottomFormat, rightBottomFormat );
-
     } else {
         if( hasChildren() ){
             if( prLSOption == AccountingPrinter::PrintLSProj ){
                 table->appendRows(1);
                 cursor->movePosition(QTextCursor::PreviousRow );
                 // numero progressivo + codice + descrizione + unità di misura + quantità [+ prezzo + importo ]
+                // n prog
                 AccountingLSBillItemPrivate::writeCell( cursor, table, leftSubTitleFormat, tagBlockFormat, progressiveCode() );
+                // codice
                 AccountingLSBillItemPrivate::writeCell( cursor, table, centralSubTitleFormat, txtBlockFormat );
+                // desc
                 AccountingLSBillItemPrivate::writeCell( cursor, table, centralSubTitleFormat, txtBlockFormat, m_d->name );
+                // udm
                 AccountingLSBillItemPrivate::writeCell( cursor, table, centralSubTitleFormat, tagBlockFormat );
 
                 if( writeAmounts ){
@@ -1556,16 +1560,25 @@ void AccountingLSBillItem::printODTAccountingOnTable( QTextCursor *cursor,
                 // numero progressivo + codice + descrizione + unità di misura + data cont. + quantità cont. [+ prezzo + importo cont.]
                 table->appendRows(1);
                 cursor->movePosition(QTextCursor::PreviousRow );
+                // n prog
                 AccountingLSBillItemPrivate::writeCell( cursor, table, leftSubTitleFormat, tagBlockFormat, progressiveCode() );
+                // articolo prezzo
                 AccountingLSBillItemPrivate::writeCell( cursor, table, centralSubTitleFormat, txtBlockFormat );
+                // desc
                 AccountingLSBillItemPrivate::writeCell( cursor, table, centralSubTitleFormat, txtBlockFormat, m_d->name );
+                // udm
                 AccountingLSBillItemPrivate::writeCell( cursor, table, centralSubTitleFormat, tagBlockFormat );
+                // data
                 AccountingLSBillItemPrivate::writeCell( cursor, table, centralSubTitleFormat, tagBlockFormat );
                 if( writeAmounts ){
+                    // quantita cont
                     AccountingLSBillItemPrivate::writeCell( cursor, table, centralSubTitleFormat, numBlockFormat );
+                    // prezzo
                     AccountingLSBillItemPrivate::writeCell( cursor, table, centralSubTitleFormat, numBlockFormat );
+                    // importo cont
                     AccountingLSBillItemPrivate::writeCell( cursor, table, rightSubTitleFormat, numBlockFormat );
                 } else {
+                    // quantita cont
                     AccountingLSBillItemPrivate::writeCell( cursor, table, rightSubTitleFormat, numBlockFormat );
                 }
             } else if( prLSOption == AccountingPrinter::PrintLSProjAcc ){
@@ -1573,9 +1586,13 @@ void AccountingLSBillItem::printODTAccountingOnTable( QTextCursor *cursor,
                 // quantita' prog [+importo prog.] + data cont. + quantità cont. [+ importo cont.]
                 table->appendRows(1);
                 cursor->movePosition(QTextCursor::PreviousRow );
+                // n prog
                 AccountingLSBillItemPrivate::writeCell( cursor, table, leftSubTitleFormat, tagBlockFormat, progressiveCode() );
+                // codice
                 AccountingLSBillItemPrivate::writeCell( cursor, table, centralSubTitleFormat, txtBlockFormat );
+                // desc
                 AccountingLSBillItemPrivate::writeCell( cursor, table, centralSubTitleFormat, txtBlockFormat, m_d->name );
+                // udm
                 AccountingLSBillItemPrivate::writeCell( cursor, table, centralSubTitleFormat, tagBlockFormat );
 
                 if( writeAmounts ){
@@ -1606,8 +1623,6 @@ void AccountingLSBillItem::printODTAccountingOnTable( QTextCursor *cursor,
             // *** riga dei totali complessivi
 
             if( writeAmounts ){
-                // riga vuota
-                AccountingLSBillItemPrivate::insertEmptyRow( colCount, cursor, leftFormat, centralFormat, rightFormat );
 
                 table->appendRows(1);
                 cursor->movePosition(QTextCursor::PreviousRow );
@@ -1624,14 +1639,21 @@ void AccountingLSBillItem::printODTAccountingOnTable( QTextCursor *cursor,
                     AccountingLSBillItemPrivate::writeCell( cursor, table, rightSubTitleFormat, numBlockFormat, projAmountStr() );
                 } else if( prLSOption == AccountingPrinter::PrintLSAcc ){
                     // numero progressivo + codice + descrizione + unità di misura + data cont. + quantità cont. [+ prezzo + importo cont.]
+                    // n prog
                     AccountingLSBillItemPrivate::writeCell( cursor, table, leftSubTitleFormat, tagBlockFormat, progressiveCode() );
+                    // codice
                     AccountingLSBillItemPrivate::writeCell( cursor, table, centralSubTitleFormat, txtBlockFormat );
+                    // desc
                     AccountingLSBillItemPrivate::writeCell( cursor, table, centralSubTitleFormat, txtBlockFormat, trUtf8("Totale %1").arg( m_d->name ) );
+                    // udm
                     AccountingLSBillItemPrivate::writeCell( cursor, table, centralSubTitleFormat, tagBlockFormat );
+                    // data
                     AccountingLSBillItemPrivate::writeCell( cursor, table, centralSubTitleFormat, tagBlockFormat );
-
+                    // prezzo
                     AccountingLSBillItemPrivate::writeCell( cursor, table, centralSubTitleFormat, numBlockFormat );
+                    // quantita cont.
                     AccountingLSBillItemPrivate::writeCell( cursor, table, centralSubTitleFormat, numBlockFormat );
+                    // importo cont.
                     AccountingLSBillItemPrivate::writeCell( cursor, table, rightSubTitleFormat, numBlockFormat, accAmountStr( dateBegin, dateEnd) );
                 } else if( prLSOption == AccountingPrinter::PrintLSProjAcc ){
                     // numero progressivo + codice + descrizione + unità di misura [ + prezzo ] +
@@ -1668,7 +1690,7 @@ void AccountingLSBillItem::printODTAccountingOnTable( QTextCursor *cursor,
     }
 }
 
-void AccountingLSBillItem::writeODTSummaryOnTable(QTextCursor *cursor,
+void AccountingLSBillItem::printODTSummaryOnTable(QTextCursor *cursor,
                                                   AccountingPrinter::PrintPPUDescOption prItemsOption,
                                                   bool writeAmounts,
                                                   bool writeDetails ) {
@@ -1947,7 +1969,7 @@ void AccountingLSBillItem::writeODTSummaryLine( PriceItem * priceItem,
     }
 }
 
-void AccountingLSBillItem::writeODTAttributeBillOnTable(QTextCursor *cursor,
+void AccountingLSBillItem::printODTAttributeBillOnTable(QTextCursor *cursor,
                                                         AccountingPrinter::AttributePrintOption prOption,
                                                         AccountingPrinter::PrintPPUDescOption prItemsOption,
                                                         const QList<Attribute *> &attrsToPrint,
@@ -2517,7 +2539,7 @@ void AccountingLSBillItem::writeODTBillLine( QTextCursor *cursor,
             AccountingLSBillItemPrivate::writeCell( cursor, table, rightQuantityTotalFormat, numBlockFormat, projQuantityStr() );
         }
     } else if( prLSOption == AccountingPrinter::PrintLSAcc ){
-        if( accQuantity(dateBegin, dateEnd) == 0.0 ){
+        if( accQuantity(dateBegin, dateEnd) != 0.0 ){
             // [numero progressivo] + codice + descrizione + unità di misura + data cont. + quantità cont. [+ prezzo + importo cont.]
             if( writeProgCode ){
                 AccountingLSBillItemPrivate::writeCell( cursor, table, leftFormat, tagBlockFormat, progressiveCode()  );
@@ -2540,6 +2562,8 @@ void AccountingLSBillItem::writeODTBillLine( QTextCursor *cursor,
             // celle vuote
             // tag unita misura
             AccountingLSBillItemPrivate::writeCell( cursor, table, centralFormat, tagBlockFormat );
+            // data
+            AccountingLSBillItemPrivate::writeCell( cursor, table, centralFormat, numBlockFormat );
             if( writeAmounts ){
                 // quantita'
                 AccountingLSBillItemPrivate::writeCell( cursor, table, centralFormat, numBlockFormat );
@@ -2592,7 +2616,8 @@ void AccountingLSBillItem::writeODTBillLine( QTextCursor *cursor,
                         if( realFormula.isEmpty() ){
                             // unita di misura
                             AccountingLSBillItemPrivate::writeCell( cursor, table, centralFormat, tagBlockFormat );
-
+                            // data
+                            AccountingLSBillItemPrivate::writeCell( cursor, table, centralFormat, numBlockFormat );
                             // quantità
                             if( writeAmounts ){
                                 AccountingLSBillItemPrivate::writeCell( cursor, table, centralFormat, numBlockFormat );
@@ -2602,7 +2627,8 @@ void AccountingLSBillItem::writeODTBillLine( QTextCursor *cursor,
                         } else {
                             // unita di misura
                             AccountingLSBillItemPrivate::writeCell( cursor, table, centralFormat, tagBlockFormat, unitMeasureTag );
-
+                            // data
+                            AccountingLSBillItemPrivate::writeCell( cursor, table, centralFormat, numBlockFormat, measure->accDateStr() );
                             // quantità
                             if( writeAmounts ){
                                 AccountingLSBillItemPrivate::writeCell( cursor, table, centralFormat, numBlockFormat, measure->accQuantityStr() );
@@ -2634,10 +2660,10 @@ void AccountingLSBillItem::writeODTBillLine( QTextCursor *cursor,
 
             // descrizione breve
             AccountingLSBillItemPrivate::writeCell( cursor, table, centralFormat, txtBlockFormat );
-
             // tag unita di misura
             AccountingLSBillItemPrivate::writeCell( cursor, table,  centralFormat, tagBlockFormat, unitMeasureTag );
-
+            // data
+            AccountingLSBillItemPrivate::writeCell( cursor, table,  centralFormat, numBlockFormat );
             if( writeAmounts ){
                 AccountingLSBillItemPrivate::writeCell( cursor, table, centralQuantityTotalFormat, numBlockFormat, accQuantityStr( dateBegin, dateEnd ) );
                 AccountingLSBillItemPrivate::writeCell( cursor, table, centralFormat, numBlockFormat, PPUStr() );
