@@ -1341,6 +1341,8 @@ void AccountingLSBillItem::printODTAccountingOnTable( QTextCursor *cursor,
     static QTextCharFormat txtCharFormat;
     static QTextCharFormat txtBoldCharFormat = txtCharFormat;
     txtBoldCharFormat.setFontWeight( QFont::Bold );
+    static QTextCharFormat txtFormulaCharFormat = txtCharFormat;
+    txtFormulaCharFormat.setFontItalic( true);
     // numeri
     static QTextBlockFormat numBlockFormat;
     numBlockFormat.setAlignment( Qt::AlignRight );
@@ -1681,7 +1683,7 @@ void AccountingLSBillItem::printODTAccountingOnTable( QTextCursor *cursor,
                               tagBlockFormat, txtBlockFormat, numBlockFormat,
                               leftFormat, centralFormat, rightFormat,
                               centralQuantityTotalFormat, rightQuantityTotalFormat,
-                              txtCharFormat, txtBoldCharFormat );
+                              txtCharFormat, txtBoldCharFormat, txtFormulaCharFormat );
             AccountingLSBillItemPrivate::insertEmptyRow( colCount, cursor, leftFormat, centralFormat, rightFormat );
         }
     }
@@ -2397,7 +2399,8 @@ void AccountingLSBillItem::writeODTBillLine( QTextCursor *cursor,
                                              QTextTableCellFormat & centralQuantityTotalFormat,
                                              QTextTableCellFormat & rightQuantityTotalFormat,
                                              QTextCharFormat & txtCharFormat,
-                                             QTextCharFormat & txtBoldCharFormat) {
+                                             QTextCharFormat & txtBoldCharFormat,
+                                             QTextCharFormat & txtFormulaCharFormat ) {
     // se abbiamo invicato questo metodo non ci sono sottoarticoli
     if( prLSOption == AccountingPrinter::PrintLSProj ){
         table->appendRows(1);
@@ -2469,27 +2472,17 @@ void AccountingLSBillItem::writeODTBillLine( QTextCursor *cursor,
             }
 
             // misure
-            if( measure != NULL ){
-                if( realFormula.isEmpty() ){
-                    AccountingLSBillItemPrivate::writeCell( cursor, table, centralFormat, txtBlockFormat, measure->comment() );
-                } else {
-                    AccountingLSBillItemPrivate::writeCell( cursor, table, centralFormat, txtBlockFormat, measure->comment() + " (" + measure->accFormula() + ")");
-                }
-            } else {
-                AccountingLSBillItemPrivate::writeCell( cursor, table, centralFormat, txtBlockFormat);
+            cursor->movePosition(QTextCursor::NextCell);
+            table->cellAt( *cursor ).setFormat( centralFormat );
+            cursor->setBlockFormat( txtBlockFormat );
+            if( !(measure->comment().isEmpty() ) ){
+                cursor->insertText( measure->comment() );
             }
+            if( !(realFormula.isEmpty()) ){
+                cursor->insertBlock();
+                cursor->setCharFormat( txtFormulaCharFormat );
+                cursor->insertText( measure->projFormula() );
 
-            if( realFormula.isEmpty() || measure == NULL ){
-                // unita di misura
-                AccountingLSBillItemPrivate::writeCell( cursor, table, centralFormat, tagBlockFormat );
-
-                // quantità
-                if( writeAmounts ){
-                    AccountingLSBillItemPrivate::writeCell( cursor, table, centralFormat, numBlockFormat );
-                } else {
-                    AccountingLSBillItemPrivate::writeCell( cursor, table, rightFormat, numBlockFormat );
-                }
-            } else {
                 // unita di misura
                 AccountingLSBillItemPrivate::writeCell( cursor, table, centralFormat, tagBlockFormat, unitMeasureTag );
 
@@ -2498,6 +2491,16 @@ void AccountingLSBillItem::writeODTBillLine( QTextCursor *cursor,
                     AccountingLSBillItemPrivate::writeCell( cursor, table, centralFormat, numBlockFormat, measure->accQuantityStr() );
                 } else {
                     AccountingLSBillItemPrivate::writeCell( cursor, table, rightFormat, numBlockFormat, measure->accQuantityStr() );
+                }
+            } else {
+                // celle vuote
+                // unita di misura
+                AccountingLSBillItemPrivate::writeCell( cursor, table, centralFormat, tagBlockFormat );
+                // quantità
+                if( writeAmounts ){
+                    AccountingLSBillItemPrivate::writeCell( cursor, table, centralFormat, numBlockFormat );
+                } else {
+                    AccountingLSBillItemPrivate::writeCell( cursor, table, rightFormat, numBlockFormat );
                 }
             }
 
@@ -2604,25 +2607,20 @@ void AccountingLSBillItem::writeODTBillLine( QTextCursor *cursor,
                         QString realFormula = measure->accFormula();
                         realFormula.remove(" ");
 
-                        // misure
-                        if( realFormula.isEmpty() ){
-                            AccountingLSBillItemPrivate::writeCell( cursor, table, centralFormat, txtBlockFormat, measure->comment() );
-                        } else {
-                            AccountingLSBillItemPrivate::writeCell( cursor, table, centralFormat, txtBlockFormat, measure->comment() + " (" + measure->accFormula() + ")");
+                        // commento + misure
+                        cursor->movePosition(QTextCursor::NextCell);
+                        table->cellAt( *cursor ).setFormat( centralFormat );
+                        cursor->setBlockFormat( txtBlockFormat );
+                        // commento
+                        if( !(measure->comment().isEmpty()) ){
+                            cursor->insertText( measure->comment() );
                         }
+                        if( !(realFormula.isEmpty()) ){
+                            // formula
+                            cursor->insertBlock();
+                            cursor->setCharFormat( txtFormulaCharFormat );
+                            cursor->insertText( measure->accFormula() );
 
-                        if( realFormula.isEmpty() ){
-                            // unita di misura
-                            AccountingLSBillItemPrivate::writeCell( cursor, table, centralFormat, tagBlockFormat );
-                            // data
-                            AccountingLSBillItemPrivate::writeCell( cursor, table, centralFormat, numBlockFormat );
-                            // quantità
-                            if( writeAmounts ){
-                                AccountingLSBillItemPrivate::writeCell( cursor, table, centralFormat, numBlockFormat );
-                            } else {
-                                AccountingLSBillItemPrivate::writeCell( cursor, table, rightFormat, numBlockFormat );
-                            }
-                        } else {
                             // unita di misura
                             AccountingLSBillItemPrivate::writeCell( cursor, table, centralFormat, tagBlockFormat, unitMeasureTag );
                             // data
@@ -2632,6 +2630,18 @@ void AccountingLSBillItem::writeODTBillLine( QTextCursor *cursor,
                                 AccountingLSBillItemPrivate::writeCell( cursor, table, centralFormat, numBlockFormat, measure->accQuantityStr() );
                             } else {
                                 AccountingLSBillItemPrivate::writeCell( cursor, table, rightFormat, numBlockFormat, measure->accQuantityStr() );
+                            }
+                        } else {
+                            // celle vuote
+                            // unita di misura
+                            AccountingLSBillItemPrivate::writeCell( cursor, table, centralFormat, tagBlockFormat );
+                            // data
+                            AccountingLSBillItemPrivate::writeCell( cursor, table, centralFormat, numBlockFormat );
+                            // quantità
+                            if( writeAmounts ){
+                                AccountingLSBillItemPrivate::writeCell( cursor, table, centralFormat, numBlockFormat );
+                            } else {
+                                AccountingLSBillItemPrivate::writeCell( cursor, table, rightFormat, numBlockFormat );
                             }
                         }
 
@@ -2650,6 +2660,7 @@ void AccountingLSBillItem::writeODTBillLine( QTextCursor *cursor,
                             // codice
                             AccountingLSBillItemPrivate::writeCell( cursor, table, centralFormat, txtBlockFormat );
                         } else {
+                            // codice
                             AccountingLSBillItemPrivate::writeCell( cursor, table, leftFormat, txtBlockFormat );
                         }
                     }
@@ -2776,7 +2787,25 @@ void AccountingLSBillItem::writeODTBillLine( QTextCursor *cursor,
                     }
                 } else {
                     // indicazione lavorazioni
-                    AccountingLSBillItemPrivate::writeCell( cursor, table, centralFormat, txtBlockFormat, measure->comment() + " (" + measure->accFormula() + ")");
+                    cursor->movePosition(QTextCursor::NextCell);
+                    table->cellAt( *cursor ).setFormat( centralFormat );
+                    cursor->setBlockFormat( txtBlockFormat );
+                    if( !(measure->comment().isEmpty()) &&
+                            ( !(projFormula.isEmpty()) || (measure->accDate() >= dateBegin) && (measure->accDate() <= dateEnd) && !(accFormula.isEmpty()) ) ){
+                        cursor->insertText( measure->comment() );
+                    }
+                    cursor->insertBlock();
+                    cursor->setCharFormat( txtFormulaCharFormat );
+                    if( !(projFormula.isEmpty()) ){
+                        cursor->insertText( "(1) " + measure->projFormula() );
+                    }
+                    if( (measure->accDate() >= dateBegin) && (measure->accDate() <= dateEnd) && !(accFormula.isEmpty()) ){
+                        if( !(projFormula.isEmpty()) ){
+                            cursor->insertText( "\n" );
+                        }
+                        cursor->insertText( "(2) " + measure->accFormula());
+                    }
+
                     // unita di misura
                     AccountingLSBillItemPrivate::writeCell( cursor, table, centralFormat, tagBlockFormat, unitMeasureTag );
                     // prezzo
@@ -2788,7 +2817,7 @@ void AccountingLSBillItem::writeODTBillLine( QTextCursor *cursor,
                     if( writeAmounts ){
                         AccountingLSBillItemPrivate::writeCell( cursor, table, centralFormat, numBlockFormat );
                     }
-                    if( measure->accDate() >= dateBegin && measure->accDate() <= dateEnd ){
+                    if( (measure->accDate() >= dateBegin) && (measure->accDate() <= dateEnd) && !(measure->accFormula().isEmpty()) ){
                         // data
                         AccountingLSBillItemPrivate::writeCell( cursor, table, centralFormat, numBlockFormat, measure->accDateStr() );
                         // quantità acc

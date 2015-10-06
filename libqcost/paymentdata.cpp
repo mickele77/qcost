@@ -4,6 +4,8 @@
 #include "mathparser.h"
 
 #include <QXmlStreamWriter>
+#include <QXmlStreamAttributes>
+#include <QXmlStreamAttribute>
 #include <QList>
 #include <QDate>
 
@@ -133,7 +135,7 @@ void PaymentData::readXml(QXmlStreamReader *reader ){
             reader->readNext();
         }
     } else if( m_d->dataType == PaymentData::Payment ){
-        if(reader->isStartElement() && reader->name().toString().toUpper() == "PAYMENTADATA"){
+        if(reader->isStartElement() && reader->name().toString().toUpper() == "PAYMENTDATA"){
             loadFromXml( reader->attributes() );
         }
     } else {
@@ -142,11 +144,14 @@ void PaymentData::readXml(QXmlStreamReader *reader ){
 }
 
 void PaymentData::loadFromXml( const QXmlStreamAttributes &attrs ) {
-    if( attrs.hasAttribute( "dataBegin" ) ){
-        setDateBegin( QDate::fromJulianDay( attrs.value( "dataBegin").toLongLong() ) );
-    }
-    if( attrs.hasAttribute( "dataEnd" ) ){
-        setDateEnd( QDate::fromJulianDay( attrs.value( "dataEnd").toLongLong() ) );
+    for( QXmlStreamAttributes::const_iterator i=attrs.begin(); i!= attrs.end(); ++i ){
+        QString attrUP = i->name().toString().toUpper();
+        if( attrUP == "DATEBEGIN" ){
+            setDateBegin( QDate::fromJulianDay( i->value().toLongLong() ) );
+        }
+        if( attrUP == "DATEEND" ){
+            setDateEnd( QDate::fromJulianDay( i->value().toLongLong() ) );
+        }
     }
 }
 
