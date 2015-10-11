@@ -802,14 +802,14 @@ bool PriceListDBModel::loadFromDBChildren(int fileParentId,
         queryStr.append( QString::number(id) + ", ");
         queryStr.append( QString::number( parentId ) + ", ");
         queryStr.append( QString::number(ord) + ", ");
-        queryStr.append( fileCode + ", ");
-        queryStr.append( fileShortDesc + ", ");
-        queryStr.append( fileLongDesc + ", ");
+        queryStr.append( "\"" + fileCode + "\", ");
+        queryStr.append( "\"" + fileShortDesc + "\", ");
+        queryStr.append( "\"" + fileLongDesc + "\", ");
         queryStr.append( QString::number(UMId) + ", ");
         queryStr.append( filePLQuery.value("priceTotal").toString() + ", ");
         queryStr.append( filePLQuery.value("priceHuman").toString() + ", ");
         queryStr.append( filePLQuery.value("priceEquipment").toString() + ", ");
-        queryStr.append( filePLQuery.value("priceMaterial").toString()  + ", ");
+        queryStr.append( filePLQuery.value("priceMaterial").toString()  + ")");
         m_d->db.exec( queryStr );
 
         loadFromDBChildren( fileId, id, importFileDBName );
