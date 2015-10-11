@@ -1297,7 +1297,6 @@ void AccountingBillItem::writeXml(QXmlStreamWriter *writer) {
         if( !attrs.isEmpty() ){
             writer->writeAttribute( "attributes", attrs );
         }
-
         for( QList<AccountingBillItem *>::iterator i = m_d->childrenContainer.begin(); i != m_d->childrenContainer.end(); ++i){
             (*i)->writeXml( writer );
         }

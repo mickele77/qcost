@@ -269,7 +269,7 @@ private:
                            QTextBlockFormat &tagBlockFormat, QTextBlockFormat &txtBlockFormat, QTextBlockFormat &numBlockFormat,
                            QTextTableCellFormat &leftFormat, QTextTableCellFormat &centralFormat, QTextTableCellFormat &rightFormat,
                            QTextTableCellFormat &centralQuantityTotalFormat, QTextTableCellFormat &rightQuantityTotalFormat,
-                           QTextCharFormat &txtCharFormat, QTextCharFormat &txtBoldCharFormat );
+                           QTextCharFormat &txtCharFormat, QTextCharFormat &txtBoldCharFormat, QTextCharFormat &txtFormulaCharFormat);
 
     void writeODTBillLine(AccountingPrinter::PrintPPUDescOption prItemsOption,
                           bool writeProgCode,
