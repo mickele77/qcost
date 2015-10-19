@@ -98,9 +98,9 @@ Qt::ItemFlags BillAttributeModel::flags(const QModelIndex &index) const {
         return Qt::ItemIsEnabled;
 
     if( index.column() == 0 ){
-        return QAbstractTableModel::flags(index) | Qt::ItemIsEditable;
+        return QAbstractItemModel::flags(index) | Qt::ItemIsEditable;
     } else {
-        return QAbstractTableModel::flags(index);
+        return QAbstractItemModel::flags(index);
     }
 }
 

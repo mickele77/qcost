@@ -13,8 +13,7 @@ class UnitMeasure;
 
 class BillItemMeasuresModelPrivate;
 
-class EXPORT_LIB_OPT BillItemMeasuresModel : public QAbstractTableModel
-{
+class EXPORT_LIB_OPT BillItemMeasuresModel : public QAbstractTableModel {
     Q_OBJECT
 public:
     explicit BillItemMeasuresModel(MathParser *p = NULL, UnitMeasure *ump = NULL, QObject *parent = 0);

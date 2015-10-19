@@ -65,9 +65,9 @@ int BillAttributeSelectModel::columnCount(const QModelIndex &parent) const {
 
 Qt::ItemFlags BillAttributeSelectModel::flags(const QModelIndex &index) const {
     if( index.column() == 0 && index.isValid() ){
-        return QAbstractTableModel::flags(index) | Qt::ItemIsUserCheckable;
+        return QAbstractItemModel::flags(index) | Qt::ItemIsUserCheckable;
     }
-    return QAbstractTableModel::flags(index);
+    return QAbstractItemModel::flags(index);
 }
 
 QVariant BillAttributeSelectModel::data(const QModelIndex &index, int role) const {

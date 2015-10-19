@@ -588,7 +588,7 @@ int PriceFieldModel::columnCount(const QModelIndex &) const {
 
 Qt::ItemFlags PriceFieldModel::flags(const QModelIndex &index) const {
     if( !index.isValid() || !(index.row() < m_d->fieldsList.size()) ){
-        return QAbstractTableModel::flags(index);
+        return QAbstractItemModel::flags(index);
     }
 
     if( index.column() == m_d->formulaCol ){

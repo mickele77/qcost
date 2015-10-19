@@ -534,7 +534,7 @@ Qt::ItemFlags PriceItemDataSetModel::flags(const QModelIndex &index) const {
             return Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsEditable;
         }
     }
-    return QAbstractTableModel::flags( index );
+    return QAbstractItemModel::flags( index );
 }
 
 QVariant PriceItemDataSetModel::data(const QModelIndex &index, int role) const {

@@ -56,7 +56,7 @@ int BillItemAttributeModel::columnCount(const QModelIndex &parent) const {
 
 Qt::ItemFlags BillItemAttributeModel::flags(const QModelIndex &index) const {
     if (!index.isValid())
-        return QAbstractTableModel::flags(index);
+        return QAbstractItemModel::flags(index);
 
     if( m_d->billItem != NULL ){
         BillAttribute * attr = m_d->attributeModel->attribute(index.row() );

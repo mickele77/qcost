@@ -197,7 +197,7 @@ Qt::ItemFlags PriceItemDataSetViewModel::flags(const QModelIndex &index) const {
             return m_d->model->flags( createIndex( row, index.column() ) );
         }
     }
-    return QAbstractTableModel::flags( index );
+    return QAbstractItemModel::flags( index );
 }
 
 QVariant PriceItemDataSetViewModel::data(const QModelIndex &index, int role) const {

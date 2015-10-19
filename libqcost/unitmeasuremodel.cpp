@@ -117,7 +117,7 @@ Qt::ItemFlags UnitMeasureModel::flags(const QModelIndex &index) const {
     if (!index.isValid())
         return Qt::ItemIsEnabled;
 
-    return QAbstractTableModel::flags(index) | Qt::ItemIsEditable;
+    return QAbstractItemModel::flags(index) | Qt::ItemIsEditable;
 }
 
 QVariant UnitMeasureModel::data(const QModelIndex &index, int role) const {

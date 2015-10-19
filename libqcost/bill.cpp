@@ -17,15 +17,15 @@
    Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 */
 
-#include "billwriter.h"
-
 #include "bill.h"
 
+#include "billprinter.h"
+#include "billattributemodel.h"
 #include "billitem.h"
 #include "pricelist.h"
 #include "priceitem.h"
 #include "projectpricelistparentitem.h"
-#include "attribute.h"
+#include "pricefieldmodel.h"
 
 #include <QXmlStreamReader>
 #include <QXmlStreamAttributes>
@@ -35,57 +35,94 @@
 
 class BillPrivate{
 public:
-    BillPrivate( const QString &n, MathParser * p = NULL ):
+    BillPrivate( const QString &n, Bill * b, PriceFieldModel * pfm, MathParser * prs = NULL ):
+        id(0),
         name( n ),
-        parser(p),
-        rootItem(new BillItem( NULL, NULL, parser )),
+        priceFieldModel(pfm),
+        parser(prs),
+        rootItem(new BillItem( NULL, NULL, pfm, parser )),
         priceList( NULL ),
+        attributeModel( new BillAttributeModel( b, parser, pfm )),
         priceListIdTmp(0){
-        id = nextId++;
-    };
+    }
     ~BillPrivate(){
         delete rootItem;
-    };
+        delete attributeModel;
+    }
+
+    static void setPriceItemParents( PriceList *pl, PriceItem * basePriceItem, PriceItem * newPriceItem ){
+        if( basePriceItem->parentItem() != NULL ){
+            if( basePriceItem->parentItem()->parentItem() != NULL ){
+                PriceItem * newPriceItemParent = pl->priceItemCode( basePriceItem->parentItem()->code() );
+                if( newPriceItemParent == NULL ){
+                    newPriceItemParent = pl->appendPriceItem();
+                    *newPriceItemParent = *(basePriceItem->parentItem());
+                }
+                setPriceItemParents( pl, basePriceItem->parentItem(), newPriceItemParent );
+                newPriceItem->setParentItem( newPriceItemParent );
+            }
+        }
+    }
 
     unsigned int id;
-    static unsigned int nextId;
 
     QString name;
     QString description;
 
+    PriceFieldModel * priceFieldModel;
     MathParser * parser;
     BillItem * rootItem;
     PriceList * priceList;
+    BillAttributeModel * attributeModel;
     unsigned int priceListIdTmp;
 };
 
-unsigned int BillPrivate::nextId = 0;
-
-Bill::Bill(const QString &n, ProjectItem *parent, MathParser * parser ):
+Bill::Bill(const QString &n, ProjectItem *parent, PriceFieldModel * pfm, MathParser * parser ):
+    QAbstractItemModel(),
     ProjectItem(parent),
-    m_d( new BillPrivate( n, parser ) ) {
-    connect( m_d->rootItem, SIGNAL(dataChanged(BillItem*,int)), this, SLOT(updateValue(BillItem*,int)) );
-    connect( m_d->rootItem, SIGNAL(amountTotalChanged(QString)), this, SIGNAL(amountTotalChanged(QString)) );
-    connect( m_d->rootItem, SIGNAL(amountHumanFactorChanged(QString)), this, SIGNAL(amountHumanFactorChanged(QString)) );
-    connect( m_d->rootItem, SIGNAL(amountTotalChanged(double)), this, SIGNAL(amountTotalChanged(double)) );
-    connect( m_d->rootItem, SIGNAL(amountHumanFactorChanged(double)), this, SIGNAL(amountHumanFactorChanged(double)) );
+    m_d( new BillPrivate( n, this, pfm, parser ) ) {
+    connect( m_d->priceFieldModel, &PriceFieldModel::endInsertPriceField, this, &Bill::insertPriceField );
+    connect( m_d->priceFieldModel, &PriceFieldModel::endRemovePriceField, this, &Bill::removePriceField );
+
+    connect( m_d->rootItem, static_cast<void(BillItem::*)(BillItem*,int)>(&BillItem::dataChanged), this, &Bill::updateValue );
+    connect( m_d->rootItem, static_cast<void(BillItem::*)(int,double)>(&BillItem::amountChanged), this, static_cast<void(Bill::*)(int,double)>(&Bill::amountChanged) );
+    connect( m_d->rootItem, static_cast<void(BillItem::*)(int,const QString &)>(&BillItem::amountChanged), this, static_cast<void(Bill::*)(int,const QString &)>(&Bill::amountChanged) );
+    connect( m_d->rootItem, &BillItem::itemChanged, this, &Bill::modelChanged );
+
+    connect( m_d->attributeModel, &BillAttributeModel::modelChanged, this, &Bill::modelChanged );
 }
 
 Bill::Bill(Bill & b):
-    QAbstractTableModel(),
-    ProjectItem( b.ProjectItem::parent() ),
-    m_d( new BillPrivate( b.m_d->name, b.m_d->parser ) ) {
-    connect( m_d->rootItem, SIGNAL(dataChanged(BillItem*,int)), this, SLOT(updateValue(BillItem*,int)) );
-    connect( m_d->rootItem, SIGNAL(amountTotalChanged(QString)), this, SIGNAL(amountTotalChanged(QString)) );
-    connect( m_d->rootItem, SIGNAL(amountHumanFactorChanged(QString)), this, SIGNAL(amountHumanFactorChanged(QString)) );
-    connect( m_d->rootItem, SIGNAL(amountTotalChanged(double)), this, SIGNAL(amountTotalChanged(double)) );
-    connect( m_d->rootItem, SIGNAL(amountHumanFactorChanged(double)), this, SIGNAL(amountHumanFactorChanged(double)) );
+    QAbstractItemModel(),
+    ProjectItem( b.ProjectItem::parentItem() ),
+    m_d( new BillPrivate( b.m_d->name, this, b.m_d->priceFieldModel, b.m_d->parser ) ) {
 
     *this = b;
+
+    connect( m_d->priceFieldModel, &PriceFieldModel::endInsertPriceField, this, &Bill::insertPriceField );
+    connect( m_d->priceFieldModel, &PriceFieldModel::endRemovePriceField, this, &Bill::removePriceField );
+
+    connect( m_d->rootItem, static_cast<void(BillItem::*)(BillItem*,int)>(&BillItem::dataChanged), this, &Bill::updateValue );
+    connect( m_d->rootItem, static_cast<void(BillItem::*)(int,double)>(&BillItem::amountChanged), this, static_cast<void(Bill::*)(int,double)>(&Bill::amountChanged) );
+    connect( m_d->rootItem, static_cast<void(BillItem::*)(int,const QString &)>(&BillItem::amountChanged), this, static_cast<void(Bill::*)(int,const QString &)>(&Bill::amountChanged) );
+    connect( m_d->rootItem, &BillItem::itemChanged, this, &Bill::modelChanged );
+
+    connect( m_d->attributeModel, &BillAttributeModel::modelChanged, this, &Bill::modelChanged );
 }
 
 Bill::~Bill(){
-    emit aboutToDelete();
+    disconnect( m_d->priceFieldModel, &PriceFieldModel::endInsertPriceField, this, &Bill::insertPriceField );
+    disconnect( m_d->priceFieldModel, &PriceFieldModel::endRemovePriceField, this, &Bill::removePriceField );
+
+    disconnect( m_d->rootItem, static_cast<void(BillItem::*)(BillItem*,int)>(&BillItem::dataChanged), this, &Bill::updateValue );
+    disconnect( m_d->rootItem, static_cast<void(BillItem::*)(int,double)>(&BillItem::amountChanged), this, static_cast<void(Bill::*)(int,double)>(&Bill::amountChanged) );
+    disconnect( m_d->rootItem, static_cast<void(BillItem::*)(int,const QString &)>(&BillItem::amountChanged), this, static_cast<void(Bill::*)(int,const QString &)>(&Bill::amountChanged) );
+    disconnect( m_d->rootItem, &BillItem::itemChanged, this, &Bill::modelChanged );
+
+    disconnect( m_d->attributeModel, &BillAttributeModel::modelChanged, this, &Bill::modelChanged );
+
+    emit aboutToBeDeleted();
+
     delete m_d;
 }
 
@@ -123,9 +160,9 @@ void Bill::setDescription(const QString &value) {
 }
 
 void Bill::setPriceCol(int v) {
-    if( v > -1 && v < m_d->priceList->nPriceCol() &&
-            m_d->rootItem->priceCol() != v ){
-        m_d->rootItem->setPriceCol( v );
+    if( v > -1 && v < m_d->priceList->priceDataSetCount() &&
+            m_d->rootItem->currentPriceDataSet() != v ){
+        m_d->rootItem->setCurrentPriceDataSet( v );
     }
 }
 
@@ -139,6 +176,10 @@ int Bill::childCount() const {
 
 int Bill::childNumber(ProjectItem * /*item*/) {
     return -1;
+}
+
+bool Bill::reset() {
+    return m_d->rootItem->reset();
 }
 
 bool Bill::canChildrenBeInserted() {
@@ -173,53 +214,63 @@ bool Bill::setData(const QVariant &value) {
 }
 
 void Bill::setPriceList(PriceList *pl, Bill::SetPriceListMode plMode) {
-    if( plMode != None ){
-        if( m_d->priceList != NULL ){
-            if( plMode == SearchAndAdd ){
-                // cerca e aggiunge se manca
-                QList<BillItem *> allItems = m_d->rootItem->allChildren();
-                for(QList<BillItem *>::iterator i = allItems.begin(); i != allItems.end(); ++i ){
-                    PriceItem * newPriceItem = pl->priceItemCode( (*i)->priceItem()->code() );
-                    if( newPriceItem == NULL ){
-                        newPriceItem = pl->appendPriceItem();
-                        *newPriceItem = (*i)->priceItem();
+    if( pl != m_d->priceList ){
+        if( plMode != None ){
+            if( m_d->priceList != NULL ){
+                if( plMode == SearchAndAdd ){
+                    // cerca in base al codice e aggiunge se manca
+                    QList<BillItem *> allItems = m_d->rootItem->allChildren();
+                    for(QList<BillItem *>::iterator i = allItems.begin(); i != allItems.end(); ++i ){
+                        PriceItem * newPriceItem = NULL;
+                        if( (*i)->priceItem()!= NULL ){
+                            newPriceItem = pl->priceItemCode( (*i)->priceItem()->code() );
+                            if( newPriceItem == NULL ){
+                                newPriceItem = pl->appendPriceItem();
+                                BillPrivate::setPriceItemParents( pl, (*i)->priceItem(), newPriceItem );
+                                *newPriceItem = *((*i)->priceItem());
+                            }
+                        }
+                        (*i)->setPriceItem( newPriceItem );
                     }
-                    (*i)->setPriceItem( newPriceItem );
+                } else if( plMode == Add ){
+                    // aggiunge sempre e comunque
+                    QList<BillItem *> allItems = m_d->rootItem->allChildren();
+                    for(QList<BillItem *>::iterator i = allItems.begin(); i != allItems.end(); ++i ){
+                        PriceItem * newPriceItem = NULL;
+                        if( (*i)->priceItem()!= NULL ){
+                            newPriceItem = pl->appendPriceItem();
+                            BillPrivate::setPriceItemParents( pl, (*i)->priceItem(), newPriceItem );
+                            *newPriceItem = *((*i)->priceItem());
+                        }
+                        (*i)->setPriceItem( newPriceItem );
+                    }
+                } else if( plMode == Search ){
+                    // cerca
+                    QList<BillItem *> allItems = m_d->rootItem->allChildren();
+                    for(QList<BillItem *>::iterator i = allItems.begin(); i != allItems.end(); ++i ){
+                        (*i)->setPriceItem( pl->priceItemCode( (*i)->priceItem()->code() ) );
+                    }
+                } else if( plMode == NULLPriceItem ){
+                    // annulla
+                    QList<BillItem *> allItems = m_d->rootItem->allChildren();
+                    for(QList<BillItem *>::iterator i = allItems.begin(); i != allItems.end(); ++i ){
+                        (*i)->setPriceItem( NULL );
+                    }
+                } else if( plMode == ResetBill ){
+                    // resetta il computo
+                    removeBillItems( 0, m_d->rootItem->childrenCount() );
                 }
-            } else if( plMode == Add ){
-                // aggiunge sempre e comunque
-                QList<BillItem *> allItems = m_d->rootItem->allChildren();
-                for(QList<BillItem *>::iterator i = allItems.begin(); i != allItems.end(); ++i ){
-                    PriceItem * newPriceItem = pl->appendPriceItem();
-                    *newPriceItem = (*i)->priceItem();
-                    (*i)->setPriceItem( newPriceItem );
+                if( pl == NULL ){
+                    m_d->rootItem->setCurrentPriceDataSet( 0 );
+                } else {
+                    if( m_d->rootItem->currentPriceDataSet() > pl->priceDataSetCount() ){
+                        m_d->rootItem->setCurrentPriceDataSet( 0 );
+                    }
                 }
-            } else if( plMode == Search ){
-                // cerca
-                QList<BillItem *> allItems = m_d->rootItem->allChildren();
-                for(QList<BillItem *>::iterator i = allItems.begin(); i != allItems.end(); ++i ){
-                    (*i)->setPriceItem( pl->priceItemCode( (*i)->priceItem()->code() ) );
-                }
-            } else if( plMode == NULLPriceItem ){
-                // annulla
-                QList<BillItem *> allItems = m_d->rootItem->allChildren();
-                for(QList<BillItem *>::iterator i = allItems.begin(); i != allItems.end(); ++i ){
-                    (*i)->setPriceItem( NULL );
-                }
-            } else if( plMode == ResetBill ){
-                // resetta il computo
-                removeBillItems( 0, m_d->rootItem->childrenCount() );
             }
-            if( pl == NULL ){
-                m_d->rootItem->setPriceCol( 0 );
-            } else {
-                if( m_d->rootItem->priceCol() > pl->nPriceCol() ){
-                    m_d->rootItem->setPriceCol( 0 );
-                }
-            }
+            m_d->priceList = pl;
+            emit priceListChanged( pl );
         }
-        m_d->priceList = pl;
-        emit priceListChanged( pl );
     }
 }
 
@@ -227,8 +278,8 @@ PriceList *Bill::priceList() {
     return m_d->priceList;
 }
 
-int Bill::priceCol() {
-    return m_d->rootItem->priceCol();
+int Bill::priceDataSet() {
+    return m_d->rootItem->currentPriceDataSet();
 }
 
 
@@ -237,6 +288,28 @@ BillItem *Bill::billItem(const QModelIndex &index ) const {
         return static_cast<BillItem *>(index.internalPointer());
     }
     return m_d->rootItem;
+}
+
+BillItem *Bill::billItem(int childNum, const QModelIndex &parentIndex ) {
+    if (parentIndex.isValid()) {
+        BillItem * parentItem = static_cast<BillItem *>(parentIndex.internalPointer());
+        if( childNum > -1 && childNum < parentItem->childrenCount() ){
+            return parentItem->childItem( childNum );
+        }
+    }
+    return m_d->rootItem;
+}
+
+BillItem *Bill::lastBillItem(const QModelIndex &parentIndex) {
+    if (parentIndex.isValid()) {
+        BillItem * parentItem = static_cast<BillItem *>(parentIndex.internalPointer());
+        return parentItem->childItem( parentItem->childrenCount()-1 );
+    }
+    return m_d->rootItem;
+}
+
+BillItem *Bill::billItemId(unsigned int itemId) {
+    return m_d->rootItem->billItemId( itemId );
 }
 
 QVariant Bill::data(const QModelIndex &index, int role) const {
@@ -258,7 +331,6 @@ QVariant Bill::headerData(int section, Qt::Orientation orientation, int role) co
 
 int Bill::rowCount(const QModelIndex &parent) const {
     BillItem *parentItem = billItem(parent);
-
     return parentItem->childrenCount();
 }
 
@@ -354,6 +426,21 @@ QModelIndex Bill::index(BillItem *item, int column) const {
     }
 }
 
+bool Bill::moveRows(const QModelIndex &sourceParent, int sourceRow, int count, const QModelIndex &destinationParent, int destinationRow ) {
+
+    if(beginMoveRows( sourceParent, sourceRow, sourceRow + count - 1, destinationParent, destinationRow )){
+        BillItem * srcParent = billItem( sourceParent );
+        BillItem * dstParent = billItem( destinationParent );
+        for( int i=0; i<count; ++i ){
+            srcParent->childItem( (sourceRow+count-1)-i )->setParent( dstParent, destinationRow );
+        }
+
+        endMoveRows();
+        return true;
+    }
+    return false;
+}
+
 void Bill::updateValue(BillItem * item, int column) {
     QModelIndex i = index( item, column);
     emit dataChanged( i, i);
@@ -367,28 +454,48 @@ bool Bill::isUsingPriceList(PriceList *pl) {
     return m_d->priceList == pl;
 }
 
-double Bill::amountTotal() {
-    return m_d->rootItem->amountTotal();
+double Bill::amount(int field) const {
+    return m_d->rootItem->amount( field );
 }
 
-double Bill::amountTotal(Attribute *attr) {
-    return m_d->rootItem->amountTotal(attr);
+QString Bill::amountStr(int field) const {
+    return m_d->rootItem->amountStr( field );
 }
 
-double Bill::amountTotal(const QList<Attribute *> &attrs) {
-    return m_d->rootItem->amountTotal(attrs);
+BillAttributeModel *Bill::attributeModel() {
+    return m_d->attributeModel;
 }
 
-double Bill::amountHumanFactor() {
-    return m_d->rootItem->amountHumanFactor();
+double Bill::amountAttribute(BillAttribute *attr, int field) {
+    return m_d->rootItem->amountAttribute( attr, field );
+}
+
+QString Bill::amountAttributeStr(BillAttribute *attr, int field) {
+    return m_d->rootItem->amountAttributeStr( attr, field );
 }
 
 void Bill::nextId() {
-    m_d->id = m_d->nextId++;
+    m_d->id++;
 }
 
 unsigned int Bill::id() {
     return m_d->id;
+}
+
+void Bill::insertPriceField( int firstPFInserted, int lastPFInserted ){
+    for( int pf = firstPFInserted; pf <= lastPFInserted; ++pf ){
+        beginInsertColumns( QModelIndex(), m_d->rootItem->firstPriceFieldCol() + pf * 2, m_d->rootItem->firstPriceFieldCol() + pf * 2 + 1 );
+        m_d->rootItem->insertAmount(pf);
+        endInsertColumns();
+    }
+}
+
+void Bill::removePriceField( int firstPFRemoved, int lastPFRemoved ){
+    for( int pf = firstPFRemoved; pf <= lastPFRemoved; ++pf ){
+        beginRemoveColumns( QModelIndex(), m_d->rootItem->firstPriceFieldCol() + pf * 2, m_d->rootItem->firstPriceFieldCol() + pf * 2 + 1 );
+        m_d->rootItem->removeAmount(pf);
+        endRemoveColumns();
+    }
 }
 
 void Bill::writeXml(QXmlStreamWriter *writer) {
@@ -399,14 +506,16 @@ void Bill::writeXml(QXmlStreamWriter *writer) {
     if( m_d->priceList ){
         writer->writeAttribute( "priceList", QString::number( m_d->priceList->id() ) );
     }
-    writer->writeAttribute( "priceCol", QString::number( m_d->rootItem->priceCol() ) );
+    writer->writeAttribute( "priceDataSet", QString::number( m_d->rootItem->currentPriceDataSet() ) );
+
+    m_d->attributeModel->writeXml( writer );
 
     m_d->rootItem->writeXml( writer );
 
     writer->writeEndElement();
 }
 
-void Bill::readXml(QXmlStreamReader *reader, AttributeList * attrList, ProjectPriceListParentItem *priceLists) {
+void Bill::readXml(QXmlStreamReader *reader, ProjectPriceListParentItem *priceLists) {
     if(reader->isStartElement() && reader->name().toString().toUpper() == "BILL"){
         loadFromXml( reader->attributes(), priceLists );
     }
@@ -414,8 +523,12 @@ void Bill::readXml(QXmlStreamReader *reader, AttributeList * attrList, ProjectPr
            (!reader->hasError()) &&
            !(reader->isEndElement() && reader->name().toString().toUpper() == "BILL") ){
         reader->readNext();
-        if( reader->name().toString().toUpper() == "BILLITEM" && reader->isStartElement()) {
-            m_d->rootItem->readXml( reader, attrList, m_d->priceList );
+        QString tag = reader->name().toString().toUpper();
+        if( tag == "BILLATTRIBUTEMODEL" && reader->isStartElement()) {
+            m_d->attributeModel->readXml( reader );
+        }
+        if( tag == "BILLITEM" && reader->isStartElement()) {
+            m_d->rootItem->readXml( reader, m_d->priceList, m_d->attributeModel );
         }
     }
 }
@@ -440,41 +553,55 @@ void Bill::loadFromXml(const QXmlStreamAttributes &attrs, ProjectPriceListParent
         if( nameUp == "ID" ){
             m_d->id = (*i).value().toUInt();
         }
-        qWarning( "%s", nameUp.toStdString().c_str() );
-    }
 
-    if( attrs.hasAttribute( "id" ) ){
-        m_d->id = attrs.value( "id").toUInt();
-    }
-    if( attrs.hasAttribute( "name" ) ){
-        setName( attrs.value( "name").toString() );
-    }
-    if( attrs.hasAttribute( "description" ) ){
-        setDescription( attrs.value( "description").toString() );
-    }
-    if( attrs.hasAttribute( "priceList" ) ){
-        m_d->priceList = priceLists->priceListId( attrs.value( "priceList").toUInt() );
-    }
-    if( attrs.hasAttribute( "priceCol" ) ){
-        m_d->rootItem->setPriceCol( attrs.value( "priceCol").toInt() );
+        if( attrs.hasAttribute( "id" ) ){
+            m_d->id = attrs.value( "id").toUInt();
+        }
+        if( attrs.hasAttribute( "name" ) ){
+            setName( attrs.value( "name").toString() );
+        }
+        if( attrs.hasAttribute( "description" ) ){
+            setDescription( attrs.value( "description").toString() );
+        }
+        if( attrs.hasAttribute( "priceList" ) ){
+            m_d->priceList = priceLists->priceListId( attrs.value( "priceList").toUInt() );
+        }
+        if( attrs.hasAttribute( "priceCol" ) ){
+            m_d->rootItem->setCurrentPriceDataSet( attrs.value( "priceCol").toInt() );
+        }
+        if( nameUp == "NAME" ){
+            setName( (*i).value().toString() );
+        }
+        if( nameUp == "DESCRIPTION" ){
+            setDescription( (*i).value().toString() );
+        }
+        if( nameUp == "PRICELIST" ){
+            m_d->priceList = priceLists->priceListId( (*i).value().toUInt() );
+        }
+        if( nameUp == "PRICEDATASET" ){
+            m_d->rootItem->setCurrentPriceDataSet( (*i).value().toInt() );
+        }
     }
 }
 
 void Bill::loadFromXmlTmp(const QXmlStreamAttributes &attrs) {
-    if( attrs.hasAttribute( "id" ) ){
-        m_d->id = attrs.value( "id").toUInt();
-    }
-    if( attrs.hasAttribute( "name" ) ){
-        setName( attrs.value( "name").toString() );
-    }
-    if( attrs.hasAttribute( "description" ) ){
-        setDescription( attrs.value( "description").toString() );
-    }
-    if( attrs.hasAttribute( "priceList" ) ){
-        m_d->priceListIdTmp = attrs.value( "priceList").toUInt();
-    }
-    if( attrs.hasAttribute( "priceCol" ) ){
-        m_d->rootItem->setPriceCol( attrs.value( "priceCol").toInt() );
+    for( QXmlStreamAttributes::const_iterator i=attrs.begin(); i != attrs.end(); ++i ){
+        QString nameUp = (*i).name().toString().toUpper();
+        if( nameUp == "ID" ){
+            m_d->id = (*i).value().toUInt();
+        }
+        if( nameUp == "NAME" ){
+            setName( (*i).value().toString() );
+        }
+        if( nameUp == "DESCRIPTION" ){
+            setDescription( (*i).value().toString() );
+        }
+        if( nameUp == "PRICELIST" ){
+            m_d->priceListIdTmp = (*i).value().toUInt();
+        }
+        if( nameUp == "PRICEDATASET" ){
+            m_d->rootItem->setCurrentPriceDataSet( (*i).value().toInt() );
+        }
     }
 }
 
@@ -486,15 +613,36 @@ QList<PriceItem *> Bill::connectedPriceItems() {
     return m_d->rootItem->connectedPriceItems();
 }
 
-void Bill::writeOnTable(QTextCursor *cursor, int printData ) {
-    m_d->rootItem->writeOnTable(cursor, printData);
+void Bill::writeODTBillOnTable( QTextCursor *cursor,
+                                BillPrinter::PrintBillItemsOption prItemsOption,
+                                const QList<int> fieldsToPrint,
+                                bool groupPrAm ) {
+    m_d->rootItem->writeODTBillOnTable(cursor, prItemsOption, fieldsToPrint, groupPrAm );
 }
 
-void Bill::loadTmpData(ProjectPriceListParentItem * priceLists, AttributeList *attrList) {
+void Bill::writeODTAttributeBillOnTable(QTextCursor *cursor,
+                                        BillPrinter::AttributePrintOption prOption,
+                                        BillPrinter::PrintBillItemsOption prItemsOption,
+                                        const QList<int> &fieldsToPrint,
+                                        const QList<BillAttribute *> &attrsToPrint,
+                                        bool groupPrAm) {
+    m_d->rootItem->writeODTAttributeBillOnTable( cursor, prOption, prItemsOption, fieldsToPrint, attrsToPrint, groupPrAm );
+}
+
+
+void Bill::writeODTSummaryOnTable(QTextCursor *cursor,
+                                  BillPrinter::PrintBillItemsOption prItemsOption,
+                                  const QList<int> fieldsToPrint,
+                                  bool groupPrAm,
+                                  bool writeDetails ) {
+    m_d->rootItem->writeODTSummaryOnTable(cursor, prItemsOption, fieldsToPrint, groupPrAm, writeDetails );
+}
+
+void Bill::loadTmpData(ProjectPriceListParentItem * priceLists) {
     m_d->priceList = priceLists->priceListId( m_d->priceListIdTmp );
-    m_d->rootItem->loadTmpData( attrList, m_d->priceList );
+    m_d->rootItem->loadTmpData( m_d->priceList, m_d->attributeModel );
 }
 
-void Bill::removeUsingAttribute(Attribute *attr){
-    return m_d->rootItem->removeUsingAttribute(attr);
+void Bill::insertStandardAttributes(){
+    m_d->attributeModel->insertStandardAttributes();
 }

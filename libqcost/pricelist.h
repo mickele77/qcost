@@ -36,11 +36,11 @@ class QTextStream;
 #include "pricelistprinter.h"
 
 #include "projectitem.h"
-#include <QAbstractTableModel>
+#include <QAbstractItemModel>
 
 class PriceListPrivate;
 
-class EXPORT_LIB_OPT PriceList : public QAbstractTableModel, public ProjectItem {
+class EXPORT_LIB_OPT PriceList : public QAbstractItemModel, public ProjectItem {
     Q_OBJECT
 public:
     friend class Project;
