@@ -90,20 +90,20 @@ QString	AccountingBillItemPrivate::toString(double i, char f, int prec ) const{
     }
 }
 
-void AccountingBillItemPrivate::writeDescriptionCell( PriceItem * priceItemToPrint, QTextCursor *cursor, QTextTable * table, const QTextTableCellFormat &centralFormat,
+void AccountingBillItemPrivate::writeDescriptionCell(PriceItem * priceItemToPrint, QTextCursor *cursor, QTextTable * table, const QTextTableCellFormat &centralFormat,
                                                       const QTextBlockFormat & txtBlockFormat, const QTextCharFormat & txtCharFormat, const QTextCharFormat & txtBoldCharFormat,
-                                                      AccountingPrinter::PrintPPUDescOption prItemsOption ){
+                                                      AccountingPrinter::PrintPPUDescOption prPPUDescOption ){
     if( priceItemToPrint != NULL ){
-        if( prItemsOption == AccountingPrinter::PrintShortDesc ){
+        if( prPPUDescOption == AccountingPrinter::PrintShortDesc ){
             writeCell( cursor, table, centralFormat, txtBlockFormat, priceItemToPrint->shortDescriptionFull() );
-        } else if( prItemsOption == AccountingPrinter::PrintLongDesc ){
+        } else if( prPPUDescOption == AccountingPrinter::PrintLongDesc ){
             writeCell( cursor, table, centralFormat, txtBlockFormat, priceItemToPrint->longDescriptionFull() );
-        } else if( prItemsOption == AccountingPrinter::PrintShortLongDesc ){
+        } else if( prPPUDescOption == AccountingPrinter::PrintShortLongDesc ){
             QList< QPair<QString, QTextCharFormat> > txt;
             txt << qMakePair( priceItemToPrint->shortDescriptionFull(), txtBoldCharFormat );
             txt << qMakePair( "\n" + priceItemToPrint->longDescriptionFull(), txtCharFormat );
             writeCell( cursor, table, centralFormat, txtBlockFormat, txt );
-        } else if( prItemsOption == AccountingPrinter::PrintShortLongDescOpt ){
+        } else if( prPPUDescOption == AccountingPrinter::PrintShortLongDescOpt ){
             QString sDesc = priceItemToPrint->shortDescriptionFull();
             while( sDesc.endsWith(" ")){
                 sDesc.remove( sDesc.length()-1, 1);

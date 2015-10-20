@@ -196,6 +196,9 @@ public:
                                     AccountingPrinter::PrintAmountsOption prAmountsOption,
                                     AccountingPrinter::PrintPPUDescOption prPPUDescOption) const;
     /**
+     * Stampa il SAL specificato da payPrint.
+     * Se payPrint è negativo, stampa l'ultimo SAL
+     * Questo metodo ha senso solo se eseguito dall'elemento Root
      * @brief Stampa il S.A.L.
      * @param cursor
      * @param payToPrint
@@ -353,6 +356,19 @@ protected:
                               QTextCursor *cursor,
                               double * itemTotalQuantity,
                               QList<double> * fieldsValue,
+                              bool printAmounts,
+                              bool writeDetails,
+                              QTextTable *table,
+                              QTextBlockFormat &tagBlockFormat,
+                              QTextBlockFormat & txtBlockFormat,
+                              QTextBlockFormat & numBlockFormat,
+                              QTextTableCellFormat & leftFormat,
+                              QTextTableCellFormat & centralFormat,
+                              QTextTableCellFormat & rightFormat ) const;
+
+    void writeODTSummaryLine( PriceItem * priceItem,
+                              QTextCursor *cursor,
+                              double * itemTotalQuantity,
                               bool printAmounts,
                               bool writeDetails,
                               QTextTable *table,

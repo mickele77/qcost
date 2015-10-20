@@ -30,6 +30,7 @@
 #include <QTextDocument>
 #include <QTextCursor>
 #include <QTextTable>
+#include <QTextLength>
 #include <QTextCodec>
 #include <QFileInfo>
 #include <QFile>
@@ -1183,24 +1184,27 @@ bool AccountingPrinter::printPaymentODT( int payToPrint,
         int dataCols = 3;
 
         if( paperOrientation == Qt::Horizontal ){
-            double usedWidth =  8.0 + 18.0 + 30.0 + 60.0 + 20.0;
             colWidths << QTextLength( QTextLength::FixedLength, 8.0 )
-                      << QTextLength( QTextLength::FixedLength, 18.0 )
                       << QTextLength( QTextLength::FixedLength, 30.0 )
                       << QTextLength( QTextLength::FixedLength, 60.0 )
                       << QTextLength( QTextLength::FixedLength, 20.0 );
+            double usedWidth =  0.0;
+            for( QVector<QTextLength>::iterator i = colWidths.begin(); i!= colWidths.end(); ++i ){
+                usedWidth += (*i).rawValue();
+            }
             double colEqualWidth = (tableWidth - usedWidth ) / dataCols;
             for( int i=0; i < dataCols; ++i ){
                 colWidths << QTextLength( QTextLength::FixedLength, colEqualWidth );
             }
         } else { // pageOrientation == Qt::Vertical
-            double usedWidth = 0.0;
             colWidths << QTextLength( QTextLength::FixedLength, 8.0 )
-                      << QTextLength( QTextLength::FixedLength, 18.0 )
                       << QTextLength( QTextLength::FixedLength, 25.0 )
                       << QTextLength( QTextLength::FixedLength, 60.0 )
                       << QTextLength( QTextLength::FixedLength, 15.0 );
-            usedWidth =  8.0 + 18.0 + 25.0 + 60.0 + 15.0;
+            double usedWidth =  0.0;
+            for( QVector<QTextLength>::iterator i = colWidths.begin(); i!= colWidths.end(); ++i ){
+                usedWidth += (*i).rawValue();
+            }
             double colEqualWidth = (tableWidth - usedWidth ) / dataCols;
             for( int i=0; i<dataCols; ++i ){
                 colWidths << QTextLength( QTextLength::FixedLength, colEqualWidth );

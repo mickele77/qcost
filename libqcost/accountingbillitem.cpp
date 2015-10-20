@@ -2503,6 +2503,11 @@ void AccountingBillItem::writeODTPaymentOnTable( QTextCursor *cursor,
                                                  int payToPrint,
                                                  AccountingPrinter::PrintPPUDescOption prPPUDescOption  ) const {
 
+    // Questo metodo ha senso solo se eseguito dall'elemento Root
+    if( m_d->itemType != Root ){
+        return;
+    }
+
     // spessore del bordo della tabella
     double borderWidth = 1.0f;
 
@@ -2627,8 +2632,8 @@ void AccountingBillItem::writeODTPaymentOnTable( QTextCursor *cursor,
     QTextTable *table = cursor->currentTable();
 
     // *** Riga di intestazione ***
+    // numero progressivo + codice + descrizione + unità di misura + quantità + prezzo + importo
     AccountingBillItemPrivate::writeCell( cursor, table, leftHeaderFormat, headerBlockFormat, trUtf8("N."), false);
-    AccountingBillItemPrivate::writeCell( cursor, table, centralHeaderFormat, headerBlockFormat, trUtf8("Data") );
     AccountingBillItemPrivate::writeCell( cursor, table, centralHeaderFormat, headerBlockFormat, trUtf8("Art.Elenco") );
     AccountingBillItemPrivate::writeCell( cursor, table, centralHeaderFormat, headerBlockFormat, trUtf8("Indicazione dei lavori"));
     AccountingBillItemPrivate::writeCell( cursor, table, centralHeaderFormat, headerBlockFormat, trUtf8("Unità di Misura"));
@@ -2641,8 +2646,63 @@ void AccountingBillItem::writeODTPaymentOnTable( QTextCursor *cursor,
 
     // *** Scrive le righe del S.A.L. ***
 
+    // se payToPrint è negativo, stampa l'ultimo SAL
+    if( payToPrint < 0 ){
+        payToPrint = m_d->childrenContainer.size() - 1;
+    }
+
+    QList<PriceItem *> usedPItems;
+    for( QList<AccountingBillItem *>::iterator i=m_d->childrenContainer.begin(); i != m_d->childrenContainer.end(); ++i){
+        QList<PriceItem *> payUsedPItems = (*i)->usedPriceItems();
+        for( QList<PriceItem *>::iterator usedPItem=payUsedPItems.begin(); usedPItem != payUsedPItems.end(); ++usedPItem ){
+            if( !usedPItems.contains(*usedPItem ) ){
+                usedPItems << *usedPItem;
+            }
+        }
+    }
+
     // TODO
 
+    int nProg = 1;
+    for( QList<PriceItem *>::iterator pItem = usedPItems.begin(); pItem != usedPItems.end(); ++pItem){
+        table->appendRows(1);
+        cursor->movePosition(QTextCursor::PreviousRow );
+        AccountingBillItemPrivate::writeCell( cursor, table, leftFormat, txtBlockFormat, QString::number(nProg) );
+        if( (*pItem) != NULL ){
+            AccountingBillItemPrivate::writeCell( cursor, table, centralFormat, txtBlockFormat, (*pItem)->codeFull() );
+            m_d->writeDescriptionCell( (*pItem), cursor, table, centralFormat, txtBlockFormat, txtCharFormat, txtBoldCharFormat, prPPUDescOption );
+        } else {
+            AccountingBillItemPrivate::writeCell( cursor, table, centralFormat, txtBlockFormat );
+            AccountingBillItemPrivate::writeCell( cursor, table, centralFormat, txtBlockFormat );
+        }
+
+        QString unitMeasureTag;
+        int unitMeasurePrec = 3;
+        if( (*pItem) != NULL ){
+            if( (*pItem)->unitMeasure() != NULL ){
+                unitMeasureTag = (*pItem)->unitMeasure()->tag();
+                unitMeasurePrec = (*pItem)->unitMeasure()->precision();
+            }
+        }
+
+        double itemTotalQuantity = 0.0;
+        m_d->childrenContainer.at(payToPrint)->writeODTSummaryLine( *pItem, cursor, &itemTotalQuantity,
+                                                                    true, false,
+                                                                    table,
+                                                                    tagBlockFormat, txtBlockFormat, numBlockFormat,
+                                                                    leftFormat, centralFormat, rightFormat );
+
+        AccountingBillItemPrivate::writeCell( cursor, table, centralFormat, tagBlockFormat, unitMeasureTag );
+
+        AccountingBillItemPrivate::writeCell( cursor, table, centralFormat, numBlockFormat, m_d->toString( itemTotalQuantity, 'f', unitMeasurePrec ));
+        if( (*pItem)!= NULL ){
+            AccountingBillItemPrivate::writeCell( cursor, table, centralFormat, numBlockFormat, PPUTotalToDiscountStr() );
+        } else {
+            AccountingBillItemPrivate::writeCell( cursor, table, centralFormat, numBlockFormat );
+        }
+        AccountingBillItemPrivate::writeCell( cursor, table, rightFormat, numBlockFormat, totalAmountToDiscountStr() );
+        AccountingBillItemPrivate::insertEmptyRow( cellCount, cursor, leftFormat, centralFormat, rightFormat );
+    }
 
     // *** riga dei totali complessivi
 
@@ -3014,6 +3074,56 @@ void AccountingBillItem::writeODTSummaryLine(PriceItem * priceItem,
     } else {
         for( QList<AccountingBillItem *>::iterator i = m_d->childrenContainer.begin(); i != m_d->childrenContainer.end(); ++i ){
             (*i)->writeODTSummaryLine( priceItem, cursor, itemTotalQuantity, fieldsValue, printAmounts, writeDetails,
+                                       table,
+                                       tagBlockFormat, txtBlockFormat, numBlockFormat,
+                                       leftFormat, centralFormat, rightFormat );
+        }
+    }
+}
+
+void AccountingBillItem::writeODTSummaryLine( PriceItem * priceItem,
+                                              QTextCursor *cursor,
+                                              double * itemTotalQuantity,
+                                              bool printAmounts,
+                                              bool writeDetails,
+                                              QTextTable *table,
+                                              QTextBlockFormat & tagBlockFormat,
+                                              QTextBlockFormat & txtBlockFormat,
+                                              QTextBlockFormat & numBlockFormat,
+                                              QTextTableCellFormat & leftFormat,
+                                              QTextTableCellFormat & centralFormat,
+                                              QTextTableCellFormat & rightFormat ) const {
+    if( m_d->childrenContainer.size() == 0 ){
+        if( priceItem == m_d->priceItem ){
+            (*itemTotalQuantity) += quantity();
+
+            if( writeDetails ){
+                AccountingBillItemPrivate::writeCell( cursor, table, leftFormat, txtBlockFormat );
+                AccountingBillItemPrivate::writeCell( cursor, table, centralFormat, txtBlockFormat, progressiveCode() );
+
+                QString unitMeasureTag;
+                if( m_d->priceItem != NULL ){
+                    if( m_d->priceItem->unitMeasure() != NULL ){
+                        unitMeasureTag = m_d->priceItem->unitMeasure()->tag();
+                    }
+                }
+                AccountingBillItemPrivate::writeCell( cursor, table, centralFormat, tagBlockFormat, unitMeasureTag );
+
+                if( printAmounts ){
+                    AccountingBillItemPrivate::writeCell( cursor, table, centralFormat, numBlockFormat, quantityStr() );
+                    AccountingBillItemPrivate::writeCell( cursor, table, centralFormat, numBlockFormat );
+                    AccountingBillItemPrivate::writeCell( cursor, table, rightFormat, numBlockFormat );
+                } else {
+                    AccountingBillItemPrivate::writeCell( cursor, table, rightFormat, numBlockFormat, quantityStr() );
+                }
+
+                table->appendRows(1);
+                cursor->movePosition(QTextCursor::PreviousRow );
+            }
+        }
+    } else {
+        for( QList<AccountingBillItem *>::iterator i = m_d->childrenContainer.begin(); i != m_d->childrenContainer.end(); ++i ){
+            (*i)->writeODTSummaryLine( priceItem, cursor, itemTotalQuantity, printAmounts, writeDetails,
                                        table,
                                        tagBlockFormat, txtBlockFormat, numBlockFormat,
                                        leftFormat, centralFormat, rightFormat );
