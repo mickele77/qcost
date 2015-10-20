@@ -75,6 +75,10 @@ public:
     AccountingPrinter(AccountingLSBill *b, MathParser *prs);
     ~AccountingPrinter();
 
+    /** Stampa:
+     * - libretto delle misure
+     * - brogliaccio del libretto delle misure
+     * - S.A.L. */
     bool printODT( int payToPrint,
                    PrintOption prOption,
                    PrintAmountsOption prAmountsOption,
@@ -83,6 +87,7 @@ public:
                    double paperWidth = 210.0, double paperHeight = 297.0,
                    Qt::Orientation paperOrientation = Qt::Vertical) const;
 
+    /** Stampa brogliaccio opere a corpo */
     bool printODT( int payToPrint,
                    PaymentDataModel *payDataModel,
                    AccountingPrinter::PrintOption prOption,
@@ -163,6 +168,13 @@ private:
                                                    AccountingPrinter::PrintLSOption prLSOption,
                                                    Qt::Orientation paperOrientation,
                                                    bool printAmounts) const;
+
+    /** Stampa S.A.L. */
+    bool printPaymentODT( int payToPrint,
+                          AccountingPrinter::PrintPPUDescOption prPPUDescOption,
+                          const QString &fileName,
+                          int paperWidth, int paperHeight,
+                          Qt::Orientation paperOrientation) const;
 };
 
 #endif // ACCOUNTINGPRINTER_H

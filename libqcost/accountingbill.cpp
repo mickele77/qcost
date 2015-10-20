@@ -806,6 +806,12 @@ void AccountingBill::writeODTAccountingOnTable( QTextCursor *cursor,
     m_d->rootItem->writeODTAccountingOnTable(cursor, payToPrint, prAmountsOption, prPPUDescOption );
 }
 
+void AccountingBill::writeODTPaymentOnTable( QTextCursor *cursor,
+                                             int payToPrint,
+                                             AccountingPrinter::PrintPPUDescOption prPPUDescOption) const {
+    m_d->rootItem->writeODTPaymentOnTable( cursor, payToPrint, prPPUDescOption );
+}
+
 void AccountingBill::writeODTAttributeAccountingOnTable( QTextCursor *cursor,
                                                          AccountingPrinter::AttributePrintOption prOption,
                                                          AccountingPrinter::PrintAmountsOption prAmountsOption,

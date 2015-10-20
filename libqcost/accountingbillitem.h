@@ -185,7 +185,7 @@ public:
     QString totalAmountAttributeStr( Attribute * attr ) const;
 
     /**
-     * @brief Stampa il libretto delle misure.
+     * @brief Stampa il libretto delle misure/brogliaccio
      * @param cursor
      * @param payToPrint
      * @param prAmountsOption
@@ -195,6 +195,16 @@ public:
                                     int payToPrint,
                                     AccountingPrinter::PrintAmountsOption prAmountsOption,
                                     AccountingPrinter::PrintPPUDescOption prPPUDescOption) const;
+    /**
+     * @brief Stampa il S.A.L.
+     * @param cursor
+     * @param payToPrint
+     * @param prPPUDescOption
+     */
+    void writeODTPaymentOnTable( QTextCursor *cursor,
+                                 int payToPrint,
+                                 AccountingPrinter::PrintPPUDescOption prPPUDescOption ) const;
+
     /**
      * @brief Stampa il sommario del registro della contabilità
      * @param cursor

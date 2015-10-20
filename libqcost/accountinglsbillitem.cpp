@@ -2791,7 +2791,8 @@ void AccountingLSBillItem::writeODTBillLine( QTextCursor *cursor,
                     table->cellAt( *cursor ).setFormat( centralFormat );
                     cursor->setBlockFormat( txtBlockFormat );
                     if( !(measure->comment().isEmpty()) &&
-                            ( !(projFormula.isEmpty()) || (measure->accDate() >= dateBegin) && (measure->accDate() <= dateEnd) && !(accFormula.isEmpty()) ) ){
+                            ( ((measure->accDate() >= dateBegin) && (measure->accDate() <= dateEnd)) &&
+                              (!(projFormula.isEmpty()) || !(accFormula.isEmpty())) ) ){
                         cursor->insertText( measure->comment() );
                     }
                     cursor->insertBlock();

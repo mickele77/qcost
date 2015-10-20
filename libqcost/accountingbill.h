@@ -188,6 +188,16 @@ public:
                                     AccountingPrinter::PrintAmountsOption prAmountsOption,
                                     AccountingPrinter::PrintPPUDescOption prPPUDescOption) const;
     /**
+     * @brief Stampa il S.A.L.
+     * @param cursor
+     * @param payToPrint S.A.L. da stampare (se è < 0 li stampa tutti)
+     * @param prPPUDescOption opzione per la stampa dei prezzi
+     */
+    void writeODTPaymentOnTable( QTextCursor * cursor,
+                                 int payToPrint,
+                                 AccountingPrinter::PrintPPUDescOption prPPUDescOption) const;
+
+    /**
      * @brief Stampa il sommario della contabilità
      * @param cursor
      * #param payToPrint S.A.L. da stampare (se è < 0 li stampa tutti)
