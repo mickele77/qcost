@@ -24,6 +24,7 @@
 
 #include <QPageSize>
 #include <QComboBox>
+#include <QVariant>
 
 class AccountingBillPrinterGUIPrivate{
 public:
@@ -31,6 +32,7 @@ public:
                                      AccountingPrinter::PrintOption *prOption,
                                      AccountingPrinter::PrintAmountsOption * prAmountsOption,
                                      int * payToPrint,
+                                     int payCount,
                                      double *pWidth,
                                      double *pHeight,
                                      Qt::Orientation * pOrient ):
@@ -39,6 +41,7 @@ public:
         printOption(prOption),
         printAmountsOption(prAmountsOption),
         paymentToPrint(payToPrint),
+        paymentsCount(payCount),
         paperWidth(pWidth),
         paperHeight(pHeight),
         paperOrientation( pOrient ) {
@@ -53,6 +56,7 @@ public:
     AccountingPrinter::PrintOption *printOption;
     AccountingPrinter::PrintAmountsOption * printAmountsOption;
     int * paymentToPrint;
+    int paymentsCount;
     double *paperWidth;
     double *paperHeight;
     Qt::Orientation * paperOrientation;
@@ -69,7 +73,7 @@ AccountingBillPrinterGUI::AccountingBillPrinterGUI(PaymentDataModel * dataModel,
                                                    Qt::Orientation * pOrient,
                                                    QWidget *parent ) :
     QDialog(parent),
-    m_d( new AccountingBillPrinterGUIPrivate( prPPUDescOption, prOption, prAmountsOption, payToPrint, pWidth, pHeight, pOrient ) ) {
+    m_d( new AccountingBillPrinterGUIPrivate( prPPUDescOption, prOption, prAmountsOption, payToPrint, dataModel->paymentsCount(), pWidth, pHeight, pOrient ) ) {
     m_d->ui->setupUi(this);
 
     connect( this, &AccountingBillPrinterGUI::accepted, this, &AccountingBillPrinterGUI::setPrintData );
@@ -116,11 +120,11 @@ AccountingBillPrinterGUI::AccountingBillPrinterGUI(PaymentDataModel * dataModel,
         m_d->ui->printNoAmountsRadioButton->setChecked( true );
     }
 
-    m_d->ui->billToPrintComboBox->insertItem(0, trUtf8("Tutti"));
     for( int i=0; i < dataModel->paymentsCount(); ++i ){
-        m_d->ui->billToPrintComboBox->insertItem((i+1), dataModel->paymentData(i)->name() );
+        m_d->ui->payToPrintComboBox->addItem( dataModel->paymentData(i)->name(), QVariant(i) );
     }
-    m_d->ui->billToPrintComboBox->setCurrentIndex(*(payToPrint)+1);
+    m_d->ui->payToPrintComboBox->addItem(trUtf8("Tutti"), QVariant(-1) );
+    m_d->ui->payToPrintComboBox->setCurrentIndex(*(payToPrint)+1);
 
     Qt::WindowFlags flags = windowFlags();
     flags |= Qt::WindowMaximizeButtonHint;
@@ -138,6 +142,9 @@ void AccountingBillPrinterGUI::updateOptionsAvailable(){
         m_d->ui->printTotalAmountsToDiscountRadioButton->setDisabled( true );
         m_d->ui->printAmountsNotToDiscountRadioButton->setDisabled( true );
         m_d->ui->printAllAmountsRadioButton->setDisabled( true );
+        if( m_d->ui->payToPrintComboBox->count() == m_d->paymentsCount ){
+            m_d->ui->payToPrintComboBox->addItem( trUtf8("Tutti"), QVariant(-1) );
+        }
     } else if( m_d->ui->printPaymentButton->isChecked() ||
                m_d->ui->printAccountingButton->isChecked() ){
         m_d->ui->printNoAmountsRadioButton->setDisabled( true );
@@ -145,12 +152,18 @@ void AccountingBillPrinterGUI::updateOptionsAvailable(){
         m_d->ui->printAmountsNotToDiscountRadioButton->setDisabled( true );
         m_d->ui->printAllAmountsRadioButton->setEnabled( true );
         m_d->ui->printAllAmountsRadioButton->setChecked(true);
+        if( m_d->ui->payToPrintComboBox->count() > m_d->paymentsCount ){
+            m_d->ui->payToPrintComboBox->removeItem( m_d->paymentsCount );
+        }
     } else {
         m_d->ui->printNoAmountsRadioButton->setEnabled( true );
         m_d->ui->printTotalAmountsToDiscountRadioButton->setEnabled( true );
         m_d->ui->printAmountsNotToDiscountRadioButton->setEnabled( true );
         m_d->ui->printAllAmountsRadioButton->setEnabled( true );
         m_d->ui->printAllAmountsRadioButton->setEnabled( true );
+        if( m_d->ui->payToPrintComboBox->count() == m_d->paymentsCount ){
+            m_d->ui->payToPrintComboBox->addItem( trUtf8("Tutti"), QVariant(-1) );
+        }
     }
 }
 
@@ -177,7 +190,7 @@ void AccountingBillPrinterGUI::setPrintData(){
         *(m_d->printOption) = AccountingPrinter::PrintRawMeasures;
     }
 
-    *(m_d->paymentToPrint) = m_d->ui->billToPrintComboBox->currentIndex() - 1;
+    *(m_d->paymentToPrint) = m_d->ui->payToPrintComboBox->currentData().toInt();
 
     *(m_d->paperWidth) = m_d->pageSizeList.at( m_d->ui->paperDimensionsComboBox->currentIndex() ).size( QPageSize::Millimeter ).width();
     *(m_d->paperHeight) = m_d->pageSizeList.at( m_d->ui->paperDimensionsComboBox->currentIndex() ).size( QPageSize::Millimeter ).height();

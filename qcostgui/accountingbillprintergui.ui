@@ -17,16 +17,16 @@
    <item row="0" column="0">
     <layout class="QVBoxLayout" name="verticalLayout_2">
      <item>
-      <widget class="QGroupBox" name="billToPrintGroupBox">
+      <widget class="QGroupBox" name="payToPrintGroupBox">
        <property name="title">
         <string>S.A.L.</string>
        </property>
        <layout class="QGridLayout" name="gridLayout_6">
         <item row="0" column="1">
-         <widget class="QComboBox" name="billToPrintComboBox"/>
+         <widget class="QComboBox" name="payToPrintComboBox"/>
         </item>
         <item row="0" column="0">
-         <widget class="QLabel" name="billToPrintLabel">
+         <widget class="QLabel" name="payToPrintLabel">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
             <horstretch>0</horstretch>
@@ -287,7 +287,7 @@
   <tabstop>printLongDescRadioButton</tabstop>
   <tabstop>printShortLongDescRadioButton</tabstop>
   <tabstop>printShortLongDescOptRadioButton</tabstop>
-  <tabstop>billToPrintComboBox</tabstop>
+  <tabstop>payToPrintComboBox</tabstop>
   <tabstop>paperDimensionsComboBox</tabstop>
   <tabstop>paperVerticalRadioButton</tabstop>
   <tabstop>paperHorizzontalRadioButton</tabstop>
