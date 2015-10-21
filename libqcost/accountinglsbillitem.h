@@ -139,7 +139,7 @@ public:
     double accAmountAttribute(Attribute * attr);
     QString accAmountAttributeStr( Attribute * attr );
 
-    void printODTAccountingOnTable( QTextCursor * cursor,
+    void writeODTAccountingOnTable( QTextCursor * cursor,
                                     const QDate & dateBegin, const QDate & dateEnd,
                                     AccountingPrinter::PrintLSOption prLSOption,
                                     AccountingPrinter::PrintPPUDescOption prPPUOption,

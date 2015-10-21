@@ -1319,7 +1319,7 @@ QList<PriceItem *> AccountingLSBillItem::connectedPriceItems() const {
 
 #include "qtextformatuserdefined.h"
 
-void AccountingLSBillItem::printODTAccountingOnTable( QTextCursor *cursor,
+void AccountingLSBillItem::writeODTAccountingOnTable( QTextCursor *cursor,
                                                       const QDate &dateBegin, const QDate &dateEnd,
                                                       AccountingPrinter::PrintLSOption prLSOption,
                                                       AccountingPrinter::PrintPPUDescOption prPPUOption,
@@ -1510,7 +1510,7 @@ void AccountingLSBillItem::printODTAccountingOnTable( QTextCursor *cursor,
 
         // *** Scrive il computo dei sottoarticoli ***
         for( QList<AccountingLSBillItem *>::iterator i = m_d->childrenContainer.begin(); i != m_d->childrenContainer.end(); ++i){
-            (*i)->printODTAccountingOnTable( cursor, dateBegin, dateEnd,
+            (*i)->writeODTAccountingOnTable( cursor, dateBegin, dateEnd,
                                              prLSOption, prPPUOption, writeAmounts );
         }
 
@@ -1618,7 +1618,7 @@ void AccountingLSBillItem::printODTAccountingOnTable( QTextCursor *cursor,
 
             // *** Scrive il computo dei sottoarticoli ***
             for( QList<AccountingLSBillItem *>::iterator i = m_d->childrenContainer.begin(); i != m_d->childrenContainer.end(); ++i){
-                (*i)->printODTAccountingOnTable( cursor, dateBegin, dateEnd,
+                (*i)->writeODTAccountingOnTable( cursor, dateBegin, dateEnd,
                                                  prLSOption, prPPUOption, writeAmounts );
             }
 

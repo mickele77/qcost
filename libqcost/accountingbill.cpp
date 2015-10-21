@@ -481,6 +481,17 @@ bool AccountingBill::removePayments(int position, int rows) {
     return success;
 }
 
+int AccountingBill::paymentCount() const {
+    return m_d->rootItem->childrenCount();
+}
+
+AccountingBillItem *AccountingBill::payment(int pay) {
+    if( pay >= 0 && pay < m_d->rootItem->childrenCount() ){
+        return m_d->rootItem->childItem( pay );
+    }
+    return NULL;
+}
+
 bool AccountingBill::removeItems(int position, int rows, const QModelIndex &parent) {
     AccountingBillItem *parentItem = item(parent);
     bool success = false;

@@ -128,6 +128,9 @@ public:
     bool removeItems(int position = -1, int rows = 1, const QModelIndex &parent = QModelIndex() );
     bool removePayments(int position, int rows=1);
 
+    int paymentCount() const;
+    AccountingBillItem *payment( int pay );
+
     AccountingBillItem *item(const QModelIndex &index ) const;
     AccountingBillItem *item(int childNum, const QModelIndex &parentIndex = QModelIndex() );
     AccountingBillItem *lastItem( const QModelIndex &parentIndex = QModelIndex() );

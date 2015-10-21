@@ -1177,6 +1177,11 @@ bool AccountingPrinter::printPaymentODT( int payToPrint,
                                          int paperWidth, int paperHeight,
                                          Qt::Orientation paperOrientation ) const{
     if( m_d->accountingBill != NULL ){
+        // se payToPrint è negativo, stampa l'ultimo SAL
+        if( payToPrint < 0 || payToPrint > (m_d->accountingBill->paymentCount()-1) ){
+            payToPrint = m_d->accountingBill->paymentCount() - 1;
+        }
+
         double tableWidth = paperWidth - 2.0 * AccountingPrinterPrivate::margin;
 
         // numero progressivo + codice + descrizione + unità di misura + quantità + prezzo + importo
@@ -1234,7 +1239,7 @@ bool AccountingPrinter::printPaymentODT( int payToPrint,
         cursor.insertBlock( headerBlockFormat );
         cursor.setBlockCharFormat( headerBlockCharFormat );
 
-        cursor.insertText(QObject::trUtf8("Stato Avanzamento Lavori") );
+        cursor.insertText( m_d->accountingBill->payment(payToPrint)->title() );
 
         cursor.insertBlock( parBlockFormat );
 

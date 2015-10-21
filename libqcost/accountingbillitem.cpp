@@ -1108,6 +1108,27 @@ void AccountingBillItem::appendUsedPriceItems( QList<PriceItem *> * usedPriceIte
     }
 }
 
+QList<AccountingBillItem *> AccountingBillItem::usedItemsPayment( int firstPay, int lastPay, ItemType iType ) const {
+    QList<AccountingBillItem *> ret;
+    if( m_d->itemType == Root ){
+        if( firstPay < 0 ){
+            firstPay = 0;
+        }
+        if( lastPay >= m_d->childrenContainer.size() ){
+            lastPay = m_d->childrenContainer.size() - 1;
+        }
+        for( int i=firstPay; i < lastPay; ++i){
+            for( int j=0; j < m_d->childrenContainer.at(i)->m_d->childrenContainer.size(); ++j){
+                if( m_d->childrenContainer.at(i)->m_d->childrenContainer.at(j)->itemType() == iType &&
+                        !(ret.contains(m_d->childrenContainer.at(i)->m_d->childrenContainer.at(j))) ){
+                    ret << m_d->childrenContainer.at(i)->m_d->childrenContainer.at(j);
+                }
+            }
+        }
+    }
+    return ret;
+}
+
 void AccountingBillItem::setHasChildrenChanged(AccountingBillItem *p, QList<int> indexes) {
     if( m_d->parentItem ){
         // non è l'oggetto root - rimandiamo all'oggetto root
@@ -1839,6 +1860,18 @@ double AccountingBillItem::totalAmountToDiscount(AccountingBillItem::ItemType iT
     return 0.0;
 }
 
+double AccountingBillItem::totalAmountToDiscountPayment(AccountingBillItem::ItemType iType, int pay) const {
+    double ret = 0.0;
+    if( m_d->itemType == Root ){
+        if( pay >= 0 && pay < m_d->childrenContainer.size() ){
+            for( int i=0; i < pay; ++i ){
+                ret += m_d->childrenContainer.at(i)->totalAmountToDiscount(iType);
+            }
+        }
+    }
+    return ret;
+}
+
 double AccountingBillItem::amountNotToDiscount() const {
     if( (m_d->itemType == PPU) || (m_d->itemType == LumpSum) ||
             (m_d->itemType == Payment) || (m_d->itemType == Root) ){
@@ -1860,6 +1893,18 @@ double AccountingBillItem::amountNotToDiscount(AccountingBillItem::ItemType iTyp
         return ret;
     }
     return 0.0;
+}
+
+double AccountingBillItem::amountNotToDiscountPayment(AccountingBillItem::ItemType iType, int pay) const {
+    double ret = 0.0;
+    if( m_d->itemType == Root ){
+        if( pay >= 0 && pay < m_d->childrenContainer.size() ){
+            for( int i=0; i < pay; ++i ){
+                ret += m_d->childrenContainer.at(i)->amountNotToDiscount(iType);
+            }
+        }
+    }
+    return ret;
 }
 
 double AccountingBillItem::amountToDiscount() const {
@@ -1968,7 +2013,7 @@ QString AccountingBillItem::totalAmountStr() const {
 
 QString AccountingBillItem::title() const{
     if( m_d->itemType == Payment ){
-        return trUtf8("S.A.L. N.%1 (%2-%3)").arg(QString::number(childNumber()+1), dateBeginStr(), dateEndStr() );
+        return trUtf8("S.A.L. N.%1").arg( QString::number(childNumber()+1) );
     } else if( m_d->itemType == TimeAndMaterials ){
         if( m_d->tamBillItem != NULL ){
             return m_d->tamBillItem->title();
@@ -2651,77 +2696,130 @@ void AccountingBillItem::writeODTPaymentOnTable( QTextCursor *cursor,
         payToPrint = m_d->childrenContainer.size() - 1;
     }
 
-    QList<PriceItem *> usedPItemsList;
-    for( QList<AccountingBillItem *>::iterator i=m_d->childrenContainer.begin(); i != m_d->childrenContainer.end(); ++i){
-        QList<PriceItem *> payUsedPItems = (*i)->usedPriceItems();
-        for( QList<PriceItem *>::iterator usedPItem=payUsedPItems.begin(); usedPItem != payUsedPItems.end(); ++usedPItem ){
-            if( !usedPItemsList.contains(*usedPItem ) ){
-                usedPItemsList << *usedPItem;
-            }
-        }
-    }
-
     // TODO
 
     double totAmToDiscount = 0.0;
     double amNotToDiscount = 0.0;
     int nProg = 1;
-    for( QList<PriceItem *>::iterator pItem = usedPItemsList.begin(); pItem != usedPItemsList.end(); ++pItem){
+
+    /* *** OPERE A CORPO *** */
+    QList<AccountingBillItem *> usedItemsList = usedItemsPayment( 0, payToPrint, LumpSum );
+    if( usedItemsList.size() > 0  ){
         table->appendRows(1);
         cursor->movePosition(QTextCursor::PreviousRow );
         AccountingBillItemPrivate::writeCell( cursor, table, leftFormat, txtBlockFormat, QString::number(nProg) );
-        if( (*pItem) != NULL ){
-            AccountingBillItemPrivate::writeCell( cursor, table, centralFormat, txtBlockFormat, (*pItem)->codeFull() );
-            m_d->writeDescriptionCell( (*pItem), cursor, table, centralFormat, txtBlockFormat, txtCharFormat, txtBoldCharFormat, prPPUDescOption );
-        } else {
-            AccountingBillItemPrivate::writeCell( cursor, table, centralFormat, txtBlockFormat );
-            AccountingBillItemPrivate::writeCell( cursor, table, centralFormat, txtBlockFormat );
-        }
+        AccountingBillItemPrivate::writeCell( cursor, table, centralFormat, txtBlockFormat );
+        AccountingBillItemPrivate::writeCell( cursor, table, centralFormat, txtBlockFormat, trUtf8("A - OPERE A CORPO") );
+        AccountingBillItemPrivate::writeCell( cursor, table, centralFormat, tagBlockFormat );
+        AccountingBillItemPrivate::writeCell( cursor, table, centralFormat, numBlockFormat );
+        AccountingBillItemPrivate::writeCell( cursor, table, centralFormat, numBlockFormat );
+        AccountingBillItemPrivate::writeCell( cursor, table, rightFormat, numBlockFormat );
 
-        QString unitMeasureTag;
-        int unitMeasurePrec = 3;
-        if( (*pItem) != NULL ){
-            if( (*pItem)->unitMeasure() != NULL ){
-                unitMeasureTag = (*pItem)->unitMeasure()->tag();
-                unitMeasurePrec = (*pItem)->unitMeasure()->precision();
+        AccountingBillItemPrivate::insertEmptyRow( cellCount, cursor, leftFormat, centralFormat, rightFormat );
+
+        totAmToDiscount += totalAmountToDiscountPayment( LumpSum, payToPrint);
+        amNotToDiscount +=  amountNotToDiscountPayment( LumpSum, payToPrint);
+    }
+
+    /* *** OPERE A MISURA *** */
+    usedItemsList = usedItemsPayment( 0, payToPrint, PPU );
+    if( usedItemsList.size() > 0  ){
+        QList<PriceItem *> usedPItemsList;
+        for( QList<AccountingBillItem *>::iterator i=m_d->childrenContainer.begin(); i != m_d->childrenContainer.end(); ++i){
+            QList<PriceItem *> payUsedPItems = (*i)->usedPriceItems();
+            for( QList<PriceItem *>::iterator usedPItem=payUsedPItems.begin(); usedPItem != payUsedPItems.end(); ++usedPItem ){
+                if( !usedPItemsList.contains(*usedPItem ) ){
+                    usedPItemsList << *usedPItem;
+                }
             }
         }
+        table->appendRows(1);
+        cursor->movePosition(QTextCursor::PreviousRow );
+        AccountingBillItemPrivate::writeCell( cursor, table, leftFormat, txtBlockFormat, QString::number(nProg) );
+        AccountingBillItemPrivate::writeCell( cursor, table, centralFormat, txtBlockFormat );
+        AccountingBillItemPrivate::writeCell( cursor, table, centralFormat, txtBlockFormat, trUtf8("B - OPERE A MISURA") );
+        AccountingBillItemPrivate::writeCell( cursor, table, centralFormat, tagBlockFormat );
+        AccountingBillItemPrivate::writeCell( cursor, table, centralFormat, numBlockFormat );
+        AccountingBillItemPrivate::writeCell( cursor, table, centralFormat, numBlockFormat );
+        AccountingBillItemPrivate::writeCell( cursor, table, rightFormat, numBlockFormat );
 
-        double itemTotalQuantity = 0.0;
-        m_d->childrenContainer.at(payToPrint)->writeODTSummaryLine( *pItem, cursor, &itemTotalQuantity,
-                                                                    true, false,
-                                                                    table,
-                                                                    tagBlockFormat, txtBlockFormat, numBlockFormat,
-                                                                    leftFormat, centralFormat, rightFormat );
-
-        AccountingBillItemPrivate::writeCell( cursor, table, centralFormat, tagBlockFormat, unitMeasureTag );
-        AccountingBillItemPrivate::writeCell( cursor, table, centralFormat, numBlockFormat, m_d->toString( itemTotalQuantity, 'f', unitMeasurePrec ));
-        AccountingBillItemPrivate::writeCell( cursor, table, centralFormat, numBlockFormat, PPUTotalToDiscountStr() );
-        double itemTotAmToDiscount = UnitMeasure::applyPrecision( PPUTotalToDiscount() * itemTotalQuantity, m_d->amountPrecision);
-        AccountingBillItemPrivate::writeCell( cursor, table, rightFormat, numBlockFormat, m_d->toString( itemTotAmToDiscount, 'f', m_d->amountPrecision ) );
-        totAmToDiscount += itemTotAmToDiscount;
-
-        if( amountNotToDiscount() != 0.0 ){
+        for( QList<PriceItem *>::iterator pItem = usedPItemsList.begin(); pItem != usedPItemsList.end(); ++pItem){
             table->appendRows(1);
             cursor->movePosition(QTextCursor::PreviousRow );
-            AccountingBillItemPrivate::writeCell( cursor, table, leftFormat, txtBlockFormat );
-            AccountingBillItemPrivate::writeCell( cursor, table, centralFormat, txtBlockFormat );
-            AccountingBillItemPrivate::writeCell( cursor, table, centralFormat, txtBlockFormat, trUtf8("di cui non soggetto a ribasso") );
+
+            AccountingBillItemPrivate::writeCell( cursor, table, leftFormat, txtBlockFormat, QString::number(nProg) );
+            if( (*pItem) != NULL ){
+                AccountingBillItemPrivate::writeCell( cursor, table, centralFormat, txtBlockFormat, (*pItem)->codeFull() );
+                m_d->writeDescriptionCell( (*pItem), cursor, table, centralFormat, txtBlockFormat, txtCharFormat, txtBoldCharFormat, prPPUDescOption );
+            } else {
+                AccountingBillItemPrivate::writeCell( cursor, table, centralFormat, txtBlockFormat );
+                AccountingBillItemPrivate::writeCell( cursor, table, centralFormat, txtBlockFormat );
+            }
+
+            QString unitMeasureTag;
+            int unitMeasurePrec = 3;
+            if( (*pItem) != NULL ){
+                if( (*pItem)->unitMeasure() != NULL ){
+                    unitMeasureTag = (*pItem)->unitMeasure()->tag();
+                    unitMeasurePrec = (*pItem)->unitMeasure()->precision();
+                }
+            }
+
+            double itemTotalQuantity = 0.0;
+            m_d->childrenContainer.at(payToPrint)->writeODTSummaryLine( *pItem, cursor, &itemTotalQuantity,
+                                                                        true, false,
+                                                                        table,
+                                                                        tagBlockFormat, txtBlockFormat, numBlockFormat,
+                                                                        leftFormat, centralFormat, rightFormat );
+
             AccountingBillItemPrivate::writeCell( cursor, table, centralFormat, tagBlockFormat, unitMeasureTag );
             AccountingBillItemPrivate::writeCell( cursor, table, centralFormat, numBlockFormat, m_d->toString( itemTotalQuantity, 'f', unitMeasurePrec ));
-            AccountingBillItemPrivate::writeCell( cursor, table, centralFormat, numBlockFormat, PPUNotToDiscountStr() );
-            double itemAmNotToDiscount = UnitMeasure::applyPrecision( PPUNotToDiscount() * itemTotalQuantity, m_d->amountPrecision);
-            AccountingBillItemPrivate::writeCell( cursor, table, rightFormat, numBlockFormat, m_d->toString( itemAmNotToDiscount, 'f', m_d->amountPrecision ) );
-            amNotToDiscount += itemAmNotToDiscount;
+            AccountingBillItemPrivate::writeCell( cursor, table, centralFormat, numBlockFormat, PPUTotalToDiscountStr() );
+            double itemTotAmToDiscount = UnitMeasure::applyPrecision( PPUTotalToDiscount() * itemTotalQuantity, m_d->amountPrecision);
+            AccountingBillItemPrivate::writeCell( cursor, table, rightFormat, numBlockFormat, m_d->toString( itemTotAmToDiscount, 'f', m_d->amountPrecision ) );
+
+            if( amountNotToDiscount() != 0.0 ){
+                table->appendRows(1);
+                cursor->movePosition(QTextCursor::PreviousRow );
+                AccountingBillItemPrivate::writeCell( cursor, table, leftFormat, txtBlockFormat );
+                AccountingBillItemPrivate::writeCell( cursor, table, centralFormat, txtBlockFormat );
+                AccountingBillItemPrivate::writeCell( cursor, table, centralFormat, txtBlockFormat, trUtf8("di cui non soggetto a ribasso") );
+                AccountingBillItemPrivate::writeCell( cursor, table, centralFormat, tagBlockFormat, unitMeasureTag );
+                AccountingBillItemPrivate::writeCell( cursor, table, centralFormat, numBlockFormat, m_d->toString( itemTotalQuantity, 'f', unitMeasurePrec ));
+                AccountingBillItemPrivate::writeCell( cursor, table, centralFormat, numBlockFormat, PPUNotToDiscountStr() );
+                double itemAmNotToDiscount = UnitMeasure::applyPrecision( PPUNotToDiscount() * itemTotalQuantity, m_d->amountPrecision);
+                AccountingBillItemPrivate::writeCell( cursor, table, rightFormat, numBlockFormat, m_d->toString( itemAmNotToDiscount, 'f', m_d->amountPrecision ) );
+            }
+
+            nProg++;
         }
 
         AccountingBillItemPrivate::insertEmptyRow( cellCount, cursor, leftFormat, centralFormat, rightFormat );
 
-        nProg++;
+        totAmToDiscount += totalAmountToDiscountPayment( PPU, payToPrint);
+        amNotToDiscount +=  amountNotToDiscountPayment( PPU, payToPrint);
     }
 
-    // *** riga dei totali complessivi
+    /* *** LISTE IN ECONOMIA *** */
+    usedItemsList = usedItemsPayment( 0, payToPrint, TimeAndMaterials );
+    if( usedItemsList.size() > 0  ){
+        table->appendRows(1);
+        cursor->movePosition(QTextCursor::PreviousRow );
+        AccountingBillItemPrivate::writeCell( cursor, table, leftFormat, txtBlockFormat, QString::number(nProg) );
+        AccountingBillItemPrivate::writeCell( cursor, table, centralFormat, txtBlockFormat );
+        AccountingBillItemPrivate::writeCell( cursor, table, centralFormat, txtBlockFormat, trUtf8("B - LISTE IN ECONOMIA") );
+        AccountingBillItemPrivate::writeCell( cursor, table, centralFormat, tagBlockFormat );
+        AccountingBillItemPrivate::writeCell( cursor, table, centralFormat, numBlockFormat );
+        AccountingBillItemPrivate::writeCell( cursor, table, centralFormat, numBlockFormat );
+        AccountingBillItemPrivate::writeCell( cursor, table, rightFormat, numBlockFormat );
 
+        totAmToDiscount += totalAmountToDiscountPayment( TimeAndMaterials, payToPrint);
+        amNotToDiscount +=  amountNotToDiscountPayment( TimeAndMaterials, payToPrint);
+
+        AccountingBillItemPrivate::insertEmptyRow( cellCount, cursor, leftFormat, centralFormat, rightFormat );
+    }
+
+    /* *** TOTALI COMPLESSIVI *** */
     table->appendRows(1);
     cursor->movePosition(QTextCursor::PreviousRow );
     AccountingBillItemPrivate::writeCell( cursor, table, leftTitleFormat, tagBlockFormat );

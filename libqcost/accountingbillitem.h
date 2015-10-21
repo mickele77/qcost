@@ -104,10 +104,10 @@ public:
     QString discountStr() const;
     // dice se il prezzo è usato dall'articolo di computo o da un suo sottoarticolo
     bool isUsingPriceItem( PriceItem * p );
-    // restituisce l'elenco degli articoli di prezzo contenuti nell'articolo di computo o nei sottoarticoli
+    /** restituisce l'elenco degli articoli di prezzo contenuti nell'articolo di computo o nei sottoarticoli */
     QList<PriceItem *> usedPriceItems() const;
-    // restituisce i sottoarticoli del prezzo associato all'articolo di computo, oltre ad eventuali
-    // altri prezzi connessi tramite analisi prezzi
+    /** restituisce i sottoarticoli del prezzo associato all'articolo di computo, oltre ad eventuali
+      * altri prezzi connessi tramite analisi prezzi */
     QList<PriceItem *> connectedPriceItems() const;
 
     void setLSBill(AccountingLSBill * newLSBill);
@@ -121,8 +121,10 @@ public:
 
     double totalAmountToDiscount() const;
     double totalAmountToDiscount( ItemType iType ) const;
+    double totalAmountToDiscountPayment( ItemType iType, int pay ) const;
     double amountNotToDiscount() const;
     double amountNotToDiscount( ItemType iType ) const;
+    double amountNotToDiscountPayment( ItemType iType, int pay ) const;
     double amountToDiscount() const;
     double amountToDiscount( ItemType iType ) const;
     double amountDiscounted() const;
@@ -221,6 +223,8 @@ public:
                                  AccountingPrinter::PrintAmountsOption prAmountsOption,
                                  AccountingPrinter::PrintPPUDescOption prItemsOption,
                                  bool writeDetails = true) const;
+
+    /** Stampa righe libretto per attributo */
     void writeODTAttributeAccountingOnTable( QTextCursor *cursor,
                                              AccountingPrinter::AttributePrintOption prOption,
                                              AccountingPrinter::PrintAmountsOption prAmountsOption,
@@ -351,6 +355,9 @@ protected:
     void addChild(AccountingBillItem *newChild, int position);
 
     void appendUsedPriceItems( QList<PriceItem *> * usedPriceItems ) const;
+
+    /** restituisce l'elenco degli articoli utilizzati fino al SAL */
+    QList<AccountingBillItem *> usedItemsPayment( int firstPay, int lastPay, ItemType iType ) const;
 
     void writeODTSummaryLine( PriceItem * priceItem,
                               QTextCursor *cursor,

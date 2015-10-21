@@ -703,7 +703,7 @@ void AccountingLSBill::writeODTAccountingOnTable( QTextCursor *cursor,
                                                   AccountingPrinter::PrintLSOption prLSOption,
                                                   AccountingPrinter::PrintPPUDescOption prPPUOption,
                                                   bool writeAmounts ) {
-    m_d->rootItem->printODTAccountingOnTable( cursor, dateBegin, dateEnd, prLSOption, prPPUOption, writeAmounts );
+    m_d->rootItem->writeODTAccountingOnTable( cursor, dateBegin, dateEnd, prLSOption, prPPUOption, writeAmounts );
 }
 
 void AccountingLSBill::writeODTAttributeBillOnTable(QTextCursor *cursor,
