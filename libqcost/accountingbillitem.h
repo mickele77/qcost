@@ -121,10 +121,10 @@ public:
 
     double totalAmountToDiscount() const;
     double totalAmountToDiscount( ItemType iType ) const;
-    double totalAmountToDiscountPayment( ItemType iType, int pay ) const;
+    double totalAmountToDiscountPayment( int firstPay, int lastPay, ItemType iType ) const;
     double amountNotToDiscount() const;
     double amountNotToDiscount( ItemType iType ) const;
-    double amountNotToDiscountPayment( ItemType iType, int pay ) const;
+    double amountNotToDiscountPayment( int firstPay, int lastPay, ItemType iType ) const;
     double amountToDiscount() const;
     double amountToDiscount( ItemType iType ) const;
     double amountDiscounted() const;
@@ -137,8 +137,8 @@ public:
     QString amountDiscountedStr() const;
     QString totalAmountStr() const;
 
-    QList<int> totalAmountPriceFields();
-    QList<int> noDiscountAmountPriceFields();
+    QList<int> totalAmountPriceFields() const;
+    QList<int> noDiscountAmountPriceFields() const;
 
     int columnCount() const;
     QList<AccountingBillItem *> allChildren();
