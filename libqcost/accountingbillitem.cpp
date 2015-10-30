@@ -1131,6 +1131,29 @@ QList<AccountingBillItem *> AccountingBillItem::usedItemsPayment( int firstPay, 
     return ret;
 }
 
+QList<AccountingLSBill *> AccountingBillItem::usedLSBillsPayment( int firstPay, int lastPay ) const {
+    QList<AccountingLSBill *> ret;
+    if( m_d->itemType == Root ){
+        if( firstPay < 0 ){
+            firstPay = 0;
+        }
+        if( lastPay >= m_d->childrenContainer.size() ){
+            lastPay = m_d->childrenContainer.size() - 1;
+        }
+        for( int i=firstPay; i <= lastPay; i++){
+            for( int j=0; j < m_d->childrenContainer.at(i)->m_d->childrenContainer.size(); ++j){
+                AccountingLSBill * assLSBill = m_d->childrenContainer.at(i)->m_d->childrenContainer.at(j)->lsBill();
+                if( (m_d->childrenContainer.at(i)->m_d->childrenContainer.at(j)->itemType() == LumpSum) &&
+                        !(ret.contains(assLSBill)) &&
+                        (assLSBill != NULL) ){
+                    ret << assLSBill;
+                }
+            }
+        }
+    }
+    return ret;
+}
+
 void AccountingBillItem::setHasChildrenChanged(AccountingBillItem *p, QList<int> indexes) {
     if( m_d->parentItem ){
         // non è l'oggetto root - rimandiamo all'oggetto root
@@ -2719,11 +2742,14 @@ void AccountingBillItem::writeODTPaymentOnTable( QTextCursor *cursor,
         cursor->movePosition(QTextCursor::PreviousRow );
         AccountingBillItemPrivate::writeCell( cursor, table, leftFormat, txtBlockFormat, QString::number(nProg) );
         AccountingBillItemPrivate::writeCell( cursor, table, centralFormat, txtBlockFormat );
-        AccountingBillItemPrivate::writeCell( cursor, table, centralFormat, txtBlockFormat, trUtf8("A - OPERE A CORPO") );
+        AccountingBillItemPrivate::writeCell( cursor, table, centralFormat, txtBlockFormat, trUtf8("OPERE A CORPO") );
         AccountingBillItemPrivate::writeCell( cursor, table, centralFormat, tagBlockFormat );
         AccountingBillItemPrivate::writeCell( cursor, table, centralFormat, numBlockFormat );
         AccountingBillItemPrivate::writeCell( cursor, table, centralFormat, numBlockFormat );
         AccountingBillItemPrivate::writeCell( cursor, table, rightFormat, numBlockFormat );
+        AccountingBillItemPrivate::insertEmptyRow( cellCount, cursor, leftFormat, centralFormat, rightFormat );
+
+
 
         AccountingBillItemPrivate::insertEmptyRow( cellCount, cursor, leftFormat, centralFormat, rightFormat );
 
@@ -2745,13 +2771,14 @@ void AccountingBillItem::writeODTPaymentOnTable( QTextCursor *cursor,
         }
         table->appendRows(1);
         cursor->movePosition(QTextCursor::PreviousRow );
-        AccountingBillItemPrivate::writeCell( cursor, table, leftFormat, txtBlockFormat, QString::number(nProg) );
+        AccountingBillItemPrivate::writeCell( cursor, table, leftFormat, txtBlockFormat );
         AccountingBillItemPrivate::writeCell( cursor, table, centralFormat, txtBlockFormat );
-        AccountingBillItemPrivate::writeCell( cursor, table, centralFormat, txtBlockFormat, trUtf8("B - OPERE A MISURA") );
+        AccountingBillItemPrivate::writeCell( cursor, table, centralFormat, txtBlockFormat, trUtf8("OPERE A MISURA") );
         AccountingBillItemPrivate::writeCell( cursor, table, centralFormat, tagBlockFormat );
         AccountingBillItemPrivate::writeCell( cursor, table, centralFormat, numBlockFormat );
         AccountingBillItemPrivate::writeCell( cursor, table, centralFormat, numBlockFormat );
         AccountingBillItemPrivate::writeCell( cursor, table, rightFormat, numBlockFormat );
+        AccountingBillItemPrivate::insertEmptyRow( cellCount, cursor, leftFormat, centralFormat, rightFormat );
 
         for( QList<PriceItem *>::iterator pItem = usedPItemsList.begin(); pItem != usedPItemsList.end(); ++pItem){
             double pricePPUTotalToDiscount = 0.0;
@@ -2771,7 +2798,7 @@ void AccountingBillItem::writeODTPaymentOnTable( QTextCursor *cursor,
             table->appendRows(1);
             cursor->movePosition(QTextCursor::PreviousRow );
 
-            AccountingBillItemPrivate::writeCell( cursor, table, leftFormat, txtBlockFormat, QString::number(nProg) );
+            AccountingBillItemPrivate::writeCell( cursor, table, leftFormat, txtBlockFormat, QString::number(nProg++) );
             if( (*pItem) != NULL ){
                 AccountingBillItemPrivate::writeCell( cursor, table, centralFormat, txtBlockFormat, (*pItem)->codeFull() );
                 m_d->writeDescriptionCell( (*pItem), cursor, table, centralFormat, txtBlockFormat, txtCharFormat, txtBoldCharFormat, prPPUDescOption );
@@ -2814,8 +2841,7 @@ void AccountingBillItem::writeODTPaymentOnTable( QTextCursor *cursor,
                 double itemAmNotToDiscount = UnitMeasure::applyPrecision( pricePPUNotToDiscount * itemTotalQuantity, m_d->amountPrecision);
                 AccountingBillItemPrivate::writeCell( cursor, table, rightFormat, numBlockFormat, m_d->toString( itemAmNotToDiscount, 'f', m_d->amountPrecision ) );
             }
-
-            nProg++;
+            AccountingBillItemPrivate::insertEmptyRow( cellCount, cursor, leftFormat, centralFormat, rightFormat );
         }
 
         AccountingBillItemPrivate::insertEmptyRow( cellCount, cursor, leftFormat, centralFormat, rightFormat );
@@ -2831,7 +2857,7 @@ void AccountingBillItem::writeODTPaymentOnTable( QTextCursor *cursor,
         cursor->movePosition(QTextCursor::PreviousRow );
         AccountingBillItemPrivate::writeCell( cursor, table, leftFormat, txtBlockFormat, QString::number(nProg) );
         AccountingBillItemPrivate::writeCell( cursor, table, centralFormat, txtBlockFormat );
-        AccountingBillItemPrivate::writeCell( cursor, table, centralFormat, txtBlockFormat, trUtf8("C - LISTE IN ECONOMIA") );
+        AccountingBillItemPrivate::writeCell( cursor, table, centralFormat, txtBlockFormat, trUtf8("LISTE IN ECONOMIA") );
         AccountingBillItemPrivate::writeCell( cursor, table, centralFormat, tagBlockFormat );
         AccountingBillItemPrivate::writeCell( cursor, table, centralFormat, numBlockFormat );
         AccountingBillItemPrivate::writeCell( cursor, table, centralFormat, numBlockFormat );

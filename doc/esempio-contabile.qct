@@ -11,10 +11,10 @@
         <UnitMeasure id="2" tag="m" description="Metro" precision="2"/>
         <UnitMeasure id="1" tag="m²" description="Metri quadrati" precision="2"/>
         <UnitMeasure id="0" tag="m³" description="Metri cubi" precision="3"/>
-        <UnitMeasure id="4" tag="h" description="" precision="3"/>
+        <UnitMeasure id="4" tag="h" description="Ore" precision="3"/>
     </UnitMeasureModel>
     <PriceLists>
-        <PriceList id="0" name="Prezzario 1" description="">
+        <PriceList id="0" name="Prezzario Misura" description="">
             <PriceItemDataSet overheads="0.13" profits="0.1"/>
             <PriceItem id="1" code="A001" inheritCodeFromParent="true" shortDescription="Denominazione 1" inheritShortDescFromParent="false" longDescription="Descrizione 1" inheritLongDescFromParent="false" unitMeasure="2">
                 <PriceItemDataSet value0="20" value1="3" value2="2.41" value3="17.59"/>
@@ -37,8 +37,18 @@
                     <PriceItemDataSet value0="23.13" value1="23.13" value2="18.61" value3="4.52"/>
                 </PriceItem>
             </PriceItem>
+            <PriceItem id="9" code="01.A02.A30" inheritCodeFromParent="false" shortDescription="Demolizione di murature in calcestruzzo non armato, in qualunque pi..." inheritShortDescFromParent="false" longDescription="Demolizione di murature in calcestruzzo non armato, in qualunque piano di fabbricato, compresala discesa o la salita a terra dei materiali, losgombero dei detriti, computando i volumi prima della demolizione" inheritLongDescFromParent="false">
+                <PriceItem id="10" code="01.A02.A30.005" inheritCodeFromParent="false" shortDescription="Con carico e trasporto dei detriti alle discariche." inheritShortDescFromParent="true" longDescription="Con carico e trasporto dei detriti alle discariche." inheritLongDescFromParent="true" unitMeasure="0">
+                    <PriceItemDataSet value0="174.04" value1="153.33" value2="123.35" value3="50.69"/>
+                </PriceItem>
+            </PriceItem>
+            <PriceItem id="11" code="01.A02.A10" inheritCodeFromParent="false" shortDescription="Demolizione di murature o di volte in mattoni,dello spessore superi..." inheritShortDescFromParent="false" longDescription="Demolizione di murature o di volte in mattoni,dello spessore superiore a cm 15, in qualunquepiano di fabbricato, compresa la discesa o la salita a terra dei materiali, lo sgombero dei detriti, computando i volumi prima della demolizione" inheritLongDescFromParent="false">
+                <PriceItem id="12" code="01.A02.A10.010" inheritCodeFromParent="false" shortDescription="Con carico e trasporto dei detriti alle discariche." inheritShortDescFromParent="true" longDescription="Con carico e trasporto dei detriti alle discariche." inheritLongDescFromParent="true" unitMeasure="0">
+                    <PriceItemDataSet value0="98.26" value1="90.01" value2="72.41" value3="25.85"/>
+                </PriceItem>
+            </PriceItem>
         </PriceList>
-        <PriceList id="1" name="Prezzario Opere a Corpo" description="">
+        <PriceList id="1" name="Prezzario Corpo" description="">
             <PriceItemDataSet overheads="0.13" profits="0.1"/>
             <PriceItem id="1" code="01.A02.A05" inheritCodeFromParent="false" shortDescription="Demolizione completa di fabbricati sino al piano di spiccato, valut..." inheritShortDescFromParent="false" longDescription="Demolizione completa di fabbricati sino al piano di spiccato, valutata a metro cubo vuoto per pieno compreso l'accatastamento entro l'area di cantiere del materiale di spoglio ed il carico ed il trasporto delle macerie alle discariche, esclusi eventuali corrispettivi per diritti di discarica" inheritLongDescFromParent="false">
                 <PriceItem id="2" code="01.A02.A05.020" inheritCodeFromParent="false" shortDescription="Con struttura portante in muratura e solai in legno, ferro, voltini..." inheritShortDescFromParent="true" longDescription="Con struttura portante in muratura e solai in legno, ferro, voltini o a volta" inheritLongDescFromParent="true" unitMeasure="0">
@@ -60,6 +70,17 @@
             <AccountingBill id="0" name="Libretto 1" discount="0.25" totalAmountPriceFields="0" noDiscountAmountPriceFields="2" priceList="0" priceDataSet="0">
                 <AttributeModel/>
                 <AccountingBillItem itemType="Payment">
+                    <AccountingBillItem itemType="Comment" id="5" text="Demolizione muro esistente"/>
+                    <AccountingBillItem itemType="PPU" id="6" date="2457325" priceItem="10">
+                        <MeasuresModel>
+                            <Measure comment="Basamento in cls" formula="0.40*0.35*25.00"/>
+                        </MeasuresModel>
+                    </AccountingBillItem>
+                    <AccountingBillItem itemType="PPU" id="7" date="2457325" priceItem="12">
+                        <MeasuresModel>
+                            <Measure comment="Demolizione muratura" formula="25.00*2.30*25.00"/>
+                        </MeasuresModel>
+                    </AccountingBillItem>
                     <AccountingBillItem itemType="PPU" id="1" date="2457288" priceItem="1">
                         <MeasuresModel>
                             <Measure comment="" formula="25"/>

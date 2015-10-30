@@ -356,8 +356,12 @@ protected:
 
     void appendUsedPriceItems( QList<PriceItem *> * usedPriceItems ) const;
 
-    /** restituisce l'elenco degli articoli utilizzati fino al SAL */
+    /** restituisce l'elenco degli articoli utilizzati dal SAL firstPay al SAL lastPay */
     QList<AccountingBillItem *> usedItemsPayment( int firstPay, int lastPay, ItemType iType ) const;
+
+    /** restituisce l'elenco delle categorie di lavorazione usati dal SAL firstPay al SAL lastPay */
+    QList<AccountingLSBill *> usedLSBillsPayment(int firstPay, int lastPay) const;
+
 
     void writeODTSummaryLine( PriceItem * priceItem,
                               QTextCursor *cursor,
