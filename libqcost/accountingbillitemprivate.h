@@ -20,6 +20,7 @@ public:
                                PriceFieldModel * pfm, MathParser * p = NULL );
     ~AccountingBillItemPrivate();
     QString	toString(double i, char f = 'g', int prec = 6) const;
+    QString percentageToString( double v ) const;
 
     /* *** Funzioni di utilita per semplificare il codice *** */
     static void insertEmptyRow( int cellCount, QTextCursor *cursor, const QTextTableCellFormat &leftFormat, const QTextTableCellFormat &centralFormat, const QTextTableCellFormat &rightFormat);

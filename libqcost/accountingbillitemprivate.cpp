@@ -1,5 +1,6 @@
 #include "accountingbillitemprivate.h"
 
+#include "accountinglsbillitem.h"
 #include "accountingpricefieldmodel.h"
 #include "measuresmodel.h"
 #include "attribute.h"
@@ -88,6 +89,10 @@ QString	AccountingBillItemPrivate::toString(double i, char f, int prec ) const{
     } else {
         return QString::number( i, f, prec );
     }
+}
+
+QString AccountingBillItemPrivate::percentageToString(double v) const {
+    return QString("%1 %").arg( toString(v * 100.0, 'f', AccountingLSBillItem::percentagePrecision() ) );
 }
 
 void AccountingBillItemPrivate::writeDescriptionCell(PriceItem * priceItemToPrint, QTextCursor *cursor, QTextTable * table, const QTextTableCellFormat &centralFormat,
