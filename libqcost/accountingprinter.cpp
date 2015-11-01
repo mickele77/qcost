@@ -1227,6 +1227,12 @@ bool AccountingPrinter::printPaymentODT( int payToPrint,
         QTextBlockFormat headerBlockFormat;
         headerBlockFormat.setAlignment( Qt::AlignHCenter );
 
+        QTextCharFormat subHeaderBlockCharFormat;
+        subHeaderBlockCharFormat.setFontWeight( QFont::Bold );
+
+        QTextBlockFormat subHeaderBlockFormat;
+        subHeaderBlockFormat.setAlignment( Qt::AlignHCenter );
+
         QTextBlockFormat headerWithPBBlockFormat = headerBlockFormat;
         headerWithPBBlockFormat.setPageBreakPolicy( QTextFormat::PageBreak_AlwaysBefore );
 
@@ -1234,12 +1240,12 @@ bool AccountingPrinter::printPaymentODT( int payToPrint,
 
         cursor.setBlockFormat( headerWithPBBlockFormat );
         cursor.setBlockCharFormat( headerBlockCharFormat );
-        cursor.insertText( m_d->accountingBill->name() );
-
-        cursor.insertBlock( headerBlockFormat );
-        cursor.setBlockCharFormat( headerBlockCharFormat );
-
         cursor.insertText( m_d->accountingBill->payment(payToPrint)->title() );
+        if( m_d->accountingBill->payment(payToPrint) != NULL ){
+            cursor.insertBlock( subHeaderBlockFormat );
+            cursor.setBlockCharFormat( subHeaderBlockCharFormat );
+            cursor.insertText( QObject::trUtf8("Opere eseguite a tutto il %1").arg(m_d->accountingBill->payment(payToPrint)->dateEndStr() ) );
+        }
 
         cursor.insertBlock( parBlockFormat );
 
