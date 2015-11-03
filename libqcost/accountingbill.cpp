@@ -810,11 +810,12 @@ QList<PriceItem *> AccountingBill::connectedPriceItems() {
     return m_d->rootItem->connectedPriceItems();
 }
 
-void AccountingBill::writeODTAccountingOnTable( QTextCursor *cursor,
+void AccountingBill::writeODTAccountingOnTable(QTextCursor *cursor,
                                                 int payToPrint,
                                                 AccountingPrinter::PrintAmountsOption prAmountsOption,
-                                                AccountingPrinter::PrintPPUDescOption prPPUDescOption ) const {
-    m_d->rootItem->writeODTAccountingOnTable(cursor, payToPrint, prAmountsOption, prPPUDescOption );
+                                                AccountingPrinter::PrintPPUDescOption prPPUDescOption,
+                                                bool writeAccountingEffective ) const {
+    m_d->rootItem->writeODTAccountingOnTable(cursor, payToPrint, prAmountsOption, prPPUDescOption, writeAccountingEffective );
 }
 
 void AccountingBill::writeODTPaymentOnTable( QTextCursor *cursor,

@@ -189,7 +189,8 @@ public:
     void writeODTAccountingOnTable( QTextCursor * cursor,
                                     int payToPrint,
                                     AccountingPrinter::PrintAmountsOption prAmountsOption,
-                                    AccountingPrinter::PrintPPUDescOption prPPUDescOption) const;
+                                    AccountingPrinter::PrintPPUDescOption prPPUDescOption,
+                                    bool writeAccountingEffective = true ) const;
     /**
      * @brief Stampa il S.A.L.
      * @param cursor

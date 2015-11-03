@@ -193,10 +193,11 @@ public:
      * @param prAmountsOption
      * @param prPPUDescOption
      */
-    void writeODTAccountingOnTable( QTextCursor * cursor,
+    void writeODTAccountingOnTable(QTextCursor * cursor,
                                     int payToPrint,
                                     AccountingPrinter::PrintAmountsOption prAmountsOption,
-                                    AccountingPrinter::PrintPPUDescOption prPPUDescOption) const;
+                                    AccountingPrinter::PrintPPUDescOption prPPUDescOption,
+                                    bool writeAccountingEffective = false ) const;
     /**
      * Stampa il SAL specificato da payPrint.
      * Se payPrint è negativo, stampa l'ultimo SAL
@@ -439,20 +440,20 @@ protected:
                                          QTextCharFormat &txtCharFormat,
                                          QTextCharFormat &txtBoldCharFormat) const;
     void writeODTBillLine(AccountingPrinter::PrintAmountsOption prAmountsOption,
-                           AccountingPrinter::PrintPPUDescOption prItemsOption,
-                           bool writeProgCode,
-                           QTextCursor *cursor,
-                           QTextTable *table,
-                           QTextBlockFormat &tagBlockFormat,
-                           QTextBlockFormat & txtBlockFormat,
-                           QTextBlockFormat & numBlockFormat,
-                           QTextTableCellFormat & leftFormat,
-                           QTextTableCellFormat & centralFormat,
-                           QTextTableCellFormat & rightFormat,
-                           QTextTableCellFormat & centralQuantityTotalFormat,
-                           QTextTableCellFormat & rightQuantityTotalFormat,
-                           QTextCharFormat & txtCharFormat,
-                           QTextCharFormat & txtAmNotToDiscCharFormat ) const;
+                          AccountingPrinter::PrintPPUDescOption prItemsOption,
+                          bool writeProgCode,
+                          QTextCursor *cursor,
+                          QTextTable *table,
+                          QTextBlockFormat &tagBlockFormat,
+                          QTextBlockFormat & txtBlockFormat,
+                          QTextBlockFormat & numBlockFormat,
+                          QTextTableCellFormat & leftFormat,
+                          QTextTableCellFormat & centralFormat,
+                          QTextTableCellFormat & rightFormat,
+                          QTextTableCellFormat & centralQuantityTotalFormat,
+                          QTextTableCellFormat & rightQuantityTotalFormat,
+                          QTextCharFormat & txtCharFormat,
+                          QTextCharFormat & txtAmNotToDiscCharFormat ) const;
 
     /** restituisce tutti gli attributi dell'elemento; se la var bool è false,
         vuol dire che l'attribute è ereditato, se è true vuol dire che è un

@@ -420,7 +420,7 @@ bool AccountingPrinter::printAccountingBillODT( int payToPrint,
     if( m_d->accountingBill != NULL ){
         double tableWidth = paperWidth - 2.0 * AccountingPrinterPrivate::margin;
 
-        // numero progressivo + codice + descrizione + unità di misura + quantità + [ prezzo campo, importo campo ]
+        // numero progressivo + data + codice + descrizione + unità di misura + quantità + [prezzo + importo]
         QVector<QTextLength> colWidths;
         int dataCols = 1;
         if( prAmountsOption != PrintNoAmount ){
@@ -496,11 +496,12 @@ bool AccountingPrinter::printAccountingBillODT( int payToPrint,
 
         if( prOption == PrintRawMeasures ){
             cursor.insertText(QObject::trUtf8("Brogliaccio del Libretto delle Misure") );
+            cursor.insertBlock( parBlockFormat );
         } else if( prOption == PrintMeasures ){
             cursor.insertText(QObject::trUtf8("Libretto delle Misure") );
-        }
-
-        cursor.insertBlock( parBlockFormat );
+            cursor.insertBlock( parBlockFormat );
+        } // else if( prOption == PrintAccounting ){
+        // cursor.insertText(QObject::trUtf8("Registro di contabilità") );
 
         QTextTableFormat tableFormat;
         tableFormat.setCellPadding(5);
@@ -511,7 +512,8 @@ bool AccountingPrinter::printAccountingBillODT( int payToPrint,
         tableFormat.setColumnWidthConstraints( colWidths );
         cursor.insertTable(1, colWidths.size(), tableFormat );
 
-        m_d->accountingBill->writeODTAccountingOnTable( &cursor, payToPrint, prAmountsOption, prPPDescOption );
+        m_d->accountingBill->writeODTAccountingOnTable( &cursor, payToPrint, prAmountsOption, prPPDescOption,
+                                                        (prOption == PrintAccounting) );
 
         QFile *file = new QFile(fileName);
         QString suf = QFileInfo(file->fileName()).suffix().toLower().toLatin1();
