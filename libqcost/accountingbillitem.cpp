@@ -2548,7 +2548,7 @@ void AccountingBillItem::writeODTAccountingOnTable(QTextCursor *cursor, int payT
             AccountingBillItemPrivate::insertEmptyRow( cellCount, cursor, leftFormat, centralFormat, rightFormat );
 
             for( QList<AccountingBillItem *>::iterator i = m_d->childrenContainer.begin(); i != m_d->childrenContainer.end(); ++i){
-                (*i)->writeODTAccountingOnTable( cursor, 0, prAmountsOption, prPPUDescOption );
+                (*i)->writeODTAccountingOnTable( cursor, 0, prAmountsOption, prPPUDescOption, writeAccountingEffective );
             }
 
             // *** Riga vuota ***
@@ -2601,13 +2601,15 @@ void AccountingBillItem::writeODTAccountingOnTable(QTextCursor *cursor, int payT
             AccountingBillItemPrivate::insertEmptyRow( cellCount, cursor, leftFormat, centralFormat, rightFormat );
         } else { // !hasChildren()
             if( m_d->itemType == Comment ){
-                writeODTBillLine( prAmountsOption, prPPUDescOption,
-                                  true,
-                                  cursor, table,
-                                  tagBlockFormat, txtBlockFormat, numBlockFormat,
-                                  leftCommentFormat, centralCommentFormat, rightCommentFormat,
-                                  centralQuantityTotalFormat, rightQuantityTotalFormat,
-                                  txtCharFormat, txtCommentCharFormat );
+                if( !writeAccountingEffective ){
+                    writeODTBillLine( prAmountsOption, prPPUDescOption,
+                                      true,
+                                      cursor, table,
+                                      tagBlockFormat, txtBlockFormat, numBlockFormat,
+                                      leftCommentFormat, centralCommentFormat, rightCommentFormat,
+                                      centralQuantityTotalFormat, rightQuantityTotalFormat,
+                                      txtCharFormat, txtCommentCharFormat );
+                }
             } else {
                 writeODTBillLine( prAmountsOption, prPPUDescOption,
                                   true,
@@ -2615,7 +2617,7 @@ void AccountingBillItem::writeODTAccountingOnTable(QTextCursor *cursor, int payT
                                   tagBlockFormat, txtBlockFormat, numBlockFormat,
                                   leftFormat, centralFormat, rightFormat,
                                   centralQuantityTotalFormat, rightQuantityTotalFormat,
-                                  txtCharFormat, txtCommentCharFormat );
+                                  txtCharFormat, txtCommentCharFormat, writeAccountingEffective );
             }
 
             // *** Riga vuota ***
@@ -3918,21 +3920,22 @@ void AccountingBillItem::writeODTAttributeBillLineIntersection(AccountingPrinter
     }
 }
 
-void AccountingBillItem::writeODTBillLine( AccountingPrinter::PrintAmountsOption prAmountsOption,
-                                           AccountingPrinter::PrintPPUDescOption prItemsOption,
-                                           bool writeProgCode,
-                                           QTextCursor *cursor,
-                                           QTextTable *table,
-                                           QTextBlockFormat &tagBlockFormat,
-                                           QTextBlockFormat & txtBlockFormat,
-                                           QTextBlockFormat & numBlockFormat,
-                                           QTextTableCellFormat & leftFormat,
-                                           QTextTableCellFormat & centralFormat,
-                                           QTextTableCellFormat & rightFormat,
-                                           QTextTableCellFormat & centralQuantityTotalFormat,
-                                           QTextTableCellFormat & rightQuantityTotalFormat,
-                                           QTextCharFormat & txtCharFormat,
-                                           QTextCharFormat & txtAmNotToDiscCharFormat ) const {
+void AccountingBillItem::writeODTBillLine(AccountingPrinter::PrintAmountsOption prAmountsOption,
+                                          AccountingPrinter::PrintPPUDescOption prItemsOption,
+                                          bool writeProgCode,
+                                          QTextCursor *cursor,
+                                          QTextTable *table,
+                                          QTextBlockFormat &tagBlockFormat,
+                                          QTextBlockFormat & txtBlockFormat,
+                                          QTextBlockFormat & numBlockFormat,
+                                          QTextTableCellFormat & leftFormat,
+                                          QTextTableCellFormat & centralFormat,
+                                          QTextTableCellFormat & rightFormat,
+                                          QTextTableCellFormat & centralQuantityTotalFormat,
+                                          QTextTableCellFormat & rightQuantityTotalFormat,
+                                          QTextCharFormat & txtCharFormat,
+                                          QTextCharFormat & txtAmNotToDiscCharFormat,
+                                          bool writeAccountingEffective ) const {
     // Numero di colonne contenute
     int colCount = 0;
 
@@ -3971,7 +3974,7 @@ void AccountingBillItem::writeODTBillLine( AccountingPrinter::PrintAmountsOption
             AccountingBillItemPrivate::writeCell( cursor, table, centralFormat, txtBlockFormat );
         }
 
-        if( m_d->measuresModel != NULL ){
+        if( m_d->measuresModel != NULL && !writeAccountingEffective ){
             // celle vuote
             // tag unita misura
             AccountingBillItemPrivate::writeCell( cursor, table, centralFormat, tagBlockFormat );

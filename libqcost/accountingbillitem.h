@@ -453,7 +453,8 @@ protected:
                           QTextTableCellFormat & centralQuantityTotalFormat,
                           QTextTableCellFormat & rightQuantityTotalFormat,
                           QTextCharFormat & txtCharFormat,
-                          QTextCharFormat & txtAmNotToDiscCharFormat ) const;
+                          QTextCharFormat & txtAmNotToDiscCharFormat,
+                          bool writeAccountingEffective = false ) const;
 
     /** restituisce tutti gli attributi dell'elemento; se la var bool è false,
         vuol dire che l'attribute è ereditato, se è true vuol dire che è un
