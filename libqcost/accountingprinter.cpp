@@ -474,34 +474,36 @@ bool AccountingPrinter::printAccountingBillODT( int payToPrint,
         QTextDocument doc;
         QTextCursor cursor(&doc);
 
-        // creiamo i vari stili necessari
-        QTextCharFormat headerBlockCharFormat;
-        headerBlockCharFormat.setFontCapitalization( QFont::AllUppercase );
-        headerBlockCharFormat.setFontWeight( QFont::Bold );
+        if( prOption != PrintAccounting ){
+            // creiamo i vari stili necessari
+            QTextCharFormat headerBlockCharFormat;
+            headerBlockCharFormat.setFontCapitalization( QFont::AllUppercase );
+            headerBlockCharFormat.setFontWeight( QFont::Bold );
 
-        QTextBlockFormat headerBlockFormat;
-        headerBlockFormat.setAlignment( Qt::AlignHCenter );
+            QTextBlockFormat headerBlockFormat;
+            headerBlockFormat.setAlignment( Qt::AlignHCenter );
 
-        QTextBlockFormat headerWithPBBlockFormat = headerBlockFormat;
-        headerWithPBBlockFormat.setPageBreakPolicy( QTextFormat::PageBreak_AlwaysBefore );
+            QTextBlockFormat headerWithPBBlockFormat = headerBlockFormat;
+            headerWithPBBlockFormat.setPageBreakPolicy( QTextFormat::PageBreak_AlwaysBefore );
 
-        QTextBlockFormat parBlockFormat;
+            QTextBlockFormat parBlockFormat;
 
-        cursor.setBlockFormat( headerWithPBBlockFormat );
-        cursor.setBlockCharFormat( headerBlockCharFormat );
-        cursor.insertText( m_d->accountingBill->name() );
+            cursor.setBlockFormat( headerWithPBBlockFormat );
+            cursor.setBlockCharFormat( headerBlockCharFormat );
+            cursor.insertText( m_d->accountingBill->name() );
 
-        cursor.insertBlock( headerBlockFormat );
-        cursor.setBlockCharFormat( headerBlockCharFormat );
+            cursor.insertBlock( headerBlockFormat );
+            cursor.setBlockCharFormat( headerBlockCharFormat );
 
-        if( prOption == PrintRawMeasures ){
-            cursor.insertText(QObject::trUtf8("Brogliaccio del Libretto delle Misure") );
-            cursor.insertBlock( parBlockFormat );
-        } else if( prOption == PrintMeasures ){
-            cursor.insertText(QObject::trUtf8("Libretto delle Misure") );
-            cursor.insertBlock( parBlockFormat );
-        } // else if( prOption == PrintAccounting ){
-        // cursor.insertText(QObject::trUtf8("Registro di contabilità") );
+            if( prOption == PrintRawMeasures ){
+                cursor.insertText(QObject::trUtf8("Brogliaccio del Libretto delle Misure") );
+                cursor.insertBlock( parBlockFormat );
+            } else if( prOption == PrintMeasures ){
+                cursor.insertText(QObject::trUtf8("Libretto delle Misure") );
+                cursor.insertBlock( parBlockFormat );
+            } // else if( prOption == PrintAccounting ){
+            // cursor.insertText(QObject::trUtf8("Registro di contabilità") );
+        }
 
         QTextTableFormat tableFormat;
         tableFormat.setCellPadding(5);
