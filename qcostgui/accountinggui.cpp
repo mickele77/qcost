@@ -47,7 +47,7 @@ void AccountingGUI::updateAmounts(){
 
 void AccountingGUI::addPayment() {
     if( m_d->accounting != NULL ){
-        int pos = m_d->accounting->workProgressBillsCount();
+        int pos = m_d->accounting->paymentDatasCount();
         if( m_d->ui->workProgressView->selectionModel() ){
             QModelIndex currIndex = m_d->ui->workProgressView->selectionModel()->currentIndex();
             if( currIndex.isValid() ){
@@ -60,7 +60,7 @@ void AccountingGUI::addPayment() {
 
 void AccountingGUI::removePayment() {
     if( m_d->accounting != NULL ){
-        int pos = m_d->accounting->workProgressBillsCount()-1;
+        int pos = m_d->accounting->paymentDatasCount()-1;
         if( m_d->ui->workProgressView->selectionModel() ){
             QModelIndex currIndex = m_d->ui->workProgressView->selectionModel()->currentIndex();
             if( currIndex.isValid() ){

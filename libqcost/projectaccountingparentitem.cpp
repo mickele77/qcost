@@ -111,11 +111,11 @@ ProjectAccountingParentItem::~ProjectAccountingParentItem(){
     delete m_d;
 }
 
-int ProjectAccountingParentItem::workProgressBillsCount() {
+int ProjectAccountingParentItem::paymentDatasCount() {
     return m_d->dataModel->paymentsCount();
 }
 
-PaymentData *ProjectAccountingParentItem::workProgressBillData(int pos) {
+PaymentData *ProjectAccountingParentItem::paymentData(int pos) {
     return m_d->dataModel->paymentData( pos );
 }
 

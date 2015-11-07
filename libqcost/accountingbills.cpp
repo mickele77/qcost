@@ -103,10 +103,10 @@ bool AccountingBills::insertChildren(int position, int count) {
         AccountingBill *item = new AccountingBill( purposedBillName, this, m_d->priceFieldModel, m_d->parser );
         ProjectAccountingParentItem * pItem = dynamic_cast<ProjectAccountingParentItem *>(parentItem());
         if( pItem ){
-            for( int i=0; i < pItem->workProgressBillsCount(); ++i ){
+            for( int i=0; i < pItem->paymentDatasCount(); ++i ){
                 item->insertPayments( i );
-                item->item(i)->setDateBegin( pItem->workProgressBillData( i )->dateBegin() );
-                item->item(i)->setDateEnd( pItem->workProgressBillData( i )->dateEnd() );
+                item->item(i)->setDateBegin( pItem->paymentData( i )->dateBegin() );
+                item->item(i)->setDateEnd( pItem->paymentData( i )->dateEnd() );
             }
         }
         connect( item, &AccountingBill::modelChanged, this, &AccountingBills::modelChanged );

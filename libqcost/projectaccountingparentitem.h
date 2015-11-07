@@ -48,8 +48,8 @@ public:
     ProjectAccountingParentItem( ProjectItem * parent, PriceFieldModel * pfm, MathParser * p = NULL );
     ~ProjectAccountingParentItem();
 
-    int workProgressBillsCount();
-    PaymentData * workProgressBillData( int pos );
+    int paymentDatasCount();
+    PaymentData * paymentData( int pos );
     AccountingBills * accountingBills();
     AccountingLSBills * lumpSumBills();
     AccountingTAMBill * timeAndMaterialBill();

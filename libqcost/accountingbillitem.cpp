@@ -169,6 +169,10 @@ AccountingBillItem &AccountingBillItem::operator=(const AccountingBillItem &cp) 
     return *this;
 }
 
+bool operator<(AccountingBillItem &item1, AccountingBillItem &item2) {
+    return (item1.m_d->date < item2.m_d->date);
+}
+
 QString AccountingBillItem::name(){
     return m_d->name;
 }

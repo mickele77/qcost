@@ -51,13 +51,19 @@ public:
 
     PaymentData * parentData();
 
+    QVariant data(int col);
+    int columnCount();
+
     int childrenCount() const;
-    PaymentData *child(int number);
+    PaymentData *child(int n);
     int childNumber() const;
     bool hasChildren() const;
     bool insertPayments( int position, int count=1 );
     bool appendPayments(int count=1);
     bool removePayments(int position, int purpCount=1);
+
+    void updateMeasures();
+    void updateProgNum(int *nextProgNum);
 
     PaymentData::DataType dataType();
     QString name();
@@ -80,6 +86,7 @@ signals:
 
 private slots:
     void removeBillItem();
+
 private:
     PaymentDataPrivate * m_d;
 };
