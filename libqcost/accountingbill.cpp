@@ -305,6 +305,7 @@ void AccountingBill::setPriceList(PriceList *pl, AccountingBill::SetPriceListMod
             }
             m_d->priceList = pl;
             emit priceListChanged( pl );
+            emit modelChanged();
         }
     }
 }

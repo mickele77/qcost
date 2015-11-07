@@ -16,8 +16,8 @@
    along with this program; if not, write to the Free Software Foundation,
    Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 */
-#include "accountingbillprintergui.h"
-#include "ui_accountingbillprintergui.h"
+#include "accountingbillmeasuresprintergui.h"
+#include "ui_accountingbillmeasuresprintergui.h"
 
 #include "paymentdatamodel.h"
 #include "paymentdata.h"
@@ -26,9 +26,9 @@
 #include <QComboBox>
 #include <QVariant>
 
-class AccountingBillPrinterGUIPrivate{
+class AccountingBillMeasuresPrinterGUIPrivate{
 public:
-    AccountingBillPrinterGUIPrivate( AccountingPrinter::PrintPPUDescOption * prPPUDescOption,
+    AccountingBillMeasuresPrinterGUIPrivate( AccountingPrinter::PrintPPUDescOption * prPPUDescOption,
                                      AccountingPrinter::PrintOption *prOption,
                                      AccountingPrinter::PrintAmountsOption * prAmountsOption,
                                      int * payToPrint,
@@ -36,7 +36,7 @@ public:
                                      double *pWidth,
                                      double *pHeight,
                                      Qt::Orientation * pOrient ):
-        ui(new Ui::AccountingBillPrinterGUI),
+        ui(new Ui::AccountingBillMeasuresPrinterGUI),
         printPPUDescOption(prPPUDescOption),
         printOption(prOption),
         printAmountsOption(prAmountsOption),
@@ -47,11 +47,11 @@ public:
         paperOrientation( pOrient ) {
         pageSizeList << QPageSize( QPageSize::A4 );
     }
-    ~AccountingBillPrinterGUIPrivate(){
+    ~AccountingBillMeasuresPrinterGUIPrivate(){
         delete ui;
     }
 
-    Ui::AccountingBillPrinterGUI *ui;
+    Ui::AccountingBillMeasuresPrinterGUI *ui;
     AccountingPrinter::PrintPPUDescOption * printPPUDescOption;
     AccountingPrinter::PrintOption *printOption;
     AccountingPrinter::PrintAmountsOption * printAmountsOption;
@@ -63,7 +63,7 @@ public:
     QList<QPageSize> pageSizeList;
 };
 
-AccountingBillPrinterGUI::AccountingBillPrinterGUI(PaymentDataModel * dataModel,
+AccountingBillMeasuresPrinterGUI::AccountingBillMeasuresPrinterGUI(PaymentDataModel * dataModel,
                                                    AccountingPrinter::PrintPPUDescOption * prPPUDescOption,
                                                    AccountingPrinter::PrintOption *prOption,
                                                    AccountingPrinter::PrintAmountsOption *prAmountsOption,
@@ -73,10 +73,10 @@ AccountingBillPrinterGUI::AccountingBillPrinterGUI(PaymentDataModel * dataModel,
                                                    Qt::Orientation * pOrient,
                                                    QWidget *parent ) :
     QDialog(parent),
-    m_d( new AccountingBillPrinterGUIPrivate( prPPUDescOption, prOption, prAmountsOption, payToPrint, dataModel->paymentsCount(), pWidth, pHeight, pOrient ) ) {
+    m_d( new AccountingBillMeasuresPrinterGUIPrivate( prPPUDescOption, prOption, prAmountsOption, payToPrint, dataModel->paymentsCount(), pWidth, pHeight, pOrient ) ) {
     m_d->ui->setupUi(this);
 
-    connect( this, &AccountingBillPrinterGUI::accepted, this, &AccountingBillPrinterGUI::setPrintData );
+    connect( this, &AccountingBillMeasuresPrinterGUI::accepted, this, &AccountingBillMeasuresPrinterGUI::setPrintData );
 
     for( int i=0; i < m_d->pageSizeList.size(); ++i ){
         m_d->ui->paperDimensionsComboBox->addItem( m_d->pageSizeList.at(i).name() );
@@ -92,23 +92,14 @@ AccountingBillPrinterGUI::AccountingBillPrinterGUI(PaymentDataModel * dataModel,
         m_d->ui->printShortLongDescOptRadioButton->setChecked( true );
     }
 
-    if( *(m_d->printOption) == AccountingPrinter::PrintAccounting ){
-        m_d->ui->printAccountingButton->setChecked( true );
-    } else if( *(m_d->printOption) == AccountingPrinter::PrintAccountingSummary ){
-        m_d->ui->printAccountingSummaryButton->setChecked( true );
-    } else if( *(m_d->printOption) == AccountingPrinter::PrintPayment ){
-        m_d->ui->printPaymentButton->setChecked( true );
-    } else if( *(m_d->printOption) == AccountingPrinter::PrintMeasures ){
-        m_d->ui->printBillButton->setChecked( true );
+    if( *(m_d->printOption) == AccountingPrinter::PrintMeasures ){
+        m_d->ui->printMeasuresButton->setChecked( true );
     } else if( *(m_d->printOption) == AccountingPrinter::PrintRawMeasures ){
-        m_d->ui->printRawBillButton->setChecked( true );
+        m_d->ui->printRawMeasuresButton->setChecked( true );
     }
 
-    connect( m_d->ui->printBillButton, &QRadioButton::toggled, this, &AccountingBillPrinterGUI::updateOptionsAvailable );
-    connect( m_d->ui->printPaymentButton, &QRadioButton::toggled, this, &AccountingBillPrinterGUI::updateOptionsAvailable );
-    connect( m_d->ui->printAccountingButton, &QRadioButton::toggled, this, &AccountingBillPrinterGUI::updateOptionsAvailable );
-    connect( m_d->ui->printAccountingSummaryButton, &QRadioButton::toggled, this, &AccountingBillPrinterGUI::updateOptionsAvailable );
-    connect( m_d->ui->printRawBillButton, &QRadioButton::toggled, this, &AccountingBillPrinterGUI::updateOptionsAvailable );
+    connect( m_d->ui->printMeasuresButton, &QRadioButton::toggled, this, &AccountingBillMeasuresPrinterGUI::updateOptionsAvailable );
+    connect( m_d->ui->printRawMeasuresButton, &QRadioButton::toggled, this, &AccountingBillMeasuresPrinterGUI::updateOptionsAvailable );
 
     if( *(m_d->printAmountsOption) == AccountingPrinter::PrintTotalAmountsToDiscount ){
         m_d->ui->printTotalAmountsToDiscountRadioButton->setChecked( true );
@@ -131,12 +122,12 @@ AccountingBillPrinterGUI::AccountingBillPrinterGUI(PaymentDataModel * dataModel,
     setWindowFlags( flags );
 }
 
-AccountingBillPrinterGUI::~AccountingBillPrinterGUI() {
+AccountingBillMeasuresPrinterGUI::~AccountingBillMeasuresPrinterGUI() {
     delete m_d;
 }
 
-void AccountingBillPrinterGUI::updateOptionsAvailable(){
-    if( m_d->ui->printBillButton->isChecked() ){
+void AccountingBillMeasuresPrinterGUI::updateOptionsAvailable(){
+    if( m_d->ui->printMeasuresButton->isChecked() ){
         m_d->ui->printNoAmountsRadioButton->setEnabled( true );
         m_d->ui->printNoAmountsRadioButton->setChecked(true);
         m_d->ui->printTotalAmountsToDiscountRadioButton->setDisabled( true );
@@ -144,16 +135,6 @@ void AccountingBillPrinterGUI::updateOptionsAvailable(){
         m_d->ui->printAllAmountsRadioButton->setDisabled( true );
         if( m_d->ui->payToPrintComboBox->count() == m_d->paymentsCount ){
             m_d->ui->payToPrintComboBox->addItem( trUtf8("Tutti"), QVariant(-1) );
-        }
-    } else if( m_d->ui->printPaymentButton->isChecked() ||
-               m_d->ui->printAccountingButton->isChecked() ){
-        m_d->ui->printNoAmountsRadioButton->setDisabled( true );
-        m_d->ui->printTotalAmountsToDiscountRadioButton->setDisabled( true );
-        m_d->ui->printAmountsNotToDiscountRadioButton->setDisabled( true );
-        m_d->ui->printAllAmountsRadioButton->setEnabled( true );
-        m_d->ui->printAllAmountsRadioButton->setChecked(true);
-        if( m_d->ui->payToPrintComboBox->count() > m_d->paymentsCount ){
-            m_d->ui->payToPrintComboBox->removeItem( m_d->paymentsCount );
         }
     } else {
         m_d->ui->printNoAmountsRadioButton->setEnabled( true );
@@ -167,7 +148,7 @@ void AccountingBillPrinterGUI::updateOptionsAvailable(){
     }
 }
 
-void AccountingBillPrinterGUI::setPrintData(){
+void AccountingBillMeasuresPrinterGUI::setPrintData(){
     if( m_d->ui->printTotalAmountsToDiscountRadioButton->isChecked() ){
         *(m_d->printAmountsOption) = AccountingPrinter::PrintTotalAmountsToDiscount;
     } else if( m_d->ui->printAmountsNotToDiscountRadioButton->isChecked() ){
@@ -178,15 +159,9 @@ void AccountingBillPrinterGUI::setPrintData(){
         *(m_d->printAmountsOption) = AccountingPrinter::PrintNoAmount;
     }
 
-    if( m_d->ui->printAccountingButton->isChecked() ){
-        *(m_d->printOption) = AccountingPrinter::PrintAccounting;
-    } else if( m_d->ui->printAccountingSummaryButton->isChecked() ){
-        *(m_d->printOption) = AccountingPrinter::PrintAccountingSummary;
-    } else if( m_d->ui->printPaymentButton->isChecked() ){
-        *(m_d->printOption) = AccountingPrinter::PrintPayment;
-    } else if( m_d->ui->printBillButton->isChecked() ){
+    if( m_d->ui->printMeasuresButton->isChecked() ){
         *(m_d->printOption) = AccountingPrinter::PrintMeasures;
-    } else if( m_d->ui->printRawBillButton->isChecked() ){
+    } else if( m_d->ui->printRawMeasuresButton->isChecked() ){
         *(m_d->printOption) = AccountingPrinter::PrintRawMeasures;
     }
 

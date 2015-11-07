@@ -25,12 +25,12 @@ class PaymentDataModel;
 
 #include <QDialog>
 
-class AccountingBillPrinterGUIPrivate;
+class AccountingBillMeasuresPrinterGUIPrivate;
 
-class AccountingBillPrinterGUI : public QDialog {
+class AccountingBillMeasuresPrinterGUI : public QDialog {
     Q_OBJECT
 public:
-    explicit AccountingBillPrinterGUI(PaymentDataModel *dataModel,
+    explicit AccountingBillMeasuresPrinterGUI(PaymentDataModel *dataModel,
                                    AccountingPrinter::PrintPPUDescOption *prItemsOption,
                                    AccountingPrinter::PrintOption * prOption,
                                    AccountingPrinter::PrintAmountsOption * prAmountsOption,
@@ -39,12 +39,12 @@ public:
                                    double *pHeight,
                                    Qt::Orientation *pOrient,
                                    QWidget *parent = 0);
-    ~AccountingBillPrinterGUI();
+    ~AccountingBillMeasuresPrinterGUI();
 private slots:
     void setPrintData();
     void updateOptionsAvailable();
 private:
-    AccountingBillPrinterGUIPrivate * m_d;
+    AccountingBillMeasuresPrinterGUIPrivate * m_d;
 };
 
 #endif // ACCOUNTINGBILLPRINTERGUI_H

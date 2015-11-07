@@ -1331,7 +1331,6 @@ Qt::ItemFlags AccountingBillItem::flags(int column) const {
 }
 
 void AccountingBillItem::writeXml(QXmlStreamWriter *writer) {
-
     if( m_d->itemType == Root ){
         for( QList<AccountingBillItem *>::iterator i = m_d->childrenContainer.begin(); i != m_d->childrenContainer.end(); ++i){
             (*i)->writeXml( writer );
@@ -1497,7 +1496,7 @@ void AccountingBillItem::loadFromXml( const QXmlStreamAttributes &attrs,
         m_d->date = QDate::fromJulianDay( attrs.value( "dateBegin").toString().toLongLong() );
     }
     if( attrs.hasAttribute( "dateEnd" ) ){
-        m_d->date = QDate::fromJulianDay( attrs.value( "dateEnd").toString().toLongLong() );
+        m_d->dateEnd = QDate::fromJulianDay( attrs.value( "dateEnd").toString().toLongLong() );
     }
     if( attrs.hasAttribute( "name" ) ){
         m_d->name = attrs.value( "name").toString();
