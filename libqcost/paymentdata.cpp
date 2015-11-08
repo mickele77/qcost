@@ -1,8 +1,6 @@
 #include "paymentdata.h"
 
 #include "accountingbillitem.h"
-#include "priceitem.h"
-#include "unitmeasure.h"
 #include "mathparser.h"
 
 #include <QXmlStreamWriter>
@@ -19,7 +17,6 @@ public:
         parser(prs),
         dateBegin( QDate::currentDate() ),
         dateEnd( QDate::currentDate() ),
-        progNum(0),
         totalAmountToDiscount(0.0),
         PPUTotalAmountToDiscount(0.0),
         LSTotalAmountToDiscount(0.0),
@@ -55,7 +52,6 @@ public:
     QList<PaymentData *> childrenContainer;
     QDate dateBegin;
     QDate dateEnd;
-    int progNum;
     QList<AccountingBillItem *> billItemContainer;
 
     double totalAmountToDiscount;
@@ -93,6 +89,14 @@ PaymentData::PaymentData( PaymentData * parent,
                           MathParser * prs ) :
     QObject(),
     m_d( new PaymentDataPrivate(parent, dType, prs) ){
+    if( m_d->dataType == Payment ){
+        PaymentData * lumpSumData = new PaymentData( this, PaymentData::LumpSum, prs );
+        m_d->childrenContainer << lumpSumData;
+        PaymentData * ppuData = new PaymentData( this, PaymentData::PPU, prs );
+        m_d->childrenContainer << ppuData;
+        PaymentData * tamData = new PaymentData( this, PaymentData::TimeAndMaterials, prs );
+        m_d->childrenContainer << tamData;
+    }
 }
 
 PaymentData::~PaymentData(){
@@ -156,17 +160,12 @@ PaymentData *PaymentData::parentData() {
 }
 
 int PaymentData::childrenCount() const {
-    if( m_d->dataType == Root ){
-        return m_d->childrenContainer.size();
-    }
-    return 0;
+    return m_d->childrenContainer.size();
 }
 
-PaymentData *PaymentData::child(int n) {
-    if( m_d->dataType == Root ){
-        if( n >= 0 && n < m_d->childrenContainer.size() ){
-            return m_d->childrenContainer[n];
-        }
+PaymentData *PaymentData::child(int number) {
+    if( number >= 0 && number < m_d->childrenContainer.size() ){
+        return m_d->childrenContainer[number];
     }
     return NULL;
 }
@@ -332,179 +331,6 @@ bool PaymentData::removePayments(int position, int purpCount) {
     return false;
 }
 
-void PaymentData::updateProgNum( int * nextProgNum ) {
-    if( m_d->dataType == Root ){
-        for( QList<PaymentData *>::iterator i=m_d->childrenContainer.begin();
-             i != m_d->childrenContainer.end(); ++i ){
-            (*i)->updateProgNum( nextProgNum );
-        }
-    } else if( m_d->dataType == Payment ){
-        for( QList<PaymentData *>::iterator i=m_d->childrenContainer.begin();
-             i != m_d->childrenContainer.end(); ++i ){
-            (*i)->m_d->progNum = *nextProgNum;
-            (*nextProgNum)++;
-        }
-    }
-}
-
-void PaymentData::updateMeasures() {
-    if( m_d->dataType == Root ){
-        int nextProgNum = 1;
-        for( QList<PaymentData *>::iterator i=m_d->childrenContainer.begin();
-             i != m_d->childrenContainer.end(); ++i ){
-            (*i)->updateMeasures();
-            (*i)->updateProgNum( &nextProgNum );
-        }
-    } else if( m_d->dataType == Payment ){
-        qDeleteAll( m_d->childrenContainer.begin(), m_d->childrenContainer.end() );
-        m_d->childrenContainer.clear();
-        QList<AccountingBillItem *> measuresList;
-        for( QList<AccountingBillItem *>::iterator pay = m_d->billItemContainer.begin();
-             pay != m_d->billItemContainer.end(); ++pay ){
-            if( (*pay)->itemType() == AccountingBillItem::Payment ){
-                for( int m = 0; m < (*pay)->childrenCount(); ++m){
-                    AccountingBillItem * meas = (*pay)->childItem(m);
-                    if( (meas->itemType() == AccountingBillItem::PPU) ||
-                            (meas->itemType() == AccountingBillItem::LumpSum) ||
-                            (meas->itemType() == AccountingBillItem::PPU) ){
-                        measuresList << meas;
-                    }
-                }
-            }
-        }
-        qStableSort( measuresList.begin(), measuresList.end() );
-        for( QList<AccountingBillItem *>::iterator meas = measuresList.begin();
-             meas != measuresList.end(); ++meas ){
-            PaymentData * dataChild = NULL;
-            if( (*meas)->itemType() == AccountingBillItem::PPU ){
-                dataChild = new PaymentData( this, PaymentData::PPU, m_d->parser );
-                dataChild->addBillItem( *meas );
-            }
-            if( (*meas)->itemType() == AccountingBillItem::LumpSum ){
-                dataChild = new PaymentData( this, PaymentData::LumpSum, m_d->parser );
-                dataChild->addBillItem( *meas );
-            }
-            if( (*meas)->itemType() == AccountingBillItem::TimeAndMaterials ){
-                dataChild = new PaymentData( this, PaymentData::TimeAndMaterials, m_d->parser );
-                dataChild->addBillItem( *meas );
-            }
-            if( dataChild != NULL ){
-                m_d->childrenContainer << dataChild;
-            }
-        }
-
-    }
-}
-
 PaymentData::DataType PaymentData::dataType() {
     return m_d->dataType;
-}
-
-QVariant PaymentData::data( int col ) {
-    if( m_d->dataType == Root ){
-        switch( col ){
-        case 0: {
-            return QVariant( trUtf8("N."));
-            break;
-        }
-        case 1: {
-            return QVariant( trUtf8("Descrizione"));
-            break;
-        }
-        case 2: {
-            return QVariant( trUtf8("Udm"));
-            break;
-        }
-        case 3: {
-            return QVariant( trUtf8("Quantità"));
-            break;
-        }
-        case 4: {
-            return QVariant( trUtf8("C.U.rib."));
-            break;
-        }
-        case 5: {
-            return QVariant( trUtf8("Importo rib."));
-            break;
-        }
-        case 6: {
-            return QVariant( trUtf8("C.U. non rib."));
-            break;
-        }
-        case 7: {
-            return QVariant( trUtf8("Importo non rib."));
-            break;
-        }
-        default:{
-            return QVariant();
-            break;
-        }
-        }
-    } else if( m_d->dataType == Payment ){
-        if( col == 1 ){
-            return QVariant( name() );
-        }
-    } else if( m_d->dataType == PPU ){
-        if( !(m_d->billItemContainer.isEmpty()) ){
-            AccountingBillItem * meas = m_d->billItemContainer.first();
-            switch( col ){
-            case 0: {
-                // n.prog
-                return QVariant();
-                break;
-            }
-            case 1: {
-                PriceItem * pItem = meas->priceItem();
-                if( pItem != NULL ){
-                    return QVariant( pItem->shortDescriptionFull() );
-                } else {
-                    return QVariant();
-                }
-                break;
-            }
-            case 2: {
-                PriceItem * pItem = meas->priceItem();
-                if( pItem != NULL ){
-                    UnitMeasure * ump = pItem->unitMeasure();
-                    if( ump != NULL ){
-                        return QVariant( ump->tag() );
-                    } else {
-                        return QVariant( QString("---") );
-                    }
-                }
-                return QVariant();
-                break;
-            }
-            case 3: {
-                return QVariant( meas->quantityStr() );
-                break;
-            }
-            case 4: {
-                return QVariant( meas->PPUTotalToDiscountStr() );
-                break;
-            }
-            case 5: {
-                return QVariant( meas->totalAmountToDiscountStr() );
-                break;
-            }
-            case 6: {
-                return QVariant( meas->PPUNotToDiscountStr() );
-                break;
-            }
-            case 7: {
-                return QVariant( meas->amountNotToDiscountStr() );
-                break;
-            }
-            default:{
-                return QVariant();
-                break;
-            }
-            }
-        }
-    }
-    return QVariant();
-}
-
-int PaymentData::columnCount() {
-    return 8;
 }

@@ -80,8 +80,6 @@ public:
 
     AccountingBillItem &operator =(const AccountingBillItem &cp);
 
-    friend bool operator< (AccountingBillItem &item1, AccountingBillItem &item2);
-
     /** @return resituitsce il genitore dell'oggetto */
     AccountingBillItem * parent();
     /** Ricerca tra gli oggetti figlio uno con id pari a itemId

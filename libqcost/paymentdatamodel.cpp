@@ -108,7 +108,16 @@ QVariant PaymentDataModel::data(const QModelIndex &index, int role) const {
 QVariant PaymentDataModel::headerData(int section, Qt::Orientation orientation, int role) const {
     if( (role == Qt::EditRole) || (role == Qt::DisplayRole) ){
         if (orientation == Qt::Horizontal ){
-            return m_d->rootData->data( section );
+            switch( section ){
+            case 0 :{
+                return QVariant( trUtf8("S.A.L."));
+                break;
+            }
+            case 1 :{
+                return QVariant( trUtf8("Importo totale"));
+                break;
+            }
+            }
         }
     }
     return QVariant();
@@ -121,7 +130,7 @@ int PaymentDataModel::rowCount(const QModelIndex &parent) const {
 
 int PaymentDataModel::columnCount(const QModelIndex &parent) const {
     Q_UNUSED(parent)
-    return m_d->rootData->columnCount();
+    return 2;
 }
 
 bool PaymentDataModel::hasChildren(const QModelIndex &parent) const {
@@ -190,10 +199,4 @@ Qt::ItemFlags PaymentDataModel::flags() const {
 
 void PaymentDataModel::updateAmounts() {
     m_d->rootData->updateAmounts();
-}
-
-void PaymentDataModel::updateMeasures() {
-    beginResetModel();
-    m_d->rootData->updateMeasures();
-    endResetModel();
 }
