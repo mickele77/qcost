@@ -97,7 +97,8 @@ public:
     void setParent(AccountingBillItem *newParent, int position);
 
     unsigned int id();
-    QString progressiveCode() const;
+    QString accountingProgCode() const;
+    QString progCode() const;
     QString name();
     int currentPriceDataSet() const;
     double discount() const;
@@ -278,8 +279,10 @@ public:
     void setDateEnd( const QDate & d );
     void setDateEnd( const QString & d );
 
-    /** Aggiorna il numero progressivo delle misure */
-    void updateProgressiveCode();
+    /** Aggiorna il numero progressivo delle misure nel registro di contabilita */
+    void updateAccountingProgCode();
+    /** Aggiorna il numero progressivo delle misure nel libretto delle misure */
+    void updateProgCode();
 
 public slots:
     void setCurrentPriceDataSet(int newVal);
@@ -464,7 +467,8 @@ protected:
     QList<Attribute *> directAttributes() const;
     QList<Attribute *> inheritedAttributes() const;
 
-    virtual void updateProgressiveCode(int *startCode);
+    virtual void updateAccountingProgCode(int *startCode);
+    virtual void updateProgCode(int *startCode);
 
 protected slots:
     void setQuantityPrivate(double v);

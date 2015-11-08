@@ -270,32 +270,64 @@ unsigned int AccountingBillItem::id() {
     return m_d->id;
 }
 
-void AccountingBillItem::updateProgressiveCode() {
-    int startCode = 1;
-    updateProgressiveCode( &startCode );
+QString AccountingBillItem::accountingProgCode() const {
+    if( (m_d->itemType == PPU) || (m_d->itemType == TimeAndMaterials) || (m_d->itemType == LumpSum)){
+        return QString::number( m_d->accountingProgCode );
+    }
+    return QString();
 }
 
-void AccountingBillItem::updateProgressiveCode( int * startCode ) {
+void AccountingBillItem::updateAccountingProgCode() {
+    int startCode = 1;
+    updateAccountingProgCode( &startCode );
+}
+
+void AccountingBillItem::updateAccountingProgCode( int * startCode ) {
     QList<AccountingBillItem *>::iterator i = m_d->childrenContainer.begin();
     if( i == m_d->childrenContainer.end() ){
         if( (m_d->itemType == PPU) ||
                 (m_d->itemType == LumpSum) ||
                 (m_d->itemType == TimeAndMaterials) ){
-            m_d->progressiveCode = *startCode;
+            m_d->accountingProgCode = *startCode;
+            (*startCode)++;
+        }
+    } else {
+        while( i!= m_d->childrenContainer.end() ){
+            (*i)->updateAccountingProgCode( startCode );
+            ++i;
+        }
+    }
+}
+
+QString AccountingBillItem::progCode() const {
+    if( (m_d->itemType == PPU) || (m_d->itemType == TimeAndMaterials) || (m_d->itemType == LumpSum)){
+        return QString::number( m_d->progCode );
+    }
+    return QString();
+}
+
+void AccountingBillItem::updateProgCode() {
+    for( QList<AccountingBillItem *>::iterator pay = m_d->childrenContainer.begin();
+         pay != m_d->childrenContainer.end(); ++pay ){
+        int startCode = 1;
+        (*pay)->updateProgCode( &startCode );
+    }
+}
+
+void AccountingBillItem::updateProgCode( int * startCode ) {
+    QList<AccountingBillItem *>::iterator i = m_d->childrenContainer.begin();
+    if( i == m_d->childrenContainer.end() ){
+        if( (m_d->itemType == PPU) ||
+                (m_d->itemType == LumpSum) ||
+                (m_d->itemType == TimeAndMaterials) ){
+            m_d->progCode = *startCode;
             (*startCode)++;
         }
     }
     while( i!= m_d->childrenContainer.end() ){
-        (*i)->updateProgressiveCode( startCode );
+        (*i)->updateProgCode( startCode );
         ++i;
     }
-}
-
-QString AccountingBillItem::progressiveCode() const {
-    if( (m_d->itemType == PPU) || (m_d->itemType == TimeAndMaterials) || (m_d->itemType == LumpSum)){
-        return QString::number( m_d->progressiveCode );
-    }
-    return QString();
 }
 
 QList<int> AccountingBillItem::totalAmountPriceFields() const {
@@ -570,7 +602,7 @@ QVariant AccountingBillItem::data(int col, int role) const {
             if( role == Qt::TextAlignmentRole ){
                 return Qt::AlignLeft + Qt::AlignVCenter;
             } else if(role == Qt::DisplayRole || role == Qt::EditRole) {
-                return QVariant( progressiveCode() );
+                return QVariant( progCode() );
             }
         } else if( col == m_d->dateCol) {
             if( role == Qt::TextAlignmentRole ){
@@ -658,7 +690,7 @@ QVariant AccountingBillItem::data(int col, int role) const {
             if( role == Qt::TextAlignmentRole ){
                 return Qt::AlignLeft + Qt::AlignVCenter;
             } else if(role == Qt::DisplayRole || role == Qt::EditRole) {
-                return QVariant( progressiveCode() );
+                return QVariant( progCode() );
             }
         } else if( col == m_d->dateCol) {
             if( role == Qt::TextAlignmentRole ){
@@ -740,7 +772,7 @@ QVariant AccountingBillItem::data(int col, int role) const {
             if( role == Qt::TextAlignmentRole ){
                 return Qt::AlignLeft + Qt::AlignVCenter;
             } else if(role == Qt::DisplayRole || role == Qt::EditRole) {
-                return QVariant( progressiveCode() );
+                return QVariant( progCode() );
             }
         } else if( col == m_d->dateCol) {
             if( role == Qt::TextAlignmentRole ){
@@ -1403,9 +1435,6 @@ void AccountingBillItem::writeXml(QXmlStreamWriter *writer) {
 }
 
 void AccountingBillItem::readXml( QXmlStreamReader *reader, PriceList * priceList, AttributeModel * attrModel ) {
-    // serve solo nel caso di item di tipo Root
-    int currentPayment = 0;
-
     if( m_d->itemType != Root ){
         if(reader->isStartElement() && reader->name().toString().toUpper() == "ACCOUNTINGBILLITEM"){
             loadFromXmlTmp( reader->attributes() );
@@ -1413,23 +1442,22 @@ void AccountingBillItem::readXml( QXmlStreamReader *reader, PriceList * priceLis
         reader->readNext();
     }
 
+    QString tag = reader->name().toString().toUpper();
     while( (!reader->atEnd()) &&
            (!reader->hasError()) &&
-           !(reader->isEndElement() && reader->name().toString().toUpper() == "ACCOUNTINGBILLITEM")&&
-           !(reader->isEndElement() && reader->name().toString().toUpper() == "ACCOUNTINGBILL")  ){
+           !(reader->isEndElement() && tag == "ACCOUNTINGBILLITEM")&&
+           !(reader->isEndElement() && tag == "ACCOUNTINGBILL")  ){
         if( m_d->itemType == Root ){
-            if( reader->name().toString().toUpper() == "ACCOUNTINGBILLITEM" && reader->isStartElement()) {
+            if( tag == "ACCOUNTINGBILLITEM" && reader->isStartElement()) {
                 if( reader->attributes().hasAttribute( "itemType" ) ){
                     if( reader->attributes().value( "itemType" ).toString().toUpper() == "PAYMENT" ){
-                        if( currentPayment < m_d->childrenContainer.size() ){
-                            m_d->childrenContainer[currentPayment]->readXml( reader, priceList, attrModel );
-                            currentPayment++;
-                        }
+                        appendChildren( Payment );
+                        m_d->childrenContainer.last()->readXml( reader, priceList, attrModel );
                     }
                 }
             }
         } else if( m_d->itemType == Payment ){
-            if( reader->name().toString().toUpper() == "ACCOUNTINGBILLITEM" && reader->isStartElement()) {
+            if( tag == "ACCOUNTINGBILLITEM" && reader->isStartElement()) {
                 if( reader->attributes().hasAttribute( "itemType" ) ){
                     AccountingBillItem::ItemType iType = PPU;
                     if( reader->attributes().value( "itemType" ).toString().toUpper() == "COMMENT" ){
@@ -1451,6 +1479,7 @@ void AccountingBillItem::readXml( QXmlStreamReader *reader, PriceList * priceLis
             }
         }
         reader->readNext();
+        tag = reader->name().toString().toUpper();
     }
 }
 
@@ -3419,7 +3448,7 @@ void AccountingBillItem::writeODTSummaryLine(PriceItem * priceItem,
 
             if( writeDetails ){
                 AccountingBillItemPrivate::writeCell( cursor, table, leftFormat, txtBlockFormat );
-                AccountingBillItemPrivate::writeCell( cursor, table, centralFormat, txtBlockFormat, progressiveCode() );
+                AccountingBillItemPrivate::writeCell( cursor, table, centralFormat, txtBlockFormat, progCode() );
 
                 QString unitMeasureTag;
                 if( m_d->priceItem != NULL ){
@@ -3469,7 +3498,7 @@ void AccountingBillItem::writeODTSummaryLine( PriceItem * priceItem,
 
             if( writeDetails ){
                 AccountingBillItemPrivate::writeCell( cursor, table, leftFormat, txtBlockFormat );
-                AccountingBillItemPrivate::writeCell( cursor, table, centralFormat, txtBlockFormat, progressiveCode() );
+                AccountingBillItemPrivate::writeCell( cursor, table, centralFormat, txtBlockFormat, progCode() );
 
                 QString unitMeasureTag;
                 if( m_d->priceItem != NULL ){
@@ -3967,7 +3996,7 @@ void AccountingBillItem::writeODTBillLine(AccountingPrinter::PrintAmountsOption 
     if( m_d->itemType == PPU ){
         if( writeProgCode ){
             // codice progressivo
-            AccountingBillItemPrivate::writeCell( cursor, table, leftFormat, tagBlockFormat, progressiveCode()  );
+            AccountingBillItemPrivate::writeCell( cursor, table, leftFormat, tagBlockFormat, progCode()  );
             // data
             AccountingBillItemPrivate::writeCell( cursor, table, centralFormat, tagBlockFormat, dateStr()  );
         } else {
@@ -4220,7 +4249,7 @@ void AccountingBillItem::writeODTBillLine(AccountingPrinter::PrintAmountsOption 
     } else if( m_d->itemType == LumpSum){
         if( writeProgCode ){
             // codice progressivo
-            AccountingBillItemPrivate::writeCell( cursor, table, leftFormat, tagBlockFormat, progressiveCode()  );
+            AccountingBillItemPrivate::writeCell( cursor, table, leftFormat, tagBlockFormat, progCode()  );
             // data
             AccountingBillItemPrivate::writeCell( cursor, table, centralFormat, tagBlockFormat, dateStr()  );
         } else {
@@ -4278,7 +4307,7 @@ void AccountingBillItem::writeODTBillLine(AccountingPrinter::PrintAmountsOption 
     } else if( m_d->itemType == TimeAndMaterials ){
         if( writeProgCode ){
             // codice progressivo
-            AccountingBillItemPrivate::writeCell( cursor, table, leftFormat, tagBlockFormat, progressiveCode()  );
+            AccountingBillItemPrivate::writeCell( cursor, table, leftFormat, tagBlockFormat, progCode()  );
             // data
             AccountingBillItemPrivate::writeCell( cursor, table, centralFormat, tagBlockFormat, dateStr()  );
         } else {

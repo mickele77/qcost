@@ -17,9 +17,6 @@ class EXPORT_QCOST_LIB_OPT PaymentDataModel : public QAbstractItemModel {
 public:
     PaymentDataModel( MathParser *prs );
 
-    void writeXml( QXmlStreamWriter * writer );
-    void readXml( QXmlStreamReader * reader );
-
     QModelIndex parent(const QModelIndex &index) const;
     QModelIndex index(int row, int col, const QModelIndex &parent) const;
 

@@ -26,21 +26,6 @@ PaymentDataModel::PaymentDataModel( MathParser * prs ):
     connect( m_d->rootData, &PaymentData::dataChanged, this, &PaymentDataModel::modelChanged );
 }
 
-void PaymentDataModel::writeXml( QXmlStreamWriter *writer ) {
-    m_d->rootData->writeXml( writer );
-}
-
-void PaymentDataModel::readXml(QXmlStreamReader *reader ){
-    while( (!reader->atEnd()) &&
-           (!reader->hasError()) &&
-           !(reader->isEndElement() && reader->name().toString().toUpper() == "PAYMENTDATAS") ){
-        reader->readNext();
-        if( reader->name().toString().toUpper() == "PAYMENTDATA" && reader->isStartElement()) {
-            m_d->rootData->readXml( reader );
-        }
-    }
-}
-
 QModelIndex PaymentDataModel::parent(const QModelIndex &index) const {
     if ( !index.isValid() )
         return QModelIndex();

@@ -35,7 +35,6 @@
 class AccountingBillPrivate{
 public:
     AccountingBillPrivate( const QString &n, AccountingBill * b, PriceFieldModel * pfm, MathParser * prs = NULL ):
-        id(0),
         name(n),
         priceFieldModel(pfm),
         parser(prs),
@@ -62,8 +61,6 @@ public:
             }
         }
     }
-
-    unsigned int id;
 
     QString name;
     QString description;
@@ -134,7 +131,6 @@ AccountingBill::~AccountingBill(){
 }
 
 AccountingBill &AccountingBill::operator=(const AccountingBill &cp) {
-    setName( cp.m_d->name );
     setDescription( cp.m_d->description );
     setPriceList( cp.m_d->priceList );
     *(m_d->rootItem) = *(cp.m_d->rootItem);
@@ -186,10 +182,12 @@ int AccountingBill::childNumber(ProjectItem * /*item*/) {
 }
 
 bool AccountingBill::clear() {
+    beginResetModel();
     bool ret = m_d->rootItem->clear();
     m_d->rootItem->setCurrentPriceDataSet( 0 );
     setName("");
     setPriceList( NULL );
+    endResetModel();
     return ret;
 }
 
@@ -210,11 +208,11 @@ bool AccountingBill::removeChildren(int position, int count) {
 }
 
 Qt::ItemFlags AccountingBill::flags() const {
-    return Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemIsEditable;
+    return Qt::ItemIsSelectable | Qt::ItemIsEnabled;
 }
 
 QVariant AccountingBill::data() const {
-    return QVariant( m_d->name );
+    return QVariant( trUtf8("Libretto delle misure" ) );
 }
 
 bool AccountingBill::setData(const QVariant &value) {
@@ -420,29 +418,6 @@ bool AccountingBill::setData(const QModelIndex &index, const QVariant &value, in
     return result;
 }
 
-bool AccountingBill::insertPayments( int inputPos, int count ) {
-    int position = inputPos;
-    if( position == -1 ){
-        position = m_d->rootItem->childrenCount();
-    }
-
-    bool success = false;
-
-    beginInsertRows(QModelIndex(), position, position + count - 1);
-    success = m_d->rootItem->insertChildren( AccountingBillItem::Payment, position, count );
-    endInsertRows();
-
-    if( success ){
-        for( int i=position; i < position+count; ++i ){
-            connect( m_d->rootItem->childItem( i ), &AccountingBillItem::requestDateBeginChangeSignal, this, &AccountingBill::requestDateBeginChange );
-            connect( m_d->rootItem->childItem( i ), &AccountingBillItem::requestDateEndChangeSignal, this, &AccountingBill::requestDateEndChange );
-        }
-        m_d->rootItem->updateProgressiveCode();
-    }
-
-    return success;
-}
-
 bool AccountingBill::insertItems(AccountingBillItem::ItemType mt, int inputPos, int count, const QModelIndex &parent) {
     AccountingBillItem *parentItem = item(parent);
 
@@ -451,32 +426,14 @@ bool AccountingBill::insertItems(AccountingBillItem::ItemType mt, int inputPos, 
         position = parentItem->childrenCount();
     }
 
-    bool success = false;
-
-    if( mt == AccountingBillItem::Payment ){
-        emit requestInsertPayments( position, count );
-        success = true;
-    } else {
-        beginInsertRows(parent, position, position + count - 1);
-        success = parentItem->insertChildren( mt, position, count );
-        endInsertRows();
-    }
+    beginInsertRows(parent, position, position + count - 1);
+    bool success = parentItem->insertChildren( mt, position, count );
+    endInsertRows();
 
     if( success ){
-        m_d->rootItem->updateProgressiveCode();
+        m_d->rootItem->updateProgCode();
+        m_d->rootItem->updateAccountingProgCode();
     }
-
-    return success;
-}
-
-bool AccountingBill::removePayments(int position, int rows) {
-    bool success = false;
-
-    beginRemoveRows(QModelIndex(), position, position + rows - 1);
-    success = m_d->rootItem->removeChildren(position, rows);
-    endRemoveRows();
-
-    m_d->rootItem->updateProgressiveCode();
 
     return success;
 }
@@ -497,19 +454,14 @@ bool AccountingBill::removeItems(int position, int rows, const QModelIndex &pare
     bool success = false;
 
     for( int row=(position+rows-1); row >= position ; --row){
-        AccountingBillItem *item = parentItem->childItem( row );
-        if( item->itemType() == AccountingBillItem::Payment ){
-            emit requestRemovePayments( row, 1 );
-            success = true;
-        } else {
-            beginRemoveRows(parent, row, row);
-            success = parentItem->removeChildren(row, 1);
-            endRemoveRows();
-        }
+        beginRemoveRows(parent, row, row);
+        success = parentItem->removeChildren(row, 1);
+        endRemoveRows();
     }
 
     if( success ){
-        m_d->rootItem->updateProgressiveCode();
+        m_d->rootItem->updateAccountingProgCode();
+        m_d->rootItem->updateProgCode();
     }
 
     return success;
@@ -663,18 +615,8 @@ void AccountingBill::setBillDateBegin(const QDate &newDate, int position) {
     }
 }
 
-void AccountingBill::nextId() {
-    m_d->id++;
-}
-
-unsigned int AccountingBill::id() {
-    return m_d->id;
-}
-
 void AccountingBill::writeXml(QXmlStreamWriter *writer) {
     writer->writeStartElement( "AccountingBill" );
-    writer->writeAttribute( "id", QString::number(m_d->id) );
-    writer->writeAttribute( "name", m_d->name );
     writer->writeAttribute( "discount", QString::number(m_d->rootItem->discount()) );
 
     QString fields;
@@ -730,31 +672,26 @@ void AccountingBill::readXml(QXmlStreamReader *reader, ProjectPriceListParentIte
             m_d->rootItem->readXml( reader, m_d->priceList, m_d->attributeModel );
         }
     }
-    m_d->rootItem->updateProgressiveCode();
+    m_d->rootItem->updateAccountingProgCode();
+    m_d->rootItem->updateProgCode();
 }
 
 void AccountingBill::loadFromXml(const QXmlStreamAttributes &attrs, ProjectPriceListParentItem * priceLists) {
     for( QXmlStreamAttributes::const_iterator i=attrs.begin(); i != attrs.end(); ++i ){
-        QString nameUp = (*i).name().toString().toUpper();
-        if( nameUp == "ID" ){
-            m_d->id = (*i).value().toUInt();
-        }
-        if( nameUp == "NAME" ){
-            setName( (*i).value().toString() );
-        }
-        if( nameUp == "DESCRIPTION" ){
+        QString tagUp = (*i).name().toString().toUpper();
+        if( tagUp == "DESCRIPTION" ){
             setDescription( (*i).value().toString() );
         }
-        if( nameUp == "PRICELIST" ){
+        if( tagUp == "PRICELIST" ){
             m_d->priceList = priceLists->priceListId( (*i).value().toUInt() );
         }
-        if( nameUp == "PRICEDATASET" ){
+        if( tagUp == "PRICEDATASET" ){
             m_d->rootItem->setCurrentPriceDataSet( (*i).value().toInt() );
         }
-        if( nameUp == "DISCOUNT" ){
+        if( tagUp == "DISCOUNT" ){
             m_d->rootItem->setDiscount( (*i).value().toDouble() );
         }
-        if( nameUp == "TOTALAMOUNTPRICEFIELDS" ){
+        if( tagUp == "TOTALAMOUNTPRICEFIELDS" ){
             QStringList pFieldsStr = (*i).value().toString().split(",");
             QList<int> pFields;
             for(QStringList::const_iterator pStr = pFieldsStr.constBegin(); pStr != pFieldsStr.constEnd(); pStr++ ){
@@ -766,7 +703,7 @@ void AccountingBill::loadFromXml(const QXmlStreamAttributes &attrs, ProjectPrice
             }
             m_d->rootItem->setTotalAmountPriceFields( pFields );
         }
-        if( nameUp == "NODISCOUNTAMOUNTPRICEFIELDS" ){
+        if( tagUp == "NODISCOUNTAMOUNTPRICEFIELDS" ){
             QStringList pFieldsStr = (*i).value().toString().split(",");
             QList<int> pFields;
             for(QStringList::const_iterator pStr = pFieldsStr.constBegin(); pStr != pFieldsStr.constEnd(); pStr++ ){
@@ -784,12 +721,6 @@ void AccountingBill::loadFromXml(const QXmlStreamAttributes &attrs, ProjectPrice
 void AccountingBill::loadFromXmlTmp(const QXmlStreamAttributes &attrs) {
     for( QXmlStreamAttributes::const_iterator i=attrs.begin(); i != attrs.end(); ++i ){
         QString nameUp = (*i).name().toString().toUpper();
-        if( nameUp == "ID" ){
-            m_d->id = (*i).value().toUInt();
-        }
-        if( nameUp == "NAME" ){
-            setName( (*i).value().toString() );
-        }
         if( nameUp == "DESCRIPTION" ){
             setDescription( (*i).value().toString() );
         }
@@ -811,10 +742,10 @@ QList<PriceItem *> AccountingBill::connectedPriceItems() {
 }
 
 void AccountingBill::writeODTAccountingOnTable(QTextCursor *cursor,
-                                                int payToPrint,
-                                                AccountingPrinter::PrintAmountsOption prAmountsOption,
-                                                AccountingPrinter::PrintPPUDescOption prPPUDescOption,
-                                                bool writeAccountingEffective ) const {
+                                               int payToPrint,
+                                               AccountingPrinter::PrintAmountsOption prAmountsOption,
+                                               AccountingPrinter::PrintPPUDescOption prPPUDescOption,
+                                               bool writeAccountingEffective ) const {
     m_d->rootItem->writeODTAccountingOnTable(cursor, payToPrint, prAmountsOption, prPPUDescOption, writeAccountingEffective );
 }
 

@@ -20,7 +20,6 @@
 
 #include "paymentdatamodel.h"
 #include "paymentdata.h"
-#include "accountingbills.h"
 #include "accountingbill.h"
 #include "accountinglsbills.h"
 #include "accountingtambill.h"
@@ -73,13 +72,9 @@ ProjectAccountingParentItem::ProjectAccountingParentItem( ProjectItem *parent, P
 
     connect( m_d->measuresBill, &AccountingBill::modelChanged, this, &ProjectAccountingParentItem::modelChanged );
 
-    connect( m_d->measuresBill, &AccountingBill::requestInsertPayments, this, &ProjectAccountingParentItem::insertPayments );
-    connect( m_d->measuresBill, &AccountingBill::requestRemovePayments, this, &ProjectAccountingParentItem::removeBills );
     connect( m_d->measuresBill, &AccountingBill::requestDateBeginChange, this, &ProjectAccountingParentItem::changeBillDateBegin );
     connect( m_d->measuresBill, &AccountingBill::requestDateEndChange, this, &ProjectAccountingParentItem::changeBillDateEnd );
 
-    connect( m_d->dataModel, &PaymentDataModel::insertPaymentsSignal, this, &ProjectAccountingParentItem::insertPayments );
-    connect( m_d->dataModel, &PaymentDataModel::removePaymentsSignal, this, &ProjectAccountingParentItem::removeBills );
     connect( m_d->dataModel, &PaymentDataModel::modelChanged, this, &ProjectAccountingParentItem::modelChanged );
 
     m_d->lumpSumBills = new AccountingLSBills( this, pfm, prs );
@@ -239,7 +234,6 @@ bool ProjectAccountingParentItem::isUsingPriceItem(PriceItem *p) {
 
 void ProjectAccountingParentItem::writeXml(QXmlStreamWriter *writer) {
     writer->writeStartElement( "Accounting");
-    m_d->dataModel->writeXml(writer);
     m_d->measuresBill->writeXml( writer );
     m_d->lumpSumBills->writeXml( writer );
     m_d->timeAndMaterialBill->writeXml( writer );
@@ -252,38 +246,19 @@ void ProjectAccountingParentItem::readXml(QXmlStreamReader *reader, ProjectPrice
            !(reader->isEndElement() && reader->name().toString().toUpper() == "ACCOUNTING") ){
         reader->readNext();
         QString nodeName = reader->name().toString().toUpper();
-        if( nodeName == "PAYMENTDATAS" && reader->isStartElement()) {
-            m_d->dataModel->readXml( reader );
-        }
         nodeName = reader->name().toString().toUpper();
         if( nodeName == "ACCOUNTINGBILL" && reader->isStartElement()) {
             m_d->measuresBill->readXml( reader, priceLists );
         }
-        nodeName = reader->name().toString().toUpper();
         if( nodeName == "ACCOUNTINGLSBILLS" && reader->isStartElement()) {
             m_d->lumpSumBills->readXml( reader, priceLists );
         }
-        nodeName = reader->name().toString().toUpper();
         if( nodeName == "ACCOUNTINGTAMBILL" && reader->isStartElement()) {
             m_d->timeAndMaterialBill->readXml( reader, priceLists );
         }
     }
     m_d->timeAndMaterialBill->loadTmpData( priceLists );
     m_d->measuresBill->loadTmpData( priceLists, m_d->lumpSumBills, m_d->timeAndMaterialBill );
-}
-
-void ProjectAccountingParentItem::insertPayments( int position, int count) {
-    for( int i=0; i < count; i++){
-        m_d->measuresBill->insertPayments( position );
-        m_d->dataModel->insertPayments( position );
-        AccountingBillItem * addedItem = m_d->measuresBill->item(position);
-        m_d->dataModel->paymentData( position )->addBillItem( addedItem );
-    }
-}
-
-void ProjectAccountingParentItem::removeBills(int position, int count) {
-    m_d->dataModel->removePayments( position, count);
-    m_d->measuresBill->removePayments( position, count);
 }
 
 void ProjectAccountingParentItem::changeBillDateEnd(const QDate &newDate, int position) {

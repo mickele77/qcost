@@ -38,7 +38,8 @@ public:
     QList<Attribute *> attributes;
     MathParser * parser;
     PriceFieldModel * priceFieldModel;
-    int progressiveCode;
+    int accountingProgCode;
+    int progCode;
 
     // Il tipo di elemento
     AccountingBillItem::ItemType itemType;

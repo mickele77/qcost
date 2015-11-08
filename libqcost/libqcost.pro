@@ -57,7 +57,6 @@ SOURCES += \
     accountingprinter.cpp \
     attribute.cpp \
     accountingpricefieldmodel.cpp \
-    accountingbills.cpp \
     accountingbill.cpp \
     accountingbillitem.cpp \
     accountingbillitemprivate.cpp \
@@ -96,7 +95,6 @@ HEADERS  += \
     accountingprinter.h \
     attribute.h \
     accountingpricefieldmodel.h \
-    accountingbills.h \
     accountingbill.h \
     accountingbillitem.h \
     accountingbillitemprivate.h \

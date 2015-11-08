@@ -88,8 +88,6 @@ public:
     QString totalAmountStr();
 
 public slots:
-    void insertPayments(int position, int count);
-    void removeBills(int position, int count);
     void changeBillDateEnd( const QDate & newDate, int position);
     void changeBillDateBegin( const QDate & newDate, int position);
 

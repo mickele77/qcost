@@ -105,56 +105,6 @@ PaymentData::~PaymentData(){
     }
 }
 
-void PaymentData::writeXml(QXmlStreamWriter *writer) {
-    if( m_d->dataType == Root ){
-        writer->writeStartElement( "PaymentDatas" );
-        for( QList<PaymentData *>::iterator i = m_d->childrenContainer.begin();
-             i != m_d->childrenContainer.end(); ++i ){
-            (*i)->writeXml( writer );
-        }
-        writer->writeEndElement();
-    } else if( m_d->dataType == Payment ){
-        writer->writeStartElement( "PaymentData" );
-        writer->writeAttribute( "dateBegin", QString::number( m_d->dateBegin.toJulianDay() ) );
-        writer->writeAttribute( "dateEnd", QString::number( m_d->dateEnd.toJulianDay() ) );
-        writer->writeEndElement();
-    }
-}
-
-void PaymentData::readXml(QXmlStreamReader *reader ){
-    if( m_d->dataType == PaymentData::Root ){
-        while( (!reader->atEnd()) &&
-               (!reader->hasError()) &&
-               !(reader->isEndElement() && reader->name().toString().toUpper() == "PAYMENTDATA") &&
-               !(reader->isEndElement() && reader->name().toString().toUpper() == "PAYMENTDATAS")  ){
-            QString nodeName = reader->name().toString().toUpper();
-            if( nodeName == "PAYMENTDATA" && reader->isStartElement()) {
-                appendPayments();
-                m_d->childrenContainer.last()->readXml( reader);
-            }
-            reader->readNext();
-        }
-    } else if( m_d->dataType == PaymentData::Payment ){
-        if(reader->isStartElement() && reader->name().toString().toUpper() == "PAYMENTDATA"){
-            loadFromXml( reader->attributes() );
-        }
-    } else {
-        reader->readNext();
-    }
-}
-
-void PaymentData::loadFromXml( const QXmlStreamAttributes &attrs ) {
-    for( QXmlStreamAttributes::const_iterator i=attrs.begin(); i!= attrs.end(); ++i ){
-        QString attrUP = i->name().toString().toUpper();
-        if( attrUP == "DATEBEGIN" ){
-            setDateBegin( QDate::fromJulianDay( i->value().toLongLong() ) );
-        }
-        if( attrUP == "DATEEND" ){
-            setDateEnd( QDate::fromJulianDay( i->value().toLongLong() ) );
-        }
-    }
-}
-
 PaymentData *PaymentData::parentData() {
     return m_d->parentData;
 }

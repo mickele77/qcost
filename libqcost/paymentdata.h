@@ -45,10 +45,6 @@ public:
 
     ~PaymentData();
 
-    void writeXml( QXmlStreamWriter * writer );
-    void readXml( QXmlStreamReader *reader );
-    void loadFromXml( const QXmlStreamAttributes &attrs );
-
     PaymentData * parentData();
 
     int childrenCount() const;

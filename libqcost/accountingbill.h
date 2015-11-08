@@ -75,9 +75,6 @@ public:
 
     virtual ~AccountingBill();
 
-    void nextId();
-    unsigned int id();
-
     /** Nome associato al libretto delle misure */
     QString name();
     /** Informazioni testuali di vario tipo associate al libretto delle misure */
@@ -124,9 +121,7 @@ public:
     Qt::ItemFlags flags(const QModelIndex &index) const;
     bool setData(const QModelIndex &index, const QVariant &value, int role = Qt::EditRole);
     bool insertItems(AccountingBillItem::ItemType mt, int position = -1, int count = 1, const QModelIndex &parent = QModelIndex() );
-    bool insertPayments(int inputPos = -1, int count = 1);
     bool removeItems(int position = -1, int rows = 1, const QModelIndex &parent = QModelIndex() );
-    bool removePayments(int position, int rows=1);
 
     int paymentCount() const;
     AccountingBillItem *payment( int pay );
@@ -224,7 +219,7 @@ public:
     void insertStandardAttributes();
 
 public slots:
-    void setName( const QString & n);
+    void setName(const QString &value);
     void setDescription( const QString & value );
     void setPriceDataSet( int );
 
@@ -234,8 +229,6 @@ signals:
     void descriptionChanged(  const QString & );
     void priceListChanged( PriceList * );
 
-    void requestInsertPayments( int position, int count );
-    void requestRemovePayments( int position, int count );
     void requestDateBeginChange( const QDate &newDate, int position );
     void requestDateEndChange( const QDate &newDate, int position );
 

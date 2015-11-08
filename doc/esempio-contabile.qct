@@ -63,15 +63,11 @@
         </Bill>
     </Bills>
     <Accounting>
-        <PaymentDatas>
-            <PaymentData dateBegin="2457298" dateEnd="2457301"/>
-        </PaymentDatas>
-        <AccountingBills>
-            <AccountingBill id="0" name="Libretto 1" discount="0.25" totalAmountPriceFields="0" noDiscountAmountPriceFields="2" priceList="0" priceDataSet="0">
-                <AttributeModel/>
-                <AccountingBillItem itemType="Payment">
-                    <AccountingBillItem itemType="Comment" id="5" text="Demolizione muro esistente"/>
-                    <AccountingBillItem itemType="PPU" id="6" date="2457325" priceItem="10">
+        <AccountingBill id="0" discount="0.25" totalAmountPriceFields="0" noDiscountAmountPriceFields="2" priceList="0" priceDataSet="0">
+            <AttributeModel/>
+            <AccountingBillItem itemType="Payment" dateBegin="2457298" dateEnd="2457301">
+                <AccountingBillItem itemType="Comment" id="5" text="Demolizione muro esistente"/>
+                <AccountingBillItem itemType="PPU" id="6" date="2457325" priceItem="10">
                         <MeasuresModel>
                             <Measure comment="Basamento in cls" formula="0.40*0.35*25.00"/>
                         </MeasuresModel>
@@ -95,8 +91,7 @@
                     </AccountingBillItem>
                     <AccountingBillItem itemType="TimeAndMaterials" id="4" date="2457296" timeAndMaterials="1"/>
                 </AccountingBillItem>
-            </AccountingBill>
-        </AccountingBills>
+        </AccountingBill>
         <AccountingLSBills>
             <AccountingLSBill id="0" name="Categoria 1" description="" PPUTotalToDiscount="0" PPUNotToDiscount="0" totalAmountPriceFields="" priceList="1" priceDataSet="0">
                 <AttributeModel/>

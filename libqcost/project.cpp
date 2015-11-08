@@ -23,7 +23,6 @@
 #include "projectpricelistparentitem.h"
 #include "projectbillparentitem.h"
 #include "projectaccountingparentitem.h"
-#include "accountingbills.h"
 #include "accountingbill.h"
 #include "accountingtambill.h"
 #include "bill.h"

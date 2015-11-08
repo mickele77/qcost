@@ -430,7 +430,10 @@ bool AccountingTAMBill::insertItems(AccountingBillItem::ItemType mt, int inputPo
     success = parentItem->insertChildren( mt, position, count );
     endInsertRows();
 
-    m_d->rootItem->updateProgressiveCode();
+    if( success ){
+        m_d->rootItem->updateProgCode();
+        m_d->rootItem->updateAccountingProgCode();
+    }
 
     return success;
 }
@@ -444,7 +447,8 @@ bool AccountingTAMBill::removeItems(int position, int rows, const QModelIndex &p
     endRemoveRows();
 
     if( success ){
-        m_d->rootItem->updateProgressiveCode();
+        m_d->rootItem->updateProgCode();
+        m_d->rootItem->updateAccountingProgCode();
     }
 
     return success;
@@ -650,7 +654,8 @@ void AccountingTAMBill::readXml(QXmlStreamReader *reader, ProjectPriceListParent
             m_d->rootItem->readXml( reader, m_d->priceList, m_d->attributeModel );
         }
     }
-    m_d->rootItem->updateProgressiveCode();
+    m_d->rootItem->updateProgCode();
+    m_d->rootItem->updateAccountingProgCode();
 }
 
 void AccountingTAMBill::readXmlTmp(QXmlStreamReader *reader ) {

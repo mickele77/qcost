@@ -23,7 +23,6 @@
 #include "projectbillparentitem.h"
 #include "projectpricelistparentitem.h"
 #include "projectdataparentitem.h"
-#include "accountingbills.h"
 #include "accountinglsbills.h"
 #include "bill.h"
 #include "pricelist.h"
@@ -134,10 +133,6 @@ void ProjectItemsView::treeViewCustomMenuRequested(QPoint pos){
                 QAction * removeAction = new QAction( trUtf8("Elimina E.P."), this);
                 connect( removeAction, &QAction::triggered, this, &ProjectItemsView::removeChildren );
                 menu->addAction(removeAction);
-            } else if( dynamic_cast<AccountingBills *>(item) ){
-                QAction * addAction = new QAction( trUtf8("Aggiungi Libretto"), this);
-                connect( addAction, &QAction::triggered, this, &ProjectItemsView::insertChildren );
-                menu->addAction(addAction);
             } else if( dynamic_cast<AccountingLSBills *>(item) ){
                 QAction * addAction = new QAction( trUtf8("Aggiungi Categoria"), this);
                 connect( addAction, &QAction::triggered, this, &ProjectItemsView::insertChildren );
