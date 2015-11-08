@@ -160,7 +160,7 @@ public:
     bool clear();
     int childNumber() const;
 
-    virtual void writeXml( QXmlStreamWriter * writer );
+    void writeXml( QXmlStreamWriter * writer );
     virtual void readXml(QXmlStreamReader *reader, PriceList *priceList, AttributeModel *attrModel);
     void readXmlTmp(QXmlStreamReader *reader);
     void loadFromXml( const QXmlStreamAttributes &attrs,

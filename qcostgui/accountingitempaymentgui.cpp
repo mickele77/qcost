@@ -258,13 +258,13 @@ bool AccountingItemPaymentGUI::eventFilter(QObject *object, QEvent *event) {
                 QDate d = m_d->TAMBillItem->dateBegin();
                 QCalendarDialog dialog( &d, this );
                 if( dialog.exec() == QDialog::Accepted ){
-                    m_d->TAMBillItem->setDateBegin( d );
+                    m_d->TAMBillItem->requestDateBeginChange( d );
                 }
             } else if( object == m_d->ui->endDateLineEdit ){
                 QDate d = m_d->TAMBillItem->dateEnd();
                 QCalendarDialog dialog( &d, this );
                 if( dialog.exec() == QDialog::Accepted ){
-                    m_d->TAMBillItem->setDateEnd( d );
+                    m_d->TAMBillItem->requestDateEndChange( d );
                 }
             }
         }

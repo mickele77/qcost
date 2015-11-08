@@ -124,23 +124,3 @@ void AccountingTAMBillItem::readXml( QXmlStreamReader *reader, PriceList * price
         reader->readNext();
     }
 }
-
-void AccountingTAMBillItem::writeXml(QXmlStreamWriter *writer) {
-    if( m_d->itemType == Payment ){
-        writer->writeStartElement( "AccountingBillItem" );
-        writer->writeAttribute( "itemType", QString("Payment") );
-        writer->writeAttribute( "dateBegin", QString::number( m_d->date.toJulianDay() ) );
-        writer->writeAttribute( "dateEnd", QString::number( m_d->dateEnd.toJulianDay() ) );
-
-        QString attrs = m_d->attributesString();
-        if( !attrs.isEmpty() ){
-            writer->writeAttribute( "attributes", attrs );
-        }
-        for( QList<AccountingBillItem *>::iterator i = m_d->childrenContainer.begin(); i != m_d->childrenContainer.end(); ++i){
-            (*i)->writeXml( writer );
-        }
-        writer->writeEndElement();
-    } else {
-        AccountingBillItem::writeXml( writer );
-    }
-}

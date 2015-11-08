@@ -93,9 +93,9 @@ SOURCES += \
     accountinglsbillitemtitlegui.cpp \
     importlsitemmeasurestxt.cpp \
     accountingitempaymentgui.cpp \
+    accountingbillprintergui.cpp \
     accountingtambillprintergui.cpp \
-    accountinglsbillprintergui.cpp \
-    accountingbillmeasuresprintergui.cpp
+    accountinglsbillprintergui.cpp
 
 HEADERS  += \
     projectitemsview.h \
@@ -153,9 +153,9 @@ HEADERS  += \
     accountinglsbillitemtitlegui.h \
     importlsitemmeasurestxt.h \
     accountingitempaymentgui.h \
+    accountingbillprintergui.h \
     accountingtambillprintergui.h \
-    accountinglsbillprintergui.h \
-    accountingbillmeasuresprintergui.h
+    accountinglsbillprintergui.h
 
 FORMS += \
     generaldatagui.ui \
@@ -191,9 +191,9 @@ FORMS += \
     accountinglsbillitemtitlegui.ui \
     importlsitemmeasurestxt.ui \
     accountingitempaymentgui.ui \
+    accountingbillprintergui.ui \
     accountingtambillprintergui.ui \
-    accountinglsbillprintergui.ui \
-    accountingbillmeasuresprintergui.ui
+    accountinglsbillprintergui.ui
 
 OTHER_FILES += \
     ../LICENSE \

@@ -38,7 +38,6 @@ public:
     bool insertChildren(ItemType iType, int position, int count=1);
 
     void readXml(QXmlStreamReader *reader, PriceList *priceList, AttributeModel *attrModel);
-    void writeXml(QXmlStreamWriter *writer);
 };
 
 #endif // ACCOUNTINGTAMBILLITEM_H

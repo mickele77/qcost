@@ -64,10 +64,10 @@
     </Bills>
     <Accounting>
         <PaymentDatas>
-            <PaymentData dateBegin="2457287" dateEnd="2457319"/>
+            <PaymentData dateBegin="2457298" dateEnd="2457301"/>
         </PaymentDatas>
         <AccountingBills>
-            <AccountingBill id="0" name="Opere edili" discount="0.25" totalAmountPriceFields="0" noDiscountAmountPriceFields="2" priceList="0" priceDataSet="0">
+            <AccountingBill id="0" name="Libretto 1" discount="0.25" totalAmountPriceFields="0" noDiscountAmountPriceFields="2" priceList="0" priceDataSet="0">
                 <AttributeModel/>
                 <AccountingBillItem itemType="Payment">
                     <AccountingBillItem itemType="Comment" id="5" text="Demolizione muro esistente"/>
@@ -96,10 +96,6 @@
                     <AccountingBillItem itemType="TimeAndMaterials" id="4" date="2457296" timeAndMaterials="1"/>
                 </AccountingBillItem>
             </AccountingBill>
-            <AccountingBill id="0" name="Opere strutturali" discount="0" totalAmountPriceFields="" noDiscountAmountPriceFields="" priceList="0" priceDataSet="0">
-                <AttributeModel/>
-                <AccountingBillItem itemType="Payment"/>
-            </AccountingBill>
         </AccountingBills>
         <AccountingLSBills>
             <AccountingLSBill id="0" name="Categoria 1" description="" PPUTotalToDiscount="0" PPUNotToDiscount="0" totalAmountPriceFields="" priceList="1" priceDataSet="0">
@@ -115,7 +111,7 @@
         </AccountingLSBills>
         <AccountingTAMBill id="0" name="Opere in economia" priceList="0" priceDataSet="0" discount="0.1" totalAmountPriceFields="0" noDiscountAmountPriceFields="2">
             <AttributeModel/>
-            <AccountingBillItem itemType="Payment" dateBegin="2457294" dateEnd="2457300">
+            <AccountingBillItem itemType="Payment">
                 <AccountingBillItem itemType="Comment" id="2" text="Manodopera per assistenza scavi"/>
                 <AccountingBillItem itemType="PPU" id="3" date="2457296" priceItem="4">
                     <MeasuresModel>
