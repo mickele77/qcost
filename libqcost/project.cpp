@@ -108,8 +108,8 @@ void Project::createSimpleProject(SimpleProjectType projType){
         m_d->billParentItem->insertChildren( 0 );
         m_d->billParentItem->bill(0)->insertStandardAttributes();
         m_d->billParentItem->bill(0)->setPriceList( m_d->priceListParentItem->priceList(0) );
-        m_d->accountingParentItem->accountingBills()->insertChildren( 0 );
-        m_d->accountingParentItem->accountingBills()->bill(0)->setPriceList( m_d->priceListParentItem->priceList(0) );
+//        m_d->accountingParentItem->accountingBills()->insertChildren( 0 );
+//        m_d->accountingParentItem->accountingBills()->bill(0)->setPriceList( m_d->priceListParentItem->priceList(0) );
         m_d->accountingParentItem->timeAndMaterialBill()->setPriceList( m_d->priceListParentItem->priceList(0) );
     } else if( projType == ProjectHumanNetNoDiscount ){
         clear();
@@ -119,8 +119,8 @@ void Project::createSimpleProject(SimpleProjectType projType){
         m_d->billParentItem->insertChildren( 0 );
         m_d->billParentItem->bill(0)->insertStandardAttributes();
         m_d->billParentItem->bill(0)->setPriceList( m_d->priceListParentItem->priceList(0) );
-        m_d->accountingParentItem->accountingBills()->insertChildren( 0 );
-        m_d->accountingParentItem->accountingBills()->bill(0)->setPriceList( m_d->priceListParentItem->priceList(0) );
+  //      m_d->accountingParentItem->accountingBills()->insertChildren( 0 );
+  //      m_d->accountingParentItem->accountingBills()->bill(0)->setPriceList( m_d->priceListParentItem->priceList(0) );
         m_d->accountingParentItem->timeAndMaterialBill()->setPriceList( m_d->priceListParentItem->priceList(0) );
     }
 }

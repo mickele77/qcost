@@ -110,8 +110,8 @@ bool AccountingBills::insertChildren(int position, int count) {
             }
         }
         connect( item, &AccountingBill::modelChanged, this, &AccountingBills::modelChanged );
-        connect( item, &AccountingBill::requestInsertBills, this, &AccountingBills::insertPaymentsSignal );
-        connect( item, &AccountingBill::requestRemoveBills, this, &AccountingBills::removePaymentsSignal );
+        connect( item, &AccountingBill::requestInsertPayments, this, &AccountingBills::insertPaymentsSignal );
+        connect( item, &AccountingBill::requestRemovePayments, this, &AccountingBills::removePaymentsSignal );
         connect( item, &AccountingBill::requestDateBeginChange, this, &AccountingBills::changePaymentDateBeginSignal );
         connect( item, &AccountingBill::requestDateEndChange, this, &AccountingBills::changePaymentDateEndSignal );
         m_d->billContainer.insert(position, item);

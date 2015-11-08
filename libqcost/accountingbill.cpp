@@ -454,7 +454,7 @@ bool AccountingBill::insertItems(AccountingBillItem::ItemType mt, int inputPos, 
     bool success = false;
 
     if( mt == AccountingBillItem::Payment ){
-        emit requestInsertBills( position, count );
+        emit requestInsertPayments( position, count );
         success = true;
     } else {
         beginInsertRows(parent, position, position + count - 1);
@@ -499,7 +499,7 @@ bool AccountingBill::removeItems(int position, int rows, const QModelIndex &pare
     for( int row=(position+rows-1); row >= position ; --row){
         AccountingBillItem *item = parentItem->childItem( row );
         if( item->itemType() == AccountingBillItem::Payment ){
-            emit requestRemoveBills( row, 1 );
+            emit requestRemovePayments( row, 1 );
             success = true;
         } else {
             beginRemoveRows(parent, row, row);

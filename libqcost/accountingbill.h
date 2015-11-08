@@ -234,8 +234,8 @@ signals:
     void descriptionChanged(  const QString & );
     void priceListChanged( PriceList * );
 
-    void requestInsertBills( int position, int count );
-    void requestRemoveBills( int position, int count );
+    void requestInsertPayments( int position, int count );
+    void requestRemovePayments( int position, int count );
     void requestDateBeginChange( const QDate &newDate, int position );
     void requestDateEndChange( const QDate &newDate, int position );
 

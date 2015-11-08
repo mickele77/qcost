@@ -75,8 +75,6 @@ public:
 
     PaymentDataModel *dataModel();
 
-    void updateAmounts();
-
     double totalAmountToDiscount();
     double amountNotToDiscount();
     double amountToDiscount();

@@ -37,7 +37,6 @@ AccountingGUI::~AccountingGUI() {
 }
 
 void AccountingGUI::updateAmounts(){
-    m_d->accounting->updateAmounts();
     m_d->ui->totalAmountToDiscountLineEdit->setText( m_d->accounting->totalAmountToDiscountStr() );
     m_d->ui->amountNotToDiscountLineEdit->setText( m_d->accounting->amountNotToDiscountStr() );
     m_d->ui->amountToDiscountLineEdit->setText( m_d->accounting->amountToDiscountStr() );
