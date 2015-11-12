@@ -15,9 +15,7 @@ public:
     ~AccountingGUI();
 
     void showEvent(QShowEvent *event);
-private slots:
-    void addPayment();
-    void removePayment();
+
 private:
     AccountingGUIPrivate * m_d;
 

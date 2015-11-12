@@ -50,7 +50,6 @@ public:
         return QString::number( val, 'f', amountPrecision );
     }
 
-    AccountingBills * measuresBills;
     AccountingBill * measuresBill;
     AccountingLSBills * lumpSumBills;
     AccountingTAMBill * timeAndMaterialBill;
@@ -72,11 +71,6 @@ ProjectAccountingParentItem::ProjectAccountingParentItem( ProjectItem *parent, P
 
     connect( m_d->measuresBill, &AccountingBill::modelChanged, this, &ProjectAccountingParentItem::modelChanged );
 
-    connect( m_d->measuresBill, &AccountingBill::requestDateBeginChange, this, &ProjectAccountingParentItem::changeBillDateBegin );
-    connect( m_d->measuresBill, &AccountingBill::requestDateEndChange, this, &ProjectAccountingParentItem::changeBillDateEnd );
-
-    connect( m_d->dataModel, &PaymentDataModel::modelChanged, this, &ProjectAccountingParentItem::modelChanged );
-
     m_d->lumpSumBills = new AccountingLSBills( this, pfm, prs );
     insertChild( m_d->lumpSumBills );
     connect( m_d->lumpSumBills, &AccountingLSBills::beginInsertChildren, this, &ProjectAccountingParentItem::beginInsertChildren );
@@ -94,12 +88,16 @@ ProjectAccountingParentItem::~ProjectAccountingParentItem(){
     delete m_d;
 }
 
-int ProjectAccountingParentItem::workProgressBillsCount() {
-    return m_d->dataModel->paymentsCount();
+int ProjectAccountingParentItem::paymentsCount() {
+    return m_d->measuresBill->paymentsCount();
 }
 
-PaymentData *ProjectAccountingParentItem::workProgressBillData(int pos) {
+PaymentData *ProjectAccountingParentItem::paymentData(int pos) {
     return m_d->dataModel->paymentData( pos );
+}
+
+AccountingBill *ProjectAccountingParentItem::measuresBill() {
+    return m_d->measuresBill;
 }
 
 PaymentDataModel * ProjectAccountingParentItem::dataModel(){
@@ -144,10 +142,6 @@ QString ProjectAccountingParentItem::amountDiscountedStr() {
 
 QString ProjectAccountingParentItem::totalAmountStr() {
     return m_d->measuresBill->totalAmountStr();
-}
-
-AccountingBills *ProjectAccountingParentItem::accountingBills() {
-    return m_d->measuresBills;
 }
 
 AccountingLSBills *ProjectAccountingParentItem::lumpSumBills() {
@@ -203,7 +197,6 @@ bool ProjectAccountingParentItem::setData(const QVariant &value) {
 
 bool ProjectAccountingParentItem::clear() {
     bool ret = true;
-    ret = ret && m_d->dataModel->clear();
     ret = m_d->measuresBill->clear() && ret;
     ret = m_d->lumpSumBills->clear() && ret;
     ret = m_d->timeAndMaterialBill->clear() && ret;
@@ -259,12 +252,4 @@ void ProjectAccountingParentItem::readXml(QXmlStreamReader *reader, ProjectPrice
     }
     m_d->timeAndMaterialBill->loadTmpData( priceLists );
     m_d->measuresBill->loadTmpData( priceLists, m_d->lumpSumBills, m_d->timeAndMaterialBill );
-}
-
-void ProjectAccountingParentItem::changeBillDateEnd(const QDate &newDate, int position) {
-    m_d->dataModel->changePaymentDateEnd(newDate, position);
-}
-
-void ProjectAccountingParentItem::changeBillDateBegin(const QDate &newDate, int position) {
-    m_d->dataModel->changePaymentDateBegin(newDate, position);
 }

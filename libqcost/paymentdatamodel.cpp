@@ -123,61 +123,6 @@ bool PaymentDataModel::hasChildren(const QModelIndex &parent) const {
     return parentItem->hasChildren();
 }
 
-int PaymentDataModel::paymentsCount() const {
-    return m_d->rootData->childrenCount();
-}
-
-void PaymentDataModel::insertPaymentsRequest(int position, int count) {
-    emit insertPaymentsSignal( position, count );
-}
-
-void PaymentDataModel::removePaymentsRequest(int position, int count) {
-    emit removePaymentsSignal( position, count );
-}
-
-void PaymentDataModel::changePaymentDateEnd(const QDate &newDate, int position) {
-    if( position >= 0 && position < m_d->rootData->childrenCount() ){
-        m_d->rootData->child(position)->setDateEnd( newDate );
-    }
-}
-
-void PaymentDataModel::changePaymentDateBegin(const QDate &newDate, int position) {
-    if( position >= 0 && position < m_d->rootData->childrenCount() ){
-        m_d->rootData->child(position)->setDateBegin( newDate );
-    }
-}
-
-bool PaymentDataModel::insertPayments(int position, int count) {
-    bool ret = false;
-    if( (position >= 0) && (position <= m_d->rootData->childrenCount()) ){
-        beginInsertRows( QModelIndex(), position, position+count-1);
-        ret = m_d->rootData->insertPayments( position, count );
-        endInsertRows();
-    }
-    return ret;
-}
-
-bool PaymentDataModel::removePayments(int position, int purpCount) {
-    if( purpCount <= 0 ){
-        return true;
-    }
-    bool ret = false;
-    if( (position >= 0) && (position < m_d->rootData->childrenCount()) ){
-        int count = purpCount;
-        if( (position+count) >= m_d->rootData->childrenCount() ){
-            count = m_d->rootData->childrenCount() - position;
-        }
-        beginRemoveRows( QModelIndex(), position, position+count-1);
-        ret = m_d->rootData->removePayments( position, count );
-        endRemoveRows();
-    }
-    return ret;
-}
-
-bool PaymentDataModel::clear() {
-    return removePayments( 0, m_d->rootData->childrenCount() );
-}
-
 Qt::ItemFlags PaymentDataModel::flags() const {
     return Qt::ItemIsSelectable | Qt::ItemIsEnabled;
 }

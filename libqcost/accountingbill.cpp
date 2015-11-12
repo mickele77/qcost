@@ -86,6 +86,8 @@ AccountingBill::AccountingBill( const QString &n, ProjectItem *parent, PriceFiel
     connect( m_d->rootItem, &AccountingBillItem::amountDiscountedChanged, this, &AccountingBill::amountDiscountedChanged );
     connect( m_d->rootItem, &AccountingBillItem::totalAmountChanged, this, &AccountingBill::totalAmountChanged );
 
+    connect( m_d->rootItem, &AccountingBillItem::paymentInserted, this, &AccountingBill::paymentInserted );
+    connect( m_d->rootItem, &AccountingBillItem::paymentRemoved, this, &AccountingBill::paymentRemoved );
     connect( m_d->rootItem, &AccountingBillItem::itemChanged, this, &AccountingBill::modelChanged );
 
     connect( m_d->attributeModel, &AttributeModel::modelChanged, this, &AccountingBill::modelChanged );
@@ -438,7 +440,7 @@ bool AccountingBill::insertItems(AccountingBillItem::ItemType mt, int inputPos, 
     return success;
 }
 
-int AccountingBill::paymentCount() const {
+int AccountingBill::paymentsCount() const {
     return m_d->rootItem->childrenCount();
 }
 

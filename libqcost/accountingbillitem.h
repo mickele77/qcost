@@ -315,8 +315,13 @@ signals:
     void aboutToBeDeleted();
     /** segnale emesso se sono stati aggiunti o tolti figli */
     void hasChildrenChanged( bool );
-    // segnale emesso quando alcuni figli dell'oggetto sono cambiati
+    /** segnale emesso quando alcuni figli dell'oggetto sono cambiati */
     void hasChildrenChanged( AccountingBillItem *, QList<int> );
+    /** segnale emesso quando viene aggiunto un SAL */
+    void paymentInserted( int payNum, AccountingBillItem * pay );
+    /** segnale emesso quando viene rimosso un SAL */
+    void paymentRemoved( int payNum, AccountingBillItem * pay );
+
     void dataChanged( AccountingBillItem * );
     void dataChanged( AccountingBillItem *, int column);
     void nameChanged( const QString & );

@@ -27,9 +27,6 @@ AccountingGUI::AccountingGUI( ProjectAccountingParentItem * acc, QWidget *parent
 
     m_d->ui->workProgressView->setModel( m_d->accounting->dataModel() );
     updateAmounts();
-
-    connect( m_d->ui->addWorkProgressPushButton, &QPushButton::clicked, this, &AccountingGUI::addPayment );
-    connect( m_d->ui->delWorkProgressPushButton, &QPushButton::clicked, this, &AccountingGUI::removePayment );
 }
 
 AccountingGUI::~AccountingGUI() {
@@ -42,32 +39,6 @@ void AccountingGUI::updateAmounts(){
     m_d->ui->amountToDiscountLineEdit->setText( m_d->accounting->amountToDiscountStr() );
     m_d->ui->amountDiscountedLineEdit->setText( m_d->accounting->amountDiscountedStr() );
     m_d->ui->totalAmountLineEdit->setText( m_d->accounting->totalAmountStr() );
-}
-
-void AccountingGUI::addPayment() {
-    if( m_d->accounting != NULL ){
-        int pos = m_d->accounting->workProgressBillsCount();
-        if( m_d->ui->workProgressView->selectionModel() ){
-            QModelIndex currIndex = m_d->ui->workProgressView->selectionModel()->currentIndex();
-            if( currIndex.isValid() ){
-                pos = currIndex.row();
-            }
-        }
-        m_d->accounting->dataModel()->insertPaymentsRequest( pos );
-    }
-}
-
-void AccountingGUI::removePayment() {
-    if( m_d->accounting != NULL ){
-        int pos = m_d->accounting->workProgressBillsCount()-1;
-        if( m_d->ui->workProgressView->selectionModel() ){
-            QModelIndex currIndex = m_d->ui->workProgressView->selectionModel()->currentIndex();
-            if( currIndex.isValid() ){
-                pos = currIndex.row();
-            }
-        }
-        m_d->accounting->dataModel()->removePaymentsRequest( pos );
-    }
 }
 
 void AccountingGUI::showEvent(QShowEvent *event) {

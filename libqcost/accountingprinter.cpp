@@ -18,8 +18,6 @@
 */
 #include "accountingprinter.h"
 
-#include "paymentdatamodel.h"
-#include "paymentdata.h"
 #include "accountingbill.h"
 #include "accountingtambill.h"
 #include "accountinglsbills.h"
@@ -372,7 +370,7 @@ bool AccountingPrinter::printAccountingODT( int payToPrint,
 }
 
 bool AccountingPrinter::printODT( int payToPrint,
-                                  PaymentDataModel * payDataModel,
+                                  AccountingBill * measuresBill,
                                   AccountingPrinter::PrintOption prOption,
                                   AccountingPrinter::PrintLSOption prLSOption,
                                   AccountingPrinter::PrintPPUDescOption prPPDescOption,
@@ -395,13 +393,13 @@ bool AccountingPrinter::printODT( int payToPrint,
     }
 
     if( m_d->accountingLSBill != NULL ){
-        return printAccountingLSBillODT( payToPrint, payDataModel,
+        return printAccountingLSBillODT( payToPrint, measuresBill,
                                          prOption, prLSOption, prPPDescOption, printAmounts,
                                          fileName, paperWidth, paperHeight, paperOrientation );
     }
 
     if( m_d->accountingLSBills != NULL ){
-        return printAccountingLSBillsODT( payToPrint, payDataModel,
+        return printAccountingLSBillsODT( payToPrint, measuresBill,
                                           prOption, prLSOption, prPPDescOption, printAmounts,
                                           fileName, paperWidth, paperHeight, paperOrientation );
     }
@@ -776,7 +774,7 @@ QVector<QTextLength> AccountingPrinter::printAccountingLSColWidth( double tableW
 }
 
 bool AccountingPrinter::printAccountingLSBillODT( int payToPrint,
-                                                  PaymentDataModel * payDataModel,
+                                                  AccountingBill * measuresBill,
                                                   AccountingPrinter::PrintOption prOption,
                                                   AccountingPrinter::PrintLSOption prLSOption,
                                                   AccountingPrinter::PrintPPUDescOption prPPDescOption,
@@ -820,17 +818,17 @@ bool AccountingPrinter::printAccountingLSBillODT( int payToPrint,
 
         QList<int> payToPrintList;
         if( payToPrint < 0 ){
-            for( int i=0; i < payDataModel->paymentsCount(); ++i ){
+            for( int i=0; i < measuresBill->paymentsCount(); ++i ){
                 payToPrintList << i;
             }
-        } else if( payToPrint < payDataModel->paymentsCount() ){
+        } else if( payToPrint < measuresBill->paymentsCount() ){
             payToPrintList << payToPrint;
         }
 
         for( int i=0; i < payToPrintList.size(); ++i ){
             cursor.insertBlock( subHeaderBlockFormat );
             cursor.setBlockCharFormat( subHeaderBlockCharFormat );
-            cursor.insertText( payDataModel->paymentData(payToPrintList.at(i))->name() );
+            cursor.insertText( measuresBill->payment(payToPrintList.at(i))->name() );
 
             cursor.insertBlock( parBlockFormat );
 
@@ -844,7 +842,7 @@ bool AccountingPrinter::printAccountingLSBillODT( int payToPrint,
             cursor.insertTable(1, colWidths.size(), tableFormat );
 
             m_d->accountingLSBill->writeODTAccountingOnTable( &cursor,
-                                                              payDataModel->paymentData(payToPrintList.at(i))->dateBegin(), payDataModel->paymentData(payToPrintList.at(i))->dateEnd(),
+                                                              measuresBill->payment(payToPrintList.at(i))->dateBegin(), measuresBill->payment(payToPrintList.at(i))->dateEnd(),
                                                               prLSOption, prPPDescOption, printAmounts );
 
             cursor.movePosition( QTextCursor::End );
@@ -864,7 +862,7 @@ bool AccountingPrinter::printAccountingLSBillODT( int payToPrint,
     return false;
 }
 
-bool AccountingPrinter::printAccountingLSBillsODT(int payToPrint, PaymentDataModel *payDataModel,
+bool AccountingPrinter::printAccountingLSBillsODT( int payToPrint, AccountingBill * measuresBill,
                                                   AccountingPrinter::PrintOption prOption, AccountingPrinter::PrintLSOption prLSOption, AccountingPrinter::PrintPPUDescOption prPPDescOption, bool printAmounts,
                                                   const QString &fileName, double paperWidth, double paperHeight, Qt::Orientation paperOrientation) const {
     if( m_d->accountingLSBills != NULL ){
@@ -905,17 +903,17 @@ bool AccountingPrinter::printAccountingLSBillsODT(int payToPrint, PaymentDataMod
 
         QList<int> payToPrintList;
         if( payToPrint < 0 ){
-            for( int i=0; i < payDataModel->paymentsCount(); ++i ){
+            for( int i=0; i < measuresBill->paymentsCount(); ++i ){
                 payToPrintList << i;
             }
-        } else if( payToPrint < payDataModel->paymentsCount() ){
+        } else if( payToPrint < measuresBill->paymentsCount() ){
             payToPrintList << payToPrint;
         }
 
         for( int i=0; i < payToPrintList.size(); ++i ){
             cursor.insertBlock( subHeaderBlockFormat );
             cursor.setBlockCharFormat( subHeaderBlockCharFormat );
-            cursor.insertText( payDataModel->paymentData(payToPrintList.at(i))->name() );
+            cursor.insertText( measuresBill->payment(payToPrintList.at(i))->name() );
 
             cursor.insertBlock( parBlockFormat );
 
@@ -930,7 +928,7 @@ bool AccountingPrinter::printAccountingLSBillsODT(int payToPrint, PaymentDataMod
 
             for( int j = 0; j < m_d->accountingLSBills->billCount(); ++j ){
                 m_d->accountingLSBills->bill(j)->writeODTAccountingOnTable( &cursor,
-                                                                            payDataModel->paymentData(payToPrintList.at(i))->dateBegin(), payDataModel->paymentData(payToPrintList.at(i))->dateEnd(),
+                                                                            measuresBill->payment(payToPrintList.at(i))->dateBegin(), measuresBill->payment(payToPrintList.at(i))->dateEnd(),
                                                                             prLSOption, prPPDescOption, printAmounts );
             }
 
@@ -1182,8 +1180,8 @@ bool AccountingPrinter::printPaymentODT( int payToPrint,
                                          Qt::Orientation paperOrientation ) const{
     if( m_d->accountingBill != NULL ){
         // se payToPrint è negativo, stampa l'ultimo SAL
-        if( payToPrint < 0 || payToPrint > (m_d->accountingBill->paymentCount()-1) ){
-            payToPrint = m_d->accountingBill->paymentCount() - 1;
+        if( payToPrint < 0 || payToPrint > (m_d->accountingBill->paymentsCount()-1) ){
+            payToPrint = m_d->accountingBill->paymentsCount() - 1;
         }
 
         double tableWidth = paperWidth - 2.0 * AccountingPrinterPrivate::margin;

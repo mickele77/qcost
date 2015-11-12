@@ -23,7 +23,7 @@
 
 class PaymentDataModel;
 class ProjectPriceListParentItem;
-class AccountingBills;
+class AccountingBill;
 class AccountingLSBills;
 class AccountingTAMBill;
 class PriceList;
@@ -48,9 +48,9 @@ public:
     ProjectAccountingParentItem( ProjectItem * parent, PriceFieldModel * pfm, MathParser * p = NULL );
     ~ProjectAccountingParentItem();
 
-    int workProgressBillsCount();
-    PaymentData * workProgressBillData( int pos );
-    AccountingBills * accountingBills();
+    int paymentsCount();
+    PaymentData * paymentData( int pos );
+    AccountingBill * measuresBill();
     AccountingLSBills * lumpSumBills();
     AccountingTAMBill * timeAndMaterialBill();
 
@@ -86,10 +86,6 @@ public:
     QString amountToDiscountStr();
     QString amountDiscountedStr();
     QString totalAmountStr();
-
-public slots:
-    void changeBillDateEnd( const QDate & newDate, int position);
-    void changeBillDateBegin( const QDate & newDate, int position);
 
 signals:
     void beginInsertChildren( ProjectItem * item, int first, int last );

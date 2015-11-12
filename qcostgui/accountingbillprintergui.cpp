@@ -19,8 +19,8 @@
 #include "accountingbillprintergui.h"
 #include "ui_accountingbillprintergui.h"
 
-#include "paymentdatamodel.h"
-#include "paymentdata.h"
+#include "accountingbill.h"
+#include "accountingbillitem.h"
 
 #include <QPageSize>
 #include <QComboBox>
@@ -63,17 +63,17 @@ public:
     QList<QPageSize> pageSizeList;
 };
 
-AccountingBillPrinterGUI::AccountingBillPrinterGUI(PaymentDataModel * dataModel,
-                                                   AccountingPrinter::PrintPPUDescOption * prPPUDescOption,
-                                                   AccountingPrinter::PrintOption *prOption,
-                                                   AccountingPrinter::PrintAmountsOption *prAmountsOption,
-                                                   int * payToPrint,
-                                                   double *pWidth,
-                                                   double *pHeight,
-                                                   Qt::Orientation * pOrient,
-                                                   QWidget *parent ) :
+AccountingBillPrinterGUI::AccountingBillPrinterGUI( AccountingBill * measuresBill,
+                                                    AccountingPrinter::PrintPPUDescOption * prPPUDescOption,
+                                                    AccountingPrinter::PrintOption *prOption,
+                                                    AccountingPrinter::PrintAmountsOption *prAmountsOption,
+                                                    int * payToPrint,
+                                                    double *pWidth,
+                                                    double *pHeight,
+                                                    Qt::Orientation * pOrient,
+                                                    QWidget *parent ) :
     QDialog(parent),
-    m_d( new AccountingBillPrinterGUIPrivate( prPPUDescOption, prOption, prAmountsOption, payToPrint, dataModel->paymentsCount(), pWidth, pHeight, pOrient ) ) {
+    m_d( new AccountingBillPrinterGUIPrivate( prPPUDescOption, prOption, prAmountsOption, payToPrint, measuresBill->paymentsCount(), pWidth, pHeight, pOrient ) ) {
     m_d->ui->setupUi(this);
 
     connect( this, &AccountingBillPrinterGUI::accepted, this, &AccountingBillPrinterGUI::setPrintData );
@@ -120,8 +120,8 @@ AccountingBillPrinterGUI::AccountingBillPrinterGUI(PaymentDataModel * dataModel,
         m_d->ui->printNoAmountsRadioButton->setChecked( true );
     }
 
-    for( int i=0; i < dataModel->paymentsCount(); ++i ){
-        m_d->ui->payToPrintComboBox->addItem( dataModel->paymentData(i)->name(), QVariant(i) );
+    for( int i=0; i < measuresBill->paymentsCount(); ++i ){
+        m_d->ui->payToPrintComboBox->addItem( measuresBill->payment(i)->name(), QVariant(i) );
     }
     m_d->ui->payToPrintComboBox->addItem(trUtf8("Tutti"), QVariant(-1) );
     m_d->ui->payToPrintComboBox->setCurrentIndex(*(payToPrint)+1);

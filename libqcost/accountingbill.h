@@ -123,7 +123,7 @@ public:
     bool insertItems(AccountingBillItem::ItemType mt, int position = -1, int count = 1, const QModelIndex &parent = QModelIndex() );
     bool removeItems(int position = -1, int rows = 1, const QModelIndex &parent = QModelIndex() );
 
-    int paymentCount() const;
+    int paymentsCount() const;
     AccountingBillItem *payment( int pay );
 
     AccountingBillItem *item(const QModelIndex &index ) const;
@@ -237,6 +237,11 @@ signals:
     void amountToDiscountChanged( const QString & newVal );
     void amountDiscountedChanged( const QString & newVal );
     void totalAmountChanged( const QString & newVal );
+
+    /** segnale emesso quando viene aggiunto un SAL */
+    void paymentInserted( int payNum, AccountingBillItem * pay );
+    /** segnale emesso quando viene rimosso un SAL */
+    void paymentRemoved( int payNum, AccountingBillItem * pay );
 
     void modelChanged();
 

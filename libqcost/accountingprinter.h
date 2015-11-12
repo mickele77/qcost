@@ -88,8 +88,8 @@ public:
                    Qt::Orientation paperOrientation = Qt::Vertical) const;
 
     /** Stampa brogliaccio opere a corpo */
-    bool printODT( int payToPrint,
-                   PaymentDataModel *payDataModel,
+    bool printODT(int payToPrint,
+                   AccountingBill *measuresBill,
                    AccountingPrinter::PrintOption prOption,
                    AccountingPrinter::PrintLSOption prLSOption,
                    AccountingPrinter::PrintPPUDescOption prPPDescOption,
@@ -144,7 +144,8 @@ private:
                                     Qt::Orientation paperOrientation) const;
 
     /** Stampa libretto/brogliaccio di una sola categoria a corpo */
-    bool printAccountingLSBillODT( int payToPrint, PaymentDataModel *payDataModel,
+    bool printAccountingLSBillODT( int payToPrint,
+                                   AccountingBill *measuresBill,
                                    AccountingPrinter::PrintOption prOption,
                                    AccountingPrinter::PrintLSOption prLSOption,
                                    AccountingPrinter::PrintPPUDescOption prPPDescOption,
@@ -154,7 +155,7 @@ private:
                                    Qt::Orientation paperOrientation) const;
 
     /** Stampa libretto/brogliaccio di tutte le categorie a corpo */
-    bool printAccountingLSBillsODT( int payToPrint, PaymentDataModel *payDataModel,
+    bool printAccountingLSBillsODT( int payToPrint, AccountingBill *measuresBill,
                                     AccountingPrinter::PrintOption prOption,
                                     AccountingPrinter::PrintLSOption prLSOption,
                                     AccountingPrinter::PrintPPUDescOption prPPDescOption,

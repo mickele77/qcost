@@ -1236,7 +1236,13 @@ QList<AccountingBillItem *> AccountingBillItem::allChildrenWithMeasures() {
 
 bool AccountingBillItem::insertChildren(int position, int count) {
     if( m_d->itemType == Root ){
-        return insertChildren( Payment, position, count );
+        bool ret = insertChildren( Payment, position, count );
+        if( ret ){
+            for( int i=position; i < (position+count); ++i ){
+                emit paymentInserted( i, m_d->childrenContainer.at(i));
+            }
+        }
+        return ret;
     }
     if( m_d->itemType == Payment ){
         return insertChildren( PPU, position, count );
@@ -1308,7 +1314,11 @@ bool AccountingBillItem::removeChildren(int position, int count) {
         disconnect( this, &AccountingBillItem::currentPriceDataSetChanged, item, &AccountingBillItem::setCurrentPriceDataSet );
         disconnect( item, &AccountingBillItem::itemChanged, this, &AccountingBillItem::itemChanged );
         delete item;
+        AccountingBillItem * itemRemoved = m_d->childrenContainer.at(position);
         m_d->childrenContainer.removeAt( position );
+        if( itemRemoved->itemType() == Payment ){
+            emit paymentRemoved( position, itemRemoved );
+        }
     }
     if( hadChildren ){
         if( !(m_d->childrenContainer.size() > 0) ){
