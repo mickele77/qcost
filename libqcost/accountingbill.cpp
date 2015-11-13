@@ -333,6 +333,10 @@ void AccountingBill::setDiscount( const QString & newVal) {
     m_d->rootItem->setDiscount( newVal );
 }
 
+AccountingBillItem *AccountingBill::rootItem() const {
+    return m_d->rootItem;
+}
+
 AccountingBillItem *AccountingBill::item(const QModelIndex &index ) const {
     if (index.isValid()) {
         return static_cast<AccountingBillItem *>(index.internalPointer());

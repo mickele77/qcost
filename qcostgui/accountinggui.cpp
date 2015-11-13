@@ -43,6 +43,7 @@ void AccountingGUI::updateAmounts(){
 
 void AccountingGUI::showEvent(QShowEvent *event) {
     if( event->type() == QEvent::Show ){
+        m_d->accounting->dataModel()->updateAmounts();
         updateAmounts();
     }
     QWidget::showEvent( event );

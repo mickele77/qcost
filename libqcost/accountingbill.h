@@ -126,6 +126,7 @@ public:
     int paymentsCount() const;
     AccountingBillItem *payment( int pay );
 
+    AccountingBillItem *rootItem() const;
     AccountingBillItem *item(const QModelIndex &index ) const;
     AccountingBillItem *item(int childNum, const QModelIndex &parentIndex = QModelIndex() );
     AccountingBillItem *lastItem( const QModelIndex &parentIndex = QModelIndex() );
@@ -238,9 +239,9 @@ signals:
     void amountDiscountedChanged( const QString & newVal );
     void totalAmountChanged( const QString & newVal );
 
-    /** segnale emesso quando viene aggiunto un SAL */
+    /** Segnale emesso quando viene aggiunto un SAL */
     void paymentInserted( int payNum, AccountingBillItem * pay );
-    /** segnale emesso quando viene rimosso un SAL */
+    /** Segnale emesso quando viene rimosso un SAL */
     void paymentRemoved( int payNum, AccountingBillItem * pay );
 
     void modelChanged();

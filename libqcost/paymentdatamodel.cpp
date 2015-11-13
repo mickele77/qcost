@@ -8,8 +8,9 @@
 
 class PaymentDataModelPrivate {
 public:
-    PaymentDataModelPrivate( MathParser * prs ):
-        rootData( new PaymentData( NULL, PaymentData::Root, prs ) ) {
+    PaymentDataModelPrivate( AccountingBillItem * rootItem, MathParser * prs ):
+        rootData( new PaymentData( NULL, PaymentData::Root, rootItem, prs ) ),
+        parser(prs){
     }
     PaymentData * data(const QModelIndex &index ) const {
         if (index.isValid()) {
@@ -18,11 +19,12 @@ public:
         return rootData;
     }
     PaymentData * rootData;
+    MathParser * parser;
 };
 
-PaymentDataModel::PaymentDataModel( MathParser * prs ):
+PaymentDataModel::PaymentDataModel( AccountingBillItem * rootItem, MathParser * prs ):
     QAbstractItemModel(),
-    m_d( new PaymentDataModelPrivate(prs) ){
+    m_d( new PaymentDataModelPrivate(rootItem, prs) ){
     connect( m_d->rootData, &PaymentData::dataChanged, this, &PaymentDataModel::modelChanged );
 }
 
@@ -129,4 +131,20 @@ Qt::ItemFlags PaymentDataModel::flags() const {
 
 void PaymentDataModel::updateAmounts() {
     m_d->rootData->updateAmounts();
+}
+
+void PaymentDataModel::insertPayment(int payNum, AccountingBillItem *pay) {
+    if( payNum > -1 && payNum <= m_d->rootData->childrenCount() ){
+        beginInsertRows( QModelIndex(), payNum, payNum );
+        m_d->rootData->insertPayment( payNum, pay );
+        endInsertRows();
+    }
+}
+
+void PaymentDataModel::removePayment(int payNum, AccountingBillItem *pay) {
+    if( payNum > -1 && payNum < m_d->rootData->childrenCount() ){
+        beginRemoveRows( QModelIndex(), payNum, payNum );
+        m_d->rootData->removePayment( payNum, pay );
+        endRemoveRows();
+    }
 }

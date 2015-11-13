@@ -40,8 +40,9 @@ public:
     };
 
     explicit PaymentData( PaymentData * parent,
-                                    PaymentData::DataType dType,
-                                    MathParser * prs );
+                          PaymentData::DataType dType,
+                          AccountingBillItem *pay,
+                          MathParser * prs );
 
     ~PaymentData();
 
@@ -51,9 +52,8 @@ public:
     PaymentData *child(int number);
     int childNumber() const;
     bool hasChildren() const;
-    bool insertPayments( int position, int count=1 );
-    bool appendPayments(int count=1);
-    bool removePayments(int position, int purpCount=1);
+    bool insertPayment( int position, AccountingBillItem * pay );
+    bool removePayment(int position, AccountingBillItem * pay );
 
     PaymentData::DataType dataType();
     QString name();
@@ -61,21 +61,17 @@ public:
     void updateAmounts();
 
     QDate dateBegin() const;
-    void setDateBegin(const QDate &newDate);
-    void setDateBegin(const QString &newDate);
     QDate dateEnd() const;
-    void setDateEnd(const QDate &newDate);
-    void setDateEnd(const QString &newDate);
 
-    void addBillItem(AccountingBillItem *billItem);
-
-    void removeBillItem(AccountingBillItem *billItem);
+    AccountingBillItem * associatedPayment();
+    void setAssociatedPayment(AccountingBillItem *newPayment);
 
 signals:
     void dataChanged();
 
 private slots:
     void removeBillItem();
+
 private:
     PaymentDataPrivate * m_d;
 };

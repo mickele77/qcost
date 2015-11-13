@@ -4,6 +4,7 @@
 #include "qcost_export.h"
 
 class MathParser;
+class AccountingBillItem;
 class PaymentData;
 class PaymentDataModelPrivate;
 
@@ -15,7 +16,7 @@ class QXmlStreamReader;
 class EXPORT_QCOST_LIB_OPT PaymentDataModel : public QAbstractItemModel {
     Q_OBJECT
 public:
-    PaymentDataModel( MathParser *prs );
+    PaymentDataModel(AccountingBillItem *rootItem, MathParser *prs );
 
     QModelIndex parent(const QModelIndex &index) const;
     QModelIndex index(int row, int col, const QModelIndex &parent) const;
@@ -32,6 +33,10 @@ public:
     PaymentData *paymentData(int pos);
 
     void updateAmounts();
+
+public slots:
+    void insertPayment( int payNum, AccountingBillItem * pay );
+    void removePayment( int payNum, AccountingBillItem * pay );
 
 signals:
     void modelChanged();

@@ -37,8 +37,7 @@ public:
     ProjectAccountingParentItemPrivate( PriceFieldModel * pfm, MathParser * p = NULL ):
         priceFieldModel(pfm),
         parser(p),
-        nextId(1),
-        dataModel( new PaymentDataModel(p) ){
+        nextId(1) {
     }
     ~ProjectAccountingParentItemPrivate(){
         delete dataModel;
@@ -67,9 +66,12 @@ ProjectAccountingParentItem::ProjectAccountingParentItem( ProjectItem *parent, P
     ProjectRootItem(parent),
     m_d( new ProjectAccountingParentItemPrivate( pfm, prs ) ){
     m_d->measuresBill = new AccountingBill( trUtf8("Libretto delle misure"), this, pfm, prs );
+    m_d->dataModel = new PaymentDataModel( m_d->measuresBill->rootItem(), prs );
     insertChild( m_d->measuresBill );
 
     connect( m_d->measuresBill, &AccountingBill::modelChanged, this, &ProjectAccountingParentItem::modelChanged );
+    connect( m_d->measuresBill, &AccountingBill::paymentInserted, m_d->dataModel, &PaymentDataModel::insertPayment );
+    connect( m_d->measuresBill, &AccountingBill::paymentRemoved, m_d->dataModel, &PaymentDataModel::removePayment );
 
     m_d->lumpSumBills = new AccountingLSBills( this, pfm, prs );
     insertChild( m_d->lumpSumBills );
