@@ -6,7 +6,6 @@ TARGET = QCostGUI
 
 TEMPLATE = app
 
-
 contains(DEFINES, BUILD_RELEASE) {
     target.path = /usr/bin
     INSTALLS += target
