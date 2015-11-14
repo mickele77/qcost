@@ -36,7 +36,4 @@ contains(DEFINES, BUILD_RELEASE) {
     !contains(DEFINES, BUILD_STATIC){
         DEFINES += BUILD_STATIC
     }
-
-    target.path = /usr/bin
-    INSTALLS += target
 }

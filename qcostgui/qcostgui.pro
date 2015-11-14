@@ -4,13 +4,19 @@ QT       += widgets sql
 
 TARGET = QCost
 
+contains(DEFINES, BUILD_RELEASE) {
+    target.path = /usr/bin
+    INSTALLS += target
+}
+
 TEMPLATE = app
 
 LIBS += \
     -L../bin \
     -lqcost \
     -lodtcreator \
-    -lmathparser
+    -lmathparser \
+    -lz
 
 DEPENDPATH += \
     ../libmatparser \
@@ -117,6 +123,3 @@ FORMS += \
 OTHER_FILES += \
     ../LICENSE \
     ../LICENSE.GPLv3
-
-DISTFILES += \
-    ../icons/qcost.svg
