@@ -49,8 +49,6 @@ class AccountingBillPrivate;
 * @brief Classe usata per modellizzare un libretto delle misure
 *
 * Questa classe viene impiegata per modellizzare i libretti delle misure.
-* All'interno di una contabilità è possibile avere più libretti delle misure
-* (vedi D.P.R. 207/2010).
 *
 * @author Michele Mocciola
 *

@@ -6,6 +6,12 @@ TARGET = QCostGUI
 
 TEMPLATE = app
 
+
+contains(DEFINES, BUILD_RELEASE) {
+    target.path = /usr/bin
+    INSTALLS += target
+}
+
 contains(DEFINES, BUILD_MSVC){
     LIBS += \
         ../bin/qcost.lib \

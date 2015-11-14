@@ -28,8 +28,8 @@ win32 {
     }
 }
 
-# if building final release version, we use static libraries
 contains(DEFINES, BUILD_RELEASE) {
+    # if building final release version, we use static libraries
     !contains(DEFINES, BUILD_STATIC){
         DEFINES += BUILD_STATIC
     }
