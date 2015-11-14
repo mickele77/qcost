@@ -51,7 +51,6 @@ SOURCES += \
     priceitemdatasetmodel.cpp
 
 HEADERS  += \
-    library_common.h \
     projectpricelistparentitem.h \
     projectitem.h \
     projectbillparentitem.h \
@@ -72,4 +71,5 @@ HEADERS  += \
     pricefieldmodel.h \
     pricelistprinter.h \
     billprinter.h \
-    priceitemdatasetmodel.h
+    priceitemdatasetmodel.h \
+    qcost_export.h

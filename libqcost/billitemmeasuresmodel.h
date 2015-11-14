@@ -1,7 +1,7 @@
 #ifndef BILLITEMMEASURESMODEL_H
 #define BILLITEMMEASURESMODEL_H
 
-#include "library_common.h"
+#include "qcost_export.h"
 
 class QXmlStreamWriter;
 class QXmlStreamReader;
@@ -13,7 +13,7 @@ class UnitMeasure;
 
 class BillItemMeasuresModelPrivate;
 
-class EXPORT_LIB_OPT BillItemMeasuresModel : public QAbstractTableModel {
+class EXPORT_QCOST_LIB_OPT BillItemMeasuresModel : public QAbstractTableModel {
     Q_OBJECT
 public:
     explicit BillItemMeasuresModel(MathParser *p = NULL, UnitMeasure *ump = NULL, QObject *parent = 0);

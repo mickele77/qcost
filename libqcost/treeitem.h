@@ -19,11 +19,11 @@
 #ifndef TREEITEM_H
 #define TREEITEM_H
 
-#include "library_common.h"
+#include "qcost_export.h"
 
 class QVariant;
 
-class EXPORT_LIB_OPT TreeItem {
+class EXPORT_QCOST_LIB_OPT TreeItem {
 public:
     explicit TreeItem(){
     };

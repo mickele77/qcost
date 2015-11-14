@@ -19,7 +19,7 @@
 #ifndef PRICELISTPRINTER_H
 #define PRICELISTPRINTER_H
 
-#include "library_common.h"
+#include "qcost_export.h"
 
 class PriceList;
 class QString;
@@ -29,7 +29,7 @@ template <typename T> class QList;
 
 class PriceListPrinterPrivate;
 
-class EXPORT_LIB_OPT PriceListPrinter {
+class EXPORT_QCOST_LIB_OPT PriceListPrinter {
 public:
     enum PrintPriceItemsOption{
         PrintShortDesc,

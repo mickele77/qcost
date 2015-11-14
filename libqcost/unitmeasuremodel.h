@@ -19,7 +19,7 @@
 #ifndef UNITMEASUREMODEL_H
 #define UNITMEASUREMODEL_H
 
-#include "library_common.h"
+#include "qcost_export.h"
 
 class UnitMeasure;
 class QTextStream;
@@ -31,7 +31,7 @@ class MathParser;
 
 class UnitMeasureModelPrivate;
 
-class EXPORT_LIB_OPT UnitMeasureModel : public QAbstractTableModel {
+class EXPORT_QCOST_LIB_OPT UnitMeasureModel : public QAbstractTableModel {
     Q_OBJECT
 public:
     friend class Project;

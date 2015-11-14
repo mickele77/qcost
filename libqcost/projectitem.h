@@ -19,14 +19,14 @@
 #ifndef PROJECTITEM_H
 #define PROJECTITEM_H
 
-#include "library_common.h"
+#include "qcost_export.h"
 
 class ProjectItemPrivate;
 class QVariant;
 
 #include <Qt>
 
-class EXPORT_LIB_OPT ProjectItem {
+class EXPORT_QCOST_LIB_OPT ProjectItem {
 public:
     explicit ProjectItem(ProjectItem *parent = 0 );
 

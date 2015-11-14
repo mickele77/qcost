@@ -17,4 +17,5 @@ HEADERS  += \
     zipwriter.h \
     zipreader.h \
     odtwriter.h \
-    qtextformatuserdefined.h
+    qtextformatuserdefined.h \
+    odtcreator_export.h

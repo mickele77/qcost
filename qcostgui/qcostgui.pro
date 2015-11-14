@@ -117,3 +117,6 @@ FORMS += \
 OTHER_FILES += \
     ../LICENSE \
     ../LICENSE.GPLv3
+
+DISTFILES += \
+    ../icons/qcost.svg

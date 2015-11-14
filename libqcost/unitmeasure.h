@@ -19,7 +19,7 @@
 #ifndef UNITMEASURE_H
 #define UNITMEASURE_H
 
-#include "library_common.h"
+#include "qcost_export.h"
 
 class QXmlStreamAttributes;
 class QXmlStreamWriter;
@@ -29,7 +29,7 @@ class QTextStream;
 
 class UnitMeasurePrivate;
 
-class EXPORT_LIB_OPT UnitMeasure : public QObject
+class EXPORT_QCOST_LIB_OPT UnitMeasure : public QObject
 {
     Q_OBJECT
 public:

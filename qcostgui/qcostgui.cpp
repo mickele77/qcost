@@ -153,6 +153,7 @@ QCostGUI::QCostGUI(QWidget *parent) :
 
     setWindowTitle(QString("%1[*] - %2").arg(trUtf8("Senza titolo"))
                    .arg(trUtf8("QCost")));
+    setWindowIcon( QIcon(":/icons/qcost.svg"));
     connect( m_d->project, &Project::modelChanged, this, static_cast<void(QCostGUI::*)()>(&QCostGUI::setModified) );
     setModified( false );
 
@@ -575,7 +576,7 @@ void QCostGUI::setOptions(){
 void QCostGUI::about() {
     QMessageBox::about(this, trUtf8("Informazioni su QCost"),
                        trUtf8("<h1>QCost</h1>"
-                              "<h2>v0.8.0</h2>"
+                              "<h2>v0.8.1</h2>"
                               "<p>QCost è un software per la redazione di computi metrici estimativi."
                               "<p>Questo programma è software libero; puoi ridistribuirlo e/o modificarlo nei termini della GNU General Public License cos' come pubblicata dalla Free Software Foundation; sia nei termini della versione 3 della licenza che (a tua scelta) nei termini di qualsiasi altra versione successiva."
                               "<p>Questo programma è distribuito nella speranza che sia utile, ma SENZA ALCUNA GARANZIA; neanche l'implicita garanzia di COMMERCIABILITÀ o di IDONEITÀ AD UN PARTICOLARE IMPIEGO. Consulta la GNU General Public License per maggiori dettagli. "

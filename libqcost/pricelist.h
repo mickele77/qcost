@@ -19,7 +19,7 @@
 #ifndef PRICELIST_H
 #define PRICELIST_H
 
-#include "library_common.h"
+#include "qcost_export.h"
 
 class ProjectPriceListParentItem;
 class PriceFieldModel;
@@ -40,7 +40,7 @@ class QTextStream;
 
 class PriceListPrivate;
 
-class EXPORT_LIB_OPT PriceList : public QAbstractItemModel, public ProjectItem {
+class EXPORT_QCOST_LIB_OPT PriceList : public QAbstractItemModel, public ProjectItem {
     Q_OBJECT
 public:
     friend class Project;

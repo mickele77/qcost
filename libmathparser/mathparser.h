@@ -19,12 +19,14 @@
 #ifndef MATHPARSER_H
 #define MATHPARSER_H
 
+#include "mathparser_export.h"
+
 class QString;
 class QLocale;
 
 class MathParserPrivate;
 
-class MathParser{
+class EXPORT_MATHPARSER_LIB_OPT MathParser{
 public:
     MathParser( const QLocale & loc );
 

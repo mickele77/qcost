@@ -20,7 +20,7 @@
 #ifndef PRICEITEM_H
 #define PRICEITEM_H
 
-#include "library_common.h"
+#include "qcost_export.h"
 
 class ProjectPriceListParentItem;
 class Bill;
@@ -48,7 +48,7 @@ class QString;
 
 class PriceItemPrivate;
 
-class EXPORT_LIB_OPT PriceItem : public QObject, public TreeItem {
+class EXPORT_QCOST_LIB_OPT PriceItem : public QObject, public TreeItem {
     Q_OBJECT
 public:
     friend class PriceItemDataSetModel;

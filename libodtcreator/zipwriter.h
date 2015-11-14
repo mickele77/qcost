@@ -26,12 +26,14 @@
 #ifndef ZIPWRITER_H
 #define ZIPWRITER_H
 
+#include "odtcreator_export.h"
+
 #include <QString>
 #include <QFile>
 
 class ZipWriterPrivate;
 
-class ZipWriter
+class EXPORT_ODTCREATOR_LIB_OPT ZipWriter
 {
 public:
     explicit ZipWriter(const QString &fileName, QIODevice::OpenMode mode = (QIODevice::WriteOnly | QIODevice::Truncate) );

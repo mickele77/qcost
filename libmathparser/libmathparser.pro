@@ -12,4 +12,5 @@ SOURCES += \
     mathparser.cpp
 
 HEADERS  += \
-    mathparser.h
+    mathparser.h \
+    mathparser_export.h

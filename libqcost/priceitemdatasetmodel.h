@@ -19,7 +19,7 @@
 #ifndef PRICEITEMDATASETMODEL_H
 #define PRICEITEMDATASETMODEL_H
 
-#include "library_common.h"
+#include "qcost_export.h"
 
 class Bill;
 class PriceItem;
@@ -35,7 +35,7 @@ class QString;
 
 class PriceItemDataSetModelPrivate;
 
-class EXPORT_LIB_OPT PriceItemDataSetModel: public QAbstractTableModel {
+class EXPORT_QCOST_LIB_OPT PriceItemDataSetModel: public QAbstractTableModel {
     Q_OBJECT
 
 public:

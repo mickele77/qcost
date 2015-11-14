@@ -19,7 +19,7 @@
 #ifndef BILLATTRIBUTE_H
 #define BILLATTRIBUTE_H
 
-#include "library_common.h"
+#include "qcost_export.h"
 
 class Bill;
 class BillItem;
@@ -33,7 +33,7 @@ class QString;
 
 class BillAttributePrivate;
 
-class EXPORT_LIB_OPT BillAttribute {
+class EXPORT_QCOST_LIB_OPT BillAttribute {
 
 public:
     friend class BillAttributeModel;

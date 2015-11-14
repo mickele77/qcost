@@ -26,6 +26,8 @@
 #ifndef ODTWRITER_H
 #define ODTWRITER_H
 
+#include "odtcreator_export.h"
+
 #include <QString>
 
 class QTextCursor;
@@ -45,7 +47,7 @@ class QTextTableFormat;
 class OdtWriterPrivate;
 class QTextCodec;
 
-class OdtWriter {
+class EXPORT_ODTCREATOR_LIB_OPT OdtWriter {
 public:
     OdtWriter(const QTextDocument &document, QIODevice *device);
     bool writeAll();

@@ -19,7 +19,7 @@
 #ifndef BILLATTRIBUTEMODEL_H
 #define BILLATTRIBUTEMODEL_H
 
-#include "library_common.h"
+#include "qcost_export.h"
 
 class Bill;
 class BillAttribute;
@@ -34,7 +34,7 @@ class QXmlStreamWriter;
 
 class BillAttributeModelPrivate;
 
-class EXPORT_LIB_OPT BillAttributeModel : public QAbstractTableModel {
+class EXPORT_QCOST_LIB_OPT BillAttributeModel : public QAbstractTableModel {
     Q_OBJECT
 public:
     friend class Project;

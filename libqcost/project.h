@@ -19,7 +19,7 @@
 #ifndef PROJECT_H
 #define PROJECT_H
 
-#include "library_common.h"
+#include "qcost_export.h"
 
 class ProjectItem;
 class UnitMeasureModel;
@@ -34,7 +34,7 @@ class QXmlStreamWriter;
 
 class ProjectPrivate;
 
-class EXPORT_LIB_OPT Project : public QAbstractItemModel {
+class EXPORT_QCOST_LIB_OPT Project : public QAbstractItemModel {
     Q_OBJECT
 public:
     enum SimpleProjectType{

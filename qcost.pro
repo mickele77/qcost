@@ -6,7 +6,7 @@ SUBDIRS	= \
     libqcost \
     qcostgui
 
-qcost.depends = libqcost
-qcost.depends += libmathparser
+qcostgui.depends = libqcost
 
 libqcost.depends = libodtcreator
+libqcost.depends += libmathparser
