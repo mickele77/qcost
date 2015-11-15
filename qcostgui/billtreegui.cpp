@@ -48,7 +48,7 @@ public:
         project( p ),
         EPAImportOptions(EPAImpOptions),
         EPAFileName(fileName){
-    };
+    }
 
     Ui::BillTreeGUI *ui;
     MathParser * parser;
@@ -210,6 +210,7 @@ void BillTreeGUI::pasteFromClipboard(){
                                     *(m_d->bill->billItem( m_d->bill->index(currRow+1, 0, currParent ) ) ) = *(*i);
                                 }
                             }
+                            currRow++;
                         }
                     } else if( mode == QCostClipboardData::Cut ){
                         if( itemsToCopyBill == m_d->bill ){
@@ -226,6 +227,7 @@ void BillTreeGUI::pasteFromClipboard(){
                                 if( !containsParent ){
                                     m_d->bill->moveRows( m_d->bill->index((*i)->parent(), 0), (*i)->childNumber(), 1, currParent, currRow+1);
                                 }
+                                currRow++;
                             }
                         }
                     }
@@ -366,13 +368,20 @@ void BillTreeGUI::addChildItems(){
 }
 
 void BillTreeGUI::removeItems(){
-    if( m_d->ui->treeView->selectionModel() ){
-        QModelIndexList selRows = m_d->ui->treeView->selectionModel()->selectedRows();
-        for( int i=selRows.size() - 1; i >= 0; --i){
+    if( m_d->bill != NULL ){
+        if( m_d->ui->treeView->selectionModel() ){
             // se la lista non contiene il genitore dell'oggetto lo rimuovo
             // altrimenti è sufficiente rimuovere il genitore
-            if( !(selRows.contains( selRows.at(i).parent()) ) ){
-                m_d->bill->removeBillItems( selRows.at(i).row(), 1, selRows.at(i).parent() );
+            QModelIndexList selRows = m_d->ui->treeView->selectionModel()->selectedRows();
+            QModelIndexList selRowsEff;
+            for( int i=0; i < selRows.size(); ++i){
+                if( !(selRows.contains( selRows.at(i).parent()) ) ){
+                    selRowsEff << selRows.at(i);
+                }
+            }
+
+            for( int i=selRowsEff.size() - 1; i >= 0; --i){
+                m_d->bill->removeBillItems( selRowsEff.at(i).row(), 1, selRowsEff.at(i).parent() );
             }
         }
     }

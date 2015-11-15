@@ -45,10 +45,10 @@ public:
         EPAImportOptions(impOptions),
         EPAFileName(fileName),
         currentPriceDataSet(-1){
-    };
+    }
     ~PriceListTreeGUIPrivate(){
         delete ui;
-    };
+    }
 
     PriceList * priceList;
     MathParser * parser;
@@ -212,13 +212,18 @@ void PriceListTreeGUI::addChildItems(){
 
 void PriceListTreeGUI::removeItems(){
     if( m_d->ui->treeView->selectionModel() ){
+        // se la lista non contiene il genitore dell'oggetto lo rimuovo
+        // altrimenti è sufficiente rimuovere il genitore
         QModelIndexList selRows = m_d->ui->treeView->selectionModel()->selectedRows();
-        for( int i=selRows.size() - 1; i >= 0; --i){
-            // se la lista non contiene il genitore dell'oggetto lo rimuovo
-            // altrimenti è sufficiente rimuovere il genitore
+        QModelIndexList selRowsEff;
+        for( int i=0; i < selRows.size(); ++i){
             if( !(selRows.contains( selRows.at(i).parent()) ) ){
-                m_d->priceList->removeRows( selRows.at(i).row(), 1, selRows.at(i).parent() );
+                selRowsEff << selRows.at(i);
             }
+        }
+
+        for( int i=selRowsEff.size() - 1; i >= 0; --i){
+            m_d->priceList->removeRows( selRowsEff.at(i).row(), 1, selRowsEff.at(i).parent() );
         }
     }
 }
@@ -297,6 +302,7 @@ void PriceListTreeGUI::pasteFromClipboard(){
                                     *(m_d->priceList->priceItem( m_d->priceList->index(currRow+1, 0, currParent ) ) ) = *(*i);
                                 }
                             }
+                            currRow++;
                         }
                     } else if( mode == QCostClipboardData::Cut ){
                         if( itemsToCopyPriceList == m_d->priceList ){
@@ -313,6 +319,7 @@ void PriceListTreeGUI::pasteFromClipboard(){
                                 if( !containsParent ){
                                     m_d->priceList->moveRows( m_d->priceList->index((*i)->parentItem(), 0), (*i)->childNumber(), 1, currParent, currRow+1);
                                 }
+                                currRow++;
                             }
                         }
                     }

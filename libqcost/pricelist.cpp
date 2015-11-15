@@ -267,12 +267,12 @@ bool PriceList::moveRows(const QModelIndex &sourceParent, int sourceRow, int cou
     return false;
 }
 
-bool PriceList::removePriceItems(int position, int rows, const QModelIndex &parent) {
+bool PriceList::removePriceItems(int position, int count, const QModelIndex &parent) {
     PriceItem *parentItem = priceItem(parent);
     bool success = true;
 
-    beginRemoveRows(parent, position, position + rows - 1);
-    success = parentItem->removeChildren(position, rows);
+    beginRemoveRows(parent, position, position + count - 1);
+    success = parentItem->removeChildren(position, count);
     endRemoveRows();
 
     return success;

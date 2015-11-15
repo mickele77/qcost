@@ -130,7 +130,7 @@ private slots:
 private:
     PriceListPrivate * m_d;
 
-    bool removePriceItems(int position = -1, int rows = 1, const QModelIndex &parent = QModelIndex() );
+    bool removePriceItems(int position = -1, int count = 1, const QModelIndex &parent = QModelIndex() );
 };
 
 #endif // PRICELIST_H
