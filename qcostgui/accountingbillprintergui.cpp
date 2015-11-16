@@ -121,7 +121,7 @@ AccountingBillPrinterGUI::AccountingBillPrinterGUI( AccountingBill * measuresBil
     }
 
     for( int i=0; i < measuresBill->paymentsCount(); ++i ){
-        m_d->ui->payToPrintComboBox->addItem( measuresBill->payment(i)->name(), QVariant(i) );
+        m_d->ui->payToPrintComboBox->addItem( measuresBill->payment(i)->title(), QVariant(i) );
     }
     m_d->ui->payToPrintComboBox->addItem(trUtf8("Tutti"), QVariant(-1) );
     m_d->ui->payToPrintComboBox->setCurrentIndex(*(payToPrint)+1);

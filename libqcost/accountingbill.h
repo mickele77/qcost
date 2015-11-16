@@ -174,17 +174,26 @@ public:
     QList<PriceItem *> connectedPriceItems();
 
     /**
-     * @brief Stampa il libretto delle misure
+     * @brief Stampa il registro di contabilità
+     * @param cursor
+     * @param payToPrint S.A.L. da stampare (se è < 0 li stampa tutti)
+     * @param prPPUDescOption opzione per la stampa dei prezzi
+     */
+    void writeODTAccountingOnTable(QTextCursor * cursor,
+                                   int payToPrint,
+                                   AccountingPrinter::PrintPPUDescOption prPPUDescOption) const;
+    /**
+     * @brief Stampa il libretto delle misure/brogliaccio del libretto delle misure
      * @param cursor
      * @param payToPrint S.A.L. da stampare (se è < 0 li stampa tutti)
      * @param prAmountsOption opzione per la stampa degli importi
      * @param prPPUDescOption opzione per la stampa dei prezzi
      */
-    void writeODTAccountingOnTable( QTextCursor * cursor,
-                                    int payToPrint,
-                                    AccountingPrinter::PrintAmountsOption prAmountsOption,
-                                    AccountingPrinter::PrintPPUDescOption prPPUDescOption,
-                                    bool writeAccountingEffective = true ) const;
+    void writeODTMeasuresOnTable( QTextCursor * cursor,
+                                  int payToPrint,
+                                  AccountingPrinter::PrintAmountsOption prAmountsOption,
+                                  AccountingPrinter::PrintPPUDescOption prPPUDescOption ) const;
+
     /**
      * @brief Stampa il S.A.L.
      * @param cursor
@@ -203,11 +212,10 @@ public:
      * @param prItemsOption
      * @param writeDetails scrive i dettaglio del sommario
      */
-    void writeODTSummaryOnTable( QTextCursor * cursor,
-                                 int payToPrint,
-                                 AccountingPrinter::PrintAmountsOption prAmountsOption,
-                                 AccountingPrinter::PrintPPUDescOption prItemsOption,
-                                 bool writeDetails = true ) const;
+    void writeODTAccountingSummaryOnTable( QTextCursor * cursor,
+                                           int payToPrint,
+                                           AccountingPrinter::PrintAmountsOption prAmountsOption,
+                                           AccountingPrinter::PrintPPUDescOption prItemsOption) const;
 
     void writeODTAttributeAccountingOnTable( QTextCursor *cursor,
                                              AccountingPrinter::AttributePrintOption prOption,

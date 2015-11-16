@@ -168,12 +168,6 @@ public:
                                    AccountingPrinter::PrintAmountsOption prAmountsOption,
                                    AccountingPrinter::PrintPPUDescOption prItemsOption ) const;
 
-    void writeODTSummaryOnTable( QTextCursor * cursor,
-                                 int payToPrint,
-                                 AccountingPrinter::PrintAmountsOption prAmountsOption,
-                                 AccountingPrinter::PrintPPUDescOption prItemsOption,
-                                 bool writeDetails = true ) const;
-
     void writeODTAttributeAccountingOnTable( QTextCursor *cursor,
                                              AccountingPrinter::AttributePrintOption prOption,
                                              AccountingPrinter::PrintAmountsOption printAmountsOption,

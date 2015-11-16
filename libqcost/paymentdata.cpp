@@ -17,8 +17,6 @@ public:
         parentData(parent),
         dataType(dType),
         parser(prs),
-        dateBegin( QDate::currentDate() ),
-        dateEnd( QDate::currentDate() ),
         associatedPayment(pay),
         totalAmountToDiscount(0.0),
         amountNotToDiscount(0.0),
@@ -38,8 +36,6 @@ public:
     PaymentData::DataType dataType;
     MathParser * parser;
     QList<PaymentData *> childrenContainer;
-    QDate dateBegin;
-    QDate dateEnd;
     AccountingBillItem * associatedPayment;
 
 
@@ -101,8 +97,8 @@ int PaymentData::childNumber() const {
 QString PaymentData::name() {
     if( m_d->dataType == Payment ){
         return trUtf8("S.A.L. N. %1 (%2-%3)").arg( QString::number(childNumber()+1),
-                                                   m_d->parser->toString( m_d->dateBegin),
-                                                   m_d->parser->toString( m_d->dateEnd) );
+                                                   m_d->parser->toString( dateBegin() ),
+                                                   m_d->parser->toString( dateEnd() ) );
     } else if( m_d->dataType == PPU ){
         return trUtf8("Opere a misura");
     } else if( m_d->dataType == LumpSum ){
@@ -141,11 +137,17 @@ void PaymentData::updateAmounts() {
 }
 
 QDate PaymentData::dateBegin() const {
-    return m_d->dateBegin;
+    if( m_d->associatedPayment != NULL ){
+        return m_d->associatedPayment->dateBegin();
+    }
+    return QDate::currentDate();
 }
 
 QDate PaymentData::dateEnd() const {
-    return m_d->dateEnd;
+    if( m_d->associatedPayment != NULL ){
+        return m_d->associatedPayment->dateEnd();
+    }
+    return QDate::currentDate();
 }
 
 AccountingBillItem *PaymentData::associatedPayment() {

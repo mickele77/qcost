@@ -188,17 +188,27 @@ public:
     QString totalAmountAttributeStr( Attribute * attr ) const;
 
     /**
+     * @brief Stampa il registro di contabilità
+     * @param cursor
+     * @param payToPrint
+     * @param prPPUDescOption
+     */
+    void writeODTAccountingOnTable( QTextCursor * cursor,
+                                    int payToPrint,
+                                    AccountingPrinter::PrintPPUDescOption prPPUDescOption ) const;
+
+    /**
      * @brief Stampa il libretto delle misure/brogliaccio
      * @param cursor
      * @param payToPrint
      * @param prAmountsOption
      * @param prPPUDescOption
      */
-    void writeODTAccountingOnTable(QTextCursor * cursor,
-                                    int payToPrint,
-                                    AccountingPrinter::PrintAmountsOption prAmountsOption,
-                                    AccountingPrinter::PrintPPUDescOption prPPUDescOption,
-                                    bool writeAccountingEffective = false ) const;
+    void writeODTMeasuresOnTable( QTextCursor * cursor,
+                                  int payToPrint,
+                                  AccountingPrinter::PrintAmountsOption prAmountsOption,
+                                  AccountingPrinter::PrintPPUDescOption prPPUDescOption ) const;
+
     /**
      * Stampa il SAL specificato da payPrint.
      * Se payPrint è negativo, stampa l'ultimo SAL
@@ -220,11 +230,10 @@ public:
      * @param prItemsOption
      * @param writeDetails
      */
-    void writeODTSummaryOnTable( QTextCursor *cursor,
+    void writeODTAccountingSummaryOnTable(QTextCursor *cursor,
                                  int payToPrint,
                                  AccountingPrinter::PrintAmountsOption prAmountsOption,
-                                 AccountingPrinter::PrintPPUDescOption prItemsOption,
-                                 bool writeDetails = true) const;
+                                 AccountingPrinter::PrintPPUDescOption prPPUDescOption) const;
 
     /** Stampa righe libretto per attributo */
     void writeODTAttributeAccountingOnTable( QTextCursor *cursor,
@@ -371,6 +380,10 @@ protected:
     /** restituisce l'elenco delle categorie di lavorazione usati dal SAL firstPay al SAL lastPay */
     QList<AccountingLSBill *> usedLSBillsPayment(int firstPay, int lastPay) const;
 
+    void writeODTAccountingSummaryOnTable(QTextCursor *cursor,
+                                           int payToPrint,
+                                           AccountingPrinter::PrintPPUDescOption prPPUDescOption,
+                                           bool writeAccountingProgCode ) const;
 
     void writeODTSummaryLine( PriceItem * priceItem,
                               QTextCursor *cursor,
@@ -447,22 +460,22 @@ protected:
                                          QTextTableCellFormat & rightQuantityTotalFormat,
                                          QTextCharFormat &txtCharFormat,
                                          QTextCharFormat &txtBoldCharFormat) const;
-    void writeODTBillLine(AccountingPrinter::PrintAmountsOption prAmountsOption,
-                          AccountingPrinter::PrintPPUDescOption prItemsOption,
-                          bool writeProgCode,
-                          QTextCursor *cursor,
-                          QTextTable *table,
-                          QTextBlockFormat &tagBlockFormat,
-                          QTextBlockFormat & txtBlockFormat,
-                          QTextBlockFormat & numBlockFormat,
-                          QTextTableCellFormat & leftFormat,
-                          QTextTableCellFormat & centralFormat,
-                          QTextTableCellFormat & rightFormat,
-                          QTextTableCellFormat & centralQuantityTotalFormat,
-                          QTextTableCellFormat & rightQuantityTotalFormat,
-                          QTextCharFormat & txtCharFormat,
-                          QTextCharFormat & txtAmNotToDiscCharFormat,
-                          bool writeAccountingEffective = false ) const;
+    void writeODTBillLine( AccountingPrinter::PrintAmountsOption prAmountsOption,
+                           AccountingPrinter::PrintPPUDescOption prItemsOption,
+                           bool writeProgCode,
+                           QTextCursor *cursor,
+                           QTextTable *table,
+                           QTextBlockFormat &tagBlockFormat,
+                           QTextBlockFormat & txtBlockFormat,
+                           QTextBlockFormat & numBlockFormat,
+                           QTextTableCellFormat & leftFormat,
+                           QTextTableCellFormat & centralFormat,
+                           QTextTableCellFormat & rightFormat,
+                           QTextTableCellFormat & centralQuantityTotalFormat,
+                           QTextTableCellFormat & rightQuantityTotalFormat,
+                           QTextCharFormat & txtCharFormat,
+                           QTextCharFormat & txtAmNotToDiscCharFormat,
+                           bool writeAccounting = false ) const;
 
     /** restituisce tutti gli attributi dell'elemento; se la var bool è false,
         vuol dire che l'attribute è ereditato, se è true vuol dire che è un

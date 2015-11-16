@@ -760,11 +760,11 @@ void AccountingTAMBill::writeODTAccountingOnTable(QTextCursor *cursor,
                                                   AccountingPrinter::PrintAmountsOption prAmountsOption,
                                                   AccountingPrinter::PrintPPUDescOption prItemsOption) const {
     if( billToPrint < 0 ){
-        m_d->rootItem->writeODTAccountingOnTable(cursor, billToPrint, prAmountsOption, prItemsOption );
+        m_d->rootItem->writeODTMeasuresOnTable(cursor, billToPrint, prAmountsOption, prItemsOption );
     } else {
         AccountingTAMBillItem * childItem = dynamic_cast<AccountingTAMBillItem *>(m_d->rootItem->childItem( billToPrint ));
         if( childItem != NULL ){
-            childItem->writeODTAccountingOnTable(cursor, billToPrint, prAmountsOption, prItemsOption );
+            childItem->writeODTMeasuresOnTable(cursor, billToPrint, prAmountsOption, prItemsOption );
         }
     }
 }
@@ -775,16 +775,6 @@ void AccountingTAMBill::writeODTAttributeAccountingOnTable(QTextCursor *cursor,
                                                            AccountingPrinter::PrintPPUDescOption prItemsOption,
                                                            const QList<Attribute *> &attrsToPrint) const {
     m_d->rootItem->writeODTAttributeAccountingOnTable( cursor, prOption, printAmountsOption, prItemsOption, attrsToPrint );
-}
-
-
-void AccountingTAMBill::writeODTSummaryOnTable( QTextCursor *cursor,
-                                                int payToPrint,
-                                                AccountingPrinter::PrintAmountsOption prAmountsOption,
-                                                AccountingPrinter::PrintPPUDescOption prItemsOption,
-                                                bool writeDetails ) const {
-
-    m_d->rootItem->writeODTSummaryOnTable( cursor, payToPrint, prAmountsOption, prItemsOption, writeDetails );
 }
 
 void AccountingTAMBill::loadTmpData(ProjectPriceListParentItem * priceLists) {

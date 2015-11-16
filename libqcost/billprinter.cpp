@@ -35,9 +35,9 @@ public:
         bill(b),
         priceFieldModel(pfm),
         parser(prs){
-    };
+    }
     ~BillPrinterPrivate(){
-    };
+    }
 
     Bill * bill;
     PriceFieldModel * priceFieldModel;
@@ -143,13 +143,16 @@ bool BillPrinter::printAttributeODT( BillPrinter::PrintBillItemsOption prItemsOp
                 colWidths << QTextLength( QTextLength::FixedLength, 30.0 )
                           << QTextLength( QTextLength::FixedLength, 70.0 )
                           << QTextLength( QTextLength::FixedLength, 20.0 );
-                double usedWidth =  10.0 + 30.0 + 70.0 + 20.0;
+                double usedWidth = 0.0;
+                for( QVector<QTextLength>::iterator iter = colWidths.begin(); iter != colWidths.end(); ++iter ){
+                    usedWidth += iter->rawValue();
+                }
                 double colEqualWidth = (tableWidth - usedWidth ) / (1 + 2*fieldsToPrint.size() );
                 for( int i=0; i < (1 + 2*fieldsToPrint.size() ); ++i ){
                     colWidths << QTextLength( QTextLength::FixedLength, colEqualWidth );
                 }
             } else { // fieldsToPrint.size() == 0
-                double descWidth = tableWidth - (10.0 + 30.0 + 20.0 + 30.0);
+                double descWidth = tableWidth - (30.0 + 20.0 + 30.0);
                 colWidths << QTextLength( QTextLength::FixedLength, 30.0 )
                           << QTextLength( QTextLength::FixedLength, descWidth )
                           << QTextLength( QTextLength::FixedLength, 20.0 )
@@ -162,12 +165,16 @@ bool BillPrinter::printAttributeODT( BillPrinter::PrintBillItemsOption prItemsOp
                     colWidths << QTextLength( QTextLength::FixedLength, 20.0 )
                               << QTextLength( QTextLength::FixedLength, 45.0 )
                               << QTextLength( QTextLength::FixedLength, 15.0 );
-                    usedWidth =  10.0 + 20.0 + 45.0 + 15.0;
+                    for( QVector<QTextLength>::iterator iter = colWidths.begin(); iter != colWidths.end(); ++iter ){
+                        usedWidth += iter->rawValue();
+                    }
                 } else { // fieldsToPrint.size() == 1
                     colWidths << QTextLength( QTextLength::FixedLength, 25.0 )
                               << QTextLength( QTextLength::FixedLength, 65.0 )
                               << QTextLength( QTextLength::FixedLength, 15.0 );
-                    usedWidth =  10.0 + 25.0 + 65.0 + 15.0;
+                    for( QVector<QTextLength>::iterator iter = colWidths.begin(); iter != colWidths.end(); ++iter ){
+                        usedWidth += iter->rawValue();
+                    }
                 }
                 double colEqualWidth = (tableWidth - usedWidth ) / (1 + 2*fieldsToPrint.size() );
                 for( int i=0; i < (1 + 2*fieldsToPrint.size() ); ++i ){
@@ -267,7 +274,10 @@ bool BillPrinter::printBillODT( PrintBillItemsOption prItemsOption,
                           << QTextLength( QTextLength::FixedLength, 30.0 )
                           << QTextLength( QTextLength::FixedLength, 70.0 )
                           << QTextLength( QTextLength::FixedLength, 20.0 );
-                double usedWidth =  10.0 + 30.0 + 70.0 + 20.0;
+                double usedWidth = 0.0;
+                for( QVector<QTextLength>::iterator iter = colWidths.begin(); iter != colWidths.end(); ++iter ){
+                    usedWidth += iter->rawValue();
+                }
                 double colEqualWidth = (tableWidth - usedWidth ) / (1 + 2*fieldsToPrint.size() );
                 for( int i=0; i < (1 + 2*fieldsToPrint.size() ); ++i ){
                     colWidths << QTextLength( QTextLength::FixedLength, colEqualWidth );
@@ -282,19 +292,20 @@ bool BillPrinter::printBillODT( PrintBillItemsOption prItemsOption,
             }
         } else { // pageOrientation == Qt::Vertical
             if( fieldsToPrint.size() > 0 ){
-                double usedWidth = 0.0;
                 if( fieldsToPrint.size() > 1  ){
                     colWidths << QTextLength( QTextLength::FixedLength, 10.0 )
                               << QTextLength( QTextLength::FixedLength, 20.0 )
                               << QTextLength( QTextLength::FixedLength, 45.0 )
                               << QTextLength( QTextLength::FixedLength, 15.0 );
-                    usedWidth =  10.0 + 20.0 + 45.0 + 15.0;
                 } else { // fieldsToPrint.size() == 1
                     colWidths << QTextLength( QTextLength::FixedLength, 10.0 )
                               << QTextLength( QTextLength::FixedLength, 25.0 )
                               << QTextLength( QTextLength::FixedLength, 65.0 )
                               << QTextLength( QTextLength::FixedLength, 15.0 );
-                    usedWidth =  10.0 + 25.0 + 65.0 + 15.0;
+                }
+                double usedWidth = 0.0;
+                for( QVector<QTextLength>::iterator iter = colWidths.begin(); iter != colWidths.end(); ++iter ){
+                    usedWidth += iter->rawValue();
                 }
                 double colEqualWidth = (tableWidth - usedWidth ) / (1 + 2*fieldsToPrint.size() );
                 for( int i=0; i < (1 + 2*fieldsToPrint.size() ); ++i ){
@@ -395,14 +406,17 @@ bool BillPrinter::printSummaryODT( PrintBillItemsOption prBillItemsOption,
                 colWidths << QTextLength( QTextLength::FixedLength, 30.0 )
                           << QTextLength( QTextLength::FixedLength, 70.0 )
                           << QTextLength( QTextLength::FixedLength, 20.0 );
-                double usedWidth =  30.0 + 70.0 + 20.0;
+                double usedWidth =  0.0;
+                for( QVector<QTextLength>::iterator iter = colWidths.begin(); iter != colWidths.end(); ++iter ){
+                    usedWidth += iter->rawValue();
+                }
                 double colEqualWidth = (tableWidth - usedWidth ) / (1 + 2*fieldsToPrint.size() );
                 for( int i=0; i < (1 + 2*fieldsToPrint.size() ); ++i ){
                     colWidths << QTextLength( QTextLength::FixedLength, colEqualWidth );
                 }
             } else { // fieldsToPrint.size() == 0
                 if( fieldsToPrint.size() > 1  ){
-                    double descWidth = tableWidth - ( 30.0 + 20.0 + 30.0);
+                    double descWidth = tableWidth - (30.0 + 20.0 + 30.0);
                     colWidths << QTextLength( QTextLength::FixedLength, 30.0 )
                               << QTextLength( QTextLength::FixedLength, descWidth )
                               << QTextLength( QTextLength::FixedLength, 20.0 )
@@ -416,12 +430,13 @@ bool BillPrinter::printSummaryODT( PrintBillItemsOption prBillItemsOption,
                     colWidths << QTextLength( QTextLength::FixedLength, 20.0 )
                               << QTextLength( QTextLength::FixedLength, 45.0 )
                               << QTextLength( QTextLength::FixedLength, 15.0 );
-                    usedWidth =  20.0 + 45.0 + 15.0;
                 } else { // fieldsToPrint.size() == 1
                     colWidths << QTextLength( QTextLength::FixedLength, 25.0 )
                               << QTextLength( QTextLength::FixedLength, 65.0 )
                               << QTextLength( QTextLength::FixedLength, 15.0 );
-                    usedWidth = 25.0 + 65.0 + 15.0;
+                }
+                for( QVector<QTextLength>::iterator iter = colWidths.begin(); iter != colWidths.end(); ++iter ){
+                    usedWidth += iter->rawValue();
                 }
                 double colEqualWidth = (tableWidth - usedWidth ) / (1 + 2*fieldsToPrint.size() );
                 for( int i=0; i < (1 + 2*fieldsToPrint.size() ); ++i ){

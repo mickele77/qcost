@@ -89,14 +89,14 @@ public:
 
     /** Stampa brogliaccio opere a corpo */
     bool printODT(int payToPrint,
-                   AccountingBill *measuresBill,
-                   AccountingPrinter::PrintOption prOption,
-                   AccountingPrinter::PrintLSOption prLSOption,
-                   AccountingPrinter::PrintPPUDescOption prPPDescOption,
-                   bool printAmounts,
-                   const QString &fileName,
-                   double paperWidth, double paperHeight,
-                   Qt::Orientation paperOrientation ) const;
+                  AccountingBill *measuresBill,
+                  AccountingPrinter::PrintOption prOption,
+                  AccountingPrinter::PrintLSOption prLSOption,
+                  AccountingPrinter::PrintPPUDescOption prPPDescOption,
+                  bool printAmounts,
+                  const QString &fileName,
+                  double paperWidth, double paperHeight,
+                  Qt::Orientation paperOrientation ) const;
 
     bool printAttributeODT( AttributePrintOption prOption,
                             PrintAmountsOption prAmountsOption,
@@ -109,30 +109,22 @@ public:
 private:
     AccountingPrinterPrivate * m_d;
 
-    bool printAccountingODT( int payToPrint,
-                             AccountingPrinter::PrintOption prOption,
-                             PrintAmountsOption prAmountOption,
-                             PrintPPUDescOption prPPDescOption,
-                             const QString &fileName,
-                             double paperWidth = 210.0, double paperHeight = 297.0,
-                             Qt::Orientation paperOrientation = Qt::Vertical ) const;
-
     /** interfaccia privata per stampa sommario contabilita' */
     bool printAccountingSummaryODT( int payToPrint,
                                     PrintAmountsOption prAmountsOption,
                                     PrintPPUDescOption prPPUDescOption,
                                     const QString &fileName,
                                     double paperWidth = 210.0, double paperHeight = 297.0,
-                                    Qt::Orientation paperOrientation = Qt::Vertical,
-                                    bool writeDetails = true ) const;
+                                    Qt::Orientation paperOrientation = Qt::Vertical) const;
 
     /** Stampa il libretto delle misure/brogliaccio */
-    bool printAccountingBillODT( int payToPrint,
-                                 AccountingPrinter::PrintOption prOption,
-                                 AccountingPrinter::PrintAmountsOption prAmountsOption,
-                                 AccountingPrinter::PrintPPUDescOption prPPDescOption,
-                                 const QString &fileName,
-                                 double paperWidth, double paperHeight, Qt::Orientation paperOrientation) const;
+    bool printMeasuresODT( int payToPrint,
+                           AccountingPrinter::PrintOption prOption,
+                           AccountingPrinter::PrintAmountsOption prAmountsOption,
+                           AccountingPrinter::PrintPPUDescOption prPPDescOption,
+                           const QString &fileName,
+                           double paperWidth, double paperHeight,
+                           Qt::Orientation paperOrientation ) const;
 
     /** Stampa lista in economia */
     bool printAccountingTAMBillODT( int billToPrint,
@@ -170,11 +162,18 @@ private:
                                                    Qt::Orientation paperOrientation,
                                                    bool printAmounts) const;
 
+    /** Stampa Registro contabilità */
+    bool printAccountingODT( int payToPrint,
+                             AccountingPrinter::PrintPPUDescOption prPPUDescOption,
+                             const QString &fileName,
+                             double paperWidth, double paperHeight,
+                             Qt::Orientation paperOrientation) const;
+
     /** Stampa S.A.L. */
     bool printPaymentODT( int payToPrint,
                           AccountingPrinter::PrintPPUDescOption prPPUDescOption,
                           const QString &fileName,
-                          int paperWidth, int paperHeight,
+                          double paperWidth, double paperHeight,
                           Qt::Orientation paperOrientation) const;
 };
 
