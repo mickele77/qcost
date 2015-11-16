@@ -231,9 +231,9 @@ public:
      * @param writeDetails
      */
     void writeODTAccountingSummaryOnTable(QTextCursor *cursor,
-                                 int payToPrint,
-                                 AccountingPrinter::PrintAmountsOption prAmountsOption,
-                                 AccountingPrinter::PrintPPUDescOption prPPUDescOption) const;
+                                          int payToPrint,
+                                          AccountingPrinter::PrintAmountsOption prAmountsOption,
+                                          AccountingPrinter::PrintPPUDescOption prPPUDescOption) const;
 
     /** Stampa righe libretto per attributo */
     void writeODTAttributeAccountingOnTable( QTextCursor *cursor,
@@ -380,8 +380,8 @@ protected:
     /** restituisce l'elenco delle categorie di lavorazione usati dal SAL firstPay al SAL lastPay */
     QList<AccountingLSBill *> usedLSBillsPayment(int firstPay, int lastPay) const;
 
-    void writeODTAccountingSummaryOnTable(QTextCursor *cursor,
-                                           int payToPrint,
+    void writeODTAccountingSummaryOnTable( QTextCursor *cursor,
+                                           int payToPrint, AccountingPrinter::PrintAmountsOption prAmountsOption,
                                            AccountingPrinter::PrintPPUDescOption prPPUDescOption,
                                            bool writeAccountingProgCode ) const;
 
