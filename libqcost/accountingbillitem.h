@@ -380,25 +380,22 @@ protected:
     /** restituisce l'elenco delle categorie di lavorazione usati dal SAL firstPay al SAL lastPay */
     QList<AccountingLSBill *> usedLSBillsPayment(int firstPay, int lastPay) const;
 
-    void writeODTAccountingSummaryOnTable( QTextCursor *cursor,
-                                           int payToPrint, AccountingPrinter::PrintAmountsOption prAmountsOption,
-                                           AccountingPrinter::PrintPPUDescOption prPPUDescOption,
-                                           bool writeAccountingProgCode ) const;
+    void writeODTSummaryOnTable( QTextCursor *cursor,
+                                 int payToPrint, AccountingPrinter::PrintAmountsOption prAmountsOption,
+                                 AccountingPrinter::PrintPPUDescOption prPPUDescOption,
+                                 bool writeAccountingProgCode ) const;
 
-    void writeODTSummaryLine( PriceItem * priceItem,
-                              QTextCursor *cursor,
-                              double * itemTotalQuantity,
-                              QList<double> * fieldsValue,
-                              bool printAmounts,
-                              bool writeDetails,
-                              QTextTable *table,
-                              QTextBlockFormat &tagBlockFormat,
-                              QTextBlockFormat & txtBlockFormat,
-                              QTextBlockFormat & numBlockFormat,
-                              QTextTableCellFormat & leftFormat,
-                              QTextTableCellFormat & centralFormat,
-                              QTextTableCellFormat & rightFormat ) const;
+    /** Metodo specifico per stampare le linee del sommario del registro di contabilità */
+    void writeODTAccountingSummaryLine(PriceItem *priceItem,
+                                        int * printedItems,
+                                        double *itemTotalQuantity,
+                                        bool printAmounts,
+                                        QTextCursor *cursor,
+                                        QTextTable *table,
+                                        QTextBlockFormat &tagBlockFormat, QTextBlockFormat &txtBlockFormat, QTextBlockFormat &numBlockFormat,
+                                        QTextTableCellFormat &leftFormat, QTextTableCellFormat &centralFormat, QTextTableCellFormat &rightFormat) const;
 
+    /** Metodo generico specifico per stampare le linee di un sommario */
     void writeODTSummaryLine( PriceItem * priceItem,
                               QTextCursor *cursor,
                               double * itemTotalQuantity,

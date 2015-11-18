@@ -15,7 +15,7 @@
     </UnitMeasureModel>
     <PriceLists>
         <PriceList id="0" name="Prezzario Misura" description="">
-            <PriceItemDataSet/>
+            <PriceItemDataSet overheads="0.13" profits="0.1"/>
             <PriceItem id="1" code="A001" inheritCodeFromParent="true" shortDescription="Denominazione 1" inheritShortDescFromParent="false" longDescription="Descrizione 1" inheritLongDescFromParent="false" unitMeasure="2">
                 <PriceItemDataSet value0="20" value1="3" value2="2.41" value3="17.59"/>
             </PriceItem>
@@ -37,7 +37,7 @@
                     <PriceItemDataSet value0="23.13" value1="23.13" value2="18.61" value3="4.52"/>
                 </PriceItem>
             </PriceItem>
-            <PriceItem id="9" code="01.A02.A30" inheritCodeFromParent="false" shortDescription="Demolizione di murature in calcestruzzo non armato, in qualunque pi..." inheritShortDescFromParent="false" longDescription="Demolizione di murature in calcestruzzo non armato, in qualunque piano di fabbricato, compresala discesa o la salita a terra dei materiali, losgombero dei detriti, computando i volumi prima della demolizione" inheritLongDescFromParent="false">
+            <PriceItem id="9" code="01.A02.A30" inheritCodeFromParent="false" shortDescription="Demolizione di murature in calcestruzzo non armato, in qualunque pi..." inheritShortDescFromParent="false" longDescription="Demolizione di murature in calcestruzzo non armato, in qualunque piano di fabbricato, compresa la discesa o la salita a terra dei materiali, lo sgombero dei detriti, computando i volumi prima della demolizione" inheritLongDescFromParent="false">
                 <PriceItem id="10" code="01.A02.A30.005" inheritCodeFromParent="false" shortDescription="Con carico e trasporto dei detriti alle discariche." inheritShortDescFromParent="true" longDescription="Con carico e trasporto dei detriti alle discariche." inheritLongDescFromParent="true" unitMeasure="0">
                     <PriceItemDataSet value0="174.04" value1="153.33" value2="123.35" value3="50.69"/>
                 </PriceItem>
@@ -49,7 +49,7 @@
             </PriceItem>
         </PriceList>
         <PriceList id="1" name="Prezzario Corpo" description="">
-            <PriceItemDataSet/>
+            <PriceItemDataSet overheads="0.13" profits="0.1"/>
             <PriceItem id="1" code="01.A02.A05" inheritCodeFromParent="false" shortDescription="Demolizione completa di fabbricati sino al piano di spiccato, valut..." inheritShortDescFromParent="false" longDescription="Demolizione completa di fabbricati sino al piano di spiccato, valutata a metro cubo vuoto per pieno compreso l'accatastamento entro l'area di cantiere del materiale di spoglio ed il carico ed il trasporto delle macerie alle discariche, esclusi eventuali corrispettivi per diritti di discarica" inheritLongDescFromParent="false">
                 <PriceItem id="2" code="01.A02.A05.020" inheritCodeFromParent="false" shortDescription="Con struttura portante in muratura e solai in legno, ferro, voltini..." inheritShortDescFromParent="true" longDescription="Con struttura portante in muratura e solai in legno, ferro, voltini o a volta" inheritLongDescFromParent="true" unitMeasure="0">
                     <PriceItemDataSet value0="11.14" value1="4.32" value2="3.48" value3="7.66"/>
