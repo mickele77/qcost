@@ -46,7 +46,7 @@ public:
         ui(new Ui::PriceItemGUI() ),
         EPAImportOptions(impOptions),
         EPAFileName(fileName){
-    };
+    }
     Project * project;
     PriceFieldModel * priceFieldModel;
     MathParser * parser;
