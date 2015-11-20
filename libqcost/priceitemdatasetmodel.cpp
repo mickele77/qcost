@@ -863,7 +863,7 @@ void PriceItemDataSetModel::setInheritOverheadsFromRoot(int priceDataSet, bool n
 
 double PriceItemDataSetModel::profits(int priceDataSet) const {
     if( priceDataSet >= 0 && priceDataSet < m_d->dataSetContainer.size() ){
-        if( m_d->dataSetContainer.at(priceDataSet)->inheritOverheadsFromRoot() ){
+        if( m_d->dataSetContainer.at(priceDataSet)->inheritProfitsFromRoot() ){
             return profitsFromRoot( priceDataSet, m_d->priceItem );
         } else {
             return m_d->dataSetContainer.at( priceDataSet )->profits();
@@ -918,7 +918,7 @@ void PriceItemDataSetModel::setProfitsFromRoot(int priceDataSet, double newVal )
     }
 
     for( int i=0; i < m_d->priceItem->childrenCount(); ++i ){
-        m_d->priceItem->childItem(i)->dataModel()->setOverheadsFromRoot( priceDataSet, newVal );
+        m_d->priceItem->childItem(i)->dataModel()->setProfitsFromRoot( priceDataSet, newVal );
     }
 }
 
