@@ -4,10 +4,20 @@ TARGET = odtcreator
 TEMPLATE = lib
 
 contains(DEFINES, BUILD_STATIC) {
-  CONFIG += staticlib
+    CONFIG += staticlib
+} else {
+    CONFIG += shared
 }
 
-LIBS += -lz
+contains(DEFINES, BUILD_MSVC){
+    INCLUDEPATH += $$ZLIB_INCLUDE
+} else {
+    LIBS += -lz
+}
+
+win32 {
+    DEFINES += BUILD_ODTCREATOR_LIB
+}
 
 SOURCES += \
     zip.cpp \

@@ -1,4 +1,4 @@
-/*
+﻿/*
    QCost is a cost estimating software.
    Copyright (C) 2013-2014 Mocciola Michele
 
@@ -33,7 +33,7 @@ double minus( double v ){
 }
 
 class MathParserPrivate{
-    Q_DECLARE_TR_FUNCTIONS()
+    Q_DECLARE_TR_FUNCTIONS( MathParserPrivate )
 public:
     MathParserPrivate( const QLocale & loc ):
         locale(loc),

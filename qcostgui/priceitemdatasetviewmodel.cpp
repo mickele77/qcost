@@ -271,7 +271,12 @@ QVariant PriceItemDataSetViewModel::headerData(int section, Qt::Orientation orie
                 if( section % 2 == 0 ){
                     return m_d->model->headerData( row, orientation, role );
                 } else {
-                    return QVariant( QString("Δ [%]") );
+#ifdef BUILD_MSVC
+#define UTF8_QSTRING(str) QString::fromWCharArray(L##str)
+#else
+#define UTF8_QSTRING(str) QString::fromUtf8(str)
+#endif
+                    return QVariant( UTF8_QSTRING("Δ") + " [%]" );
                 }
             } else {
                 row = m_d->model->lastValueRow() + (section - (2 * m_d->model->lastValueRow() + 1));

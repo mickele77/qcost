@@ -9,14 +9,23 @@ contains(DEFINES, BUILD_RELEASE) {
     INSTALLS += target
 }
 
-TEMPLATE = app
+contains(DEFINES, BUILD_MSVC){
+    LIBS += \
+        ../bin/qcost.lib \
+        ../bin/odtcreator.lib \
+        $$ZLIB_STATIC_LIB \
+        ../bin/mathparser.lib
+    INCLUDEPATH += $$ZLIB_INCLUDE
+} else {
+    LIBS += \
+        -L../bin \
+        -lqcost \
+        -lodtcreator \
+        -lmathparser \
+        -lz
+}
 
-LIBS += \
-    -L../bin \
-    -lqcost \
-    -lodtcreator \
-    -lmathparser \
-    -lz
+TEMPLATE = app
 
 DEPENDPATH += \
     ../libmatparser \
