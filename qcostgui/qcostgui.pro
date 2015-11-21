@@ -17,7 +17,7 @@ contains(DEFINES, BUILD_MSVC){
         ../bin/odtcreator.lib \
         $$ZLIB_STATIC_LIB \
         ../bin/mathparser.lib
-    INCLUDEPATH += c:/zlib
+    INCLUDEPATH += $$ZLIB_INCLUDE
 } else {
     LIBS += \
         -L../bin \
@@ -204,8 +204,3 @@ OTHER_FILES += \
     ../LICENSE \
     ../LICENSE.GPLv3 \
     ../README
-
-contains(DEFINES, BUILD_RELEASE) {
-    target.path = /usr/local/bin/
-    INSTALLS += target
-}

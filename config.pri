@@ -3,7 +3,7 @@ MOC_DIR = ../moc
 OBJECTS_DIR = ../obj
 UI_DIR = ../ui
 
-# uncomment
+# uncomment following line if building release version
 # DEFINES += BUILD_RELEASE
 
 win32 {
@@ -15,7 +15,11 @@ win32 {
         # These flags, if present, have no sens with MSVC compiler
         QMAKE_LFLAGS -= " -Wl,--no-undefined"
         # path to static zlib library (not included in Qt if using MSVC)
-        ZLIB_STATIC_LIB = c:/zlib/x64/zlibstat.lib
+        contains(QT_ARCH, i386) {
+            ZLIB_STATIC_LIB = c:/zlib/x86/zlibstat.lib
+        } else {
+            ZLIB_STATIC_LIB = c:/zlib/x64/zlibstat.lib
+        }
         # path to static zlib library (not included in Qt if using MSVC)
         ZLIB_INCLUDE = c:/zlib
     } else {

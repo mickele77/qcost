@@ -15,7 +15,7 @@ win32 {
 }
 
 contains(DEFINES, BUILD_MSVC){
-    INCLUDEPATH += "c:/zlib"
+    INCLUDEPATH += $$ZLIB_INCLUDE
 } else {
     LIBS += \
         -L../bin \
