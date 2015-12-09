@@ -382,7 +382,11 @@ PriceItem *BillItem::priceItem() {
 }
 
 double BillItem::quantity() const {
-    return m_d->quantity;
+    if( m_d->childrenContainer.size() > 0 ){
+        return 0.0;
+    } else {
+        return m_d->quantity;
+    }
 }
 
 QString BillItem::quantityStr() const {
@@ -392,7 +396,7 @@ QString BillItem::quantityStr() const {
             prec = m_d->priceItem->unitMeasure()->precision();
         }
     }
-    return m_d->toString( m_d->quantity, 'f', prec );
+    return m_d->toString( quantity(), 'f', prec );
 }
 
 double BillItem::amount( int field ) const{

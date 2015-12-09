@@ -411,7 +411,8 @@ protected:
 
     void writeODTAttributeBillLineSimple( AccountingPrinter::PrintAmountsOption prAmountsOption,
                                           AccountingPrinter::PrintPPUDescOption prPPUDescOption,
-                                          QList<double> * fieldsAmounts,
+                                          double * totalAmountToDiscountTotal,
+                                          double * amountNotToDiscountTotal,
                                           Attribute * attrsToPrint,
                                           QTextCursor *cursor,
                                           QTextTable *table,
@@ -425,9 +426,11 @@ protected:
                                           QTextTableCellFormat & rightQuantityTotalFormat,
                                           QTextCharFormat &txtCharFormat,
                                           QTextCharFormat &txtBoldCharFormat ) const;
+
     void writeODTAttributeBillLineIntersection( AccountingPrinter::PrintAmountsOption prAmountsOption,
                                                 AccountingPrinter::PrintPPUDescOption prPPUDescOption,
-                                                QList<double> * fieldsAmounts,
+                                                double * totalAmountToDiscountTotal,
+                                                double * amountNotToDiscountTotal,
                                                 const QList<Attribute *> &attrsToPrint,
                                                 QTextCursor *cursor,
                                                 QTextTable *table,
@@ -443,7 +446,8 @@ protected:
                                                 QTextCharFormat &txtBoldCharFormat ) const;
     void writeODTAttributeBillLineUnion( AccountingPrinter::PrintAmountsOption prAmountsOption,
                                          AccountingPrinter::PrintPPUDescOption prPPUDescOption,
-                                         QList<double> * fieldsAmounts,
+                                         double * totalAmountToDiscountTotal,
+                                         double * amountNotToDiscountTotal,
                                          const QList<Attribute *> &attrsToPrint,
                                          QTextCursor *cursor,
                                          QTextTable *table,
@@ -457,6 +461,7 @@ protected:
                                          QTextTableCellFormat & rightQuantityTotalFormat,
                                          QTextCharFormat &txtCharFormat,
                                          QTextCharFormat &txtBoldCharFormat) const;
+
     void writeODTBillLine( AccountingPrinter::PrintAmountsOption prAmountsOption,
                            AccountingPrinter::PrintPPUDescOption prItemsOption,
                            bool writeProgCode,
