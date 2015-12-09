@@ -1,6 +1,6 @@
 #include "measuresmodel.h"
 
-#include "billitemmeasure.h"
+#include "measure.h"
 #include "unitmeasure.h"
 #include "mathparser.h"
 
@@ -11,8 +11,9 @@
 
 class MeasuresModelPrivate{
 public:
-    MeasuresModelPrivate( MathParser * p, UnitMeasure * ump ):
+    MeasuresModelPrivate( BillItem * bItem, MathParser * p, UnitMeasure * ump ):
         parserWasCreated(false),
+        billItem(bItem),
         unitMeasure(ump),
         quantity( 0.0 ){
         if( p == NULL ){
@@ -21,23 +22,24 @@ public:
         } else {
             parser = p;
         }
-    };
+    }
     ~MeasuresModelPrivate(){
         if( parserWasCreated ){
             delete parser;
         }
     }
 
-    MathParser * parser;
     bool parserWasCreated;
+    BillItem * billItem;
+    MathParser * parser;
     UnitMeasure * unitMeasure;
-    QList<BillItemMeasure *> linesContainer;
+    QList<Measure *> linesContainer;
     double quantity;
 };
 
-MeasuresModel::MeasuresModel(MathParser * p, UnitMeasure * ump, QObject *parent) :
-    QAbstractTableModel(parent),
-    m_d(new MeasuresModelPrivate( p, ump )){
+MeasuresModel::MeasuresModel(BillItem * bItem, MathParser * p, UnitMeasure * ump) :
+    QAbstractTableModel(),
+    m_d(new MeasuresModelPrivate( bItem, p, ump )){
     insertRows(0);
 
     if( m_d->unitMeasure != NULL ){
@@ -171,8 +173,8 @@ bool MeasuresModel::insertRows(int row, int count, const QModelIndex &parent) {
     }
     beginInsertRows(QModelIndex(), row, row+count-1 );
     for(int i=0; i < count; ++i){
-        BillItemMeasure * itemLine = new BillItemMeasure( m_d->parser, m_d->unitMeasure );
-        connect( itemLine, &BillItemMeasure::quantityChanged, this, &MeasuresModel::updateQuantity );
+        Measure * itemLine = new Measure( m_d->billItem, m_d->parser, m_d->unitMeasure );
+        connect( itemLine, &Measure::quantityChanged, this, &MeasuresModel::updateQuantity );
         m_d->linesContainer.insert( row, itemLine );
     }
     endInsertRows();
@@ -217,7 +219,7 @@ bool MeasuresModel::append( int count ){
 
 void MeasuresModel::updateQuantity() {
     double ret = 0.0;
-    for( QList<BillItemMeasure *>::iterator i = m_d->linesContainer.begin(); i != m_d->linesContainer.end(); ++i ){
+    for( QList<Measure *>::iterator i = m_d->linesContainer.begin(); i != m_d->linesContainer.end(); ++i ){
         ret += (*i)->quantity();
     }
     if( ret != m_d->quantity ){
@@ -244,7 +246,7 @@ void MeasuresModel::setUnitMeasure(UnitMeasure *ump) {
             disconnect( m_d->unitMeasure, &UnitMeasure::precisionChanged, this, &MeasuresModel::updateAllQuantities );
         }
         m_d->unitMeasure = ump;
-        for( QList<BillItemMeasure *>::iterator i = m_d->linesContainer.begin(); i != m_d->linesContainer.end(); ++i ){
+        for( QList<Measure *>::iterator i = m_d->linesContainer.begin(); i != m_d->linesContainer.end(); ++i ){
             (*i)->setUnitMeasure( ump );
         }
         if( m_d->linesContainer.size() != 0 ){
@@ -261,13 +263,13 @@ void MeasuresModel::setUnitMeasure(UnitMeasure *ump) {
 
 void MeasuresModel::writeXml(QXmlStreamWriter *writer) {
     writer->writeStartElement( "MeasuresModel" );
-    for( QList<BillItemMeasure *>::iterator i = m_d->linesContainer.begin(); i != m_d->linesContainer.end(); ++i ){
+    for( QList<Measure *>::iterator i = m_d->linesContainer.begin(); i != m_d->linesContainer.end(); ++i ){
         (*i)->writeXml( writer );
     }
     writer->writeEndElement();
 }
 
-void MeasuresModel::readXml(QXmlStreamReader *reader) {
+void MeasuresModel::readXmlTmp(QXmlStreamReader *reader) {
     bool firstLine = true;
     while( !reader->atEnd() &&
            !reader->hasError() &&
@@ -275,24 +277,43 @@ void MeasuresModel::readXml(QXmlStreamReader *reader) {
         reader->readNext();
         if( reader->name().toString().toUpper() == "MEASURE" && reader->isStartElement()) {
             if( firstLine ){
-                m_d->linesContainer.last()->loadFromXml( reader->attributes() );
+                m_d->linesContainer.last()->loadXmlTmp( reader->attributes() );
                 firstLine = false;
             } else {
                 if(append()){
-                    m_d->linesContainer.last()->loadFromXml( reader->attributes() );
+                    m_d->linesContainer.last()->loadXmlTmp( reader->attributes() );
                 }
             }
         }
     }
 }
 
-int MeasuresModel::billItemMeasureCount() {
+void MeasuresModel::readFromXmlTmp() {
+    for( QList<Measure *>::iterator i = m_d->linesContainer.begin(); i != m_d->linesContainer.end(); ++i ){
+        (*i)->loadFromXmlTmp();
+    }
+}
+
+int MeasuresModel::measuresCount() {
     return m_d->linesContainer.size();
 }
 
-BillItemMeasure * MeasuresModel::measure(int i) {
+Measure * MeasuresModel::measure(int i) {
     if( i >= 0 && i < m_d->linesContainer.size() ){
         return m_d->linesContainer.at(i);
     }
     return NULL;
+}
+
+QList<BillItem *> MeasuresModel::connectedBillItems() {
+    QList<BillItem *> ret;
+    for( QList<Measure *>::iterator i = m_d->linesContainer.begin(); i != m_d->linesContainer.end(); ++i ){
+        QList<BillItem *> connItems = (*i)->connectedBillItems();
+        for( QList<BillItem *>::iterator j = connItems.begin(); j != connItems.end(); ++j ){
+            if( !(ret.contains(*j)) ){
+                ret.append( *j );
+            }
+        }
+    }
+    return ret;
 }

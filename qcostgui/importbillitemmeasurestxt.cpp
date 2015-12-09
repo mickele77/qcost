@@ -2,7 +2,7 @@
 #include "ui_importbillitemmeasurestxt.h"
 
 #include "measuresmodel.h"
-#include "billitemmeasure.h"
+#include "measure.h"
 #include "mathparser.h"
 
 #include <QTextStream>

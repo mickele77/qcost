@@ -118,7 +118,7 @@ void AccountingTAMBillItem::readXml( QXmlStreamReader *reader, PriceList * price
             }
         }  else if( m_d->itemType == PPU ){
             if( reader->name().toString().toUpper() == "MEASURESMODEL" && reader->isStartElement() ) {
-                generateMeasuresModel()->readXml( reader );
+                generateMeasuresModel()->readXmlTmp( reader );
             }
         }
         reader->readNext();

@@ -23,7 +23,7 @@
 #include "pricelist.h"
 #include "priceitem.h"
 #include "measuresmodel.h"
-#include "billitemmeasure.h"
+#include "measure.h"
 #include "attributemodel.h"
 #include "attribute.h"
 #include "pricefieldmodel.h"
@@ -330,6 +330,28 @@ BillItem *BillItem::findBillItemId( unsigned int itemId ) {
     return NULL;
 }
 
+BillItem *BillItem::billItemProgCode( const QString & pCode) {
+    if( pCode == progressiveCode() ){
+        return this;
+    } else {
+        for( QList<BillItem *>::iterator i = m_d->childrenContainer.begin(); i != m_d->childrenContainer.end(); ++i ){
+            BillItem * childItems = (*i)->billItemProgCode(pCode);
+            if( childItems != NULL ) {
+                return childItems;
+            }
+        }
+    }
+    return NULL;
+}
+
+BillItem *BillItem::findBillItemProgCode( const QString & pCode ) {
+    if( m_d->parentItem == NULL ){
+        return billItemProgCode(pCode);
+    } else {
+        return m_d->parentItem->findBillItemProgCode(pCode);
+    }
+    return NULL;
+}
 
 BillItem *BillItem::childItem(int number) {
     return dynamic_cast<BillItem *>(child( number ));
@@ -827,7 +849,7 @@ MeasuresModel *BillItem::generateMeasuresModel() {
         if( m_d->priceItem != NULL ){
             ump = m_d->priceItem->unitMeasure();
         }
-        m_d->measuresModel = new MeasuresModel( m_d->parser, ump );
+        m_d->measuresModel = new MeasuresModel( this, m_d->parser, ump );
         setQuantity( m_d->measuresModel->quantity() );
         connect( m_d->measuresModel, &MeasuresModel::quantityChanged, this, &BillItem::setQuantityPrivate );
         connect( m_d->measuresModel, &MeasuresModel::modelChanged, this, &BillItem::itemChanged );
@@ -843,6 +865,24 @@ void BillItem::removeMeasuresModel() {
         delete m_d->measuresModel;
         m_d->measuresModel = NULL;
         updateAmounts();
+    }
+}
+
+void BillItem::appendConnectedBillItems(QList<BillItem *> *itemsList) {
+    // aggiunge l'item corrente e tutti i suoi figli, se non presenti
+    if( !(itemsList->contains(this)) ){
+        itemsList->append(this);
+        for( QList<BillItem *>::iterator i = m_d->childrenContainer.begin(); i != m_d->childrenContainer.end(); ++i ){
+            (*i)->appendConnectedBillItems(itemsList);
+        }
+    }
+
+    // aggiunge tutti gli item connessi tramite le misure, se non presenti
+    QList<BillItem *> connItems = m_d->measuresModel->connectedBillItems();
+    for( QList<BillItem *>::iterator i = connItems.begin(); i != connItems.end(); ++i ){
+        if( !(itemsList->contains(*i)) ){
+            (*i)->appendConnectedBillItems(itemsList);
+        }
     }
 }
 
@@ -910,32 +950,11 @@ void BillItem::writeXml(QXmlStreamWriter *writer) {
     }
 }
 
-void BillItem::readXml(QXmlStreamReader *reader, PriceList * priceList, AttributeModel * billAttrModel ) {
-    if( m_d->parentItem != NULL ){
-        if(reader->isStartElement() && reader->name().toString().toUpper() == "BILLITEM"){
-            loadFromXml( reader->attributes(), priceList, billAttrModel );
-        }
-        reader->readNext();
-    }
-    while( (!reader->atEnd()) &&
-           (!reader->hasError()) &&
-           !(reader->isEndElement() && reader->name().toString().toUpper() == "BILLITEM")&&
-           !(reader->isEndElement() && reader->name().toString().toUpper() == "BILL")  ){
-        if( reader->name().toString().toUpper() == "BILLITEM" && reader->isStartElement()) {
-            appendChildren();
-            m_d->childrenContainer.last()->readXml( reader, priceList, billAttrModel );
-        }
-        if( reader->name().toString().toUpper() == "MEASURESMODEL" && reader->isStartElement() ) {
-            generateMeasuresModel()->readXml( reader );
-        }
-        reader->readNext();
-    }
-}
-
 void BillItem::readXmlTmp(QXmlStreamReader *reader) {
     if( m_d->parentItem != NULL ){
         if(reader->isStartElement() && reader->name().toString().toUpper() == "BILLITEM"){
-            loadFromXmlTmp( reader->attributes() );
+            m_d->tmpAttributes.clear();
+            m_d->tmpAttributes = reader->attributes();
         }
         reader->readNext();
     }
@@ -948,13 +967,13 @@ void BillItem::readXmlTmp(QXmlStreamReader *reader) {
             m_d->childrenContainer.last()->readXmlTmp( reader );
         }
         if( reader->name().toString().toUpper() == "MEASURESMODEL" && reader->isStartElement() ) {
-            generateMeasuresModel()->readXml( reader );
+            generateMeasuresModel()->readXmlTmp( reader );
         }
         reader->readNext();
     }
 }
 
-void BillItem::loadFromXml(const QXmlStreamAttributes &attrs, PriceList * priceList, AttributeModel * billAttrModel) {
+void BillItem::loadXml(const QXmlStreamAttributes &attrs, PriceList * priceList, AttributeModel * billAttrModel) {
     if( attrs.hasAttribute( "id" ) ){
         m_d->id = attrs.value( "id").toUInt();
     }
@@ -985,18 +1004,16 @@ void BillItem::loadFromXml(const QXmlStreamAttributes &attrs, PriceList * priceL
     }
 }
 
-void BillItem::loadFromXmlTmp(const QXmlStreamAttributes &attrs) {
-    m_d->tmpAttributes.clear();
-    m_d->tmpAttributes = attrs;
-}
-
-void BillItem::loadTmpData( PriceList *priceList, AttributeModel * billAttrModel) {
+void BillItem::readFromXmlTmp( PriceList *priceList, AttributeModel * billAttrModel) {
     if( !m_d->tmpAttributes.isEmpty() ){
-        loadFromXml(m_d->tmpAttributes, priceList, billAttrModel );
+        loadXml(m_d->tmpAttributes, priceList, billAttrModel );
         m_d->tmpAttributes.clear();
+        if( m_d->measuresModel != NULL ){
+            m_d->measuresModel->readFromXmlTmp();
+        }
     }
     for( QList<BillItem *>::iterator i = m_d->childrenContainer.begin(); i != m_d->childrenContainer.end(); ++i ){
-        (*i)->loadTmpData( priceList, billAttrModel );
+        (*i)->readFromXmlTmp( priceList, billAttrModel );
     }
 }
 
@@ -2363,8 +2380,8 @@ void BillItem::writeODTBillLine( BillPrinter::PrintBillItemsOption prItemsOption
             }
         }
 
-        for( int i=0; i < m_d->measuresModel->billItemMeasureCount(); ++i ){
-            BillItemMeasure * measure = m_d->measuresModel->measure(i);
+        for( int i=0; i < m_d->measuresModel->measuresCount(); ++i ){
+            Measure * measure = m_d->measuresModel->measure(i);
 
             // formula senza spazi bianchi
             QString realFormula;

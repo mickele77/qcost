@@ -528,9 +528,10 @@ void Bill::readXml(QXmlStreamReader *reader, ProjectPriceListParentItem *priceLi
             m_d->attributeModel->readXml( reader );
         }
         if( tag == "BILLITEM" && reader->isStartElement()) {
-            m_d->rootItem->readXml( reader, m_d->priceList, m_d->attributeModel );
+            m_d->rootItem->readXmlTmp( reader );
         }
     }
+    m_d->rootItem->readFromXmlTmp( m_d->priceList, m_d->attributeModel );
 }
 
 void Bill::readXmlTmp(QXmlStreamReader *reader ) {
@@ -624,7 +625,7 @@ void Bill::writeODTSummaryOnTable(QTextCursor *cursor,
 
 void Bill::loadTmpData(ProjectPriceListParentItem * priceLists) {
     m_d->priceList = priceLists->priceListId( m_d->priceListIdTmp );
-    m_d->rootItem->loadTmpData( m_d->priceList, m_d->attributeModel );
+    m_d->rootItem->readFromXmlTmp( m_d->priceList, m_d->attributeModel );
 }
 
 void Bill::insertStandardAttributes(){

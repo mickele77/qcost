@@ -31,7 +31,7 @@
 #include "pricelist.h"
 #include "priceitem.h"
 #include "measuresmodel.h"
-#include "billitemmeasure.h"
+#include "measure.h"
 #include "attributemodel.h"
 #include "attribute.h"
 #include "pricefieldmodel.h"
@@ -1485,7 +1485,7 @@ void AccountingBillItem::readXml( QXmlStreamReader *reader, PriceList * priceLis
             }
         }  else if( m_d->itemType == PPU ){
             if( reader->name().toString().toUpper() == "MEASURESMODEL" && reader->isStartElement() ) {
-                generateMeasuresModel()->readXml( reader );
+                generateMeasuresModel()->readXmlTmp( reader );
             }
         }
         reader->readNext();
@@ -1515,7 +1515,7 @@ void AccountingBillItem::readXmlTmp(QXmlStreamReader *reader) {
         } else if( (reader->name().toString().toUpper() == "MEASURESMODEL") &&
                    reader->isStartElement() &&
                    m_d->itemType == PPU ){
-            generateMeasuresModel()->readXml( reader );
+            generateMeasuresModel()->readXmlTmp( reader );
         }
         reader->readNext();
     }
@@ -2247,7 +2247,7 @@ MeasuresModel *AccountingBillItem::generateMeasuresModel() {
         if( m_d->priceItem != NULL ){
             ump = m_d->priceItem->unitMeasure();
         }
-        m_d->measuresModel = new MeasuresModel( m_d->parser, ump );
+        m_d->measuresModel = new MeasuresModel( NULL, m_d->parser, ump );
         setQuantity( m_d->measuresModel->quantity() );
         connect( m_d->measuresModel, &MeasuresModel::quantityChanged, this, &AccountingBillItem::setQuantityPrivate );
         connect( m_d->measuresModel, &MeasuresModel::modelChanged, this, &AccountingBillItem::itemChanged );
@@ -4302,8 +4302,8 @@ void AccountingBillItem::writeODTBillLine(AccountingPrinter::PrintAmountsOption 
                 }
             }
 
-            for( int i=0; i < m_d->measuresModel->billItemMeasureCount(); ++i ){
-                BillItemMeasure * measure = m_d->measuresModel->measure(i);
+            for( int i=0; i < m_d->measuresModel->measuresCount(); ++i ){
+                Measure * measure = m_d->measuresModel->measure(i);
 
                 // formula senza spazi bianchi
                 QString realFormula;

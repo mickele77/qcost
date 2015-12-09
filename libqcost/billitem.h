@@ -60,6 +60,12 @@ public:
     BillItem * parent();
     /** ricerca tra gli oggetti figlio uno con id pari a itemId */
     BillItem * billItemId(unsigned int itemId);
+    /** Ricerca all'interno del computo un BillItem con id pari a itemId */
+    BillItem *findBillItemId(unsigned int itemId);
+    /** ricerca tra gli oggetti figlio uno con progCode pari a pCode */
+    BillItem * billItemProgCode(const QString &pCode);
+    /** Ricerca all'interno del computo un BillItem con progCode pari a pCode */
+    BillItem *findBillItemProgCode(const QString & pCode);
     BillItem * childItem(int number);
     bool isDescending( BillItem * ancestor );
     void setParent(BillItem *newParent, int position);
@@ -102,13 +108,11 @@ public:
     MeasuresModel * measuresModel();
     MeasuresModel * generateMeasuresModel();
     void removeMeasuresModel();
+    void appendConnectedBillItems( QList<BillItem *> * itemsList );
 
     void writeXml( QXmlStreamWriter * writer );
-    void readXml(QXmlStreamReader *reader, PriceList *priceList, AttributeModel * billAttrModel);
     void readXmlTmp(QXmlStreamReader *reader);
-    void loadFromXml(const QXmlStreamAttributes &attrs, PriceList *priceList, AttributeModel * billAttrModel);
-    void loadFromXmlTmp(const QXmlStreamAttributes &attrs);
-    void loadTmpData(PriceList *priceList , AttributeModel *billAttrModel);
+    void readFromXmlTmp(PriceList *priceList , AttributeModel *billAttrModel);
 
     bool containsAttribute( Attribute * attr );
     bool containsAttributeInherited( Attribute * attr );
@@ -164,9 +168,6 @@ signals:
 private:
     BillItemPrivate * m_d;
 
-    /** Ricerca all'interno del computo un BillItem con id pari a itemId */
-    BillItem *findBillItemId(unsigned int itemId);
-
     void setId( unsigned int ii );
 
     void setHasChildrenChanged(BillItem * p , QList<int> indexes);
@@ -179,6 +180,8 @@ private:
     void updateAmount(int pf);
 
     void appendUsedPriceItems( QList<PriceItem *> * usedPriceItems ) const;
+
+    void loadXml(const QXmlStreamAttributes &attrs, PriceList *priceList, AttributeModel * billAttrModel);
 
     void writeODTSummaryLine(PriceItem * priceItem,
                              QTextCursor *cursor,
@@ -193,6 +196,7 @@ private:
                              QTextTableCellFormat & leftFormat,
                              QTextTableCellFormat & centralFormat,
                              QTextTableCellFormat & rightFormat);
+
     void writeODTAttributeBillLineSimple( BillPrinter::PrintBillItemsOption prItemsOption,
                                           QList<double> * fieldsAmounts,
                                           const QList<int> &fieldsToPrint,

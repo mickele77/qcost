@@ -47,7 +47,6 @@ SOURCES += \
     unitmeasure.cpp \
     billitem.cpp \
     priceitem.cpp \
-    billitemmeasure.cpp \
     unitmeasuremodel.cpp \
     pricefieldmodel.cpp \
     pricelistprinter.cpp \
@@ -70,7 +69,8 @@ SOURCES += \
     accountinglsitemmeasure.cpp \
     measureslsmodel.cpp \
     paymentdata.cpp \
-    paymentdatamodel.cpp
+    paymentdatamodel.cpp \
+    measure.cpp
 
 HEADERS  += \
     projectpricelistparentitem.h \
@@ -85,7 +85,6 @@ HEADERS  += \
     treeitem.h \
     billitem.h \
     priceitem.h \
-    billitemmeasure.h \
     unitmeasuremodel.h \
     pricefieldmodel.h \
     pricelistprinter.h \
@@ -109,4 +108,5 @@ HEADERS  += \
     measureslsmodel.h \
     paymentdata.h \
     qcost_export.h \
-    paymentdatamodel.h
+    paymentdatamodel.h \
+    measure.h
