@@ -243,7 +243,7 @@ void ProjectAccountingParentItem::readXml(QXmlStreamReader *reader, ProjectPrice
         QString nodeName = reader->name().toString().toUpper();
         nodeName = reader->name().toString().toUpper();
         if( nodeName == "ACCOUNTINGBILL" && reader->isStartElement()) {
-            m_d->measuresBill->readXml( reader, priceLists );
+            m_d->measuresBill->readXml( reader, priceLists, m_d->lumpSumBills, m_d->timeAndMaterialBill );
         }
         if( nodeName == "ACCOUNTINGLSBILLS" && reader->isStartElement()) {
             m_d->lumpSumBills->readXml( reader, priceLists );
@@ -252,6 +252,4 @@ void ProjectAccountingParentItem::readXml(QXmlStreamReader *reader, ProjectPrice
             m_d->timeAndMaterialBill->readXml( reader, priceLists );
         }
     }
-    m_d->timeAndMaterialBill->loadTmpData( priceLists );
-    m_d->measuresBill->loadTmpData( priceLists, m_d->lumpSumBills, m_d->timeAndMaterialBill );
 }

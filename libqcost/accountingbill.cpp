@@ -65,6 +65,7 @@ public:
     QString name;
     QString description;
 
+    QXmlStreamAttributes tmpAttributes;
     PriceFieldModel * priceFieldModel;
     MathParser * parser;
     AccountingBillItem * rootItem;
@@ -366,7 +367,7 @@ AccountingBillItem *AccountingBill::lastItem(const QModelIndex &parentIndex) {
 }
 
 AccountingBillItem *AccountingBill::itemId(unsigned int itemId) {
-    return m_d->rootItem->itemId( itemId );
+    return m_d->rootItem->itemFromId( itemId );
 }
 
 QVariant AccountingBill::data(const QModelIndex &index, int role) const {
@@ -662,9 +663,13 @@ void AccountingBill::writeXml(QXmlStreamWriter *writer) {
     writer->writeEndElement();
 }
 
-void AccountingBill::readXml(QXmlStreamReader *reader, ProjectPriceListParentItem *priceLists) {
+void AccountingBill::readXml(QXmlStreamReader *reader,
+                             ProjectPriceListParentItem * priceLists,
+                             AccountingLSBills * lsBills,
+                             AccountingTAMBill * tamBill ) {
     if(reader->isStartElement() && reader->name().toString().toUpper() == "ACCOUNTINGBILL"){
-        loadFromXml( reader->attributes(), priceLists );
+        m_d->tmpAttributes.clear();
+        m_d->tmpAttributes = reader->attributes();
     }
     while( (!reader->atEnd()) &&
            (!reader->hasError()) &&
@@ -675,14 +680,16 @@ void AccountingBill::readXml(QXmlStreamReader *reader, ProjectPriceListParentIte
             m_d->attributeModel->readXml( reader );
         }
         if( tag == "ACCOUNTINGBILLITEM" && reader->isStartElement()) {
-            m_d->rootItem->readXml( reader, m_d->priceList, m_d->attributeModel );
+            m_d->rootItem->readXmlTmp( reader );
         }
     }
+    loadXml( m_d->tmpAttributes, priceLists );
+    m_d->rootItem->readFromXmlTmp( lsBills, tamBill, m_d->priceList, m_d->attributeModel );
     m_d->rootItem->updateAccountingProgCode();
     m_d->rootItem->updateProgCode();
 }
 
-void AccountingBill::loadFromXml(const QXmlStreamAttributes &attrs, ProjectPriceListParentItem * priceLists) {
+void AccountingBill::loadXml( const QXmlStreamAttributes &attrs, ProjectPriceListParentItem * priceLists ) {
     for( QXmlStreamAttributes::const_iterator i=attrs.begin(); i != attrs.end(); ++i ){
         QString tagUp = (*i).name().toString().toUpper();
         if( tagUp == "DESCRIPTION" ){
@@ -720,21 +727,6 @@ void AccountingBill::loadFromXml(const QXmlStreamAttributes &attrs, ProjectPrice
                 }
             }
             m_d->rootItem->setNoDiscountAmountPriceFields( pFields );
-        }
-    }
-}
-
-void AccountingBill::loadFromXmlTmp(const QXmlStreamAttributes &attrs) {
-    for( QXmlStreamAttributes::const_iterator i=attrs.begin(); i != attrs.end(); ++i ){
-        QString nameUp = (*i).name().toString().toUpper();
-        if( nameUp == "DESCRIPTION" ){
-            setDescription( (*i).value().toString() );
-        }
-        if( nameUp == "PRICELIST" ){
-            m_d->priceListIdTmp = (*i).value().toUInt();
-        }
-        if( nameUp == "PRICEDATASET" ){
-            m_d->rootItem->setCurrentPriceDataSet( (*i).value().toInt() );
         }
     }
 }
@@ -780,10 +772,6 @@ void AccountingBill::writeODTAccountingSummaryOnTable( QTextCursor *cursor,
                                                        AccountingPrinter::PrintAmountsOption prAmountsOption,
                                                        AccountingPrinter::PrintPPUDescOption prItemsOption ) const {
     m_d->rootItem->writeODTAccountingSummaryOnTable( cursor, payToPrint, prAmountsOption, prItemsOption );
-}
-void AccountingBill::loadTmpData(ProjectPriceListParentItem * priceLists, AccountingLSBills * lsBills, AccountingTAMBill * tamBill ) {
-    m_d->priceList = priceLists->priceListId( m_d->priceListIdTmp );
-    m_d->rootItem->loadTmpData( lsBills, tamBill, m_d->priceList, m_d->attributeModel );
 }
 
 void AccountingBill::insertStandardAttributes(){

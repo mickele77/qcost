@@ -59,15 +59,18 @@ public:
 
     BillItem * parent();
     /** ricerca tra gli oggetti figlio uno con id pari a itemId */
-    BillItem * billItemId(unsigned int itemId);
+    BillItem * itemFromId(unsigned int itemId);
     /** Ricerca all'interno del computo un BillItem con id pari a itemId */
-    BillItem *findBillItemId(unsigned int itemId);
+    BillItem *findItemFromId(unsigned int itemId);
     /** ricerca tra gli oggetti figlio uno con progCode pari a pCode */
-    BillItem * billItemProgCode(const QString &pCode);
+    BillItem * itemFromProgCode(const QString &pCode);
     /** Ricerca all'interno del computo un BillItem con progCode pari a pCode */
-    BillItem *findBillItemProgCode(const QString & pCode);
+    BillItem *findItemFromProgCode(const QString & pCode);
+    /** Restituisce elemento l'elemento figlio numero number */
     BillItem * childItem(int number);
+    /** Ci dice se l'elemento discende dall'elemento ancestor */
     bool isDescending( BillItem * ancestor );
+    /** Imposta il genitore dell'oggetto a newParent */
     void setParent(BillItem *newParent, int position);
 
     unsigned int id();

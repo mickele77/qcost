@@ -96,8 +96,7 @@ public:
 
     void writeXml( QXmlStreamWriter * writer );
     void readXml(QXmlStreamReader *reader, UnitMeasureModel *uml);
-    void loadFromXml(const QXmlStreamAttributes &attrs);
-    void loadTmpData(ProjectPriceListParentItem *priceLists);
+    void readFromXmlTmp(ProjectPriceListParentItem *priceLists);
 
     void nextId();
     unsigned int id();
@@ -131,6 +130,7 @@ private slots:
 private:
     PriceListPrivate * m_d;
 
+    void loadFromXml(const QXmlStreamAttributes &attrs);
     bool removePriceItems(int position = -1, int rows = 1, const QModelIndex &parent = QModelIndex() );
 };
 

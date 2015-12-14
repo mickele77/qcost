@@ -183,7 +183,7 @@ void ProjectPriceListParentItem::readXml(QXmlStreamReader *reader, UnitMeasureMo
         }
     }
     for( QList<PriceList*>::iterator i = m_d->priceListContainer.begin(); i != m_d->priceListContainer.end(); ++i ){
-        (*i)->loadTmpData( this );
+        (*i)->readFromXmlTmp( this );
     }
 }
 

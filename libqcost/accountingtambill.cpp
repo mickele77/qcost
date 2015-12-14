@@ -365,7 +365,7 @@ AccountingTAMBillItem *AccountingTAMBill::lastAccountingMeasure(const QModelInde
 }
 
 AccountingTAMBillItem *AccountingTAMBill::itemId(unsigned int itemId) {
-    return dynamic_cast<AccountingTAMBillItem *>(m_d->rootItem->itemId( itemId ));
+    return dynamic_cast<AccountingTAMBillItem *>(m_d->rootItem->itemFromId( itemId ));
 }
 
 QVariant AccountingTAMBill::data(const QModelIndex &index, int role) const {
@@ -651,25 +651,12 @@ void AccountingTAMBill::readXml(QXmlStreamReader *reader, ProjectPriceListParent
             m_d->attributeModel->readXml( reader );
         }
         if( tag == "ACCOUNTINGBILLITEM" && reader->isStartElement()) {
-            m_d->rootItem->readXml( reader, m_d->priceList, m_d->attributeModel );
-        }
-    }
-    m_d->rootItem->updateProgCode();
-    m_d->rootItem->updateAccountingProgCode();
-}
-
-void AccountingTAMBill::readXmlTmp(QXmlStreamReader *reader ) {
-    if(reader->isStartElement() && reader->name().toString().toUpper() == "ACCOUNTINGTAMBILL"){
-        loadFromXmlTmp( reader->attributes() );
-    }
-    while( (!reader->atEnd()) &&
-           (!reader->hasError()) &&
-           !(reader->isEndElement() && reader->name().toString().toUpper() == "ACCOUNTINGTAMBILL") ){
-        reader->readNext();
-        if( reader->name().toString().toUpper() == "ACCOUNTINGBILLITEM" && reader->isStartElement()) {
             m_d->rootItem->readXmlTmp( reader );
         }
     }
+    m_d->rootItem->readFromXmlTmp( NULL, NULL, m_d->priceList, m_d->attributeModel );
+    m_d->rootItem->updateProgCode();
+    m_d->rootItem->updateAccountingProgCode();
 }
 
 void AccountingTAMBill::loadFromXml(const QXmlStreamAttributes &attrs, ProjectPriceListParentItem * priceLists) {
@@ -747,10 +734,6 @@ void AccountingTAMBill::loadFromXmlTmp(const QXmlStreamAttributes &attrs) {
     }
 }
 
-void AccountingTAMBill::setTmpData( ProjectPriceListParentItem * priceLists ) {
-    m_d->priceList = priceLists->priceListId( m_d->priceListIdTmp );
-}
-
 QList<PriceItem *> AccountingTAMBill::connectedPriceItems() {
     return m_d->rootItem->connectedPriceItems();
 }
@@ -777,9 +760,9 @@ void AccountingTAMBill::writeODTAttributeAccountingOnTable(QTextCursor *cursor,
     m_d->rootItem->writeODTAttributeAccountingOnTable( cursor, prOption, printAmountsOption, prItemsOption, attrsToPrint );
 }
 
-void AccountingTAMBill::loadTmpData(ProjectPriceListParentItem * priceLists) {
+void AccountingTAMBill::readFromXmlTmp( ProjectPriceListParentItem * priceLists ) {
     m_d->priceList = priceLists->priceListId( m_d->priceListIdTmp );
-    m_d->rootItem->loadTmpData( NULL, NULL, m_d->priceList, m_d->attributeModel );
+    m_d->rootItem->readFromXmlTmp( NULL, NULL, m_d->priceList, m_d->attributeModel );
 }
 
 void AccountingTAMBill::insertStandardAttributes(){

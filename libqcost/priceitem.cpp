@@ -999,13 +999,13 @@ void PriceItem::loadFromXml(const QXmlStreamAttributes &attrs, UnitMeasureModel 
     }
 }
 
-void PriceItem::loadTmpData( ProjectPriceListParentItem * priceLists ) {
+void PriceItem::readFromXmlTmp( ProjectPriceListParentItem * priceLists ) {
     if( hasChildren() ){
         for( QList<PriceItem *>::iterator i = m_d->childrenContainer.begin(); i != m_d->childrenContainer.end(); ++i){
-            (*i)->loadTmpData( priceLists );
+            (*i)->readFromXmlTmp( priceLists );
         }
     } else if(m_d->parentItem != NULL ){
-        m_d->dataModel->loadTmpData( priceLists );
+        m_d->dataModel->readFromXmlTmp( priceLists );
     }
 }
 

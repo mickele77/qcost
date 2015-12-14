@@ -86,7 +86,7 @@ public:
 
     void writeXml( QXmlStreamWriter * writer );
     void loadXmlPriceDataSet(int priceDataSet, const QXmlStreamAttributes &attrs);
-    void loadTmpData( ProjectPriceListParentItem *priceLists );
+    void readFromXmlTmp( ProjectPriceListParentItem *priceLists );
 
     int priceDataSetCount() const ;
     int lastValueRow() const;

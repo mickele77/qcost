@@ -416,6 +416,6 @@ void PriceList::loadFromXml(const QXmlStreamAttributes &attrs ) {
     }
 }
 
-void PriceList::loadTmpData( ProjectPriceListParentItem * priceLists ) {
-    m_d->rootItem->loadTmpData( priceLists );
+void PriceList::readFromXmlTmp( ProjectPriceListParentItem * priceLists ) {
+    m_d->rootItem->readFromXmlTmp( priceLists );
 }

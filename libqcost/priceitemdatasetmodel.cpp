@@ -967,10 +967,10 @@ void PriceItemDataSetModel::loadXmlPriceDataSet( int priceDataSet, const QXmlStr
     }
 }
 
-void PriceItemDataSetModel::loadTmpData( ProjectPriceListParentItem *priceLists ) {
+void PriceItemDataSetModel::readFromXmlTmp( ProjectPriceListParentItem *priceLists ) {
     for( QList<PriceItemDataSet *>::iterator i = m_d->dataSetContainer.begin(); i != m_d->dataSetContainer.end(); ++i){
         if( (*i)->associateAP ){
-            (*i)->associatedAP->loadTmpData( priceLists );
+            (*i)->associatedAP->readFromXmlTmp( priceLists );
         }
     }
 }

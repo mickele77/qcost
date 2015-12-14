@@ -146,7 +146,7 @@ public:
     void writeXml( QXmlStreamWriter * writer );
     void readXml(QXmlStreamReader *reader, UnitMeasureModel *uml);
     void loadFromXml(const QXmlStreamAttributes &attrs, UnitMeasureModel *uml);
-    void loadTmpData(ProjectPriceListParentItem *priceLists);
+    void readFromXmlTmp(ProjectPriceListParentItem *priceLists);
 
     void writeODTOnTable(QTextCursor * cursor, PriceListPrinter::PrintPriceItemsOption printOption, const QList<int> fieldsToPrint, int priceDataSetToPrint = 0);
 

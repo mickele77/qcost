@@ -3,6 +3,7 @@
 
 #include "qcost_export.h"
 
+class AccountingBillItem;
 class BillItem;
 class UnitMeasure;
 class MathParser;
@@ -18,14 +19,15 @@ class EXPORT_QCOST_LIB_OPT Measure : public QObject {
     Q_OBJECT
 public:
     explicit Measure( BillItem * bItem = NULL, MathParser *p = NULL, UnitMeasure * ump = NULL );
+    explicit Measure( AccountingBillItem * accBItem = NULL, MathParser *p = NULL, UnitMeasure * ump = NULL );
     ~Measure();
 
     Measure &operator =(const Measure &cp);
 
-    QString comment();
-    QString formula();
-    double quantity();
-    QString quantityStr();
+    QString comment() const;
+    QString formula() const;
+    double quantity() const;
+    QString quantityStr() const;
 
     /** Imposta il valore della formula
      * @param connItemFromId se vero i valori tra parentesi [] sono gli id degli item connessi,
@@ -39,7 +41,7 @@ public:
     void loadXmlTmp(const QXmlStreamAttributes &attrs);
 
     QList<BillItem *> connectedBillItems();
-
+    QList<AccountingBillItem *> connectedAccBillItems();
 signals:
     void quantityChanged( double );
 

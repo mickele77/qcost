@@ -307,12 +307,12 @@ void BillItem::removeChild( int position ) {
     m_d->childrenContainer.removeAt( position );
 }
 
-BillItem *BillItem::billItemId( unsigned int itemId ) {
+BillItem *BillItem::itemFromId( unsigned int itemId ) {
     if( itemId == m_d->id ){
         return this;
     } else {
         for( QList<BillItem *>::iterator i = m_d->childrenContainer.begin(); i != m_d->childrenContainer.end(); ++i ){
-            BillItem * childItems = (*i)->billItemId(itemId);
+            BillItem * childItems = (*i)->itemFromId(itemId);
             if( childItems != NULL ) {
                 return childItems;
             }
@@ -321,21 +321,21 @@ BillItem *BillItem::billItemId( unsigned int itemId ) {
     return NULL;
 }
 
-BillItem *BillItem::findBillItemId( unsigned int itemId ) {
+BillItem *BillItem::findItemFromId( unsigned int itemId ) {
     if( m_d->parentItem == NULL ){
-        return billItemId(itemId );
+        return itemFromId(itemId );
     } else {
-        return m_d->parentItem->findBillItemId(itemId);
+        return m_d->parentItem->findItemFromId(itemId);
     }
     return NULL;
 }
 
-BillItem *BillItem::billItemProgCode( const QString & pCode) {
+BillItem *BillItem::itemFromProgCode( const QString & pCode) {
     if( pCode == progressiveCode() ){
         return this;
     } else {
         for( QList<BillItem *>::iterator i = m_d->childrenContainer.begin(); i != m_d->childrenContainer.end(); ++i ){
-            BillItem * childItems = (*i)->billItemProgCode(pCode);
+            BillItem * childItems = (*i)->itemFromProgCode(pCode);
             if( childItems != NULL ) {
                 return childItems;
             }
@@ -344,11 +344,11 @@ BillItem *BillItem::billItemProgCode( const QString & pCode) {
     return NULL;
 }
 
-BillItem *BillItem::findBillItemProgCode( const QString & pCode ) {
+BillItem *BillItem::findItemFromProgCode( const QString & pCode ) {
     if( m_d->parentItem == NULL ){
-        return billItemProgCode(pCode);
+        return itemFromProgCode(pCode);
     } else {
-        return m_d->parentItem->findBillItemProgCode(pCode);
+        return m_d->parentItem->findItemFromProgCode(pCode);
     }
     return NULL;
 }
@@ -773,7 +773,7 @@ bool BillItem::insertChildren(PriceItem * p, int position, int count ){
 
     for (int row = 0; row < count; ++row) {
         BillItem *item = new BillItem( p, this, m_d->priceFieldModel, m_d->parser );
-        while( findBillItemId( item->id() ) != NULL ){
+        while( findItemFromId( item->id() ) != NULL ){
             item->setId( item->id() + 1 );
         }
         m_d->childrenContainer.insert(position, item);

@@ -150,16 +150,9 @@ public:
 
     void writeXml( QXmlStreamWriter * writer );
     void readXml(QXmlStreamReader *reader, ProjectPriceListParentItem * priceLists);
-    void readXmlTmp(QXmlStreamReader *reader);
-    void loadFromXml(const QXmlStreamAttributes &attrs, ProjectPriceListParentItem * priceLists);
-    void loadTmpData( PriceList *priceList );
 
     void nextId();
     unsigned int id();
-
-    void loadTmpData( ProjectPriceListParentItem *priceLists );
-    void loadFromXmlTmp(const QXmlStreamAttributes &attrs);
-    void setTmpData(ProjectPriceListParentItem *priceLists);
 
     QList<PriceItem *> connectedPriceItems();
 
@@ -199,6 +192,10 @@ private slots:
     void updateValue(AccountingBillItem *item, int column);
 private:
     AccountingTAMBillPrivate * m_d;
+
+    void readFromXmlTmp( ProjectPriceListParentItem *priceLists );
+    void loadFromXml(const QXmlStreamAttributes &attrs, ProjectPriceListParentItem * priceLists);
+    void loadFromXmlTmp(const QXmlStreamAttributes &attrs);
 };
 
 #endif // ACCOUNTINGTAMBILL_H

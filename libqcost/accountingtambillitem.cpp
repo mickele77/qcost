@@ -49,7 +49,7 @@ bool AccountingTAMBillItem::insertChildren(AccountingBillItem::ItemType iType, i
 
         for (int row = 0; row < count; ++row) {
             AccountingTAMBillItem * item = new AccountingTAMBillItem( this, iType,  m_d->priceFieldModel, m_d->parser );
-            while( findAccountingItemId( item->id() ) != NULL ){
+            while( findItemFromId( item->id() ) != NULL ){
                 item->setId( item->id() + 1 );
             }
             m_d->childrenContainer.insert(position, item);
@@ -76,51 +76,4 @@ bool AccountingTAMBillItem::insertChildren(AccountingBillItem::ItemType iType, i
         return true;
     }
     return false;
-}
-
-void AccountingTAMBillItem::readXml( QXmlStreamReader *reader, PriceList * priceList, AttributeModel * attrModel ) {
-    if( m_d->itemType != Root ){
-        if(reader->isStartElement() && reader->name().toString().toUpper() == "ACCOUNTINGBILLITEM"){
-            loadFromXmlTmp( reader->attributes() );
-        }
-        reader->readNext();
-    }
-
-    while( (!reader->atEnd()) &&
-           (!reader->hasError()) &&
-           !(reader->isEndElement() && reader->name().toString().toUpper() == "ACCOUNTINGBILLITEM")&&
-           !(reader->isEndElement() && reader->name().toString().toUpper() == "ACCOUNTINGBILL")  ){
-        if( m_d->itemType == Root ){
-            if( reader->name().toString().toUpper() == "ACCOUNTINGBILLITEM" && reader->isStartElement()) {
-                if( reader->attributes().hasAttribute( "itemType" ) ){
-                    if( reader->attributes().value( "itemType" ).toString().toUpper() == "PAYMENT" ){
-                        appendChildren( Payment );
-                        m_d->childrenContainer.last()->readXml( reader, priceList, attrModel );
-                    }
-                }
-            }
-        } else if( m_d->itemType == Payment ){
-            if( reader->name().toString().toUpper() == "ACCOUNTINGBILLITEM" && reader->isStartElement()) {
-                if( reader->attributes().hasAttribute( "itemType" ) ){
-                    AccountingBillItem::ItemType iType = PPU;
-                    if( reader->attributes().value( "itemType" ).toString().toUpper() == "COMMENT" ){
-                        iType = Comment;
-                    } else if( reader->attributes().value( "itemType" ).toString().toUpper() == "PPU" ){
-                        iType = PPU;
-                    } else if( reader->attributes().value( "itemType" ).toString().toUpper() == "TIMEANDMATERIALS" ){
-                        iType = TimeAndMaterials;
-                    } else if( reader->attributes().value( "itemType" ).toString().toUpper() == "LUMPSUM" ){
-                        iType = LumpSum;
-                    }
-                    appendChildren( iType );
-                    m_d->childrenContainer.last()->readXml( reader, priceList, attrModel );
-                }
-            }
-        }  else if( m_d->itemType == PPU ){
-            if( reader->name().toString().toUpper() == "MEASURESMODEL" && reader->isStartElement() ) {
-                generateMeasuresModel()->readXmlTmp( reader );
-            }
-        }
-        reader->readNext();
-    }
 }

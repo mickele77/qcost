@@ -84,7 +84,13 @@ public:
     AccountingBillItem * parent();
     /** Ricerca tra gli oggetti figlio uno con id pari a itemId
      * @return restituisce l'oggetto trovato */
-    AccountingBillItem * itemId(unsigned int itemId);
+    AccountingBillItem * itemFromId(unsigned int itemFromId);
+    /** Ricerca all'interno del computo un BillItem con id pari a itemId */
+    AccountingBillItem *findItemFromId(unsigned int itemId);
+    /** ricerca tra gli oggetti figlio uno con progCode pari a pCode */
+    AccountingBillItem * itemFromProgCode(const QString &pCode);
+    /** Ricerca all'interno del computo un BillItem con progCode pari a pCode */
+    AccountingBillItem *findItemFromProgCode(const QString & pCode);
     /** Ricerca tra gli oggetti figlio uno con id pari a itemId
      * @param number il numero d'ordine dell'oggetto figlio restituito
      * @return restituisce l'oggetto figlio di numero number */
@@ -99,6 +105,7 @@ public:
     unsigned int id();
     QString accountingProgCode() const;
     QString progCode() const;
+    QString fullProgCode() const;
     QString name();
     int currentPriceDataSet() const;
     double discount() const;
@@ -162,15 +169,16 @@ public:
     int childNumber() const;
 
     void writeXml( QXmlStreamWriter * writer );
-    virtual void readXml(QXmlStreamReader *reader, PriceList *priceList, AttributeModel *attrModel);
     void readXmlTmp(QXmlStreamReader *reader);
+    virtual void readFromXmlTmp( AccountingLSBills *lsBills,
+                                 AccountingTAMBill *tamBill,
+                                 PriceList *priceList,
+                                 AttributeModel *billAttrModel );
     void loadFromXml( const QXmlStreamAttributes &attrs,
                       AccountingLSBills * lsBills,
                       AccountingTAMBill * tamBill,
                       PriceList * priceList,
                       AttributeModel * billAttrModel );
-    void loadFromXmlTmp(const QXmlStreamAttributes &attrs);
-    void loadTmpData( AccountingLSBills * lsBills, AccountingTAMBill * tamBill ,PriceList * priceList, AttributeModel * billAttrModel );
 
     bool containsAttribute( Attribute * attr ) const ;
     bool containsAttributeInherited( Attribute * attr ) const ;
@@ -339,6 +347,7 @@ signals:
     void discountChanged( const QString & newVal );
     void PPUTotalToDiscountChanged( const QString & newVal );
     void PPUNotToDiscountChanged( const QString & newVal );
+    void amountsChanged();
     void totalAmountToDiscountChanged( const QString & newVal );
     void amountNotToDiscountChanged( const QString & newVal );
     void amountToDiscountChanged( const QString & newVal );
@@ -359,11 +368,6 @@ signals:
 
 protected:
     AccountingBillItemPrivate * m_d;
-
-    int progressiveCodeInternal() const;
-
-    /** Ricerca all'interno del computo un AccountingMeasure con id pari a itemId */
-    AccountingBillItem *findAccountingItemId(unsigned int itemId);
 
     void setId( unsigned int ii );
 

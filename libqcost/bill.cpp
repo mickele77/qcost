@@ -309,7 +309,7 @@ BillItem *Bill::lastBillItem(const QModelIndex &parentIndex) {
 }
 
 BillItem *Bill::billItemId(unsigned int itemId) {
-    return m_d->rootItem->billItemId( itemId );
+    return m_d->rootItem->itemFromId( itemId );
 }
 
 QVariant Bill::data(const QModelIndex &index, int role) const {
@@ -517,7 +517,7 @@ void Bill::writeXml(QXmlStreamWriter *writer) {
 
 void Bill::readXml(QXmlStreamReader *reader, ProjectPriceListParentItem *priceLists) {
     if(reader->isStartElement() && reader->name().toString().toUpper() == "BILL"){
-        loadFromXml( reader->attributes(), priceLists );
+        loadXml( reader->attributes(), priceLists );
     }
     while( (!reader->atEnd()) &&
            (!reader->hasError()) &&
@@ -548,7 +548,12 @@ void Bill::readXmlTmp(QXmlStreamReader *reader ) {
     }
 }
 
-void Bill::loadFromXml(const QXmlStreamAttributes &attrs, ProjectPriceListParentItem * priceLists) {
+void Bill::readFromXmlTmp(ProjectPriceListParentItem * priceLists) {
+    m_d->priceList = priceLists->priceListId( m_d->priceListIdTmp );
+    m_d->rootItem->readFromXmlTmp( m_d->priceList, m_d->attributeModel );
+}
+
+void Bill::loadXml(const QXmlStreamAttributes &attrs, ProjectPriceListParentItem * priceLists) {
     for( QXmlStreamAttributes::const_iterator i=attrs.begin(); i != attrs.end(); ++i ){
         QString nameUp = (*i).name().toString().toUpper();
         if( nameUp == "ID" ){
@@ -590,10 +595,6 @@ void Bill::loadFromXmlTmp(const QXmlStreamAttributes &attrs) {
     }
 }
 
-void Bill::setTmpData( ProjectPriceListParentItem * priceLists ) {
-    m_d->priceList = priceLists->priceListId( m_d->priceListIdTmp );
-}
-
 QList<PriceItem *> Bill::connectedPriceItems() {
     return m_d->rootItem->connectedPriceItems();
 }
@@ -621,11 +622,6 @@ void Bill::writeODTSummaryOnTable(QTextCursor *cursor,
                                   bool groupPrAm,
                                   bool writeDetails ) {
     m_d->rootItem->writeODTSummaryOnTable(cursor, prItemsOption, fieldsToPrint, groupPrAm, writeDetails );
-}
-
-void Bill::loadTmpData(ProjectPriceListParentItem * priceLists) {
-    m_d->priceList = priceLists->priceListId( m_d->priceListIdTmp );
-    m_d->rootItem->readFromXmlTmp( m_d->priceList, m_d->attributeModel );
 }
 
 void Bill::insertStandardAttributes(){

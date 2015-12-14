@@ -118,16 +118,12 @@ public:
 
     void writeXml( QXmlStreamWriter * writer );
     void readXml(QXmlStreamReader *reader, ProjectPriceListParentItem * priceLists);
+
     void readXmlTmp(QXmlStreamReader *reader);
-    void loadFromXml(const QXmlStreamAttributes &attrs, ProjectPriceListParentItem * priceLists);
-    void loadTmpData( PriceList *priceList );
+    void readFromXmlTmp( ProjectPriceListParentItem *priceLists );
 
     void nextId();
     unsigned int id();
-
-    void loadTmpData( ProjectPriceListParentItem *priceLists );
-    void loadFromXmlTmp(const QXmlStreamAttributes &attrs);
-    void setTmpData(ProjectPriceListParentItem *priceLists);
 
     QList<PriceItem *> connectedPriceItems();
 
@@ -171,6 +167,10 @@ private slots:
     void removePriceField( int firstPFRemoved, int lastPFRemoved );
 private:
     BillPrivate * m_d;
+
+    void loadXml( const QXmlStreamAttributes &attrs,
+                  ProjectPriceListParentItem * priceLists);
+    void loadFromXmlTmp( const QXmlStreamAttributes &attrs );
 };
 
 #endif // BILL_H

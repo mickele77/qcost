@@ -94,6 +94,12 @@ AccountingBillItem::AccountingBillItem(AccountingBillItem *parentItem, Accountin
     connect( this, &AccountingBillItem::amountDiscountedChanged, this, &AccountingBillItem::updateTotalAmount );
     connect( this, &AccountingBillItem::amountNotToDiscountChanged, this, &AccountingBillItem::updateTotalAmount );
 
+    connect( this, &AccountingBillItem::totalAmountToDiscountChanged, this, &AccountingBillItem::amountsChanged );
+    connect( this, &AccountingBillItem::amountNotToDiscountChanged, this, &AccountingBillItem::amountsChanged );
+    connect( this, &AccountingBillItem::amountToDiscountChanged, this, &AccountingBillItem::amountsChanged );
+    connect( this, &AccountingBillItem::amountDiscountedChanged, this, &AccountingBillItem::amountsChanged );
+    connect( this, &AccountingBillItem::totalAmountChanged, this, &AccountingBillItem::amountsChanged );
+
     connect( this, &AccountingBillItem::totalAmountToDiscountChanged, this, &AccountingBillItem::itemChanged );
     connect( this, &AccountingBillItem::amountNotToDiscountChanged, this, &AccountingBillItem::itemChanged );
     connect( this, &AccountingBillItem::amountToDiscountChanged, this, &AccountingBillItem::itemChanged );
@@ -234,12 +240,12 @@ void AccountingBillItem::addChild(AccountingBillItem * newChild, int position ) 
     m_d->childrenContainer.insert( position, newChild );
 }
 
-AccountingBillItem *AccountingBillItem::itemId( unsigned int itemId ) {
+AccountingBillItem *AccountingBillItem::itemFromId( unsigned int itemId ) {
     if( itemId == m_d->id ){
         return this;
     } else {
         for( QList<AccountingBillItem *>::iterator i = m_d->childrenContainer.begin(); i != m_d->childrenContainer.end(); ++i ){
-            AccountingBillItem * childItems = (*i)->itemId(itemId);
+            AccountingBillItem * childItems = (*i)->itemFromId(itemId);
             if( childItems != NULL ) {
                 return childItems;
             }
@@ -248,15 +254,37 @@ AccountingBillItem *AccountingBillItem::itemId( unsigned int itemId ) {
     return NULL;
 }
 
-AccountingBillItem *AccountingBillItem::findAccountingItemId( unsigned int searchitemId ) {
+AccountingBillItem *AccountingBillItem::findItemFromId( unsigned int searchitemId ) {
     if( m_d->parentItem == NULL ){
-        return itemId(searchitemId );
+        return itemFromId(searchitemId );
     } else {
-        return m_d->parentItem->findAccountingItemId(searchitemId);
+        return m_d->parentItem->findItemFromId(searchitemId);
     }
     return NULL;
 }
 
+AccountingBillItem *AccountingBillItem::itemFromProgCode( const QString & pCode) {
+    if( pCode == fullProgCode() ){
+        return this;
+    } else {
+        for( QList<AccountingBillItem *>::iterator i = m_d->childrenContainer.begin(); i != m_d->childrenContainer.end(); ++i ){
+            AccountingBillItem * childItems = (*i)->itemFromProgCode(pCode);
+            if( childItems != NULL ) {
+                return childItems;
+            }
+        }
+    }
+    return NULL;
+}
+
+AccountingBillItem *AccountingBillItem::findItemFromProgCode( const QString & pCode ) {
+    if( m_d->parentItem == NULL ){
+        return itemFromProgCode(pCode);
+    } else {
+        return m_d->parentItem->findItemFromProgCode(pCode);
+    }
+    return NULL;
+}
 
 AccountingBillItem *AccountingBillItem::childItem(int number) {
     return dynamic_cast<AccountingBillItem *>(child( number ));
@@ -297,6 +325,17 @@ void AccountingBillItem::updateAccountingProgCode( int * startCode ) {
             ++i;
         }
     }
+}
+
+QString AccountingBillItem::fullProgCode() const {
+    if( (m_d->itemType == PPU) || (m_d->itemType == TimeAndMaterials) || (m_d->itemType == LumpSum)){
+        QString ret = progCode();
+        if( m_d->parentItem != NULL ){
+            ret = QString::number( m_d->parentItem->childNumber()+1 ) + "." + ret;
+        }
+        return ret;
+    }
+    return QString();
 }
 
 QString AccountingBillItem::progCode() const {
@@ -1256,7 +1295,7 @@ bool AccountingBillItem::insertChildren(AccountingBillItem::ItemType iType, int 
         for (int row = 0; row < count; ++row) {
             AccountingBillItem * item = new AccountingBillItem( this, iType,  m_d->priceFieldModel, m_d->parser );
             if( iType != Payment && iType != Root ){
-                while( findAccountingItemId( item->id() ) != NULL ){
+                while( findItemFromId( item->id() ) != NULL ){
                     item->setId( item->id() + 1 );
                 }
             }
@@ -1444,10 +1483,11 @@ void AccountingBillItem::writeXml(QXmlStreamWriter *writer) {
     }
 }
 
-void AccountingBillItem::readXml( QXmlStreamReader *reader, PriceList * priceList, AttributeModel * attrModel ) {
+void AccountingBillItem::readXmlTmp( QXmlStreamReader *reader ) {
     if( m_d->itemType != Root ){
         if(reader->isStartElement() && reader->name().toString().toUpper() == "ACCOUNTINGBILLITEM"){
-            loadFromXmlTmp( reader->attributes() );
+            m_d->tmpAttributes.clear();
+            m_d->tmpAttributes = reader->attributes();
         }
         reader->readNext();
     }
@@ -1462,7 +1502,7 @@ void AccountingBillItem::readXml( QXmlStreamReader *reader, PriceList * priceLis
                 if( reader->attributes().hasAttribute( "itemType" ) ){
                     if( reader->attributes().value( "itemType" ).toString().toUpper() == "PAYMENT" ){
                         appendChildren( Payment );
-                        m_d->childrenContainer.last()->readXml( reader, priceList, attrModel );
+                        m_d->childrenContainer.last()->readXmlTmp( reader );
                     }
                 }
             }
@@ -1480,7 +1520,7 @@ void AccountingBillItem::readXml( QXmlStreamReader *reader, PriceList * priceLis
                         iType = LumpSum;
                     }
                     appendChildren( iType );
-                    m_d->childrenContainer.last()->readXml( reader, priceList, attrModel );
+                    m_d->childrenContainer.last()->readXmlTmp( reader );
                 }
             }
         }  else if( m_d->itemType == PPU ){
@@ -1493,31 +1533,16 @@ void AccountingBillItem::readXml( QXmlStreamReader *reader, PriceList * priceLis
     }
 }
 
-void AccountingBillItem::readXmlTmp(QXmlStreamReader *reader) {
-    while( (!reader->atEnd()) &&
-           (!reader->hasError()) &&
-           !(reader->isEndElement() && reader->name().toString().toUpper() == "ACCOUNTINGTAMBILL")  ){
-        if( (reader->name().toString().toUpper() == "ACCOUNTINGTAMBILLITEMBILL") &&
-                (reader->isStartElement()) &&
-                (m_d->itemType == Root) ){
-            appendChildren( Payment );
-            m_d->childrenContainer.last()->readXmlTmp( reader );
-        } else if( (reader->name().toString().toUpper() == "ACCOUNTINGTAMBILLITEMPPU") &&
-                   (reader->isStartElement()) &&
-                   (m_d->itemType == Payment) ){
-            appendChildren( PPU );
-            m_d->childrenContainer.last()->readXmlTmp( reader );
-        } else if( (reader->name().toString().toUpper() == "ACCOUNTINGTAMBILLITEMCOMMENT") &&
-                   reader->isStartElement() &&
-                   (m_d->itemType == Payment) ){
-            appendChildren( Comment );
-            m_d->childrenContainer.last()->readXmlTmp( reader );
-        } else if( (reader->name().toString().toUpper() == "MEASURESMODEL") &&
-                   reader->isStartElement() &&
-                   m_d->itemType == PPU ){
-            generateMeasuresModel()->readXmlTmp( reader );
+void AccountingBillItem::readFromXmlTmp( AccountingLSBills * lsBills, AccountingTAMBill * tamBill ,PriceList * priceList, AttributeModel * billAttrModel ) {
+    if( !m_d->tmpAttributes.isEmpty() ){
+        loadFromXml( m_d->tmpAttributes, lsBills, tamBill, priceList, billAttrModel );
+        m_d->tmpAttributes.clear();
+        if( m_d->measuresModel != NULL ){
+            m_d->measuresModel->readFromXmlTmp();
         }
-        reader->readNext();
+    }
+    for( QList<AccountingBillItem *>::iterator i = m_d->childrenContainer.begin(); i != m_d->childrenContainer.end(); ++i ){
+        (*i)->readFromXmlTmp( lsBills, tamBill, priceList, billAttrModel );
     }
 }
 
@@ -1578,21 +1603,6 @@ void AccountingBillItem::loadFromXml( const QXmlStreamAttributes &attrs,
         if( attrs.hasAttribute("timeAndMaterials") ){
             setTAMBillItem( tamBill->itemId( attrs.value("timeAndMaterials").toUInt() ) );
         }
-    }
-}
-
-void AccountingBillItem::loadFromXmlTmp(const QXmlStreamAttributes &attrs) {
-    m_d->tmpAttributes.clear();
-    m_d->tmpAttributes = attrs;
-}
-
-void AccountingBillItem::loadTmpData( AccountingLSBills * lsBills, AccountingTAMBill * tamBill ,PriceList * priceList, AttributeModel * billAttrModel ) {
-    if( !m_d->tmpAttributes.isEmpty() ){
-        loadFromXml( m_d->tmpAttributes, lsBills, tamBill, priceList, billAttrModel );
-        m_d->tmpAttributes.clear();
-    }
-    for( QList<AccountingBillItem *>::iterator i = m_d->childrenContainer.begin(); i != m_d->childrenContainer.end(); ++i ){
-        (*i)->loadTmpData( lsBills, tamBill, priceList, billAttrModel );
     }
 }
 

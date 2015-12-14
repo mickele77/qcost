@@ -15,7 +15,7 @@
     </UnitMeasureModel>
     <PriceLists>
         <PriceList id="0" name="Prezzario Misura" description="">
-            <PriceItemDataSet overheads="0.13" profits="0.1"/>
+            <PriceItemDataSet/>
             <PriceItem id="1" code="A001" inheritCodeFromParent="true" shortDescription="Denominazione 1" inheritShortDescFromParent="false" longDescription="Descrizione 1" inheritLongDescFromParent="false" unitMeasure="2">
                 <PriceItemDataSet value0="20" value1="3" value2="2.41" value3="17.59"/>
             </PriceItem>
@@ -49,7 +49,7 @@
             </PriceItem>
         </PriceList>
         <PriceList id="1" name="Prezzario Corpo" description="">
-            <PriceItemDataSet overheads="0.13" profits="0.1"/>
+            <PriceItemDataSet/>
             <PriceItem id="1" code="01.A02.A05" inheritCodeFromParent="false" shortDescription="Demolizione completa di fabbricati sino al piano di spiccato, valut..." inheritShortDescFromParent="false" longDescription="Demolizione completa di fabbricati sino al piano di spiccato, valutata a metro cubo vuoto per pieno compreso l'accatastamento entro l'area di cantiere del materiale di spoglio ed il carico ed il trasporto delle macerie alle discariche, esclusi eventuali corrispettivi per diritti di discarica" inheritLongDescFromParent="false">
                 <PriceItem id="2" code="01.A02.A05.020" inheritCodeFromParent="false" shortDescription="Con struttura portante in muratura e solai in legno, ferro, voltini..." inheritShortDescFromParent="true" longDescription="Con struttura portante in muratura e solai in legno, ferro, voltini o a volta" inheritLongDescFromParent="true" unitMeasure="0">
                     <PriceItemDataSet value0="11.14" value1="4.32" value2="3.48" value3="7.66"/>
@@ -64,37 +64,39 @@
     </Bills>
     <Accounting>
         <AccountingBill discount="0.25" totalAmountPriceFields="0" noDiscountAmountPriceFields="2" priceList="0" priceDataSet="0">
-            <AttributeModel/>
+            <AttributeModel>
+                <Attribute id="0" name="Corpo A"/>
+            </AttributeModel>
             <AccountingBillItem itemType="Payment">
                 <AccountingBillItem itemType="Comment" id="5" text="Demolizione muro esistente"/>
-                <AccountingBillItem itemType="PPU" id="6" date="2457325" priceItem="10">
+                <AccountingBillItem itemType="PPU" id="6" date="2457325" priceItem="10" attributes="0">
                     <MeasuresModel>
-                        <Measure comment="Basamento in cls" formula="0.40*0.35*25.00"/>
+                        <Measure comment="" formula="23"/>
                     </MeasuresModel>
                 </AccountingBillItem>
                 <AccountingBillItem itemType="PPU" id="7" date="2457325" priceItem="12">
                     <MeasuresModel>
-                        <Measure comment="Demolizione muratura" formula="25.00*2.30*25.00"/>
+                        <Measure comment="" formula="25"/>
                     </MeasuresModel>
                 </AccountingBillItem>
                 <AccountingBillItem itemType="PPU" id="1" date="2457288" priceItem="1">
                     <MeasuresModel>
-                        <Measure comment="" formula="25"/>
+                        <Measure comment="" formula=""/>
                     </MeasuresModel>
                 </AccountingBillItem>
                 <AccountingBillItem itemType="Comment" id="2" text="Iniziamo"/>
-                <AccountingBillItem itemType="PPU" id="3" date="2457288" priceItem="2">
+                <AccountingBillItem itemType="PPU" id="3" date="2457288" priceItem="2" attributes="0">
                     <MeasuresModel>
-                        <Measure comment="" formula="5"/>
-                        <Measure comment="proviamo" formula="2"/>
+                        <Measure comment="" formula=""/>
+                        <Measure comment="" formula=""/>
                     </MeasuresModel>
                 </AccountingBillItem>
-                <AccountingBillItem itemType="TimeAndMaterials" id="4" date="2457296" timeAndMaterials="1"/>
+                <AccountingBillItem itemType="TimeAndMaterials" id="4" date="2457296"/>
             </AccountingBillItem>
             <AccountingBillItem itemType="Payment">
                 <AccountingBillItem itemType="PPU" id="8" date="2457343" priceItem="1">
                     <MeasuresModel>
-                        <Measure comment="" formula="1"/>
+                        <Measure comment="" formula=""/>
                     </MeasuresModel>
                 </AccountingBillItem>
             </AccountingBillItem>
@@ -117,18 +119,18 @@
                 <AccountingBillItem itemType="Comment" id="2" text="Manodopera per assistenza scavi"/>
                 <AccountingBillItem itemType="PPU" id="3" date="2457296" priceItem="4">
                     <MeasuresModel>
-                        <Measure comment="Mariano Giovanni" formula="8"/>
+                        <Measure comment="" formula=""/>
                     </MeasuresModel>
                 </AccountingBillItem>
                 <AccountingBillItem itemType="PPU" id="4" date="2457296" priceItem="8">
                     <MeasuresModel>
-                        <Measure comment="Del Campo Filippo" formula="8"/>
-                        <Measure comment="Rossi Giacomo" formula="8"/>
+                        <Measure comment="" formula=""/>
+                        <Measure comment="" formula=""/>
                     </MeasuresModel>
                 </AccountingBillItem>
                 <AccountingBillItem itemType="PPU" id="5" date="2457296" priceItem="8">
                     <MeasuresModel>
-                        <Measure comment="Bongiovanni Filippo" formula="8"/>
+                        <Measure comment="" formula=""/>
                     </MeasuresModel>
                 </AccountingBillItem>
             </AccountingBillItem>
