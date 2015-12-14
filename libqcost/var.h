@@ -1,11 +1,10 @@
-#ifndef MEASURE_H
-#define MEASURE_H
+#ifndef VAR_H
+#define VAR_H
 
 #include "qcost_export.h"
 
 class AccountingBillItem;
 class BillItem;
-class UnitMeasure;
 class MathParser;
 class QTextStream;
 class QXmlStreamWriter;
@@ -13,16 +12,16 @@ class QXmlStreamAttributes;
 
 #include <QObject>
 
-class MeasurePrivate;
+class VarPrivate;
 
-class EXPORT_QCOST_LIB_OPT Measure : public QObject {
+class EXPORT_QCOST_LIB_OPT Var : public QObject {
     Q_OBJECT
 public:
-    explicit Measure( BillItem * bItem = NULL, MathParser *p = NULL, UnitMeasure * ump = NULL );
-    explicit Measure( AccountingBillItem * accBItem = NULL, MathParser *p = NULL, UnitMeasure * ump = NULL );
-    ~Measure();
+    explicit Var( BillItem * bItem = NULL, MathParser *p = NULL );
+    explicit Var( AccountingBillItem * accBItem = NULL, MathParser *p = NULL, UnitVar * ump = NULL );
+    ~Var();
 
-    Measure &operator =(const Measure &cp);
+    Var &operator =(const Var &cp);
 
     QString comment() const;
     QString formula() const;
@@ -34,7 +33,7 @@ public:
               altrimenti sono i progressiveCode */
     void setFormula(const QString &nf, bool connItemFromId = false );
     void setComment(const QString &nc);
-    void setUnitMeasure( UnitMeasure * ump );
+    void setUnitVar( UnitVar * ump );
 
     void writeXml( QXmlStreamWriter * writer );
     void loadFromXmlTmp();
@@ -42,12 +41,13 @@ public:
 
     QList<BillItem *> connectedBillItems();
     QList<AccountingBillItem *> connectedAccBillItems();
+
 signals:
     void quantityChanged( double );
 
 private:
-    MeasurePrivate * m_d;
+    VarPrivate * m_d;
     void updateQuantity();
 };
 
-#endif // MEASURE_H
+#endif // VAR_H

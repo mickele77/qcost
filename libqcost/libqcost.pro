@@ -45,9 +45,11 @@ SOURCES += \
     bill.cpp \
     project.cpp \
     unitmeasure.cpp \
+    unitmeasuremodel.cpp \
+    var.cpp \
+    varsmodel.cpp \
     billitem.cpp \
     priceitem.cpp \
-    unitmeasuremodel.cpp \
     pricefieldmodel.cpp \
     pricelistprinter.cpp \
     billprinter.cpp \
@@ -82,10 +84,12 @@ HEADERS  += \
     bill.h \
     project.h \
     unitmeasure.h \
+    unitmeasuremodel.h \
+    var.h \
+    varsmodel.h \
     treeitem.h \
     billitem.h \
     priceitem.h \
-    unitmeasuremodel.h \
     pricefieldmodel.h \
     pricelistprinter.h \
     billprinter.h \
