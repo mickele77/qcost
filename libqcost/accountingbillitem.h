@@ -117,6 +117,8 @@ public:
     /** restituisce i sottoarticoli del prezzo associato all'articolo di computo, oltre ad eventuali
       * altri prezzi connessi tramite analisi prezzi */
     QList<PriceItem *> connectedPriceItems() const;
+    /** Aggiunge a itemList gli elementi connessi all'item corrente */
+    void appendConnectedItems(QList<AccountingBillItem *> *itemsList);
 
     void setLSBill(AccountingLSBill * newLSBill);
     AccountingLSBill * lsBill();
@@ -144,6 +146,7 @@ public:
     QString amountToDiscountStr() const;
     QString amountDiscountedStr() const;
     QString totalAmountStr() const;
+    QString amountStr( int ) const;
 
     QList<int> totalAmountPriceFields() const;
     QList<int> noDiscountAmountPriceFields() const;
@@ -163,7 +166,7 @@ public:
         Se l'elemento è Bill, aggiunge una riga PPU */
     bool insertChildren(int position, int count=1);
     virtual bool insertChildren(ItemType iType, int position, int count=1);
-    bool appendChildren(ItemType iType, int count=1 );
+    bool endChildren(ItemType iType, int count=1 );
     bool removeChildren(int position, int count=1);
     bool clear();
     int childNumber() const;

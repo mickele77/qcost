@@ -111,7 +111,8 @@ public:
     MeasuresModel * measuresModel();
     MeasuresModel * generateMeasuresModel();
     void removeMeasuresModel();
-    void appendConnectedBillItems( QList<BillItem *> * itemsList );
+
+    void appendConnectedItems( QList<BillItem *> * itemsList );
 
     void writeXml( QXmlStreamWriter * writer );
     void readXmlTmp(QXmlStreamReader *reader);

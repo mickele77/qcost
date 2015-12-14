@@ -444,7 +444,7 @@ void Measure::updateQuantity(){
                     BillItem * connItem = m_d->billItem->findItemFromId( connItemId );
                     if( connItem != NULL ){
                         QList<BillItem *> connItems;
-                        connItem->appendConnectedBillItems( &connItems );
+                        connItem->appendConnectedItems( &connItems );
                         if( connItems.contains(m_d->billItem) ){
                             ok = false;
                         } else {

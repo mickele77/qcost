@@ -13,7 +13,6 @@ public:
     VarsModelPrivate( BillItem * bItem, MathParser * p ):
         parserWasCreated(false),
         billItem(bItem),
-        unitVar(ump),
         quantity( 0.0 ){
         if( p == NULL ){
             parser = new MathParser( QLocale::system() );
@@ -31,19 +30,14 @@ public:
     bool parserWasCreated;
     BillItem * billItem;
     MathParser * parser;
-    UnitVar * unitVar;
     QList<Var *> linesContainer;
     double quantity;
 };
 
 VarsModel::VarsModel(BillItem * bItem, MathParser * p) :
     QAbstractTableModel(),
-    m_d(new VarsModelPrivate( bItem, p, ump )){
+    m_d(new VarsModelPrivate( bItem, p )){
     insertRows(0);
-
-    if( m_d->unitVar != NULL ){
-        connect( m_d->unitVar, &UnitVar::precisionChanged, this, &VarsModel::updateAllQuantities );
-    }
 }
 
 VarsModel::~VarsModel(){
@@ -52,7 +46,6 @@ VarsModel::~VarsModel(){
 
 VarsModel &VarsModel::operator=(const VarsModel &cp) {
     if( &cp != this ){
-        setUnitVar( cp.m_d->unitVar );
         if( m_d->linesContainer.size() > cp.m_d->linesContainer.size() ){
             removeRows( 0, m_d->linesContainer.size() - cp.m_d->linesContainer.size() );
         } else if( m_d->linesContainer.size() < cp.m_d->linesContainer.size() ){

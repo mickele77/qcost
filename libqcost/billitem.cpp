@@ -872,12 +872,12 @@ void BillItem::removeMeasuresModel() {
     }
 }
 
-void BillItem::appendConnectedBillItems(QList<BillItem *> *itemsList) {
+void BillItem::appendConnectedItems(QList<BillItem *> *itemsList) {
     // aggiunge l'item corrente e tutti i suoi figli, se non presenti
     if( !(itemsList->contains(this)) ){
         itemsList->append(this);
         for( QList<BillItem *>::iterator i = m_d->childrenContainer.begin(); i != m_d->childrenContainer.end(); ++i ){
-            (*i)->appendConnectedBillItems(itemsList);
+            (*i)->appendConnectedItems(itemsList);
         }
     }
 
@@ -885,7 +885,7 @@ void BillItem::appendConnectedBillItems(QList<BillItem *> *itemsList) {
     QList<BillItem *> connItems = m_d->measuresModel->connectedBillItems();
     for( QList<BillItem *>::iterator i = connItems.begin(); i != connItems.end(); ++i ){
         if( !(itemsList->contains(*i)) ){
-            (*i)->appendConnectedBillItems(itemsList);
+            (*i)->appendConnectedItems(itemsList);
         }
     }
 }

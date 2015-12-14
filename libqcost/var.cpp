@@ -14,7 +14,6 @@ class VarPrivate{
 public:
     VarPrivate( BillItem * bItem, MathParser * p ):
         parser( p ),
-        unitVar( ump ),
         billItem(bItem),
         accountingBillItem(NULL),
         comment(""),
@@ -23,7 +22,6 @@ public:
     }
     VarPrivate( AccountingBillItem * accBItem, MathParser * p ):
         parser( p ),
-        unitVar( ump ),
         billItem(NULL),
         accountingBillItem(accBItem),
         comment(""),
@@ -38,7 +36,6 @@ public:
         }
     }
     MathParser * parser;
-    UnitVar * unitVar;
     BillItem * billItem;
     QList< QPair<BillItem *, int> > connectedBillItems;
     AccountingBillItem * accountingBillItem;
@@ -65,7 +62,6 @@ Var::~Var(){
 
 Var &Var::operator=(const Var &cp) {
     if( &cp != this ){
-        setUnitVar( cp.m_d->unitVar );
         setComment( cp.m_d->comment );
         if( (m_d->billItem != NULL) && (m_d->billItem == cp.m_d->billItem) ){
             setFormula( cp.m_d->formula, true );
@@ -85,13 +81,6 @@ QString Var::comment() const{
 
 void Var::setComment( const QString & nc ){
     m_d->comment = nc;
-}
-
-void Var::setUnitVar(UnitVar *ump) {
-    if( m_d->unitVar != ump ){
-        m_d->unitVar = ump;
-        updateQuantity();
-    }
 }
 
 QString Var::formula() const {
@@ -326,11 +315,11 @@ void Var::setFormula( const QString & nf, bool connItemFromId ){
                                         connItemPriceField = newFormSplittedAmounts.at(1).toInt();
                                     }
                                     if( connItemPriceField > 0 ){
-                                        m_d->connectedBillItems << qMakePair( connItem, connItemPriceField );
+                                        m_d->connectedAccBillItems << qMakePair( connItem, connItemPriceField );
                                         newForm += "[" + QString::number(connItem->id()) + ":" + QString::number(connItemPriceField) + "]";
                                         connect( connItem, &AccountingBillItem::amountsChanged, this, &Var::updateQuantity );
                                     } else {
-                                        m_d->connectedBillItems << qMakePair( connItem, -1 );
+                                        m_d->connectedAccBillItems << qMakePair( connItem, -1 );
                                         newForm += "[" + QString::number(connItem->id()) + "]";
                                         connect( connItem, &AccountingBillItem::quantityChanged, this, &Var::updateQuantity );
                                     }
@@ -373,11 +362,11 @@ void Var::setFormula( const QString & nf, bool connItemFromId ){
                                         connItemPriceField = newFormSplittedAmounts.at(1).toInt();
                                     }
                                     if( connItemPriceField > 0 ){
-                                        m_d->connectedBillItems << qMakePair( connItem, connItemPriceField );
+                                        m_d->connectedAccBillItems << qMakePair( connItem, connItemPriceField );
                                         newForm += "[" + QString::number(connItem->id()) + ":" + QString::number(connItemPriceField) + "]";
                                         connect( connItem, &AccountingBillItem::amountsChanged, this, &Var::updateQuantity );
                                     } else {
-                                        m_d->connectedBillItems << qMakePair( connItem, -1 );
+                                        m_d->connectedAccBillItems << qMakePair( connItem, -1 );
                                         newForm += "[" + QString::number(connItem->id()) + "]";
                                         connect( connItem, &AccountingBillItem::quantityChanged, this, &Var::updateQuantity );
                                     }
@@ -388,7 +377,7 @@ void Var::setFormula( const QString & nf, bool connItemFromId ){
                         } else {
                             AccountingBillItem * connItem = m_d->accountingBillItem->findItemFromProgCode( newFormSplitted.at(i) );
                             if( connItem != NULL ){
-                                m_d->connectedBillItems << qMakePair(connItem, -1);
+                                m_d->connectedAccBillItems << qMakePair(connItem, -1);
                                 newForm += "[" + QString::number(connItem->id()) + "]";
                                 connect( connItem, &AccountingBillItem::quantityChanged, this, &Var::updateQuantity );
                             } else {
@@ -444,7 +433,7 @@ void Var::updateQuantity(){
                     BillItem * connItem = m_d->billItem->findItemFromId( connItemId );
                     if( connItem != NULL ){
                         QList<BillItem *> connItems;
-                        connItem->appendConnectedBillItems( &connItems );
+                        connItem->appendConnectedItems( &connItems );
                         if( connItems.contains(m_d->billItem) ){
                             ok = false;
                         } else {
@@ -489,7 +478,7 @@ void Var::updateQuantity(){
                     AccountingBillItem * connItem = m_d->accountingBillItem->findItemFromId( connItemId );
                     if( connItem != NULL ){
                         QList<AccountingBillItem *> connItems;
-                        connItem->appendConnectedBillItems( &connItems );
+                        connItem->appendConnectedItems( &connItems );
                         if( connItems.contains(m_d->accountingBillItem) ){
                             ok = false;
                         } else {
@@ -524,9 +513,6 @@ void Var::updateQuantity(){
     }
 
     double v = m_d->parser->evaluate( effFormula );
-    if( m_d->unitVar ) {
-        v = m_d->unitVar->applyPrecision( v );
-    }
     if( v != m_d->quantity ){
         m_d->quantity = v;
         emit quantityChanged( v );
@@ -535,11 +521,7 @@ void Var::updateQuantity(){
 
 double Var::quantity() const{
     double ret = 0.0;
-    if( m_d->unitVar != NULL ){
-        ret = m_d->unitVar->applyPrecision( m_d->quantity );
-    } else {
-        ret = m_d->quantity;
-    }
+    ret = m_d->quantity;
     return ret;
 }
 
@@ -549,11 +531,7 @@ QString Var::quantityStr() const{
     if( realFormula.isEmpty() ){
         return QString();
     }
-    if( m_d->unitVar != NULL ){
-        return m_d->toString( quantity(), 'f', m_d->unitVar->precision() ) ;
-    } else {
-        return m_d->toString( quantity(), 'f', 6 ) ;
-    }
+    return m_d->toString( quantity(), 'f', 6 ) ;
 }
 
 void Var::writeXml( QXmlStreamWriter * writer ){

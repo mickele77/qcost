@@ -1820,6 +1820,24 @@ QList<PriceItem *> AccountingBillItem::connectedPriceItems() const {
     return ret;
 }
 
+void AccountingBillItem::appendConnectedItems(QList<AccountingBillItem *> *itemsList) {
+    // aggiunge l'item corrente e tutti i suoi figli, se non presenti
+    if( !(itemsList->contains(this)) ){
+        itemsList->append(this);
+        for( QList<BillItem *>::iterator i = m_d->childrenContainer.begin(); i != m_d->childrenContainer.end(); ++i ){
+            (*i)->appendConnectedItems(itemsList);
+        }
+    }
+
+    // aggiunge tutti gli item connessi tramite le misure, se non presenti
+    QList<AccountingBillItem *> connItems = m_d->measuresModel->connectedBillItems();
+    for( QList<AccountingBillItem *>::iterator i = connItems.begin(); i != connItems.end(); ++i ){
+        if( !(itemsList->contains(*i)) ){
+            (*i)->appendConnectedItems(itemsList);
+        }
+    }
+}
+
 void AccountingBillItem::setLSBill(AccountingLSBill *newLSBill) {
     if( m_d->lsBill != newLSBill ){
         if( m_d->lsBill != NULL ){

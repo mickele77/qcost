@@ -7,6 +7,7 @@ class QXmlStreamWriter;
 class QXmlStreamReader;
 class MathParser;
 class BillItem;
+class AccountingBillItem;
 class Measure;
 class UnitMeasure;
 
@@ -19,6 +20,7 @@ class EXPORT_QCOST_LIB_OPT MeasuresModel : public QAbstractTableModel
     Q_OBJECT
 public:
     explicit MeasuresModel(BillItem *bItem, MathParser *p = NULL, UnitMeasure *ump = NULL);
+    explicit MeasuresModel(AccountingBillItem *accBItem, MathParser *p = NULL, UnitMeasure *ump = NULL);
 
     ~MeasuresModel();
 
@@ -47,6 +49,7 @@ public:
     Measure * measure( int i );
 
     QList<BillItem *> connectedBillItems();
+    QList<AccountingBillItem *> connectedAccBillItems();
 
 signals:
     void quantityChanged( double );

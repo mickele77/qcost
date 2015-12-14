@@ -14,6 +14,20 @@ public:
     MeasuresModelPrivate( BillItem * bItem, MathParser * p, UnitMeasure * ump ):
         parserWasCreated(false),
         billItem(bItem),
+        accountingBillItem(NULL),
+        unitMeasure(ump),
+        quantity( 0.0 ){
+        if( p == NULL ){
+            parser = new MathParser( QLocale::system() );
+            parserWasCreated = true;
+        } else {
+            parser = p;
+        }
+    }
+    MeasuresModelPrivate( AccountingBillItem * accBItem, MathParser * p, UnitMeasure * ump ):
+        parserWasCreated(false),
+        billItem(NULL),
+        accountingBillItem(accBItem),
         unitMeasure(ump),
         quantity( 0.0 ){
         if( p == NULL ){
@@ -31,6 +45,7 @@ public:
 
     bool parserWasCreated;
     BillItem * billItem;
+    AccountingBillItem * accountingBillItem;
     MathParser * parser;
     UnitMeasure * unitMeasure;
     QList<Measure *> linesContainer;
@@ -40,6 +55,16 @@ public:
 MeasuresModel::MeasuresModel(BillItem * bItem, MathParser * p, UnitMeasure * ump) :
     QAbstractTableModel(),
     m_d(new MeasuresModelPrivate( bItem, p, ump )){
+    insertRows(0);
+
+    if( m_d->unitMeasure != NULL ){
+        connect( m_d->unitMeasure, &UnitMeasure::precisionChanged, this, &MeasuresModel::updateAllQuantities );
+    }
+}
+
+MeasuresModel::MeasuresModel(AccountingBillItem *accBItem, MathParser *p, UnitMeasure *ump) :
+    QAbstractTableModel(),
+    m_d(new MeasuresModelPrivate( accBItem, p, ump )){
     insertRows(0);
 
     if( m_d->unitMeasure != NULL ){
@@ -173,7 +198,12 @@ bool MeasuresModel::insertRows(int row, int count, const QModelIndex &parent) {
     }
     beginInsertRows(QModelIndex(), row, row+count-1 );
     for(int i=0; i < count; ++i){
-        Measure * itemLine = new Measure( m_d->billItem, m_d->parser, m_d->unitMeasure );
+        Measure * itemLine = NULL;
+        if(m_d->billItem != NULL ){
+        itemLine = new Measure( m_d->billItem, m_d->parser, m_d->unitMeasure );
+        } else if( m_d->accountingBillItem != NULL ){
+            itemLine = new Measure( m_d->accountingBillItem, m_d->parser, m_d->unitMeasure );
+        }
         connect( itemLine, &Measure::quantityChanged, this, &MeasuresModel::updateQuantity );
         m_d->linesContainer.insert( row, itemLine );
     }
@@ -310,6 +340,19 @@ QList<BillItem *> MeasuresModel::connectedBillItems() {
     for( QList<Measure *>::iterator i = m_d->linesContainer.begin(); i != m_d->linesContainer.end(); ++i ){
         QList<BillItem *> connItems = (*i)->connectedBillItems();
         for( QList<BillItem *>::iterator j = connItems.begin(); j != connItems.end(); ++j ){
+            if( !(ret.contains(*j)) ){
+                ret.append( *j );
+            }
+        }
+    }
+    return ret;
+}
+
+QList<AccountingBillItem *> MeasuresModel::connectedAccBillItems() {
+    QList<AccountingBillItem *> ret;
+    for( QList<Measure *>::iterator i = m_d->linesContainer.begin(); i != m_d->linesContainer.end(); ++i ){
+        QList<AccountingBillItem *> connItems = (*i)->connectedAccBillItems();
+        for( QList<AccountingBillItem *>::iterator j = connItems.begin(); j != connItems.end(); ++j ){
             if( !(ret.contains(*j)) ){
                 ret.append( *j );
             }
