@@ -64,11 +64,11 @@ Var &Var::operator=(const Var &cp) {
     if( &cp != this ){
         setComment( cp.m_d->comment );
         if( (m_d->billItem != NULL) && (m_d->billItem == cp.m_d->billItem) ){
-            setFormula( cp.m_d->formula, true );
+            setName( cp.m_d->formula, true );
         } else if( (m_d->accountingBillItem != NULL) && (m_d->accountingBillItem == cp.m_d->accountingBillItem) ){
-            setFormula( cp.m_d->formula, true );
+            setName( cp.m_d->formula, true );
         } else {
-            setFormula( cp.formula(), false );
+            setName( cp.name(), false );
         }
     }
 
@@ -83,7 +83,7 @@ void Var::setComment( const QString & nc ){
     m_d->comment = nc;
 }
 
-QString Var::formula() const {
+QString Var::name() const {
     QString displayedForm = m_d->formula;
 
     if( m_d->billItem != NULL ){
@@ -116,9 +116,9 @@ QString Var::formula() const {
 
                 if( ok && connItem != NULL  ){
                     if(  priceFieldConnItem > 0 ){
-                        displayedForm += "[" + connItem->progressiveCode() + ":" + QString::number(priceFieldConnItem)+ "]";
+                        displayedForm += "[" + connItem->progCode() + ":" + QString::number(priceFieldConnItem)+ "]";
                     } else {
-                        displayedForm += "[" + connItem->progressiveCode() + "]";
+                        displayedForm += "[" + connItem->progCode() + "]";
                     }
                 } else {
                     displayedForm += "[Err]";
@@ -172,7 +172,7 @@ QString Var::formula() const {
     return displayedForm;
 }
 
-void Var::setFormula( const QString & nf, bool connItemFromId ){
+void Var::setName( const QString & nf, bool connItemFromId ){
     if( nf != m_d->formula ){
         // azzera l'elenco dei BillItem connessi
         for( QList< QPair<BillItem *, int> >::iterator it = m_d->connectedBillItems.begin(); it != m_d->connectedBillItems.end(); ++it ){
@@ -537,7 +537,7 @@ QString Var::quantityStr() const{
 void Var::writeXml( QXmlStreamWriter * writer ){
     writer->writeStartElement( "Var" );
     writer->writeAttribute( "comment", comment() );
-    QString f = formula();
+    QString f = name();
     if( m_d->parser->decimalSeparator() != "." ){
         f.replace( m_d->parser->decimalSeparator(), ".");
     }
@@ -555,7 +555,7 @@ void Var::loadFromXmlTmp() {
         if( m_d->parser->decimalSeparator() != "." ){
             f.replace( ".", m_d->parser->decimalSeparator());
         }
-        setFormula( f );
+        setName( f );
     }
     m_d->tmpAttrs.clear();
 }

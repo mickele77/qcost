@@ -127,9 +127,9 @@ QString Measure::formula() const {
 
                 if( ok && connItem != NULL  ){
                     if(  priceFieldConnItem > 0 ){
-                        displayedForm += "[" + connItem->progressiveCode() + ":" + QString::number(priceFieldConnItem)+ "]";
+                        displayedForm += "[" + connItem->progCode() + ":" + QString::number(priceFieldConnItem)+ "]";
                     } else {
-                        displayedForm += "[" + connItem->progressiveCode() + "]";
+                        displayedForm += "[" + connItem->progCode() + "]";
                     }
                 } else {
                     displayedForm += "[Err]";
@@ -168,9 +168,9 @@ QString Measure::formula() const {
 
                 if( ok && connItem != NULL  ){
                     if(  priceFieldConnItem > 0 ){
-                        displayedForm += "[" + connItem->progCode() + ":" + QString::number(priceFieldConnItem)+ "]";
+                        displayedForm += "[" + connItem->fullProgCode() + ":" + QString::number(priceFieldConnItem)+ "]";
                     } else {
-                        displayedForm += "[" + connItem->progCode() + "]";
+                        displayedForm += "[" + connItem->fullProgCode() + "]";
                     }
                 } else {
                     displayedForm += "[Err]";
@@ -326,11 +326,11 @@ void Measure::setFormula( const QString & nf, bool connItemFromId ){
                                         connItemPriceField = newFormSplittedAmounts.at(1).toInt();
                                     }
                                     if( connItemPriceField > 0 ){
-                                        m_d->connectedBillItems << qMakePair( connItem, connItemPriceField );
+                                        m_d->connectedAccBillItems << qMakePair( connItem, connItemPriceField );
                                         newForm += "[" + QString::number(connItem->id()) + ":" + QString::number(connItemPriceField) + "]";
                                         connect( connItem, &AccountingBillItem::amountsChanged, this, &Measure::updateQuantity );
                                     } else {
-                                        m_d->connectedBillItems << qMakePair( connItem, -1 );
+                                        m_d->connectedAccBillItems << qMakePair( connItem, -1 );
                                         newForm += "[" + QString::number(connItem->id()) + "]";
                                         connect( connItem, &AccountingBillItem::quantityChanged, this, &Measure::updateQuantity );
                                     }
@@ -373,11 +373,11 @@ void Measure::setFormula( const QString & nf, bool connItemFromId ){
                                         connItemPriceField = newFormSplittedAmounts.at(1).toInt();
                                     }
                                     if( connItemPriceField > 0 ){
-                                        m_d->connectedBillItems << qMakePair( connItem, connItemPriceField );
+                                        m_d->connectedAccBillItems << qMakePair( connItem, connItemPriceField );
                                         newForm += "[" + QString::number(connItem->id()) + ":" + QString::number(connItemPriceField) + "]";
                                         connect( connItem, &AccountingBillItem::amountsChanged, this, &Measure::updateQuantity );
                                     } else {
-                                        m_d->connectedBillItems << qMakePair( connItem, -1 );
+                                        m_d->connectedAccBillItems << qMakePair( connItem, -1 );
                                         newForm += "[" + QString::number(connItem->id()) + "]";
                                         connect( connItem, &AccountingBillItem::quantityChanged, this, &Measure::updateQuantity );
                                     }
@@ -388,7 +388,7 @@ void Measure::setFormula( const QString & nf, bool connItemFromId ){
                         } else {
                             AccountingBillItem * connItem = m_d->accountingBillItem->findItemFromProgCode( newFormSplitted.at(i) );
                             if( connItem != NULL ){
-                                m_d->connectedBillItems << qMakePair(connItem, -1);
+                                m_d->connectedAccBillItems << qMakePair(connItem, -1);
                                 newForm += "[" + QString::number(connItem->id()) + "]";
                                 connect( connItem, &AccountingBillItem::quantityChanged, this, &Measure::updateQuantity );
                             } else {
@@ -418,7 +418,7 @@ void Measure::setFormula( const QString & nf, bool connItemFromId ){
     }
 }
 
-void Measure::updateQuantity(){
+QString Measure::effectiveFormula(){
     QString effFormula = m_d->formula;
     if( m_d->billItem != NULL ){
         QRegExp rx("(\\[|\\])");
@@ -489,7 +489,7 @@ void Measure::updateQuantity(){
                     AccountingBillItem * connItem = m_d->accountingBillItem->findItemFromId( connItemId );
                     if( connItem != NULL ){
                         QList<AccountingBillItem *> connItems;
-                        connItem->appendConnectedBillItems( &connItems );
+                        connItem->appendConnectedItems( &connItems );
                         if( connItems.contains(m_d->accountingBillItem) ){
                             ok = false;
                         } else {
@@ -522,8 +522,11 @@ void Measure::updateQuantity(){
             }
         }
     }
+    return effFormula;
+}
 
-    double v = m_d->parser->evaluate( effFormula );
+void Measure::updateQuantity(){
+    double v = m_d->parser->evaluate( effectiveFormula() );
     if( m_d->unitMeasure ) {
         v = m_d->unitMeasure->applyPrecision( v );
     }

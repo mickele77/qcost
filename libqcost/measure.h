@@ -26,6 +26,7 @@ public:
 
     QString comment() const;
     QString formula() const;
+    QString effectiveFormula();
     double quantity() const;
     QString quantityStr() const;
 

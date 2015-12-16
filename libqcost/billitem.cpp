@@ -331,7 +331,7 @@ BillItem *BillItem::findItemFromId( unsigned int itemId ) {
 }
 
 BillItem *BillItem::itemFromProgCode( const QString & pCode) {
-    if( pCode == progressiveCode() ){
+    if( pCode == progCode() ){
         return this;
     } else {
         for( QList<BillItem *>::iterator i = m_d->childrenContainer.begin(); i != m_d->childrenContainer.end(); ++i ){
@@ -365,14 +365,14 @@ unsigned int BillItem::id() {
     return m_d->id;
 }
 
-QString BillItem::progressiveCode() const {
+QString BillItem::progCode() const {
     if( m_d->parentItem == NULL ){
         return QString();
     } else {
-        if( m_d->parentItem->progressiveCode().isEmpty() ){
+        if( m_d->parentItem->progCode().isEmpty() ){
             return QString::number( childNumber()+1 );
         } else {
-            return m_d->parentItem->progressiveCode() + "." + QString::number( childNumber()+1 );
+            return m_d->parentItem->progCode() + "." + QString::number( childNumber()+1 );
         }
     }
 }
@@ -485,7 +485,7 @@ QVariant BillItem::data(int col, int role) const {
             if( m_d->parentItem == NULL ){
                 return QVariant( trUtf8("N.") );
             } else {
-                return QVariant( progressiveCode() );
+                return QVariant( progCode() );
             }
         }
     } else if( col == m_d->priceCodeCol ){
@@ -1380,7 +1380,7 @@ void BillItem::writeODTBillOnTable( QTextCursor *cursor,
             table->appendRows(1);
             cursor->movePosition(QTextCursor::PreviousRow );
 
-            BillItemPrivate::writeCell( cursor, table, leftSubTitleFormat, tagBlockFormat, progressiveCode() );
+            BillItemPrivate::writeCell( cursor, table, leftSubTitleFormat, tagBlockFormat, progCode() );
             BillItemPrivate::writeCell( cursor, table, centralSubTitleFormat, txtBlockFormat );
             BillItemPrivate::writeCell( cursor, table, centralSubTitleFormat, txtBlockFormat, m_d->name );
             BillItemPrivate::writeCell( cursor, table, centralSubTitleFormat, tagBlockFormat );
@@ -1780,7 +1780,7 @@ void BillItem::writeODTSummaryLine(PriceItem * priceItem,
             }
             if( writeDetails ){
                 BillItemPrivate::writeCell( cursor, table, leftFormat, txtBlockFormat );
-                BillItemPrivate::writeCell( cursor, table, centralFormat, txtBlockFormat, progressiveCode() );
+                BillItemPrivate::writeCell( cursor, table, centralFormat, txtBlockFormat, progCode() );
 
                 QString unitMeasureTag;
                 if( m_d->priceItem != NULL ){
@@ -2326,7 +2326,7 @@ void BillItem::writeODTBillLine( BillPrinter::PrintBillItemsOption prItemsOption
     cursor->movePosition(QTextCursor::PreviousRow );
 
     if( writeProgCode ){
-        BillItemPrivate::writeCell( cursor, table, leftFormat, tagBlockFormat, progressiveCode()  );
+        BillItemPrivate::writeCell( cursor, table, leftFormat, tagBlockFormat, progCode()  );
     }
 
     if( m_d->priceItem ){
@@ -2399,7 +2399,7 @@ void BillItem::writeODTBillLine( BillPrinter::PrintBillItemsOption prItemsOption
                 if( realFormula.isEmpty() ){
                     BillItemPrivate::writeCell( cursor, table, centralFormat, txtBlockFormat, measure->comment() );
                 } else {
-                    BillItemPrivate::writeCell( cursor, table, centralFormat, txtBlockFormat, measure->comment() + " (" + measure->formula() + ")");
+                    BillItemPrivate::writeCell( cursor, table, centralFormat, txtBlockFormat, measure->comment() + " (" + measure->effectiveFormula() + ")");
                 }
             } else {
                 BillItemPrivate::writeCell( cursor, table, centralFormat, txtBlockFormat);

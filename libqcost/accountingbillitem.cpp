@@ -1824,13 +1824,13 @@ void AccountingBillItem::appendConnectedItems(QList<AccountingBillItem *> *items
     // aggiunge l'item corrente e tutti i suoi figli, se non presenti
     if( !(itemsList->contains(this)) ){
         itemsList->append(this);
-        for( QList<BillItem *>::iterator i = m_d->childrenContainer.begin(); i != m_d->childrenContainer.end(); ++i ){
+        for( QList<AccountingBillItem *>::iterator i = m_d->childrenContainer.begin(); i != m_d->childrenContainer.end(); ++i ){
             (*i)->appendConnectedItems(itemsList);
         }
     }
 
     // aggiunge tutti gli item connessi tramite le misure, se non presenti
-    QList<AccountingBillItem *> connItems = m_d->measuresModel->connectedBillItems();
+    QList<AccountingBillItem *> connItems = m_d->measuresModel->connectedAccBillItems();
     for( QList<AccountingBillItem *>::iterator i = connItems.begin(); i != connItems.end(); ++i ){
         if( !(itemsList->contains(*i)) ){
             (*i)->appendConnectedItems(itemsList);
@@ -2111,6 +2111,29 @@ QString AccountingBillItem::totalAmountStr() const {
     return m_d->toString( totalAmount(), 'f', m_d->amountPrecision );
 }
 
+QString AccountingBillItem::amountStr(int i ) const {
+    switch(i){
+    case 0:{
+        return totalAmountToDiscountStr();
+    }
+    case 1:{
+        return amountNotToDiscountStr();
+    }
+    case 2:{
+        return amountToDiscountStr();
+    }
+    case 3:{
+        return amountDiscountedStr();
+    }
+    case 4:{
+        return totalAmountStr();
+    }
+    default:{
+        return totalAmountToDiscountStr();
+    }
+    }
+}
+
 QString AccountingBillItem::title() const{
     if( m_d->itemType == Payment ){
         return trUtf8("S.A.L. N.%1").arg( QString::number(childNumber()+1) );
@@ -2279,7 +2302,7 @@ MeasuresModel *AccountingBillItem::generateMeasuresModel() {
         if( m_d->priceItem != NULL ){
             ump = m_d->priceItem->unitMeasure();
         }
-        m_d->measuresModel = new MeasuresModel( NULL, m_d->parser, ump );
+        m_d->measuresModel = new MeasuresModel( this, m_d->parser, ump );
         setQuantity( m_d->measuresModel->quantity() );
         connect( m_d->measuresModel, &MeasuresModel::quantityChanged, this, &AccountingBillItem::setQuantityPrivate );
         connect( m_d->measuresModel, &MeasuresModel::modelChanged, this, &AccountingBillItem::itemChanged );
@@ -4436,7 +4459,7 @@ void AccountingBillItem::writeODTBillLine(AccountingPrinter::PrintAmountsOption 
                     if( realFormula.isEmpty() ){
                         AccountingBillItemPrivate::writeCell( cursor, table, centralFormat, txtBlockFormat, measure->comment() );
                     } else {
-                        AccountingBillItemPrivate::writeCell( cursor, table, centralFormat, txtBlockFormat, measure->comment() + " (" + measure->formula() + ")");
+                        AccountingBillItemPrivate::writeCell( cursor, table, centralFormat, txtBlockFormat, measure->comment() + " (" + measure->effectiveFormula() + ")");
                     }
                 } else {
                     AccountingBillItemPrivate::writeCell( cursor, table, centralFormat, txtBlockFormat);

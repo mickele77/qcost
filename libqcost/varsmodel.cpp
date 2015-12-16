@@ -86,7 +86,7 @@ QVariant VarsModel::data(const QModelIndex &index, int role) const {
                     return QVariant( m_d->linesContainer.at(index.row())->comment());
                 }
                 if( index.column() == 1 ){
-                    return QVariant( m_d->linesContainer.at(index.row())->formula() );
+                    return QVariant( m_d->linesContainer.at(index.row())->name() );
                 }
                 if( index.column() == 2 ){
                     return QVariant( m_d->linesContainer.at(index.row())->quantityStr());
@@ -119,7 +119,7 @@ bool VarsModel::setData(const QModelIndex &index, const QVariant &value, int rol
                     return true;
                 }
                 if( index.column() == 1 ){
-                    m_d->linesContainer.at(index.row())->setFormula( value.toString() );
+                    m_d->linesContainer.at(index.row())->setName( value.toString() );
                     QModelIndex bottomRight = createIndex( index.row(), 2 );
                     emit dataChanged( index, bottomRight );
                     updateQuantity();
@@ -165,7 +165,7 @@ bool VarsModel::insertRows(int row, int count, const QModelIndex &parent) {
     }
     beginInsertRows(QModelIndex(), row, row+count-1 );
     for(int i=0; i < count; ++i){
-        Var * itemLine = new Var( m_d->billItem, m_d->parser, m_d->unitVar );
+        Var * itemLine = new Var( m_d->billItem, m_d->parser );
         connect( itemLine, &Var::quantityChanged, this, &VarsModel::updateQuantity );
         m_d->linesContainer.insert( row, itemLine );
     }
@@ -229,28 +229,6 @@ void VarsModel::updateAllQuantities() {
         emit dataChanged( createIndex(0, 2), createIndex(m_d->linesContainer.size()-1, 2) );
     }
     updateQuantity();
-}
-
-void VarsModel::setUnitVar(UnitVar *ump) {
-    if( m_d->unitVar != ump ){
-        beginResetModel();
-        if( m_d->unitVar != NULL ){
-            disconnect( m_d->unitVar, &UnitVar::precisionChanged, this, &VarsModel::updateAllQuantities );
-        }
-        m_d->unitVar = ump;
-        for( QList<Var *>::iterator i = m_d->linesContainer.begin(); i != m_d->linesContainer.end(); ++i ){
-            (*i)->setUnitVar( ump );
-        }
-        if( m_d->linesContainer.size() != 0 ){
-            emit dataChanged( createIndex(0, 2), createIndex(m_d->linesContainer.size()-1, 2) );
-        }
-        updateQuantity();
-        if( m_d->unitVar != NULL ){
-            connect( m_d->unitVar, &UnitVar::precisionChanged, this, &VarsModel::updateAllQuantities );
-        }
-        endResetModel();
-        emit modelChanged();
-    }
 }
 
 void VarsModel::writeXml(QXmlStreamWriter *writer) {

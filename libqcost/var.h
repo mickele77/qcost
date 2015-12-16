@@ -24,14 +24,14 @@ public:
     Var &operator =(const Var &cp);
 
     QString comment() const;
-    QString formula() const;
+    QString name() const;
     double quantity() const;
     QString quantityStr() const;
 
     /** Imposta il valore della formula
      * @param connItemFromId se vero i valori tra parentesi [] sono gli id degli item connessi,
               altrimenti sono i progressiveCode */
-    void setFormula(const QString &nf, bool connItemFromId = false );
+    void setName(const QString &nf, bool connItemFromId = false );
     void setComment(const QString &nc);
 
     void writeXml( QXmlStreamWriter * writer );

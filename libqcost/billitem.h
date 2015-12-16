@@ -74,7 +74,7 @@ public:
     void setParent(BillItem *newParent, int position);
 
     unsigned int id();
-    QString progressiveCode() const;
+    QString progCode() const;
     QString name();
     int currentPriceDataSet() const;
     PriceItem * priceItem();

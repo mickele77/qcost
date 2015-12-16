@@ -146,7 +146,7 @@ public:
     QString amountToDiscountStr() const;
     QString amountDiscountedStr() const;
     QString totalAmountStr() const;
-    QString amountStr( int ) const;
+    QString amountStr(int i) const;
 
     QList<int> totalAmountPriceFields() const;
     QList<int> noDiscountAmountPriceFields() const;
@@ -166,6 +166,7 @@ public:
         Se l'elemento è Bill, aggiunge una riga PPU */
     bool insertChildren(int position, int count=1);
     virtual bool insertChildren(ItemType iType, int position, int count=1);
+    bool appendChildren(ItemType iType, int count = 1);
     bool endChildren(ItemType iType, int count=1 );
     bool removeChildren(int position, int count=1);
     bool clear();
