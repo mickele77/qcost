@@ -5,9 +5,8 @@
 
 class QXmlStreamWriter;
 class QXmlStreamReader;
-class MathParser;
-class BillItem;
 class Var;
+class MathParser;
 
 #include <QAbstractTableModel>
 
@@ -17,7 +16,7 @@ class EXPORT_QCOST_LIB_OPT VarsModel : public QAbstractTableModel
 {
     Q_OBJECT
 public:
-    explicit VarsModel(BillItem *bItem, MathParser *p = NULL);
+    explicit VarsModel(MathParser *prs);
 
     ~VarsModel();
 
@@ -37,21 +36,15 @@ public:
     double quantity();
 
     void writeXml( QXmlStreamWriter * writer );
-    void readFromXmlTmp();
-    void readXmlTmp(QXmlStreamReader *reader);
+    void readXml(QXmlStreamReader *reader);
 
     int varsCount();
     Var * var( int i );
 
-    QList<BillItem *> connectedBillItems();
-
+    QString replaceValue(const QString &expr);
 signals:
-    void quantityChanged( double );
     void modelChanged();
 
-private slots:
-    void updateQuantity();
-    void updateAllQuantities();
 private:
     VarsModelPrivate * m_d;
 };

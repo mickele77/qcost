@@ -10,33 +10,25 @@
 
 class VarsModelPrivate{
 public:
-    VarsModelPrivate( BillItem * bItem, MathParser * p ):
-        parserWasCreated(false),
-        billItem(bItem),
-        quantity( 0.0 ){
-        if( p == NULL ){
-            parser = new MathParser( QLocale::system() );
-            parserWasCreated = true;
-        } else {
-            parser = p;
-        }
+    VarsModelPrivate( MathParser * prs ):
+        valueCol(2),
+        nameCol(0),
+        commentCol(1),
+        parser(prs){
     }
     ~VarsModelPrivate(){
-        if( parserWasCreated ){
-            delete parser;
-        }
     }
 
-    bool parserWasCreated;
-    BillItem * billItem;
-    MathParser * parser;
     QList<Var *> linesContainer;
-    double quantity;
+    int valueCol;
+    int nameCol;
+    int commentCol;
+    MathParser * parser;
 };
 
-VarsModel::VarsModel(BillItem * bItem, MathParser * p) :
+VarsModel::VarsModel(MathParser * prs) :
     QAbstractTableModel(),
-    m_d(new VarsModelPrivate( bItem, p )){
+    m_d(new VarsModelPrivate(prs)){
     insertRows(0);
 }
 
@@ -82,24 +74,24 @@ QVariant VarsModel::data(const QModelIndex &index, int role) const {
     if( index.isValid() ){
         if( index.row() >= 0 && index.row() < m_d->linesContainer.size() ){
             if( role == Qt::EditRole || role == Qt::DisplayRole ){
-                if( index.column() == 0 ){
+                if( index.column() == m_d->nameCol ){
+                    return QVariant( m_d->linesContainer.at(index.row())->name());
+                }
+                if( index.column() == m_d->valueCol ){
+                    return QVariant( m_d->linesContainer.at(index.row())->value() );
+                }
+                if( index.column() == m_d->commentCol ){
                     return QVariant( m_d->linesContainer.at(index.row())->comment());
-                }
-                if( index.column() == 1 ){
-                    return QVariant( m_d->linesContainer.at(index.row())->name() );
-                }
-                if( index.column() == 2 ){
-                    return QVariant( m_d->linesContainer.at(index.row())->quantityStr());
                 }
             }
             if( role == Qt::TextAlignmentRole ){
-                if( index.column() == 0 ){
+                if( index.column() == m_d->nameCol ){
                     return Qt::AlignLeft + Qt::AlignVCenter;
                 }
-                if( index.column() == 1 ){
+                if( index.column() == m_d->commentCol ){
                     return Qt::AlignLeft + Qt::AlignVCenter;
                 }
-                if( index.column() == 2 ){
+                if( index.column() == m_d->valueCol ){
                     return Qt::AlignRight + Qt::AlignVCenter;
                 }
             }
@@ -112,17 +104,21 @@ bool VarsModel::setData(const QModelIndex &index, const QVariant &value, int rol
     if( index.isValid() ){
         if( index.row() >= 0 && index.row() < m_d->linesContainer.size() ){
             if( role == Qt::EditRole  ){
-                if( index.column() == 0 ){
+                if( index.column() == m_d->commentCol ){
                     m_d->linesContainer.at(index.row())->setComment( value.toString() );
                     emit dataChanged( index, index );
                     emit modelChanged();
                     return true;
                 }
-                if( index.column() == 1 ){
+                if( index.column() == m_d->nameCol ){
                     m_d->linesContainer.at(index.row())->setName( value.toString() );
-                    QModelIndex bottomRight = createIndex( index.row(), 2 );
-                    emit dataChanged( index, bottomRight );
-                    updateQuantity();
+                    emit dataChanged( index, index );
+                    emit modelChanged();
+                    return true;
+                }
+                if( index.column() == m_d->valueCol ){
+                    m_d->linesContainer.at(index.row())->setValue( value.toString() );
+                    emit dataChanged( index, index );
                     emit modelChanged();
                     return true;
                 }
@@ -137,14 +133,14 @@ QVariant VarsModel::headerData(int section, Qt::Orientation orientation, int rol
         return QVariant();
 
     if (orientation == Qt::Horizontal) {
-        if( section == 0 ) {
+        if( section == m_d->commentCol ) {
             return trUtf8("Commento");
         }
-        if( section == 1 ) {
-            return trUtf8("Misure");
+        if( section == m_d->nameCol ) {
+            return trUtf8("Variabile");
         }
-        if( section == 2 ) {
-            return trUtf8("Quantità");
+        if( section == m_d->valueCol ) {
+            return trUtf8("Valore");
         }
     } else if( orientation == Qt::Vertical ){
         return QVariant( section + 1 );
@@ -165,8 +161,7 @@ bool VarsModel::insertRows(int row, int count, const QModelIndex &parent) {
     }
     beginInsertRows(QModelIndex(), row, row+count-1 );
     for(int i=0; i < count; ++i){
-        Var * itemLine = new Var( m_d->billItem, m_d->parser );
-        connect( itemLine, &Var::quantityChanged, this, &VarsModel::updateQuantity );
+        Var * itemLine = new Var( m_d->parser );
         m_d->linesContainer.insert( row, itemLine );
     }
     endInsertRows();
@@ -200,35 +195,12 @@ bool VarsModel::removeRows(int row, int count, const QModelIndex &parent) {
         m_d->linesContainer.removeAt( row );
     }
     endRemoveRows();
-    updateQuantity();
     emit modelChanged();
     return true;
 }
 
 bool VarsModel::append( int count ){
     return insertRows( m_d->linesContainer.size(), count );
-}
-
-void VarsModel::updateQuantity() {
-    double ret = 0.0;
-    for( QList<Var *>::iterator i = m_d->linesContainer.begin(); i != m_d->linesContainer.end(); ++i ){
-        ret += (*i)->quantity();
-    }
-    if( ret != m_d->quantity ){
-        m_d->quantity = ret;
-        emit quantityChanged( ret );
-    }
-}
-
-double VarsModel::quantity(){
-    return m_d->quantity;
-}
-
-void VarsModel::updateAllQuantities() {
-    if( m_d->linesContainer.size() != 0 ){
-        emit dataChanged( createIndex(0, 2), createIndex(m_d->linesContainer.size()-1, 2) );
-    }
-    updateQuantity();
 }
 
 void VarsModel::writeXml(QXmlStreamWriter *writer) {
@@ -239,28 +211,22 @@ void VarsModel::writeXml(QXmlStreamWriter *writer) {
     writer->writeEndElement();
 }
 
-void VarsModel::readXmlTmp(QXmlStreamReader *reader) {
+void VarsModel::readXml(QXmlStreamReader *reader) {
     bool firstLine = true;
     while( !reader->atEnd() &&
            !reader->hasError() &&
-           !(reader->isEndElement() && reader->name().toString().toUpper() == "MEASURESMODEL") ){
+           !(reader->isEndElement() && reader->name().toString().toUpper() == "VARSMODEL") ){
         reader->readNext();
-        if( reader->name().toString().toUpper() == "MEASURE" && reader->isStartElement()) {
+        if( reader->name().toString().toUpper() == "VAR" && reader->isStartElement()) {
             if( firstLine ){
-                m_d->linesContainer.last()->loadXmlTmp( reader->attributes() );
+                m_d->linesContainer.last()->loadXml( reader->attributes() );
                 firstLine = false;
             } else {
                 if(append()){
-                    m_d->linesContainer.last()->loadXmlTmp( reader->attributes() );
+                    m_d->linesContainer.last()->loadXml( reader->attributes() );
                 }
             }
         }
-    }
-}
-
-void VarsModel::readFromXmlTmp() {
-    for( QList<Var *>::iterator i = m_d->linesContainer.begin(); i != m_d->linesContainer.end(); ++i ){
-        (*i)->loadFromXmlTmp();
     }
 }
 
@@ -275,15 +241,10 @@ Var * VarsModel::var(int i) {
     return NULL;
 }
 
-QList<BillItem *> VarsModel::connectedBillItems() {
-    QList<BillItem *> ret;
+QString VarsModel::replaceValue( const QString & expr ) {
+    QString ret;
     for( QList<Var *>::iterator i = m_d->linesContainer.begin(); i != m_d->linesContainer.end(); ++i ){
-        QList<BillItem *> connItems = (*i)->connectedBillItems();
-        for( QList<BillItem *>::iterator j = connItems.begin(); j != connItems.end(); ++j ){
-            if( !(ret.contains(*j)) ){
-                ret.append( *j );
-            }
-        }
+        (*i)->replaceValue( &ret );
     }
     return ret;
 }

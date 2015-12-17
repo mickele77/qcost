@@ -3,8 +3,6 @@
 
 #include "qcost_export.h"
 
-class AccountingBillItem;
-class BillItem;
 class MathParser;
 class QTextStream;
 class QXmlStreamWriter;
@@ -17,36 +15,31 @@ class VarPrivate;
 class EXPORT_QCOST_LIB_OPT Var : public QObject {
     Q_OBJECT
 public:
-    explicit Var( BillItem * bItem = NULL, MathParser *p = NULL );
-    explicit Var( AccountingBillItem * accBItem = NULL, MathParser *p = NULL );
+    explicit Var(MathParser *prs);
     ~Var();
 
     Var &operator =(const Var &cp);
 
     QString comment() const;
     QString name() const;
-    double quantity() const;
-    QString quantityStr() const;
+    QString value() const;
 
     /** Imposta il valore della formula
      * @param connItemFromId se vero i valori tra parentesi [] sono gli id degli item connessi,
               altrimenti sono i progressiveCode */
-    void setName(const QString &nf, bool connItemFromId = false );
+    void setName(const QString &nf);
     void setComment(const QString &nc);
+    void setValue( const QString & newVal );
 
     void writeXml( QXmlStreamWriter * writer );
-    void loadFromXmlTmp();
-    void loadXmlTmp(const QXmlStreamAttributes &attrs);
+    void loadXml(const QXmlStreamAttributes &attrs);
 
-    QList<BillItem *> connectedBillItems();
-    QList<AccountingBillItem *> connectedAccBillItems();
-
+    void replaceValue(QString *expr);
 signals:
     void quantityChanged( double );
 
 private:
     VarPrivate * m_d;
-    void updateQuantity();
 };
 
 #endif // VAR_H
