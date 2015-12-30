@@ -3,6 +3,7 @@
 
 class AccountingPriceFieldModel;
 
+#include "varsmodel.h"
 #include "accountinglsbill.h"
 #include "accountingbillitem.h"
 #include "pricefieldmodel.h"
@@ -17,7 +18,7 @@ class AccountingPriceFieldModel;
 class AccountingBillItemPrivate{
 public:
     AccountingBillItemPrivate( AccountingBillItem * parent, AccountingBillItem::ItemType iType,
-                               PriceFieldModel * pfm, MathParser * p = NULL );
+                               PriceFieldModel * pfm, MathParser * p = NULL, VarsModel * vModel = NULL );
     ~AccountingBillItemPrivate();
     QString	toString(double i, char f = 'g', int prec = 6) const;
     QString percentageToString( double v ) const;
@@ -37,9 +38,11 @@ public:
     QList<AccountingBillItem *> childrenContainer;
     QList<Attribute *> attributes;
     MathParser * parser;
-    PriceFieldModel * priceFieldModel;
     int accountingProgCode;
     int progCode;
+    PriceFieldModel * priceFieldModel;
+    // modello delle variabili associato
+    VarsModel * varsModel;
 
     // Il tipo di elemento
     AccountingBillItem::ItemType itemType;

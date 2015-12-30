@@ -15,81 +15,64 @@
   </property>
   <layout class="QGridLayout" name="gridLayout">
    <item row="0" column="0">
-    <widget class="QSplitter" name="splitter_2">
+    <widget class="QSplitter" name="splitter">
      <property name="orientation">
-      <enum>Qt::Vertical</enum>
+      <enum>Qt::Horizontal</enum>
      </property>
-     <widget class="QSplitter" name="splitter">
-      <property name="orientation">
-       <enum>Qt::Horizontal</enum>
-      </property>
-      <widget class="QGroupBox" name="infoGroupBox">
-       <property name="title">
-        <string>Info</string>
-       </property>
-       <layout class="QGridLayout" name="gridLayout_2">
-        <item row="0" column="0">
-         <widget class="QLabel" name="nameLabel">
-          <property name="text">
-           <string>Nome</string>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="1">
-         <widget class="QLineEdit" name="nameLineEdit"/>
-        </item>
-        <item row="1" column="0" colspan="2">
-         <widget class="QGroupBox" name="groupBox">
-          <property name="title">
-           <string>Note</string>
-          </property>
-          <property name="flat">
-           <bool>false</bool>
-          </property>
-          <layout class="QGridLayout" name="gridLayout_4">
-           <item row="0" column="0">
-            <widget class="QPlainTextEdit" name="descriptionTextEdit"/>
-           </item>
-          </layout>
-         </widget>
-        </item>
-       </layout>
-      </widget>
-      <widget class="QGroupBox" name="amountsGroupBox">
-       <property name="title">
-        <string>Importi</string>
-       </property>
-       <layout class="QGridLayout" name="amountsLayout"/>
-      </widget>
-     </widget>
-     <widget class="QGroupBox" name="attributesGroupBox">
+     <widget class="QGroupBox" name="infoGroupBox">
       <property name="title">
-       <string>Etichette</string>
+       <string>Info</string>
       </property>
-      <layout class="QGridLayout" name="gridLayout_3">
-       <item row="1" column="1">
-        <widget class="QPushButton" name="removeAttributePushButton">
+      <layout class="QGridLayout" name="gridLayout_2">
+       <item row="0" column="0">
+        <widget class="QLabel" name="nameLabel">
          <property name="text">
-          <string>-</string>
+          <string>Nome</string>
          </property>
         </widget>
        </item>
-       <item row="1" column="0">
-        <widget class="QPushButton" name="addAttributePushButton">
-         <property name="text">
-          <string>+</string>
+       <item row="0" column="1">
+        <widget class="QLineEdit" name="nameLineEdit"/>
+       </item>
+       <item row="1" column="0" colspan="2">
+        <widget class="QGroupBox" name="groupBox">
+         <property name="title">
+          <string>Note</string>
          </property>
+         <property name="flat">
+          <bool>false</bool>
+         </property>
+         <layout class="QGridLayout" name="gridLayout_4">
+          <item row="0" column="0">
+           <widget class="QPlainTextEdit" name="descriptionTextEdit"/>
+          </item>
+         </layout>
         </widget>
        </item>
-       <item row="1" column="2">
-        <widget class="QPushButton" name="printAttributeBillPushButton">
-         <property name="text">
-          <string>Stampa</string>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="">
+      <layout class="QVBoxLayout" name="verticalLayout">
+       <item>
+        <widget class="QGroupBox" name="amountsGroupBox">
+         <property name="title">
+          <string>Importi</string>
          </property>
+         <layout class="QGridLayout" name="amountsLayout"/>
         </widget>
        </item>
-       <item row="0" column="0" colspan="3">
-        <widget class="QTableView" name="attributesTableView"/>
+       <item>
+        <spacer name="verticalSpacer">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>40</height>
+          </size>
+         </property>
+        </spacer>
        </item>
       </layout>
      </widget>

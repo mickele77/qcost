@@ -1,6 +1,6 @@
 /*
    QCost is a cost estimating software.
-   Copyright (C) 2013-2014 Mocciola Michele
+   Copyright (C) 2013-2016 Mocciola Michele
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -18,23 +18,23 @@
 */
 #include "billattributeselectmodel.h"
 
-#include "attributemodel.h"
+#include "attributesmodel.h"
 #include "attribute.h"
 
 class BillAttributeSelectModelPrivate{
 public:
-    BillAttributeSelectModelPrivate( AttributeModel * m ):
+    BillAttributeSelectModelPrivate( AttributesModel * m ):
         model(m){
         for( int i=0; i < model->size(); ++i){
             selected << false;
         }
     }
-    AttributeModel * model;
+    AttributesModel * model;
     QList<bool> selected;
 };
 
 
-BillAttributeSelectModel::BillAttributeSelectModel(AttributeModel *m, QObject *parent) :
+BillAttributeSelectModel::BillAttributeSelectModel(AttributesModel *m, QObject *parent) :
     QAbstractTableModel(parent),
     m_d( new BillAttributeSelectModelPrivate(m) ){
 }

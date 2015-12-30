@@ -32,6 +32,7 @@ public:
     bool insertRows(int row, int count = 1, const QModelIndex &parent = QModelIndex() );
     bool append( int count = 1 );
     bool removeRows(int row, int count = 1, const QModelIndex &parent = QModelIndex() );
+    bool clear();
 
     double quantity();
 

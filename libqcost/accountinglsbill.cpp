@@ -1,6 +1,6 @@
 /*
    QCost is a cost estimating software.
-   Copyright (C) 2013-2014 Mocciola Michele
+   Copyright (C) 2013-2016 Mocciola Michele
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
 #include "accountinglsbill.h"
 
 #include "billprinter.h"
-#include "attributemodel.h"
+#include "attributesmodel.h"
 #include "accountinglsbillitem.h"
 #include "pricelist.h"
 #include "priceitem.h"
@@ -46,7 +46,7 @@ public:
         parser(prs),
         rootItem(new AccountingLSBillItem( NULL, NULL, pfm, parser )),
         priceList( NULL ),
-        attributeModel( new AttributeModel( b, parser, pfm )),
+        attributeModel( new AttributesModel( b, parser, pfm )),
         priceListIdTmp(0){
     }
     ~AccountingLSBillPrivate(){
@@ -80,7 +80,7 @@ public:
     MathParser * parser;
     AccountingLSBillItem * rootItem;
     PriceList * priceList;
-    AttributeModel * attributeModel;
+    AttributesModel * attributeModel;
     unsigned int priceListIdTmp;
 
     static int amountPrecision;
@@ -100,7 +100,7 @@ AccountingLSBill::AccountingLSBill( const QString &c, const QString &n,
     connect( m_d->rootItem, &AccountingLSBillItem::percentageAccountedChanged, this, &AccountingLSBill::percentageAccountedChanged );
 
     connect( m_d->rootItem, &AccountingLSBillItem::itemChanged, this, &AccountingLSBill::modelChanged );
-    connect( m_d->attributeModel, &AttributeModel::modelChanged, this, &AccountingLSBill::modelChanged );
+    connect( m_d->attributeModel, &AttributesModel::modelChanged, this, &AccountingLSBill::modelChanged );
 }
 
 AccountingLSBill::AccountingLSBill(AccountingLSBill & b):
@@ -117,7 +117,7 @@ AccountingLSBill::AccountingLSBill(AccountingLSBill & b):
     connect( m_d->rootItem, &AccountingLSBillItem::percentageAccountedChanged, this, &AccountingLSBill::percentageAccountedChanged );
 
     connect( m_d->rootItem, &AccountingLSBillItem::itemChanged, this, &AccountingLSBill::modelChanged );
-    connect( m_d->attributeModel, &AttributeModel::modelChanged, this, &AccountingLSBill::modelChanged );
+    connect( m_d->attributeModel, &AttributesModel::modelChanged, this, &AccountingLSBill::modelChanged );
 }
 
 AccountingLSBill::~AccountingLSBill(){
@@ -128,7 +128,7 @@ AccountingLSBill::~AccountingLSBill(){
     disconnect( m_d->rootItem, &AccountingLSBillItem::percentageAccountedChanged, this, &AccountingLSBill::percentageAccountedChanged );
 
     disconnect( m_d->rootItem, &AccountingLSBillItem::itemChanged, this, &AccountingLSBill::modelChanged );
-    disconnect( m_d->attributeModel, &AttributeModel::modelChanged, this, &AccountingLSBill::modelChanged );
+    disconnect( m_d->attributeModel, &AttributesModel::modelChanged, this, &AccountingLSBill::modelChanged );
 
     emit aboutToBeDeleted();
 
@@ -563,7 +563,7 @@ double AccountingLSBill::percentageAccounted(const QDate &dBegin, const QDate &d
     return m_d->rootItem->percentageAccounted(dBegin, dEnd);
 }
 
-AttributeModel *AccountingLSBill::attributeModel() {
+AttributesModel *AccountingLSBill::attributeModel() {
     return m_d->attributeModel;
 }
 

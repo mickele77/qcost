@@ -1,6 +1,6 @@
 /*
    QCost is a cost estimating software.
-   Copyright (C) 2013-2014 Mocciola Michele
+   Copyright (C) 2013-2016 Mocciola Michele
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -16,8 +16,8 @@
    along with this program; if not, write to the Free Software Foundation,
    Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 */
-#ifndef ATTRIBUTEMODEL_H
-#define ATTRIBUTEMODEL_H
+#ifndef ATTRIBUTESMODEL_H
+#define ATTRIBUTESMODEL_H
 
 #include "qcost_export.h"
 
@@ -35,17 +35,19 @@ class QXmlStreamWriter;
 
 #include <QAbstractTableModel>
 
-class AttributeModelPrivate;
+class AttributesModelPrivate;
 
-class EXPORT_QCOST_LIB_OPT AttributeModel : public QAbstractTableModel {
+class EXPORT_QCOST_LIB_OPT AttributesModel : public QAbstractTableModel {
     Q_OBJECT
 public:
     friend class Project;
-    explicit AttributeModel( Bill * myBill, MathParser * prs, PriceFieldModel *pfm, QObject *parent = 0);
-    explicit AttributeModel( AccountingBill * myBill, MathParser * prs, PriceFieldModel *pfm, QObject *parent = 0);
-    explicit AttributeModel( AccountingTAMBill * myBill, MathParser * prs, PriceFieldModel *pfm, QObject *parent = 0);
-    explicit AttributeModel( AccountingLSBill * myBill, MathParser * prs, PriceFieldModel *pfm, QObject *parent = 0);
-    ~AttributeModel();
+    explicit AttributesModel( Bill * myBill, MathParser * prs, PriceFieldModel *pfm, QObject *parent = 0);
+    explicit AttributesModel( AccountingBill * myBill, MathParser * prs, PriceFieldModel *pfm, QObject *parent = 0);
+    explicit AttributesModel( AccountingTAMBill * myBill, MathParser * prs, PriceFieldModel *pfm, QObject *parent = 0);
+    explicit AttributesModel( AccountingLSBill * myBill, MathParser * prs, PriceFieldModel *pfm, QObject *parent = 0);
+    ~AttributesModel();
+
+    AttributesModel & operator= (const AttributesModel & cp );
 
     int size();
     Attribute * attribute( int i );
@@ -73,7 +75,7 @@ signals:
     void aboutToBeDeleted();
 
 private:
-    AttributeModelPrivate * m_d;
+    AttributesModelPrivate * m_d;
 };
 
-#endif // ATTRIBUTEMODEL_H
+#endif // ATTRIBUTESMODEL_H

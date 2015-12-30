@@ -1,6 +1,6 @@
 /*
    QCost is a cost estimating software.
-   Copyright (C) 2013-2014 Mocciola Michele
+   Copyright (C) 2013-2016 Mocciola Michele
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -23,13 +23,13 @@
 #include "accountingbillitem.h"
 #include "billitem.h"
 #include "attributeselectmodel.h"
-#include "attributemodel.h"
+#include "attributesmodel.h"
 #include "attribute.h"
 
 class AttributeChangeDialogPrivate{
 public:
     AttributeChangeDialogPrivate( QList<BillItem *> * il,
-                                  AttributeModel * bam ):
+                                  AttributesModel * bam ):
         ui( new Ui::AttributeChangeDialog ),
         billItemsList(il),
         accountingBillItemsList( NULL ),
@@ -38,7 +38,7 @@ public:
         selectModel( new AttributeSelectModel( bam ) ){
     }
     AttributeChangeDialogPrivate( QList<AccountingBillItem *> * il,
-                                  AttributeModel * bam ):
+                                  AttributesModel * bam ):
         ui( new Ui::AttributeChangeDialog ),
         billItemsList(NULL),
         accountingBillItemsList( il ),
@@ -47,7 +47,7 @@ public:
         selectModel( new AttributeSelectModel( bam ) ){
     }
     AttributeChangeDialogPrivate( QList<AccountingTAMBillItem *> * il,
-                                  AttributeModel * bam ):
+                                  AttributesModel * bam ):
         ui( new Ui::AttributeChangeDialog ),
         billItemsList(NULL),
         accountingBillItemsList( NULL ),
@@ -63,12 +63,12 @@ public:
     QList<BillItem *> * billItemsList;
     QList<AccountingBillItem *> * accountingBillItemsList;
     QList<AccountingTAMBillItem *> * accountingTAMBillItemsList;
-    AttributeModel * accountingAttModel;
+    AttributesModel * accountingAttModel;
     AttributeSelectModel * selectModel;
 };
 
 AttributeChangeDialog::AttributeChangeDialog(QList<BillItem *> * itemsList,
-                                             AttributeModel *accountingAttModel,
+                                             AttributesModel *accountingAttModel,
                                              QWidget *parent) :
     QDialog(parent),
     m_d( new AttributeChangeDialogPrivate( itemsList, accountingAttModel ) ) {
@@ -76,7 +76,7 @@ AttributeChangeDialog::AttributeChangeDialog(QList<BillItem *> * itemsList,
 }
 
 AttributeChangeDialog::AttributeChangeDialog(QList<AccountingBillItem *> * itemsList,
-                                             AttributeModel *accountingAttModel,
+                                             AttributesModel *accountingAttModel,
                                              QWidget *parent) :
     QDialog(parent),
     m_d( new AttributeChangeDialogPrivate( itemsList, accountingAttModel ) ) {
@@ -84,7 +84,7 @@ AttributeChangeDialog::AttributeChangeDialog(QList<AccountingBillItem *> * items
 }
 
 AttributeChangeDialog::AttributeChangeDialog(QList<AccountingTAMBillItem *> * itemsList,
-                                             AttributeModel *accountingAttModel,
+                                             AttributesModel *accountingAttModel,
                                              QWidget *parent) :
     QDialog(parent),
     m_d( new AttributeChangeDialogPrivate( itemsList, accountingAttModel ) ) {

@@ -1,6 +1,6 @@
 /*
    QCost is a cost estimating software.
-   Copyright (C) 2013-2014 Mocciola Michele
+   Copyright (C) 2013-2016 Mocciola Michele
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -37,7 +37,7 @@ public:
 
     bool insertChildren(ItemType iType, int position, int count=1);
 
-    void readXml(QXmlStreamReader *reader, PriceList *priceList, AttributeModel *attrModel);
+    void readXml(QXmlStreamReader *reader, PriceList *priceList, AttributesModel *attrModel);
 };
 
 #endif // ACCOUNTINGTAMBILLITEM_H

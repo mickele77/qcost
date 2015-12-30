@@ -1,6 +1,6 @@
 /*
    QCost is a cost estimating software.
-   Copyright (C) 2013-2014 Mocciola Michele
+   Copyright (C) 2013-2016 Mocciola Michele
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -24,9 +24,10 @@
 class PriceList;
 class PriceItem;
 class MeasuresModel;
+class VarsModel;
 class PriceFieldModel;
 class MathParser;
-class AttributeModel;
+class AttributesModel;
 class Attribute;
 class UnitMeasure;
 
@@ -50,13 +51,15 @@ class EXPORT_QCOST_LIB_OPT BillItem :  public QObject, public TreeItem {
     Q_OBJECT
 public:
     friend class Bill;
-    BillItem( PriceItem * p, BillItem * parentItem, PriceFieldModel * pfm, MathParser * parser = NULL );
+    BillItem(PriceItem * p, BillItem * parentItem, PriceFieldModel * pfm, MathParser * parser = NULL, VarsModel * vModel = NULL );
     ~BillItem();
 
     BillItem &operator =(const BillItem &cp);
 
     int firstPriceFieldCol();
+    VarsModel * varsModel();
 
+    const BillItem * rootItem() const;
     BillItem * parent();
     /** ricerca tra gli oggetti figlio uno con id pari a itemId */
     BillItem * itemFromId(unsigned int itemId);
@@ -116,7 +119,7 @@ public:
 
     void writeXml( QXmlStreamWriter * writer );
     void readXmlTmp(QXmlStreamReader *reader);
-    void readFromXmlTmp(PriceList *priceList , AttributeModel *billAttrModel);
+    void readFromXmlTmp(PriceList *priceList , AttributesModel *billAttrModel);
 
     bool containsAttribute( Attribute * attr );
     bool containsAttributeInherited( Attribute * attr );
@@ -185,7 +188,7 @@ private:
 
     void appendUsedPriceItems( QList<PriceItem *> * usedPriceItems ) const;
 
-    void loadXml(const QXmlStreamAttributes &attrs, PriceList *priceList, AttributeModel * billAttrModel);
+    void loadXml(const QXmlStreamAttributes &attrs, PriceList *priceList, AttributesModel * billAttrModel);
 
     void writeODTSummaryLine(PriceItem * priceItem,
                              QTextCursor *cursor,

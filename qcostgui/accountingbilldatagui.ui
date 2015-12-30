@@ -13,8 +13,155 @@
   <property name="windowTitle">
    <string>Dati computo</string>
   </property>
-  <layout class="QGridLayout" name="gridLayout_7">
+  <layout class="QGridLayout" name="gridLayout_3">
    <item row="0" column="0">
+    <widget class="QSplitter" name="splitter">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <widget class="QGroupBox" name="infoGroupBox">
+      <property name="title">
+       <string>Info</string>
+      </property>
+      <layout class="QGridLayout" name="gridLayout_4">
+       <item row="0" column="0">
+        <widget class="QLabel" name="nameLabel">
+         <property name="text">
+          <string>Denominazione</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1">
+        <widget class="QLineEdit" name="nameLineEdit"/>
+       </item>
+       <item row="1" column="0" colspan="2">
+        <widget class="QGroupBox" name="descriptionGroupBox">
+         <property name="title">
+          <string>Descrizione</string>
+         </property>
+         <layout class="QGridLayout" name="gridLayout_6">
+          <item row="0" column="0">
+           <widget class="QPlainTextEdit" name="descriptionTextEdit"/>
+          </item>
+         </layout>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="">
+      <layout class="QVBoxLayout" name="verticalLayout">
+       <item>
+        <widget class="QGroupBox" name="amountsGroupBox">
+         <property name="title">
+          <string>Importi</string>
+         </property>
+         <layout class="QGridLayout" name="gridLayout_8">
+          <item row="0" column="3">
+           <widget class="QLineEdit" name="totalAmountToDiscountLineEdit">
+            <property name="alignment">
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
+            <property name="readOnly">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="0" colspan="2">
+           <widget class="QLabel" name="amountNotToDiscountLabel">
+            <property name="text">
+             <string>Totale non ribassabile</string>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="3">
+           <widget class="QLineEdit" name="amountToDiscountLineEdit">
+            <property name="alignment">
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
+            <property name="readOnly">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="3">
+           <widget class="QLineEdit" name="amountDiscountedLineEdit">
+            <property name="alignment">
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
+            <property name="readOnly">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="0">
+           <widget class="QLabel" name="amountDiscountedLabel">
+            <property name="text">
+             <string>Totale ribassabile netto</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="0" colspan="3">
+           <widget class="QLabel" name="totalAmountToDiscountLabel">
+            <property name="text">
+             <string>Totale lordo</string>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="0">
+           <widget class="QLabel" name="amountToDiscountLabel">
+            <property name="text">
+             <string>Totale ribassabile</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="3">
+           <widget class="QLineEdit" name="amountNotToDiscountLineEdit">
+            <property name="alignment">
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
+            <property name="readOnly">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="5" column="0">
+           <widget class="QLabel" name="totalAmountLabel">
+            <property name="text">
+             <string>Totale</string>
+            </property>
+           </widget>
+          </item>
+          <item row="5" column="3">
+           <widget class="QLineEdit" name="totalAmountLineEdit">
+            <property name="alignment">
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
+            <property name="readOnly">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <spacer name="verticalSpacer">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>40</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </widget>
+    </widget>
+   </item>
+   <item row="0" column="1">
     <widget class="QTabWidget" name="tabWidget">
      <property name="tabPosition">
       <enum>QTabWidget::West</enum>
@@ -32,148 +179,6 @@
          <property name="orientation">
           <enum>Qt::Horizontal</enum>
          </property>
-         <widget class="QWidget" name="layoutWidget">
-          <layout class="QVBoxLayout" name="generalDataLeftVerticalLayout">
-           <item>
-            <widget class="QGroupBox" name="amountsGroupBox">
-             <property name="title">
-              <string>Importi</string>
-             </property>
-             <layout class="QGridLayout" name="gridLayout_8">
-              <item row="0" column="3">
-               <widget class="QLineEdit" name="totalAmountToDiscountLineEdit">
-                <property name="alignment">
-                 <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                </property>
-                <property name="readOnly">
-                 <bool>true</bool>
-                </property>
-               </widget>
-              </item>
-              <item row="2" column="0" colspan="2">
-               <widget class="QLabel" name="amountNotToDiscountLabel">
-                <property name="text">
-                 <string>Totale non ribassabile</string>
-                </property>
-               </widget>
-              </item>
-              <item row="3" column="3">
-               <widget class="QLineEdit" name="amountToDiscountLineEdit">
-                <property name="alignment">
-                 <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                </property>
-                <property name="readOnly">
-                 <bool>true</bool>
-                </property>
-               </widget>
-              </item>
-              <item row="4" column="3">
-               <widget class="QLineEdit" name="amountDiscountedLineEdit">
-                <property name="alignment">
-                 <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                </property>
-                <property name="readOnly">
-                 <bool>true</bool>
-                </property>
-               </widget>
-              </item>
-              <item row="4" column="0">
-               <widget class="QLabel" name="amountDiscountedLabel">
-                <property name="text">
-                 <string>Totale ribassabile netto</string>
-                </property>
-               </widget>
-              </item>
-              <item row="0" column="0" colspan="3">
-               <widget class="QLabel" name="totalAmountToDiscountLabel">
-                <property name="text">
-                 <string>Totale lordo</string>
-                </property>
-               </widget>
-              </item>
-              <item row="3" column="0">
-               <widget class="QLabel" name="amountToDiscountLabel">
-                <property name="text">
-                 <string>Totale ribassabile</string>
-                </property>
-               </widget>
-              </item>
-              <item row="2" column="3">
-               <widget class="QLineEdit" name="amountNotToDiscountLineEdit">
-                <property name="alignment">
-                 <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                </property>
-                <property name="readOnly">
-                 <bool>true</bool>
-                </property>
-               </widget>
-              </item>
-              <item row="5" column="0">
-               <widget class="QLabel" name="totalAmountLabel">
-                <property name="text">
-                 <string>Totale</string>
-                </property>
-               </widget>
-              </item>
-              <item row="5" column="3">
-               <widget class="QLineEdit" name="totalAmountLineEdit">
-                <property name="alignment">
-                 <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                </property>
-                <property name="readOnly">
-                 <bool>true</bool>
-                </property>
-               </widget>
-              </item>
-             </layout>
-            </widget>
-           </item>
-           <item>
-            <widget class="QGroupBox" name="infoGroupBox">
-             <property name="title">
-              <string>Info</string>
-             </property>
-             <layout class="QGridLayout" name="gridLayout_4">
-              <item row="0" column="0">
-               <widget class="QLabel" name="nameLabel">
-                <property name="text">
-                 <string>Denominazione</string>
-                </property>
-               </widget>
-              </item>
-              <item row="0" column="1">
-               <widget class="QLineEdit" name="nameLineEdit"/>
-              </item>
-              <item row="1" column="0" colspan="2">
-               <widget class="QGroupBox" name="descriptionGroupBox">
-                <property name="title">
-                 <string>Descrizione</string>
-                </property>
-                <layout class="QGridLayout" name="gridLayout_6">
-                 <item row="0" column="0">
-                  <widget class="QPlainTextEdit" name="descriptionTextEdit"/>
-                 </item>
-                </layout>
-               </widget>
-              </item>
-             </layout>
-            </widget>
-           </item>
-           <item>
-            <spacer name="verticalSpacer">
-             <property name="orientation">
-              <enum>Qt::Vertical</enum>
-             </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>20</width>
-               <height>40</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
-          </layout>
-         </widget>
          <widget class="QGroupBox" name="priceGroupBox">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
@@ -264,46 +269,6 @@
            </item>
           </layout>
          </widget>
-        </widget>
-       </item>
-      </layout>
-     </widget>
-     <widget class="QWidget" name="attributesTab">
-      <attribute name="title">
-       <string>Etichette</string>
-      </attribute>
-      <layout class="QGridLayout" name="gridLayout_11">
-       <item row="0" column="0">
-        <widget class="QGroupBox" name="attributesGroupBox">
-         <property name="title">
-          <string>Etichette</string>
-         </property>
-         <layout class="QGridLayout" name="gridLayout_3">
-          <item row="1" column="1">
-           <widget class="QPushButton" name="removeAttributePushButton">
-            <property name="text">
-             <string>-</string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="0">
-           <widget class="QPushButton" name="addAttributePushButton">
-            <property name="text">
-             <string>+</string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="2">
-           <widget class="QPushButton" name="printAttributePushButton">
-            <property name="text">
-             <string>Stampa</string>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="0" colspan="3">
-           <widget class="QTableView" name="attributesTableView"/>
-          </item>
-         </layout>
         </widget>
        </item>
       </layout>

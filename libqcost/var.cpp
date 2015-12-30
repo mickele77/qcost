@@ -95,5 +95,7 @@ void Var::loadXml(const QXmlStreamAttributes &attrs) {
 }
 
 void Var::replaceValue( QString * expr ) {
-    expr->replace(m_d->name, m_d->value);
+    if( !(m_d->name.isEmpty()) ){
+        expr->replace(m_d->name, m_d->value);
+    }
 }

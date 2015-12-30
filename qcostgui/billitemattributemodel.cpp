@@ -1,6 +1,6 @@
 /*
    QCost is a cost estimating software.
-   Copyright (C) 2013-2014 Mocciola Michele
+   Copyright (C) 2013-2016 Mocciola Michele
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -18,21 +18,21 @@
 */
 #include "billitemattributemodel.h"
 
-#include "attributemodel.h"
+#include "attributesmodel.h"
 #include "attribute.h"
 #include "billitem.h"
 
 class BillItemAttributeModelPrivate{
 public:
-    BillItemAttributeModelPrivate(BillItem * item, AttributeModel * attrModel):
+    BillItemAttributeModelPrivate(BillItem * item, AttributesModel * attrModel):
         billItem(item),
         attributeModel(attrModel){
     };
     BillItem * billItem;
-    AttributeModel * attributeModel;
+    AttributesModel * attributeModel;
 };
 
-BillItemAttributeModel::BillItemAttributeModel(BillItem * item, AttributeModel * attrModel, QObject *parent) :
+BillItemAttributeModel::BillItemAttributeModel(BillItem * item, AttributesModel * attrModel, QObject *parent) :
     QAbstractTableModel(parent),
     m_d( new BillItemAttributeModelPrivate(item, attrModel) ){
 }
@@ -182,16 +182,16 @@ bool BillItemAttributeModel::clear() {
     return false;
 }
 
-void BillItemAttributeModel::setAttributeModel(AttributeModel *attrModel) {
+void BillItemAttributeModel::setAttributeModel(AttributesModel *attrModel) {
     if( m_d->attributeModel != NULL ){
-        disconnect( m_d->attributeModel, &AttributeModel::aboutToBeDeleted, this, &BillItemAttributeModel::setAttributeModelNULL );
+        disconnect( m_d->attributeModel, &AttributesModel::aboutToBeDeleted, this, &BillItemAttributeModel::setAttributeModelNULL );
     }
     beginResetModel();
     m_d->attributeModel = attrModel;
     m_d->billItem = NULL;
     endResetModel();
     if( m_d->attributeModel != NULL ){
-        connect( m_d->attributeModel, &AttributeModel::aboutToBeDeleted, this, &BillItemAttributeModel::setAttributeModelNULL );
+        connect( m_d->attributeModel, &AttributesModel::aboutToBeDeleted, this, &BillItemAttributeModel::setAttributeModelNULL );
     }
 }
 

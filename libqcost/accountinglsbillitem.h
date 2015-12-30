@@ -1,6 +1,6 @@
 /*
    QCost is a cost estimating software.
-   Copyright (C) 2013-2014 Mocciola Michele
+   Copyright (C) 2013-2016 Mocciola Michele
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -27,7 +27,7 @@ class PriceItem;
 class MeasuresLSModel;
 class PriceFieldModel;
 class MathParser;
-class AttributeModel;
+class AttributesModel;
 class Attribute;
 class UnitMeasure;
 
@@ -121,11 +121,11 @@ public:
     MeasuresLSModel *measuresModel();
 
     void writeXml( QXmlStreamWriter * writer );
-    void readXml(QXmlStreamReader *reader, PriceList *priceList, AttributeModel * billAttrModel);
+    void readXml(QXmlStreamReader *reader, PriceList *priceList, AttributesModel * billAttrModel);
     void readXmlTmp(QXmlStreamReader *reader);
-    void loadFromXml(const QXmlStreamAttributes &attrs, PriceList *priceList, AttributeModel * billAttrModel);
+    void loadFromXml(const QXmlStreamAttributes &attrs, PriceList *priceList, AttributesModel * billAttrModel);
     void loadFromXmlTmp(const QXmlStreamAttributes &attrs);
-    void loadTmpData(PriceList *priceList , AttributeModel *billAttrModel);
+    void loadTmpData(PriceList *priceList , AttributesModel *billAttrModel);
 
     bool containsAttribute( Attribute * attr );
     bool containsAttributeInherited( Attribute * attr );

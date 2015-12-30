@@ -1,6 +1,6 @@
 /*
    QCost is a cost estimating software.
-   Copyright (C) 2013-2014 Mocciola Michele
+   Copyright (C) 2013-2016 Mocciola Michele
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -26,10 +26,11 @@ class AccountingPriceFieldModel;
 class PriceList;
 class PriceItem;
 class MeasuresModel;
+class VarsModel;
 class PriceFieldModel;
 class MathParser;
 class AccountingLSBills;
-class AttributeModel;
+class AttributesModel;
 class Attribute;
 class UnitMeasure;
 
@@ -75,11 +76,13 @@ public:
     friend class AccountingBill;
     friend class AccountingTAMBillItem;
 
-    AccountingBillItem( AccountingBillItem * parentItem, AccountingBillItem::ItemType iType, PriceFieldModel * pfm, MathParser * parser = NULL );
+    AccountingBillItem( AccountingBillItem * parentItem, AccountingBillItem::ItemType iType, PriceFieldModel * pfm, MathParser * parser = NULL, VarsModel * vModel = NULL );
     ~AccountingBillItem();
 
     AccountingBillItem &operator =(const AccountingBillItem &cp);
 
+    /** @return resituitsce il progenitore dell'oggetto */
+    const AccountingBillItem * rootItem() const;
     /** @return resituitsce il genitore dell'oggetto */
     AccountingBillItem * parent();
     /** Ricerca tra gli oggetti figlio uno con id pari a itemId
@@ -102,6 +105,7 @@ public:
      * @param position il numero di posizione dell'oggetto nel nuovo genitore*/
     void setParent(AccountingBillItem *newParent, int position);
 
+    VarsModel *varsModel();
     unsigned int id();
     QString accountingProgCode() const;
     QString progCode() const;
@@ -177,12 +181,12 @@ public:
     virtual void readFromXmlTmp( AccountingLSBills *lsBills,
                                  AccountingTAMBill *tamBill,
                                  PriceList *priceList,
-                                 AttributeModel *billAttrModel );
+                                 AttributesModel *billAttrModel );
     void loadFromXml( const QXmlStreamAttributes &attrs,
                       AccountingLSBills * lsBills,
                       AccountingTAMBill * tamBill,
                       PriceList * priceList,
-                      AttributeModel * billAttrModel );
+                      AttributesModel * billAttrModel );
 
     bool containsAttribute( Attribute * attr ) const ;
     bool containsAttributeInherited( Attribute * attr ) const ;

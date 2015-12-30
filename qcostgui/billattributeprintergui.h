@@ -4,7 +4,7 @@
 #include "billprinter.h"
 
 class Attribute;
-class AttributeModel;
+class AttributesModel;
 class PriceFieldModel;
 
 #include <QDialog>
@@ -22,7 +22,7 @@ public:
                                       Qt::Orientation *pOrient,
                                       bool * groupPrAm,
                                       PriceFieldModel * pfm,
-                                      AttributeModel * bam,
+                                      AttributesModel * bam,
                                       QWidget *parent = 0);
     ~BillAttributePrinterGUI();
 private slots:

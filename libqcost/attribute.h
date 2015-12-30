@@ -1,6 +1,6 @@
 /*
    QCost is a cost estimating software.
-   Copyright (C) 2013-2014 Mocciola Michele
+   Copyright (C) 2013-2016 Mocciola Michele
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -36,13 +36,12 @@ class AttributePrivate;
 class EXPORT_QCOST_LIB_OPT Attribute {
 
 public:
-    // TODO rimuovere
-    friend class AccountingAttributeModel;
-    friend class BillAttributeModel;
-    friend class AttributeModel;
+    friend class AttributesModel;
 
     explicit Attribute(MathParser * prs , PriceFieldModel *pfm);
     ~Attribute();
+
+    Attribute & operator= (const Attribute & cp );
 
     QString name();
     void setName( const QString & n );

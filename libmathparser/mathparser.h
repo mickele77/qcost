@@ -1,6 +1,6 @@
 /*
    QCost is a cost estimating software.
-   Copyright (C) 2013-2014 Mocciola Michele
+   Copyright (C) 2013-2016 Mocciola Michele
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -39,6 +39,9 @@ public:
     QString	toString( double i, char f = 'g', int prec = 6 ) const;
 
     QString decimalSeparator();
+
+    QString spellInt(QString numStr );
+    QString spellDouble(QString num);
 
 private:
     MathParserPrivate * m_d;

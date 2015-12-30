@@ -1,6 +1,6 @@
 /*
    QCost is a cost estimating software.
-   Copyright (C) 2013-2014 Mocciola Michele
+   Copyright (C) 2013-2016 Mocciola Michele
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -33,7 +33,7 @@
 #include "measuresmodel.h"
 
 #include "accountingitemattributemodel.h"
-#include "attributemodel.h"
+#include "attributesmodel.h"
 #include "priceitem.h"
 #include "unitmeasure.h"
 #include "pricefieldmodel.h"
@@ -316,7 +316,7 @@ void AccountingItemPPUGUI::setAccountingTAMBill(AccountingTAMBill *b) {
 
 void AccountingItemPPUGUI::setAccountingBill(AccountingBill *b) {
     if( b != NULL ){
-        m_d->itemAttributeModel->setAttributeModel( b->attributeModel() );
+        m_d->itemAttributeModel->setAttributeModel( b->attributesModel() );
     } else {
         m_d->itemAttributeModel->setAttributeModel( NULL );
     }

@@ -1,6 +1,6 @@
 /*
    QCost is a cost estimating software.
-   Copyright (C) 2013-2014 Mocciola Michele
+   Copyright (C) 2013-2016 Mocciola Michele
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -20,7 +20,8 @@
 #include "bill.h"
 
 #include "billprinter.h"
-#include "attributemodel.h"
+#include "attributesmodel.h"
+#include "varsmodel.h"
 #include "billitem.h"
 #include "pricelist.h"
 #include "priceitem.h"
@@ -40,14 +41,16 @@ public:
         name( n ),
         priceFieldModel(pfm),
         parser(prs),
-        rootItem(new BillItem( NULL, NULL, pfm, parser )),
+        varsModel( new VarsModel( parser )),
+        rootItem(new BillItem( NULL, NULL, pfm, parser, varsModel )),
         priceList( NULL ),
-        attributeModel( new AttributeModel( b, parser, pfm )),
+        attributesModel( new AttributesModel( b, parser, pfm )),
         priceListIdTmp(0){
     }
     ~BillPrivate(){
         delete rootItem;
-        delete attributeModel;
+        delete attributesModel;
+        delete varsModel;
     }
 
     static void setPriceItemParents( PriceList *pl, PriceItem * basePriceItem, PriceItem * newPriceItem ){
@@ -71,9 +74,10 @@ public:
 
     PriceFieldModel * priceFieldModel;
     MathParser * parser;
+    VarsModel * varsModel;
     BillItem * rootItem;
     PriceList * priceList;
-    AttributeModel * attributeModel;
+    AttributesModel * attributesModel;
     unsigned int priceListIdTmp;
 };
 
@@ -89,7 +93,7 @@ Bill::Bill(const QString &n, ProjectItem *parent, PriceFieldModel * pfm, MathPar
     connect( m_d->rootItem, static_cast<void(BillItem::*)(int,const QString &)>(&BillItem::amountChanged), this, static_cast<void(Bill::*)(int,const QString &)>(&Bill::amountChanged) );
     connect( m_d->rootItem, &BillItem::itemChanged, this, &Bill::modelChanged );
 
-    connect( m_d->attributeModel, &AttributeModel::modelChanged, this, &Bill::modelChanged );
+    connect( m_d->attributesModel, &AttributesModel::modelChanged, this, &Bill::modelChanged );
 }
 
 Bill::Bill(Bill & b):
@@ -107,7 +111,7 @@ Bill::Bill(Bill & b):
     connect( m_d->rootItem, static_cast<void(BillItem::*)(int,const QString &)>(&BillItem::amountChanged), this, static_cast<void(Bill::*)(int,const QString &)>(&Bill::amountChanged) );
     connect( m_d->rootItem, &BillItem::itemChanged, this, &Bill::modelChanged );
 
-    connect( m_d->attributeModel, &AttributeModel::modelChanged, this, &Bill::modelChanged );
+    connect( m_d->attributesModel, &AttributesModel::modelChanged, this, &Bill::modelChanged );
 }
 
 Bill::~Bill(){
@@ -119,7 +123,7 @@ Bill::~Bill(){
     disconnect( m_d->rootItem, static_cast<void(BillItem::*)(int,const QString &)>(&BillItem::amountChanged), this, static_cast<void(Bill::*)(int,const QString &)>(&Bill::amountChanged) );
     disconnect( m_d->rootItem, &BillItem::itemChanged, this, &Bill::modelChanged );
 
-    disconnect( m_d->attributeModel, &AttributeModel::modelChanged, this, &Bill::modelChanged );
+    disconnect( m_d->attributesModel, &AttributesModel::modelChanged, this, &Bill::modelChanged );
 
     emit aboutToBeDeleted();
 
@@ -131,6 +135,8 @@ Bill &Bill::operator=(const Bill &cp) {
     setDescription( cp.m_d->description );
     setPriceList( cp.m_d->priceList );
     *(m_d->rootItem) = *(cp.m_d->rootItem);
+    *(m_d->attributesModel) = *(cp.m_d->attributesModel);
+    *(m_d->varsModel) = *(cp.m_d->varsModel);
     return *this;
 }
 
@@ -388,6 +394,12 @@ bool Bill::removeBillItems(int position, int rows, const QModelIndex &parent) {
     return success;
 }
 
+void Bill::clear() {
+    removeBillItems( 0, m_d->rootItem->childrenCount() );
+    m_d->attributesModel->clear();
+    m_d->varsModel->clear();
+}
+
 QModelIndex Bill::parent(const QModelIndex &index) const {
     if (!index.isValid())
         return QModelIndex();
@@ -462,8 +474,8 @@ QString Bill::amountStr(int field) const {
     return m_d->rootItem->amountStr( field );
 }
 
-AttributeModel *Bill::attributeModel() {
-    return m_d->attributeModel;
+AttributesModel *Bill::attributesModel() {
+    return m_d->attributesModel;
 }
 
 double Bill::amountAttribute(Attribute *attr, int field) {
@@ -472,6 +484,10 @@ double Bill::amountAttribute(Attribute *attr, int field) {
 
 QString Bill::amountAttributeStr(Attribute *attr, int field) {
     return m_d->rootItem->amountAttributeStr( attr, field );
+}
+
+VarsModel *Bill::varsModel() {
+    return m_d->varsModel;
 }
 
 void Bill::nextId() {
@@ -508,7 +524,8 @@ void Bill::writeXml(QXmlStreamWriter *writer) {
     }
     writer->writeAttribute( "priceDataSet", QString::number( m_d->rootItem->currentPriceDataSet() ) );
 
-    m_d->attributeModel->writeXml( writer );
+    m_d->attributesModel->writeXml( writer );
+    m_d->varsModel->writeXml( writer );
 
     m_d->rootItem->writeXml( writer );
 
@@ -523,15 +540,20 @@ void Bill::readXml(QXmlStreamReader *reader, ProjectPriceListParentItem *priceLi
            (!reader->hasError()) &&
            !(reader->isEndElement() && reader->name().toString().toUpper() == "BILL") ){
         reader->readNext();
-        QString tag = reader->name().toString().toUpper();
-        if( tag == "BILLATTRIBUTEMODEL" && reader->isStartElement()) {
-            m_d->attributeModel->readXml( reader );
-        }
-        if( tag == "BILLITEM" && reader->isStartElement()) {
-            m_d->rootItem->readXmlTmp( reader );
+        if( reader->isStartElement() ){
+            QString tag = reader->name().toString().toUpper();
+            if( tag == "ATTRIBUTESMODEL" ) {
+                m_d->attributesModel->readXml( reader );
+            }
+            if( tag == "VARSMODEL" ) {
+                m_d->varsModel->readXml( reader );
+            }
+            if( tag == "BILLITEM" ) {
+                m_d->rootItem->readXmlTmp( reader );
+            }
         }
     }
-    m_d->rootItem->readFromXmlTmp( m_d->priceList, m_d->attributeModel );
+    m_d->rootItem->readFromXmlTmp( m_d->priceList, m_d->attributesModel );
 }
 
 void Bill::readXmlTmp(QXmlStreamReader *reader ) {
@@ -542,15 +564,24 @@ void Bill::readXmlTmp(QXmlStreamReader *reader ) {
            (!reader->hasError()) &&
            !(reader->isEndElement() && reader->name().toString().toUpper() == "BILL") ){
         reader->readNext();
-        if( reader->name().toString().toUpper() == "BILLITEM" && reader->isStartElement()) {
-            m_d->rootItem->readXmlTmp( reader );
+        if( reader->isStartElement() ){
+            QString tag = reader->name().toString().toUpper();
+            if( tag == "ATTRIBUTESMODEL" ) {
+                m_d->attributesModel->readXml( reader );
+            }
+            if( tag == "VARSMODEL" ) {
+                m_d->varsModel->readXml( reader );
+            }
+            if( tag == "BILLITEM" ) {
+                m_d->rootItem->readXmlTmp( reader );
+            }
         }
     }
 }
 
 void Bill::readFromXmlTmp(ProjectPriceListParentItem * priceLists) {
     m_d->priceList = priceLists->priceListId( m_d->priceListIdTmp );
-    m_d->rootItem->readFromXmlTmp( m_d->priceList, m_d->attributeModel );
+    m_d->rootItem->readFromXmlTmp( m_d->priceList, m_d->attributesModel );
 }
 
 void Bill::loadXml(const QXmlStreamAttributes &attrs, ProjectPriceListParentItem * priceLists) {
@@ -625,5 +656,5 @@ void Bill::writeODTSummaryOnTable(QTextCursor *cursor,
 }
 
 void Bill::insertStandardAttributes(){
-    m_d->attributeModel->insertStandardAttributes();
+    m_d->attributesModel->insertStandardAttributes();
 }

@@ -100,7 +100,10 @@ SOURCES += \
     accountingitempaymentgui.cpp \
     accountingbillprintergui.cpp \
     accountingtambillprintergui.cpp \
-    accountinglsbillprintergui.cpp
+    accountinglsbillprintergui.cpp \
+    attributesgui.cpp \
+    varsgui.cpp \
+    accountingbillpricegui.cpp
 
 HEADERS  += \
     projectitemsview.h \
@@ -160,7 +163,10 @@ HEADERS  += \
     accountingitempaymentgui.h \
     accountingbillprintergui.h \
     accountingtambillprintergui.h \
-    accountinglsbillprintergui.h
+    accountinglsbillprintergui.h \
+    attributesgui.h \
+    varsgui.h \
+    accountingbillpricegui.h
 
 FORMS += \
     generaldatagui.ui \
@@ -198,7 +204,10 @@ FORMS += \
     accountingitempaymentgui.ui \
     accountingbillprintergui.ui \
     accountingtambillprintergui.ui \
-    accountinglsbillprintergui.ui
+    accountinglsbillprintergui.ui \
+    attributesgui.ui \
+    varsgui.ui \
+    accountingbillpricegui.ui
 
 OTHER_FILES += \
     ../LICENSE \

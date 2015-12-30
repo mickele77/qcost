@@ -1,6 +1,6 @@
 /*
    QCost is a cost estimating software.
-   Copyright (C) 2013-2014 Mocciola Michele
+   Copyright (C) 2013-2016 Mocciola Michele
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -24,9 +24,10 @@
 #include "priceitem.h"
 #include "measuresmodel.h"
 #include "measure.h"
-#include "attributemodel.h"
+#include "attributesmodel.h"
 #include "attribute.h"
 #include "pricefieldmodel.h"
+#include "varsmodel.h"
 #include "unitmeasure.h"
 #include "mathparser.h"
 
@@ -43,11 +44,12 @@
 
 class BillItemPrivate{
 public:
-    BillItemPrivate( BillItem * parent, PriceFieldModel * pfm, MathParser * p = NULL ):
+    BillItemPrivate( BillItem * parent, PriceFieldModel * pfm, MathParser * p = NULL, VarsModel *vModel = NULL ):
         parentItem(parent),
         measuresModel( NULL ),
         parser(p),
         priceFieldModel(pfm),
+        varsModel( vModel ),
         name(QObject::trUtf8("Titolo")),
         priceItem( NULL ),
         currentPriceDataSet(0),
@@ -168,6 +170,7 @@ public:
     MeasuresModel * measuresModel;
     MathParser * parser;
     PriceFieldModel * priceFieldModel;
+    VarsModel * varsModel;
 
     // se l'oggetto ha figli, l'oggetto diventa un titolo: il titolo è contenuto nell'attributo name
     QString name;
@@ -200,9 +203,9 @@ int BillItemPrivate::priceUmCol = 3;
 int BillItemPrivate::quantityCol = 4;
 int BillItemPrivate::firstPriceFieldCol = 5;
 
-BillItem::BillItem( PriceItem * p, BillItem *parentItem, PriceFieldModel * pfm, MathParser * parser ):
+BillItem::BillItem( PriceItem * p, BillItem *parentItem, PriceFieldModel * pfm, MathParser * parser, VarsModel * vModel ):
     TreeItem(),
-    m_d( new BillItemPrivate(parentItem, pfm, parser ) ){
+    m_d( new BillItemPrivate(parentItem, pfm, parser, vModel ) ){
     setPriceItem(p);
     connect( this, &BillItem::currentPriceDataSetChanged, this, &BillItem::emitPriceDataUpdated );
     connect( this, &BillItem::currentPriceDataSetChanged, this, &BillItem::updateAmounts );
@@ -243,6 +246,13 @@ BillItem &BillItem::operator=(const BillItem &cp) {
         if( cp.m_d->measuresModel != NULL ){
             generateMeasuresModel();
             *(m_d->measuresModel) = *(cp.m_d->measuresModel);
+        }
+
+        if( rootItem() == cp.rootItem() ){
+            m_d->attributes.clear();
+            m_d->attributes = cp.m_d->attributes;
+        } else {
+            m_d->attributes.clear();
         }
     }
 
@@ -359,6 +369,22 @@ BillItem *BillItem::childItem(int number) {
 
 void BillItem::setId( unsigned int ii ) {
     m_d->id = ii;
+}
+
+VarsModel *BillItem::varsModel() {
+    if( m_d->parentItem == NULL ){
+        return m_d->varsModel;
+    } else {
+        return m_d->parentItem->varsModel();
+    }
+}
+
+const BillItem *BillItem::rootItem() const {
+    if( m_d->parentItem == NULL ){
+        return this;
+    } else {
+        return m_d->parentItem->rootItem();
+    }
 }
 
 unsigned int BillItem::id() {
@@ -977,7 +1003,7 @@ void BillItem::readXmlTmp(QXmlStreamReader *reader) {
     }
 }
 
-void BillItem::loadXml(const QXmlStreamAttributes &attrs, PriceList * priceList, AttributeModel * billAttrModel) {
+void BillItem::loadXml(const QXmlStreamAttributes &attrs, PriceList * priceList, AttributesModel * billAttrModel) {
     if( attrs.hasAttribute( "id" ) ){
         m_d->id = attrs.value( "id").toUInt();
     }
@@ -1008,7 +1034,7 @@ void BillItem::loadXml(const QXmlStreamAttributes &attrs, PriceList * priceList,
     }
 }
 
-void BillItem::readFromXmlTmp( PriceList *priceList, AttributeModel * billAttrModel) {
+void BillItem::readFromXmlTmp( PriceList *priceList, AttributesModel * billAttrModel) {
     if( !m_d->tmpAttributes.isEmpty() ){
         loadXml(m_d->tmpAttributes, priceList, billAttrModel );
         m_d->tmpAttributes.clear();

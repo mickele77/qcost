@@ -1,6 +1,6 @@
 /*
    QCost is a cost estimating software.
-   Copyright (C) 2013-2014 Mocciola Michele
+   Copyright (C) 2013-2016 Mocciola Michele
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -19,7 +19,7 @@
 #include "billattributeprintergui.h"
 #include "ui_billattributeprintergui.h"
 
-#include "attributemodel.h"
+#include "attributesmodel.h"
 #include "pricefieldmodel.h"
 
 #include <QComboBox>
@@ -36,7 +36,7 @@ public:
                                     Qt::Orientation * pOrient,
                                     bool *groupPrAm,
                                     PriceFieldModel * pfm,
-                                    AttributeModel * bam ):
+                                    AttributesModel * bam ):
         ui(new Ui::BillAttributePrinterGUI),
         printItemsOption(prItemsOption),
         printOption(prOption),
@@ -60,7 +60,7 @@ public:
     BillPrinter::AttributePrintOption *printOption;
     QList<int> * printFields;
     QList<Attribute *> * printAttributes;
-    AttributeModel * billAttributeModel;
+    AttributesModel * billAttributeModel;
     double *paperWidth;
     double *paperHeight;
     Qt::Orientation * paperOrientation;
@@ -78,7 +78,7 @@ BillAttributePrinterGUI::BillAttributePrinterGUI( BillPrinter::PrintBillItemsOpt
                                                   Qt::Orientation * pOrient,
                                                   bool *groupPrAm,
                                                   PriceFieldModel * pfm,
-                                                  AttributeModel * bam,
+                                                  AttributesModel * bam,
                                                   QWidget *parent ) :
     QDialog(parent),
     m_d( new BillAttributePrinterGUIPrivate( prItemsOption, prOption, pFlds, pAttrs, pWidth, pHeight, pOrient, groupPrAm, pfm, bam) ) {

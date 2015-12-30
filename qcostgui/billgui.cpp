@@ -1,6 +1,6 @@
 /*
    QCost is a cost estimating software.
-   Copyright (C) 2013-2014 Mocciola Michele
+   Copyright (C) 2013-2016 Mocciola Michele
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -19,6 +19,8 @@
 #include "billgui.h"
 
 #include "billdatagui.h"
+#include "attributesgui.h"
+#include "varsgui.h"
 #include "billtreegui.h"
 #include "billitemgui.h"
 #include "billitemtitlegui.h"
@@ -65,7 +67,9 @@ public:
         currentBillItem( NULL ),
         project(prj),
         billItemEditingPrice(NULL),
-        billDataGUI( new BillDataGUI( prj->priceFieldModel(), prs, NULL, wpf, parent ) ),
+        billDataGUI( new BillDataGUI( prj->priceFieldModel(), NULL, parent ) ),
+        billAttributesGUI( new AttributesGUI( prj->priceFieldModel(), prs, (Bill *)(NULL), wpf, parent ) ),
+        billVarsGUI( new VarsGUI( (Bill *) NULL, parent ) ),
         mainSplitter( new QSplitter(Qt::Horizontal, parent ) ),
         billTreeGUI( new BillTreeGUI( EPAImpOptions, EPAFileName, NULL, prs, prj, mainSplitter ) ),
         billItemGUI( new BillItemGUI( EPAImpOptions, EPAFileName, NULL, prs, prj, parent ) ),
@@ -73,7 +77,7 @@ public:
         billItemWidget( new BillItemWidget(billItemGUI, billItemTitleGUI, mainSplitter ) ) {
         billItemGUI->hide();
         billItemTitleGUI->hide();
-    };
+    }
 
     Bill * bill;
     BillItem * currentBillItem;
@@ -82,6 +86,8 @@ public:
     PriceItem * importingDataPriceItem;
 
     BillDataGUI * billDataGUI;
+    AttributesGUI * billAttributesGUI;
+    VarsGUI * billVarsGUI;
     QSplitter * mainSplitter;
     BillTreeGUI * billTreeGUI;
     BillItemGUI * billItemGUI;
@@ -96,10 +102,12 @@ BillGUI::BillGUI( QMap<PriceListDBWidget::ImportOptions, bool> *EPAImpOptions,
     QTabWidget(parent),
     m_d( new BillGUIPrivate( EPAImpOptions, EPAFileName, prs, b, p, wordProcessorFile, this ) ){
 
-    addTab( m_d->billDataGUI, trUtf8("Computo - Dati generali"));
-    addTab( m_d->mainSplitter, trUtf8("Computo - Misure"));
+    addTab( m_d->billDataGUI, trUtf8("Dati generali"));
+    addTab( m_d->billAttributesGUI, trUtf8("Etichette"));
+    addTab( m_d->billVarsGUI, trUtf8("Variabili"));
+    addTab( m_d->mainSplitter, trUtf8("Misure"));
 
-    setCurrentIndex( 1 );
+    setCurrentIndex( count() - 1 );
     setBill(b);
 
     connect( m_d->billTreeGUI, &BillTreeGUI::currentItemChanged, this, &BillGUI::setBillItem );
@@ -112,6 +120,8 @@ BillGUI::~BillGUI(){
 void BillGUI::setBill( Bill * b ){
     m_d->bill = b;
     m_d->billDataGUI->setBill( b );
+    m_d->billAttributesGUI->setBill( b );
+    m_d->billVarsGUI->setBill( b );
     m_d->billTreeGUI->setBill( b );
     m_d->billItemGUI->setBill( b );
     m_d->billItemTitleGUI->setBill( b );

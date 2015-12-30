@@ -1,6 +1,6 @@
 /*
    QCost is a cost estimating software.
-   Copyright (C) 2013-2014 Mocciola Michele
+   Copyright (C) 2013-2016 Mocciola Michele
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -21,7 +21,6 @@
 
 class AttributeList;
 class Bill;
-class MathParser;
 class PriceFieldModel;
 
 #include <QWidget>
@@ -31,7 +30,7 @@ class BillDataGUIPrivate;
 class BillDataGUI : public QWidget {
     Q_OBJECT
 public:
-    explicit BillDataGUI( PriceFieldModel * pfm, MathParser *prs, Bill * b, QString * wordProcessorFile = NULL, QWidget *parent = 0);
+    explicit BillDataGUI(PriceFieldModel * pfm, Bill * b, QWidget *parent = 0);
     ~BillDataGUI();
 
     void setBill( Bill * b);
@@ -39,8 +38,6 @@ public:
 private slots:
     void setDescription();
     void setBillNULL();
-    void addAttribute();
-    void removeAttribute();
 
     // aggiorna etichette e importi di tutti i campi prezzo
     void updateAmountsNameValue();
@@ -49,12 +46,6 @@ private slots:
     // aggiorna solo l'importo di un campo prezzo
     void updateAmountValue(int priceField, const QString &newVal);
 
-    void resizeAttributeColsToContents();
-
-    void attributesTableViewCustomMenuRequested(QPoint pos);
-    void resizeAttributesColToContents();
-
-    bool printAttributeBillODT();
 private:
     BillDataGUIPrivate * m_d;
 };

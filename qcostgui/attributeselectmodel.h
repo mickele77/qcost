@@ -2,7 +2,7 @@
 #define ATTRIBUTESELECTMODEL_H
 
 class Attribute;
-class AttributeModel;
+class AttributesModel;
 class AttributeSelectModelPrivate;
 
 #include <QAbstractTableModel>
@@ -10,7 +10,7 @@ class AttributeSelectModelPrivate;
 class AttributeSelectModel : public QAbstractTableModel {
     Q_OBJECT
 public:
-    explicit AttributeSelectModel(AttributeModel * m, QObject *parent = 0);
+    explicit AttributeSelectModel(AttributesModel * m, QObject *parent = 0);
     ~AttributeSelectModel();
 
     QList<Attribute *> selectedAttributes();

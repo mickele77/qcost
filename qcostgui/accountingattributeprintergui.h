@@ -4,7 +4,7 @@
 #include "accountingprinter.h"
 
 class Attribute;
-class AttributeModel;
+class AttributesModel;
 
 #include <QDialog>
 
@@ -19,7 +19,7 @@ public:
                                            QList<Attribute *> *pAttrs,
                                            double *pWidth, double *pHeight,
                                            Qt::Orientation *pOrient,
-                                           AttributeModel * bam,
+                                           AttributesModel * bam,
                                            QWidget *parent = 0);
     ~AccountingAttributePrinterGUI();
 private slots:

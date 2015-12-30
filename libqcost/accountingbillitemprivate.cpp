@@ -19,12 +19,13 @@ int AccountingBillItemPrivate::totalAmountCol = 10;
 int AccountingBillItemPrivate::amountPrecision = 2;
 int AccountingBillItemPrivate::discountPrecision = 8;
 
-AccountingBillItemPrivate::AccountingBillItemPrivate( AccountingBillItem * parent, AccountingBillItem::ItemType iType, PriceFieldModel * pfm, MathParser * p ):
+AccountingBillItemPrivate::AccountingBillItemPrivate( AccountingBillItem * parent, AccountingBillItem::ItemType iType, PriceFieldModel * pfm, MathParser * p, VarsModel * vModel ):
     parentItem(parent),
     parser(p),
-    priceFieldModel(pfm),
     accountingProgCode(-1),
     progCode(-1),
+    priceFieldModel(pfm),
+    varsModel(vModel),
     itemType(iType),
     name(QString()),
     date( QDate::currentDate() ),

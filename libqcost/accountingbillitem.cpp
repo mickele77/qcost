@@ -1,6 +1,6 @@
 /*
    QCost is a cost estimating software.
-   Copyright (C) 2013-2014 Mocciola Michele
+   Copyright (C) 2013-2016 Mocciola Michele
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -32,7 +32,7 @@
 #include "priceitem.h"
 #include "measuresmodel.h"
 #include "measure.h"
-#include "attributemodel.h"
+#include "attributesmodel.h"
 #include "attribute.h"
 #include "pricefieldmodel.h"
 #include "unitmeasure.h"
@@ -51,9 +51,9 @@
 #include <cmath>
 
 AccountingBillItem::AccountingBillItem(AccountingBillItem *parentItem, AccountingBillItem::ItemType iType,
-                                       PriceFieldModel * pfm, MathParser * parser ):
+                                       PriceFieldModel * pfm, MathParser * parser , VarsModel *vModel):
     TreeItem(),
-    m_d( new AccountingBillItemPrivate(parentItem, iType, pfm, parser ) ){
+    m_d( new AccountingBillItemPrivate(parentItem, iType, pfm, parser, vModel ) ){
 
     if( parentItem != NULL ){
         connect( parentItem, &AccountingBillItem::attributesChanged, this, &AccountingBillItem::attributesChanged );
@@ -170,9 +170,24 @@ AccountingBillItem &AccountingBillItem::operator=(const AccountingBillItem &cp) 
             setText( cp.m_d->text );
         }
 
+        if( rootItem() == cp.rootItem() ){
+            m_d->attributes.clear();
+            m_d->attributes = cp.m_d->attributes;
+        } else {
+            m_d->attributes.clear();
+        }
+
     }
 
     return *this;
+}
+
+const AccountingBillItem * AccountingBillItem::rootItem() const {
+    if( m_d->parentItem == NULL ){
+        return this;
+    } else {
+        return m_d->parentItem->rootItem();
+    }
 }
 
 QString AccountingBillItem::name(){
@@ -292,6 +307,14 @@ AccountingBillItem *AccountingBillItem::childItem(int number) {
 
 void AccountingBillItem::setId( unsigned int ii ) {
     m_d->id = ii;
+}
+
+VarsModel * AccountingBillItem::varsModel() {
+    if( m_d->itemType == Root ){
+        return m_d->varsModel;
+    } else {
+        return m_d->parentItem->varsModel();
+    }
 }
 
 unsigned int AccountingBillItem::id() {
@@ -1533,7 +1556,7 @@ void AccountingBillItem::readXmlTmp( QXmlStreamReader *reader ) {
     }
 }
 
-void AccountingBillItem::readFromXmlTmp( AccountingLSBills * lsBills, AccountingTAMBill * tamBill ,PriceList * priceList, AttributeModel * billAttrModel ) {
+void AccountingBillItem::readFromXmlTmp( AccountingLSBills * lsBills, AccountingTAMBill * tamBill ,PriceList * priceList, AttributesModel * billAttrModel ) {
     if( !m_d->tmpAttributes.isEmpty() ){
         loadFromXml( m_d->tmpAttributes, lsBills, tamBill, priceList, billAttrModel );
         m_d->tmpAttributes.clear();
@@ -1550,7 +1573,7 @@ void AccountingBillItem::loadFromXml( const QXmlStreamAttributes &attrs,
                                       AccountingLSBills * lsBills,
                                       AccountingTAMBill * tamBill,
                                       PriceList * priceList,
-                                      AttributeModel * billAttrModel ) {
+                                      AttributesModel * billAttrModel ) {
     if( attrs.hasAttribute( "id" ) ){
         m_d->id = attrs.value( "id").toUInt();
     }

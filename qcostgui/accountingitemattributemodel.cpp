@@ -1,6 +1,6 @@
 /*
    QCost is a cost estimating software.
-   Copyright (C) 2013-2014 Mocciola Michele
+   Copyright (C) 2013-2016 Mocciola Michele
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
 */
 #include "accountingitemattributemodel.h"
 
-#include "attributemodel.h"
+#include "attributesmodel.h"
 #include "attribute.h"
 #include "accountingbillitem.h"
 #include "accountingtambillitem.h"
@@ -26,7 +26,7 @@
 
 class AccountingItemAttributeModelModelPrivate{
 public:
-    AccountingItemAttributeModelModelPrivate( AttributeModel * attrModel):
+    AccountingItemAttributeModelModelPrivate( AttributesModel * attrModel):
         accountingBillItem(NULL),
         accountingTAMBillItem(NULL),
         accountingLSBillItem(NULL),
@@ -35,10 +35,10 @@ public:
     AccountingBillItem * accountingBillItem;
     AccountingTAMBillItem * accountingTAMBillItem;
     AccountingLSBillItem * accountingLSBillItem;
-    AttributeModel * attributeModel;
+    AttributesModel * attributeModel;
 };
 
-AccountingItemAttributeModel::AccountingItemAttributeModel(AttributeModel *attrModel, QObject *parent) :
+AccountingItemAttributeModel::AccountingItemAttributeModel(AttributesModel *attrModel, QObject *parent) :
     QAbstractTableModel(parent),
     m_d( new AccountingItemAttributeModelModelPrivate(attrModel) ){
 }
@@ -188,16 +188,16 @@ bool AccountingItemAttributeModel::clear() {
     return false;
 }
 
-void AccountingItemAttributeModel::setAttributeModel(AttributeModel *attrModel) {
+void AccountingItemAttributeModel::setAttributeModel(AttributesModel *attrModel) {
     if( m_d->attributeModel != NULL ){
-        disconnect( m_d->attributeModel, &AttributeModel::aboutToBeDeleted, this, &AccountingItemAttributeModel::setAttributeModelNULL );
+        disconnect( m_d->attributeModel, &AttributesModel::aboutToBeDeleted, this, &AccountingItemAttributeModel::setAttributeModelNULL );
     }
     beginResetModel();
     m_d->attributeModel = attrModel;
     setItemNULL();
     endResetModel();
     if( m_d->attributeModel != NULL ){
-        connect( m_d->attributeModel, &AttributeModel::aboutToBeDeleted, this, &AccountingItemAttributeModel::setAttributeModelNULL );
+        connect( m_d->attributeModel, &AttributesModel::aboutToBeDeleted, this, &AccountingItemAttributeModel::setAttributeModelNULL );
     }
 }
 

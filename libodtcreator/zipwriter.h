@@ -6,7 +6,7 @@
 
    Copyright (C) 2013 Digia Plc and/or its subsidiary(-ies)
    Contact: http://www.qt-project.org/legal
-   Copyright (C) 2013-2014 Mocciola Michele
+   Copyright (C) 2013-2016 Mocciola Michele
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by

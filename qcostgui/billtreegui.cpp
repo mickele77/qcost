@@ -1,6 +1,6 @@
 /*
    QCost is a cost estimating software.
-   Copyright (C) 2013-2014 Mocciola Michele
+   Copyright (C) 2013-2016 Mocciola Michele
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -245,7 +245,7 @@ void BillTreeGUI::editAttributes(){
                 itemsList << m_d->bill->billItem( selRows.at(i)) ;
             }
         }
-        AttributeChangeDialog dialog( &itemsList, m_d->bill->attributeModel(), this );
+        AttributeChangeDialog dialog( &itemsList, m_d->bill->attributesModel(), this );
         dialog.exec();
     }
 }

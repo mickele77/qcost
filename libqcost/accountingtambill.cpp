@@ -1,6 +1,6 @@
 /*
    QCost is a cost estimating software.
-   Copyright (C) 2013-2014 Mocciola Michele
+   Copyright (C) 2013-2016 Mocciola Michele
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -19,7 +19,7 @@
 
 #include "accountingtambill.h"
 
-#include "attributemodel.h"
+#include "attributesmodel.h"
 #include "accountingtambillitem.h"
 #include "pricelist.h"
 #include "priceitem.h"
@@ -42,7 +42,7 @@ public:
         parser(prs),
         rootItem(new AccountingTAMBillItem( NULL, AccountingBillItem::Root, pfm, parser )),
         priceList( NULL ),
-        attributeModel( new AttributeModel( b, parser, pfm )),
+        attributeModel( new AttributesModel( b, parser, pfm )),
         priceListIdTmp(0){
     }
     ~AccountingTAMBillPrivate(){
@@ -72,7 +72,7 @@ public:
     MathParser * parser;
     AccountingTAMBillItem * rootItem;
     PriceList * priceList;
-    AttributeModel * attributeModel;
+    AttributesModel * attributeModel;
     unsigned int priceListIdTmp;
 };
 
@@ -92,7 +92,7 @@ AccountingTAMBill::AccountingTAMBill( const QString &n, ProjectItem *parent, Pri
 
     connect( m_d->rootItem, &AccountingTAMBillItem::itemChanged, this, &AccountingTAMBill::modelChanged );
 
-    connect( m_d->attributeModel, &AttributeModel::modelChanged, this, &AccountingTAMBill::modelChanged );
+    connect( m_d->attributeModel, &AttributesModel::modelChanged, this, &AccountingTAMBill::modelChanged );
 }
 
 AccountingTAMBill::AccountingTAMBill(AccountingTAMBill & b):
@@ -112,7 +112,7 @@ AccountingTAMBill::AccountingTAMBill(AccountingTAMBill & b):
 
     connect( m_d->rootItem, &AccountingTAMBillItem::itemChanged, this, &AccountingTAMBill::modelChanged );
 
-    connect( m_d->attributeModel, &AttributeModel::modelChanged, this, &AccountingTAMBill::modelChanged );
+    connect( m_d->attributeModel, &AttributesModel::modelChanged, this, &AccountingTAMBill::modelChanged );
 }
 
 AccountingTAMBill::~AccountingTAMBill(){
@@ -126,7 +126,7 @@ AccountingTAMBill::~AccountingTAMBill(){
 
     disconnect( m_d->rootItem, &AccountingBillItem::itemChanged, this, &AccountingTAMBill::modelChanged );
 
-    disconnect( m_d->attributeModel, &AttributeModel::modelChanged, this, &AccountingTAMBill::modelChanged );
+    disconnect( m_d->attributeModel, &AttributesModel::modelChanged, this, &AccountingTAMBill::modelChanged );
 
     emit aboutToBeDeleted();
 
@@ -560,7 +560,7 @@ QString AccountingTAMBill::totalAmountStr() const {
     return m_d->rootItem->totalAmountStr();
 }
 
-AttributeModel *AccountingTAMBill::attributeModel() {
+AttributesModel *AccountingTAMBill::attributeModel() {
     return m_d->attributeModel;
 }
 

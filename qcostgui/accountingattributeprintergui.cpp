@@ -1,6 +1,6 @@
 /*
    QCost is a cost estimating software.
-   Copyright (C) 2013-2014 Mocciola Michele
+   Copyright (C) 2013-2016 Mocciola Michele
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -19,7 +19,7 @@
 #include "accountingattributeprintergui.h"
 #include "ui_accountingattributeprintergui.h"
 
-#include "attributemodel.h"
+#include "attributesmodel.h"
 #include "pricefieldmodel.h"
 
 #include <QComboBox>
@@ -34,7 +34,7 @@ public:
                                           double * pWidth,
                                           double * pHeight,
                                           Qt::Orientation * pOrient,
-                                          AttributeModel * bam ):
+                                          AttributesModel * bam ):
         ui(new Ui::AccountingAttributePrinterGUI),
         printItemsOption(prItemsOption),
         printAmountsOption( prAmountsOption ),
@@ -55,7 +55,7 @@ public:
     AccountingPrinter::PrintAmountsOption * printAmountsOption;
     AccountingPrinter::AttributePrintOption *printOption;
     QList<Attribute *> * printAttributes;
-    AttributeModel * accountingAttributeModel;
+    AttributesModel * accountingAttributeModel;
     double *paperWidth;
     double *paperHeight;
     Qt::Orientation * paperOrientation;
@@ -69,7 +69,7 @@ AccountingAttributePrinterGUI::AccountingAttributePrinterGUI(AccountingPrinter::
                                                               double * pWidth,
                                                               double * pHeight,
                                                               Qt::Orientation * pOrient,
-                                                              AttributeModel * bam,
+                                                              AttributesModel * bam,
                                                               QWidget *parent ) :
     QDialog(parent),
     m_d( new AccountingAttributePrinterGUIPrivate( prItemsOption, prAmountsOption, prOption, pAttrs, pWidth, pHeight, pOrient, bam) ) {

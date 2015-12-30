@@ -1,6 +1,6 @@
 /*
    QCost is a cost estimating software.
-   Copyright (C) 2013-2014 Mocciola Michele
+   Copyright (C) 2013-2016 Mocciola Michele
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -289,8 +289,7 @@ public:
             return 0.0;
         }
 
-        // Se siamo arrivato fin qui vuol dire che la stringa è un numero.
-        // Restituiamo il valore numerico
+        // Se siamo arrivati fin qui la stringa è un numero: restituiamo il valore numerico
         if( isValue(expr) ){
             bool ok = false;
             double ret = locale.toDouble( expr, &ok );
@@ -340,4 +339,133 @@ QString MathParser::toString(double i, char f, int prec) const {
 
 QString MathParser::decimalSeparator() {
     return m_d->decimalSeparator;
+}
+
+QString MathParser::spellInt(QString numStr) {
+    QList<QString> oneDigitNums;
+    oneDigitNums << "" << "uno" << "due" << "tre" << "quattro" << "cinque" << "sei" << "sette" << "otto" << "nove";
+
+    QList<QString> teenNums;
+    teenNums << "dieci" << "undici" << "dodici" << "tredici" << "quattordici" << "quindici" << "sedici" << "diciassette" << "diciotto" << "diciannove";
+
+    QList<QString> tensNums;
+    tensNums << "" << teenNums.at(0) << "venti" << "trenta" << "quaranta" << "cinquanta" << "sessanta" << "settanta" << "ottanta" << "novanta";
+
+    QList<QString> hundredNums;
+    hundredNums << "cent" << "cento";
+
+    QList<QString> thousandDigitsFirst;
+    thousandDigitsFirst << "" << "mille" << "milione" << "miliardo" << "bilione" << "biliardo";
+    QList<QString> thousandDigitsSec;
+    thousandDigitsSec << "" << "mila" << "milioni" << "miliardi" << "bilioni" << "biliardi";
+    QList< QList<QString> > thounsandNums;
+    thounsandNums << thousandDigitsFirst << thousandDigitsSec;
+
+    QList<QString> text;
+    text << "" << "" << "";
+    QList<int> digit;
+    digit << 0 << 0 << 0;
+
+    QString result;
+
+    bool ok = false;
+    int num = numStr.toInt( &ok );
+    bool isPositive = (num >= 0);
+    if( !isPositive ){
+        num = -num;
+    }
+
+    if( !ok ) {
+        return "zero";
+    }
+
+    switch( numStr.length() % 3 ) {
+    case 1:	numStr	= "00" + numStr;
+        break;
+    case 2:	numStr	= "0" + numStr;
+        break;
+    }
+    int numLen = numStr.length();
+
+    if ( numLen > (6 * 3) ){
+        return QString("*** Errore ***");
+    } if( num == 0 ) {
+        return "zero";
+    }
+
+    int sect = 0;
+    while( (sect + 1) * 3 <= numLen ) {
+        QString subNumStr = numStr.mid(((numLen - 1) - ((sect + 1) * 3)) + 1, 3);
+        if( subNumStr != "000" ) {
+            int subNum = subNumStr.toInt();
+            digit[0] = subNumStr.mid(0, 1).toInt();
+            digit[1] = subNumStr.mid(1, 1).toInt();
+            digit[2] = subNumStr.mid(2, 1).toInt();
+            int twoDigits = digit[1] * 10 + digit[2];
+            if( twoDigits < 10 ) {
+                text[2]	= oneDigitNums[digit[2]];
+                text[1]	= "";
+            } else if( twoDigits < 20 ) {
+                text[2]	= "";
+                text[1]	= teenNums[twoDigits - 10];
+            } else {
+                // ventitre => ventitrè
+                if( sect == 0 && digit[2] == 3 ) {
+                    text[2]	= QObject::trUtf8("trè");
+                } else {
+                    text[2]	= oneDigitNums[digit[2]];
+                }
+                // novantaotto => novantotto
+                if( digit[2] == 1 || digit[2] == 8 ) {
+                    text[1]	= tensNums[digit[1]].mid(0, tensNums[digit[1]].length() -1);
+                } else {
+                    text[1]	= tensNums[digit[1]];
+                }
+            }
+            if( digit[0] == 0 ) {
+                text[0]	= "";
+            } else {
+                int IDcent = 0;
+                // centoottanta => centottanta
+                if( (digit[1] == 8) || (digit[1] == 0 && digit[2] == 8) ) {
+                    IDcent	= 0;
+                } else {
+                    IDcent	= 1;
+                }
+                if( digit[0] != 1 ) {
+                    text[0]	= oneDigitNums[digit[0]] + hundredNums[IDcent];
+                } else {
+                    text[0]	= hundredNums[IDcent];
+                }
+            }
+
+            // unomille => mille
+            // miliardo => unmiliardo
+            if( subNum == 1 && sect != 0 ) {
+                if( sect >= 2 ) {
+                    result = "un" + thounsandNums[0][sect] + result;
+                } else {
+                    result = thounsandNums[0][sect] + result;
+                }
+            } else {
+                result = text[0] + text[1] + text[2] + thounsandNums[1][sect] + result;
+            }
+        }
+        sect++;
+    }
+
+    if( !isPositive ){
+        result = QString("%1 ").arg( QObject::trUtf8("meno")) + result;
+    }
+
+    return result;
+}
+
+QString MathParser::spellDouble( QString num ){
+    QStringList numSplit = num.split( m_d->decimalSeparator );
+    if( numSplit.size() > 1 ){
+        return spellInt(numSplit.at(0)) + "/" + numSplit.at(1);
+    } else {
+        return spellInt(num);
+    }
 }

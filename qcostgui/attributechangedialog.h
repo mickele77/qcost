@@ -5,7 +5,7 @@ class AttributeChangeDialogPrivate;
 class AccountingTAMBillItem;
 class AccountingBillItem;
 class BillItem;
-class AttributeModel;
+class AttributesModel;
 
 #include <QDialog>
 
@@ -13,13 +13,13 @@ class AttributeChangeDialog : public QDialog {
     Q_OBJECT
 public:
     explicit AttributeChangeDialog(QList<BillItem *> * itemsList,
-                                       AttributeModel * accountingAttrModel,
+                                       AttributesModel * accountingAttrModel,
                                        QWidget *parent = 0);
     explicit AttributeChangeDialog(QList<AccountingBillItem *> * itemsList,
-                                       AttributeModel * accountingAttrModel,
+                                       AttributesModel * accountingAttrModel,
                                        QWidget *parent = 0);
     explicit AttributeChangeDialog(QList<AccountingTAMBillItem *> * itemsList,
-                                       AttributeModel * accountingAttrModel,
+                                       AttributesModel * accountingAttrModel,
                                        QWidget *parent = 0);
     ~AttributeChangeDialog();
 

@@ -1,6 +1,6 @@
 /*
    QCost is a cost estimating software.
-   Copyright (C) 2013-2014 Mocciola Michele
+   Copyright (C) 2013-2016 Mocciola Michele
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -22,7 +22,7 @@
 class AccountingBillItem;
 class AccountingTAMBillItem;
 class AccountingLSBillItem;
-class AttributeModel;
+class AttributesModel;
 
 class AccountingItemAttributeModelModelPrivate;
 
@@ -31,7 +31,7 @@ class AccountingItemAttributeModelModelPrivate;
 class AccountingItemAttributeModel : public QAbstractTableModel {
     Q_OBJECT
 public:
-    explicit AccountingItemAttributeModel(AttributeModel *attrModel, QObject *parent = 0);
+    explicit AccountingItemAttributeModel(AttributesModel *attrModel, QObject *parent = 0);
     ~AccountingItemAttributeModel();
 
     int rowCount(const QModelIndex &parent = QModelIndex()) const;
@@ -47,7 +47,7 @@ public:
     bool removeRows(int row, int count=1);
     bool clear();
 
-    void setAttributeModel(AttributeModel *attrModel );
+    void setAttributeModel(AttributesModel *attrModel );
     void setItem(AccountingBillItem *item);
     void setItem(AccountingTAMBillItem *item);
     void setItem(AccountingLSBillItem *item);

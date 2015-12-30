@@ -64,7 +64,6 @@ SOURCES += \
     accountinglsbills.cpp \
     accountingtambill.cpp \
     accountingtambillitem.cpp \
-    attributemodel.cpp \
     measuresmodel.cpp \
     accountinglsbill.cpp \
     accountinglsbillitem.cpp \
@@ -72,7 +71,8 @@ SOURCES += \
     measureslsmodel.cpp \
     paymentdata.cpp \
     paymentdatamodel.cpp \
-    measure.cpp
+    measure.cpp \
+    attributesmodel.cpp
 
 HEADERS  += \
     projectpricelistparentitem.h \
@@ -104,7 +104,6 @@ HEADERS  += \
     accountinglsbills.h \
     accountingtambill.h \
     accountingtambillitem.h \
-    attributemodel.h \
     measuresmodel.h \
     accountinglsbill.h \
     accountinglsbillitem.h \
@@ -113,4 +112,5 @@ HEADERS  += \
     paymentdata.h \
     qcost_export.h \
     paymentdatamodel.h \
-    measure.h
+    measure.h \
+    attributesmodel.h

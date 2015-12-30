@@ -1,5 +1,6 @@
 #include "measure.h"
 
+#include "varsmodel.h"
 #include "accountingbillitem.h"
 #include "billitem.h"
 #include "unitmeasure.h"
@@ -465,6 +466,10 @@ QString Measure::effectiveFormula(){
                 effFormula += formSplitted.at(i);
             }
         }
+        VarsModel * varsModel = m_d->billItem->varsModel();
+        if( varsModel != NULL ){
+            effFormula = varsModel->replaceValue( effFormula );
+        }
     } else if( m_d->accountingBillItem != NULL ){
         QRegExp rx("(\\[|\\])");
         QStringList formSplitted = effFormula.split( rx );
@@ -509,6 +514,10 @@ QString Measure::effectiveFormula(){
             } else {
                 effFormula += formSplitted.at(i);
             }
+        }
+        VarsModel * varsModel = m_d->accountingBillItem->varsModel();
+        if( varsModel != NULL ){
+            effFormula = varsModel->replaceValue( effFormula );
         }
     } else {
         QRegExp rx("(\\[|\\])");

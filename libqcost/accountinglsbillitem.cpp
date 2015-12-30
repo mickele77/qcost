@@ -1,6 +1,6 @@
 /*
    QCost is a cost estimating software.
-   Copyright (C) 2013-2014 Mocciola Michele
+   Copyright (C) 2013-2016 Mocciola Michele
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -24,7 +24,7 @@
 #include "priceitem.h"
 #include "measureslsmodel.h"
 #include "accountinglsitemmeasure.h"
-#include "attributemodel.h"
+#include "attributesmodel.h"
 #include "attribute.h"
 #include "unitmeasure.h"
 #include "mathparser.h"
@@ -1062,7 +1062,7 @@ void AccountingLSBillItem::writeXml(QXmlStreamWriter *writer) {
     }
 }
 
-void AccountingLSBillItem::readXml(QXmlStreamReader *reader, PriceList * priceList, AttributeModel * billAttrModel ) {
+void AccountingLSBillItem::readXml(QXmlStreamReader *reader, PriceList * priceList, AttributesModel * billAttrModel ) {
     if( m_d->parentItem != NULL ){
         if(reader->isStartElement() && reader->name().toString().toUpper() == "ACCOUNTINGLSBILLITEM"){
             loadFromXml( reader->attributes(), priceList, billAttrModel );
@@ -1106,7 +1106,7 @@ void AccountingLSBillItem::readXmlTmp(QXmlStreamReader *reader) {
     }
 }
 
-void AccountingLSBillItem::loadFromXml(const QXmlStreamAttributes &attrs, PriceList * priceList, AttributeModel * billAttrModel) {
+void AccountingLSBillItem::loadFromXml(const QXmlStreamAttributes &attrs, PriceList * priceList, AttributesModel * billAttrModel) {
     if( attrs.hasAttribute( "id" ) ){
         m_d->id = attrs.value( "id").toUInt();
     }
@@ -1141,7 +1141,7 @@ void AccountingLSBillItem::loadFromXmlTmp(const QXmlStreamAttributes &attrs) {
     m_d->tmpAttributes = attrs;
 }
 
-void AccountingLSBillItem::loadTmpData( PriceList *priceList, AttributeModel * billAttrModel) {
+void AccountingLSBillItem::loadTmpData( PriceList *priceList, AttributesModel * billAttrModel) {
     if( !m_d->tmpAttributes.isEmpty() ){
         loadFromXml(m_d->tmpAttributes, priceList, billAttrModel );
         m_d->tmpAttributes.clear();

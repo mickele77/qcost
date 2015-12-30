@@ -1,6 +1,6 @@
 /*
    QCost is a cost estimating software.
-   Copyright (C) 2013-2014 Mocciola Michele
+   Copyright (C) 2013-2016 Mocciola Michele
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -26,7 +26,8 @@ class PriceList;
 class PriceItem;
 class BillItem;
 class Attribute;
-class AttributeModel;
+class AttributesModel;
+class VarsModel;
 class PriceFieldModel;
 class MathParser;
 class QXmlStreamAttributes;
@@ -94,6 +95,7 @@ public:
     bool setData(const QModelIndex &index, const QVariant &value, int role = Qt::EditRole);
     bool insertBillItems(PriceItem * p, int position = -1, int count = 1, const QModelIndex &parent = QModelIndex() );
     bool removeBillItems(int position = -1, int rows = 1, const QModelIndex &parent = QModelIndex() );
+    void clear();
 
     BillItem *billItem(const QModelIndex &index ) const;
     BillItem *billItem(int childNum, const QModelIndex &parentIndex = QModelIndex() );
@@ -109,9 +111,11 @@ public:
     double amount( int field ) const ;
     QString amountStr( int field ) const ;
 
-    AttributeModel * attributeModel();
+    AttributesModel * attributesModel();
     double amountAttribute( Attribute * attr, int field );
     QString amountAttributeStr( Attribute * attr, int field );
+
+    VarsModel *varsModel();
 
     bool isUsingPriceItem( PriceItem * p );
     bool isUsingPriceList( PriceList * pl );

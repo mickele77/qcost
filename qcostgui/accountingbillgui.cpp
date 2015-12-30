@@ -1,6 +1,6 @@
 /*
    QCost is a cost estimating software.
-   Copyright (C) 2013-2014 Mocciola Michele
+   Copyright (C) 2013-2016 Mocciola Michele
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -19,6 +19,9 @@
 #include "accountingbillgui.h"
 
 #include "accountingbilldatagui.h"
+#include "accountingbillpricegui.h"
+#include "attributesgui.h"
+#include "varsgui.h"
 #include "accountingtreegui.h"
 #include "accountingitemppugui.h"
 #include "accountingitempaymentgui.h"
@@ -86,6 +89,9 @@ public:
         project(prj),
         accountingItemEditingPrice(NULL),
         accountingDataGUI( new AccountingBillDataGUI( prj->priceFieldModel(), prs, NULL, prj, wpf, parent ) ),
+        accountingPriceGUI( new AccountingBillPriceGUI( prj->priceFieldModel(), prs, NULL, prj, wpf, parent ) ),
+        attributesGUI( new AttributesGUI( prj->priceFieldModel(), prs, (AccountingBill *) (NULL), wpf, parent ) ),
+        varsGUI( new VarsGUI( (AccountingBill *)(NULL), parent ) ),
         mainSplitter( new QSplitter(Qt::Horizontal, parent ) ),
         accountingTreeGUI( new AccountingTreeGUI( EPAImpOptions, EPAFileName, b, prs, prj, mainSplitter ) ),
         accountingItemBillGUI( new AccountingItemPaymentGUI( prj->priceFieldModel(), parent ) ),
@@ -108,6 +114,9 @@ public:
     PriceItem * importingDataPriceItem;
 
     AccountingBillDataGUI * accountingDataGUI;
+    AccountingBillPriceGUI * accountingPriceGUI;
+    AttributesGUI * attributesGUI;
+    VarsGUI * varsGUI;
     QSplitter * mainSplitter;
     AccountingTreeGUI * accountingTreeGUI;
     AccountingItemPaymentGUI * accountingItemBillGUI;
@@ -125,10 +134,13 @@ AccountingBillGUI::AccountingBillGUI( QMap<PriceListDBWidget::ImportOptions, boo
     QTabWidget(parent),
     m_d( new AccountingBillGUIPrivate( EPAImpOptions, EPAFileName, prs, b, p, wordProcessorFile, this ) ){
 
-    addTab( m_d->accountingDataGUI, trUtf8("Libretto delle Misure - Dati generali"));
-    addTab( m_d->mainSplitter, trUtf8("Libretto delle Misure - Misure"));
+    addTab( m_d->accountingDataGUI, trUtf8("Dati generali"));
+    addTab( m_d->accountingPriceGUI, trUtf8("Prezzi"));
+    addTab( m_d->attributesGUI, trUtf8("Etichette"));
+    addTab( m_d->varsGUI, trUtf8("Variabili"));
+    addTab( m_d->mainSplitter, trUtf8("Misure"));
 
-    setCurrentIndex( 1 );
+    setCurrentIndex( count()-1 );
     setAccountingBill(b);
 
     connect( m_d->accountingTreeGUI, &AccountingTreeGUI::currentBillItemChanged, this, &AccountingBillGUI::setAccountingItem );
@@ -141,6 +153,9 @@ AccountingBillGUI::~AccountingBillGUI(){
 void AccountingBillGUI::setAccountingBill( AccountingBill * b ){
     m_d->accounting = b;
     m_d->accountingDataGUI->setAccountingBill( b );
+    m_d->accountingPriceGUI->setAccountingBill( b );
+    m_d->attributesGUI->setBill( b );
+    m_d->varsGUI->setBill( b );
     m_d->accountingTreeGUI->setAccountingBill( b );
     m_d->accountingItemBillGUI->setAccountingBill( b );
     m_d->accountingItemPPUGUI->setAccountingBill( b );

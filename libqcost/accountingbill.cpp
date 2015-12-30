@@ -1,6 +1,6 @@
 /*
    QCost is a cost estimating software.
-   Copyright (C) 2013-2014 Mocciola Michele
+   Copyright (C) 2013-2016 Mocciola Michele
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -19,7 +19,8 @@
 
 #include "accountingbill.h"
 
-#include "attributemodel.h"
+#include "varsmodel.h"
+#include "attributesmodel.h"
 #include "accountingbillitem.h"
 #include "pricelist.h"
 #include "priceitem.h"
@@ -38,14 +39,15 @@ public:
         name(n),
         priceFieldModel(pfm),
         parser(prs),
-        rootItem(new AccountingBillItem( NULL, AccountingBillItem::Root, pfm, parser )),
         priceList( NULL ),
-        attributeModel( new AttributeModel( b, parser, pfm )),
+        attributesModel( new AttributesModel( b, parser, pfm )),
+        varsModel( new VarsModel(parser) ),
+        rootItem(new AccountingBillItem( NULL, AccountingBillItem::Root, pfm, parser, varsModel )),
         priceListIdTmp(0){
     }
     ~AccountingBillPrivate(){
         delete rootItem;
-        delete attributeModel;
+        delete attributesModel;
     }
 
     static void setPriceItemParents( PriceList *pl, PriceItem * basePriceItem, PriceItem * newPriceItem ){
@@ -68,9 +70,10 @@ public:
     QXmlStreamAttributes tmpAttributes;
     PriceFieldModel * priceFieldModel;
     MathParser * parser;
-    AccountingBillItem * rootItem;
     PriceList * priceList;
-    AttributeModel * attributeModel;
+    AttributesModel * attributesModel;
+    VarsModel * varsModel;
+    AccountingBillItem * rootItem;
     unsigned int priceListIdTmp;
 };
 
@@ -91,7 +94,7 @@ AccountingBill::AccountingBill( const QString &n, ProjectItem *parent, PriceFiel
     connect( m_d->rootItem, &AccountingBillItem::paymentRemoved, this, &AccountingBill::paymentRemoved );
     connect( m_d->rootItem, &AccountingBillItem::itemChanged, this, &AccountingBill::modelChanged );
 
-    connect( m_d->attributeModel, &AttributeModel::modelChanged, this, &AccountingBill::modelChanged );
+    connect( m_d->attributesModel, &AttributesModel::modelChanged, this, &AccountingBill::modelChanged );
 }
 
 AccountingBill::AccountingBill(AccountingBill & b):
@@ -112,7 +115,7 @@ AccountingBill::AccountingBill(AccountingBill & b):
 
     connect( m_d->rootItem, &AccountingBillItem::itemChanged, this, &AccountingBill::modelChanged );
 
-    connect( m_d->attributeModel, &AttributeModel::modelChanged, this, &AccountingBill::modelChanged );
+    connect( m_d->attributesModel, &AttributesModel::modelChanged, this, &AccountingBill::modelChanged );
 }
 
 AccountingBill::~AccountingBill(){
@@ -126,7 +129,7 @@ AccountingBill::~AccountingBill(){
 
     disconnect( m_d->rootItem, &AccountingBillItem::itemChanged, this, &AccountingBill::modelChanged );
 
-    disconnect( m_d->attributeModel, &AttributeModel::modelChanged, this, &AccountingBill::modelChanged );
+    disconnect( m_d->attributesModel, &AttributesModel::modelChanged, this, &AccountingBill::modelChanged );
 
     emit aboutToBeDeleted();
 
@@ -190,6 +193,8 @@ bool AccountingBill::clear() {
     m_d->rootItem->setCurrentPriceDataSet( 0 );
     setName("");
     setPriceList( NULL );
+    m_d->attributesModel->clear();
+    m_d->varsModel->clear();
     endResetModel();
     return ret;
 }
@@ -591,8 +596,12 @@ QString AccountingBill::totalAmountStr() const {
     return m_d->rootItem->totalAmountStr();
 }
 
-AttributeModel *AccountingBill::attributeModel() {
-    return m_d->attributeModel;
+AttributesModel *AccountingBill::attributesModel() {
+    return m_d->attributesModel;
+}
+
+VarsModel *AccountingBill::varsModel() {
+    return m_d->varsModel;
 }
 
 void AccountingBill::updateValue(AccountingBillItem * item, int column) {
@@ -656,7 +665,8 @@ void AccountingBill::writeXml(QXmlStreamWriter *writer) {
     }
     writer->writeAttribute( "priceDataSet", QString::number( m_d->rootItem->currentPriceDataSet() ) );
 
-    m_d->attributeModel->writeXml( writer );
+    m_d->attributesModel->writeXml( writer );
+    m_d->varsModel->writeXml( writer );
 
     m_d->rootItem->writeXml( writer );
 
@@ -675,16 +685,21 @@ void AccountingBill::readXml(QXmlStreamReader *reader,
            (!reader->hasError()) &&
            !(reader->isEndElement() && reader->name().toString().toUpper() == "ACCOUNTINGBILL") ){
         reader->readNext();
-        QString tag = reader->name().toString().toUpper();
-        if( tag == "ATTRIBUTEMODEL" && reader->isStartElement()) {
-            m_d->attributeModel->readXml( reader );
-        }
-        if( tag == "ACCOUNTINGBILLITEM" && reader->isStartElement()) {
-            m_d->rootItem->readXmlTmp( reader );
+        if( reader->isStartElement() ){
+            QString tag = reader->name().toString().toUpper();
+            if( tag == "ATTRIBUTESMODEL" ) {
+                m_d->attributesModel->readXml( reader );
+            }
+            if( tag == "VARSMODEL" ) {
+                m_d->varsModel->readXml( reader );
+            }
+            if( tag == "ACCOUNTINGBILLITEM" ) {
+                m_d->rootItem->readXmlTmp( reader );
+            }
         }
     }
     loadXml( m_d->tmpAttributes, priceLists );
-    m_d->rootItem->readFromXmlTmp( lsBills, tamBill, m_d->priceList, m_d->attributeModel );
+    m_d->rootItem->readFromXmlTmp( lsBills, tamBill, m_d->priceList, m_d->attributesModel );
     m_d->rootItem->updateAccountingProgCode();
     m_d->rootItem->updateProgCode();
 }
@@ -775,5 +790,5 @@ void AccountingBill::writeODTAccountingSummaryOnTable( QTextCursor *cursor,
 }
 
 void AccountingBill::insertStandardAttributes(){
-    m_d->attributeModel->insertStandardAttributes();
+    m_d->attributesModel->insertStandardAttributes();
 }

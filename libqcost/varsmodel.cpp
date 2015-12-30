@@ -19,7 +19,7 @@ public:
     ~VarsModelPrivate(){
     }
 
-    QList<Var *> linesContainer;
+    QList<Var *> varsContainer;
     int valueCol;
     int nameCol;
     int commentCol;
@@ -38,13 +38,13 @@ VarsModel::~VarsModel(){
 
 VarsModel &VarsModel::operator=(const VarsModel &cp) {
     if( &cp != this ){
-        if( m_d->linesContainer.size() > cp.m_d->linesContainer.size() ){
-            removeRows( 0, m_d->linesContainer.size() - cp.m_d->linesContainer.size() );
-        } else if( m_d->linesContainer.size() < cp.m_d->linesContainer.size() ){
-            insertRows( 0, cp.m_d->linesContainer.size() - m_d->linesContainer.size() );
+        if( m_d->varsContainer.size() > cp.m_d->varsContainer.size() ){
+            removeRows( 0, m_d->varsContainer.size() - cp.m_d->varsContainer.size() );
+        } else if( m_d->varsContainer.size() < cp.m_d->varsContainer.size() ){
+            insertRows( 0, cp.m_d->varsContainer.size() - m_d->varsContainer.size() );
         }
-        for( int i = 0; i < m_d->linesContainer.size(); ++i ){
-            *(m_d->linesContainer[i]) = *(cp.m_d->linesContainer.at(i));
+        for( int i = 0; i < m_d->varsContainer.size(); ++i ){
+            *(m_d->varsContainer[i]) = *(cp.m_d->varsContainer.at(i));
         }
     }
 
@@ -52,7 +52,7 @@ VarsModel &VarsModel::operator=(const VarsModel &cp) {
 }
 
 int VarsModel::rowCount(const QModelIndex &) const {
-    return m_d->linesContainer.size();
+    return m_d->varsContainer.size();
 }
 
 int VarsModel::columnCount(const QModelIndex &) const {
@@ -61,10 +61,8 @@ int VarsModel::columnCount(const QModelIndex &) const {
 
 Qt::ItemFlags VarsModel::flags(const QModelIndex &index) const {
     if( index.isValid() ){
-        if( index.column() == 0 || index.column() == 1 ){
+        if( index.column() == 0 || index.column() == 1 || index.column() == 2 ){
             return Qt::ItemIsEnabled | Qt::ItemIsEditable | Qt::ItemIsSelectable;
-        } else if( index.column() == 2 ){
-            return Qt::ItemIsEnabled | Qt::ItemIsSelectable;
         }
     }
     return Qt::NoItemFlags;
@@ -72,16 +70,16 @@ Qt::ItemFlags VarsModel::flags(const QModelIndex &index) const {
 
 QVariant VarsModel::data(const QModelIndex &index, int role) const {
     if( index.isValid() ){
-        if( index.row() >= 0 && index.row() < m_d->linesContainer.size() ){
+        if( index.row() >= 0 && index.row() < m_d->varsContainer.size() ){
             if( role == Qt::EditRole || role == Qt::DisplayRole ){
                 if( index.column() == m_d->nameCol ){
-                    return QVariant( m_d->linesContainer.at(index.row())->name());
+                    return QVariant( m_d->varsContainer.at(index.row())->name());
                 }
                 if( index.column() == m_d->valueCol ){
-                    return QVariant( m_d->linesContainer.at(index.row())->value() );
+                    return QVariant( m_d->varsContainer.at(index.row())->value() );
                 }
                 if( index.column() == m_d->commentCol ){
-                    return QVariant( m_d->linesContainer.at(index.row())->comment());
+                    return QVariant( m_d->varsContainer.at(index.row())->comment());
                 }
             }
             if( role == Qt::TextAlignmentRole ){
@@ -102,22 +100,22 @@ QVariant VarsModel::data(const QModelIndex &index, int role) const {
 
 bool VarsModel::setData(const QModelIndex &index, const QVariant &value, int role) {
     if( index.isValid() ){
-        if( index.row() >= 0 && index.row() < m_d->linesContainer.size() ){
+        if( index.row() >= 0 && index.row() < m_d->varsContainer.size() ){
             if( role == Qt::EditRole  ){
                 if( index.column() == m_d->commentCol ){
-                    m_d->linesContainer.at(index.row())->setComment( value.toString() );
+                    m_d->varsContainer.at(index.row())->setComment( value.toString() );
                     emit dataChanged( index, index );
                     emit modelChanged();
                     return true;
                 }
                 if( index.column() == m_d->nameCol ){
-                    m_d->linesContainer.at(index.row())->setName( value.toString() );
+                    m_d->varsContainer.at(index.row())->setName( value.toString() );
                     emit dataChanged( index, index );
                     emit modelChanged();
                     return true;
                 }
                 if( index.column() == m_d->valueCol ){
-                    m_d->linesContainer.at(index.row())->setValue( value.toString() );
+                    m_d->varsContainer.at(index.row())->setValue( value.toString() );
                     emit dataChanged( index, index );
                     emit modelChanged();
                     return true;
@@ -156,13 +154,13 @@ bool VarsModel::insertRows(int row, int count, const QModelIndex &parent) {
     if( row < 0 ){
         row = 0;
     }
-    if( row > m_d->linesContainer.size() ){
-        row = m_d->linesContainer.size();
+    if( row > m_d->varsContainer.size() ){
+        row = m_d->varsContainer.size();
     }
     beginInsertRows(QModelIndex(), row, row+count-1 );
     for(int i=0; i < count; ++i){
         Var * itemLine = new Var( m_d->parser );
-        m_d->linesContainer.insert( row, itemLine );
+        m_d->varsContainer.insert( row, itemLine );
     }
     endInsertRows();
     emit modelChanged();
@@ -172,16 +170,16 @@ bool VarsModel::insertRows(int row, int count, const QModelIndex &parent) {
 bool VarsModel::removeRows(int row, int count, const QModelIndex &parent) {
     Q_UNUSED(parent);
 
-    if( count < 1 || row < 0 || row > m_d->linesContainer.size() ){
+    if( count < 1 || row < 0 || row > m_d->varsContainer.size() ){
         return false;
     }
 
-    if( (row+count) > m_d->linesContainer.size() ){
-        count = m_d->linesContainer.size() - row;
+    if( (row+count) > m_d->varsContainer.size() ){
+        count = m_d->varsContainer.size() - row;
     }
 
     // lasciamo almeno una linea
-    if( count == m_d->linesContainer.size() ){
+    if( count == m_d->varsContainer.size() ){
         count--;
         row = 1;
     }
@@ -191,21 +189,25 @@ bool VarsModel::removeRows(int row, int count, const QModelIndex &parent) {
 
     beginRemoveRows(QModelIndex(), row, row+count-1);
     for(int i=0; i < count; ++i){
-        delete m_d->linesContainer.at(row);
-        m_d->linesContainer.removeAt( row );
+        delete m_d->varsContainer.at(row);
+        m_d->varsContainer.removeAt( row );
     }
     endRemoveRows();
     emit modelChanged();
     return true;
 }
 
+bool VarsModel::clear() {
+    return removeRows( 0, m_d->varsContainer.size() );
+}
+
 bool VarsModel::append( int count ){
-    return insertRows( m_d->linesContainer.size(), count );
+    return insertRows( m_d->varsContainer.size(), count );
 }
 
 void VarsModel::writeXml(QXmlStreamWriter *writer) {
     writer->writeStartElement( "VarsModel" );
-    for( QList<Var *>::iterator i = m_d->linesContainer.begin(); i != m_d->linesContainer.end(); ++i ){
+    for( QList<Var *>::iterator i = m_d->varsContainer.begin(); i != m_d->varsContainer.end(); ++i ){
         (*i)->writeXml( writer );
     }
     writer->writeEndElement();
@@ -219,11 +221,11 @@ void VarsModel::readXml(QXmlStreamReader *reader) {
         reader->readNext();
         if( reader->name().toString().toUpper() == "VAR" && reader->isStartElement()) {
             if( firstLine ){
-                m_d->linesContainer.last()->loadXml( reader->attributes() );
+                m_d->varsContainer.last()->loadXml( reader->attributes() );
                 firstLine = false;
             } else {
                 if(append()){
-                    m_d->linesContainer.last()->loadXml( reader->attributes() );
+                    m_d->varsContainer.last()->loadXml( reader->attributes() );
                 }
             }
         }
@@ -231,20 +233,33 @@ void VarsModel::readXml(QXmlStreamReader *reader) {
 }
 
 int VarsModel::varsCount() {
-    return m_d->linesContainer.size();
+    return m_d->varsContainer.size();
 }
 
 Var * VarsModel::var(int i) {
-    if( i >= 0 && i < m_d->linesContainer.size() ){
-        return m_d->linesContainer.at(i);
+    if( i >= 0 && i < m_d->varsContainer.size() ){
+        return m_d->varsContainer.at(i);
     }
     return NULL;
 }
 
 QString VarsModel::replaceValue( const QString & expr ) {
-    QString ret;
-    for( QList<Var *>::iterator i = m_d->linesContainer.begin(); i != m_d->linesContainer.end(); ++i ){
-        (*i)->replaceValue( &ret );
+    // ordiniamo le variabili in base alla lunghezza, di modo da evitare
+    // problemi nel caso di variabili lunghe che contengono variabili piuù corte
+    QList<Var *> linesOrdered = m_d->varsContainer;
+    for( int i = 0; i < (linesOrdered.size()-1); ++i ){
+        for( int j = i+1; j < linesOrdered.size(); ++j ){
+            if( linesOrdered.at(i)->name().length() < linesOrdered.at(j)->name().length() ){
+                linesOrdered.swap(i, j);
+            }
+        }
     }
+
+    // sostituiamo al nome delle variabili il relativo valore
+    QString ret = expr;
+    for( QList<Var *>::iterator iter = linesOrdered.begin(); iter != linesOrdered.end(); ++iter ){
+        (*iter)->replaceValue( &ret );
+    }
+
     return ret;
 }

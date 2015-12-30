@@ -153,7 +153,7 @@ void AccountingItemTAMGUI::setAccountingBill(AccountingBill *b) {
     m_d->bill = b;
 
     if( m_d->bill != NULL ){
-        m_d->itemAttributeModel->setAttributeModel( m_d->bill->attributeModel() );
+        m_d->itemAttributeModel->setAttributeModel( m_d->bill->attributesModel() );
         connect( m_d->bill, &AccountingBill::aboutToBeDeleted, this, &AccountingItemTAMGUI::setAccountingNULL );
     }
 

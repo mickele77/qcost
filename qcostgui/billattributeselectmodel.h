@@ -2,7 +2,7 @@
 #define BILLATTRIBUTESELECTMODEL_H
 
 class Attribute;
-class AttributeModel;
+class AttributesModel;
 class BillAttributeSelectModelPrivate;
 
 #include <QAbstractTableModel>
@@ -10,7 +10,7 @@ class BillAttributeSelectModelPrivate;
 class BillAttributeSelectModel : public QAbstractTableModel {
     Q_OBJECT
 public:
-    explicit BillAttributeSelectModel(AttributeModel * m, QObject *parent = 0);
+    explicit BillAttributeSelectModel(AttributesModel * m, QObject *parent = 0);
     ~BillAttributeSelectModel();
 
     QList<Attribute *> selectedAttributes();
