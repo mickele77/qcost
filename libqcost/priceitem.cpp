@@ -416,15 +416,12 @@ void PriceItem::setUnitMeasure(UnitMeasure *ump) {
     }
 }
 
-bool PriceItem::isUsingUnitMeasure(UnitMeasure * ump ) {
+bool PriceItem::isUsingUnitMeasure(UnitMeasure * ump ) const {
     if( hasChildren() ){
         for( QList<PriceItem *>::iterator i = m_d->childrenContainer.begin(); i != m_d->childrenContainer.end(); ++i){
             if( (*i)->isUsingUnitMeasure(ump) ){
                 return true;
             }
-        }
-        if( m_d->unitMeasure == ump ){
-            m_d->unitMeasure = NULL;
         }
     } else {
         if( m_d->unitMeasure == ump ){
@@ -773,7 +770,7 @@ void PriceItem::setCode(const QString & v) {
     }
 }
 
-bool PriceItem::inheritCodeFromParent() {
+bool PriceItem::inheritCodeFromParent() const {
     return m_d->inheritCodeFromParent;
 }
 
@@ -795,11 +792,11 @@ void PriceItem::emitCodeFullChanged( const QString & str ){
     emit codeFullChanged( str + codeSeparator() + m_d->code );
 }
 
-QString PriceItem::shortDescription() {
+QString PriceItem::shortDescription() const {
     return m_d->shortDescription;
 }
 
-QString PriceItem::shortDescriptionFull() {
+QString PriceItem::shortDescriptionFull() const {
     if( m_d->parentItem != NULL ){
         if( m_d->parentItem->parentInternal() != NULL ){
             if( m_d->inheritShortDescFromParent ){
@@ -819,7 +816,7 @@ void PriceItem::setShortDescription(const QString & v ) {
     }
 }
 
-bool PriceItem::inheritShortDescFromParent() {
+bool PriceItem::inheritShortDescFromParent() const {
     return m_d->inheritShortDescFromParent;
 }
 
@@ -840,11 +837,11 @@ void PriceItem::emitShortDescFullChanged(const QString & str ) {
     emit shortDescriptionFullChanged( str + shortDescSeparator() + m_d->shortDescription );
 }
 
-QString PriceItem::longDescription() {
+QString PriceItem::longDescription() const {
     return m_d->longDescription;
 }
 
-QString PriceItem::longDescriptionFull() {
+QString PriceItem::longDescriptionFull() const {
     if( m_d->parentItem != NULL ){
         if( m_d->parentItem->parentInternal() != NULL ){
             if( m_d->inheritLongDescFromParent ){
@@ -863,7 +860,7 @@ void PriceItem::setLongDescription(const QString & v ) {
     }
 }
 
-bool PriceItem::inheritLongDescFromParent() {
+bool PriceItem::inheritLongDescFromParent() const {
     return m_d->inheritLongDescFromParent;
 }
 
@@ -1014,7 +1011,8 @@ void PriceItem::readFromXmlTmp( ProjectPriceListParentItem * priceLists ) {
 void PriceItem::writeODTOnTable( QTextCursor *cursor,
                                  PriceListPrinter::PrintPriceItemsOption printOption,
                                  const QList<int> fieldsToPrint,
-                                 int priceDataSetToPrint ) {
+                                 int priceDataSetToPrint,
+                                 bool printNumLetters ) const {
     double borderWidth = 1.0f;
 
     // stile dell'unità di misura e del numero d'ordine
@@ -1088,7 +1086,7 @@ void PriceItem::writeODTOnTable( QTextCursor *cursor,
 
         QList<PriceItem *>::iterator i = m_d->childrenContainer.begin();
         while( i != m_d->childrenContainer.end() ){
-            (*i)->writeODTOnTable( cursor, printOption, fieldsToPrint, priceDataSetToPrint  );
+            (*i)->writeODTOnTable( cursor, printOption, fieldsToPrint, priceDataSetToPrint, printNumLetters );
             QList<PriceItem *>::iterator j = i;
             ++i;
             if( (*j)->hasChildren() && i != m_d->childrenContainer.end() ){
@@ -1137,7 +1135,7 @@ void PriceItem::writeODTOnTable( QTextCursor *cursor,
                 }
             }
             for( QList<PriceItem *>::iterator i = m_d->childrenContainer.begin(); i != m_d->childrenContainer.end(); ++i){
-                (*i)->writeODTOnTable( cursor, printOption, fieldsToPrint, priceDataSetToPrint  );
+                (*i)->writeODTOnTable( cursor, printOption, fieldsToPrint, priceDataSetToPrint, printNumLetters  );
             }
         } else { // ! hasChildren()
             table->appendRows(1);
@@ -1175,10 +1173,14 @@ void PriceItem::writeODTOnTable( QTextCursor *cursor,
             PriceItemPrivate::writeCell( cursor, table, centralFormat, tagBlockFormat, txt );
 
             for( int i=0; i < fieldsToPrint.size(); ++i ){
+                QString valToPrint = valueStr( fieldsToPrint.at(i), priceDataSetToPrint );
+                if( printNumLetters && m_d->parser != NULL ){
+                    valToPrint = m_d->parser->spellDouble( valToPrint );
+                }
                 if( i == fieldsToPrint.size() - 1 ){
-                    PriceItemPrivate::writeCell( cursor, table, rightFormat, numBlockFormat, valueStr( fieldsToPrint.at(i), priceDataSetToPrint ) );
+                    PriceItemPrivate::writeCell( cursor, table, rightFormat, numBlockFormat, valToPrint );
                 } else {
-                    PriceItemPrivate::writeCell( cursor, table, centralFormat, numBlockFormat, valueStr( fieldsToPrint.at(i), priceDataSetToPrint ) );
+                    PriceItemPrivate::writeCell( cursor, table, centralFormat, numBlockFormat, valToPrint );
                 }
             }
         }

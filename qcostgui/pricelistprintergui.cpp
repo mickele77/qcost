@@ -28,6 +28,7 @@ class PriceListPrinterGUIPrivate {
 public:
     PriceListPrinterGUIPrivate( PriceListPrinter::PrintPriceItemsOption * prItemsOptions,
                                 QList<int> * fields,
+                                bool * pNumLetters,
                                 double *pWidth,
                                 double *pHeight,
                                 Qt::Orientation *pOrient,
@@ -40,6 +41,7 @@ public:
         printItemsOption( prItemsOptions ),
         printFields(fields),
         printPriceDataSet(priceCol),
+        printNumLetters(pNumLetters),
         printPriceList( prPrList ),
         printPriceAP( prAP ),
         APgroupPriceAmount( APgrPrAm ),
@@ -48,15 +50,16 @@ public:
         paperOrientation( pOrient ),
         priceFieldsNames( pfm->fieldNames() ){
         pageSizeList << QPageSize( QPageSize::A4 );
-    };
+    }
     ~PriceListPrinterGUIPrivate(){
         delete ui;
-    };
+    }
 
     Ui::PriceListPrinterGUI *ui;
     PriceListPrinter::PrintPriceItemsOption * printItemsOption;
     QList<int> * printFields;
     int *printPriceDataSet;
+    bool *printNumLetters;
     bool *printPriceList;
     bool *printPriceAP;
     bool *APgroupPriceAmount;
@@ -70,6 +73,7 @@ public:
 
 PriceListPrinterGUI::PriceListPrinterGUI( PriceListPrinter::PrintPriceItemsOption * prItemsOption,
                                           QList<int> * printFields,
+                                          bool * printNumLetters,
                                           double *pWidth,
                                           double *pHeight,
                                           Qt::Orientation *pOrient,
@@ -81,7 +85,8 @@ PriceListPrinterGUI::PriceListPrinterGUI( PriceListPrinter::PrintPriceItemsOptio
                                           PriceFieldModel * pfm,
                                           QWidget *parent ) :
     QDialog(parent),
-    m_d( new PriceListPrinterGUIPrivate( prItemsOption, printFields, pWidth, pHeight, pOrient, printPriceDataSet, printPriceList, printPriceAP, APgroupPrAm, pfm ) ){
+    m_d( new PriceListPrinterGUIPrivate( prItemsOption, printFields, printNumLetters,
+                                         pWidth, pHeight, pOrient, printPriceDataSet, printPriceList, printPriceAP, APgroupPrAm, pfm ) ){
 
     m_d->ui->setupUi(this);
 
@@ -93,6 +98,12 @@ PriceListPrinterGUI::PriceListPrinterGUI( PriceListPrinter::PrintPriceItemsOptio
         m_d->ui->priceDataSetSpinBox->setDisabled( true );
     }
     m_d->ui->priceDataSetSpinBox->setValue( *printPriceDataSet + 1 );
+
+    if( *(m_d->printNumLetters) ){
+        m_d->ui->printNumLettersRadioButton->setChecked( true );
+    } else {
+        m_d->ui->printNumDigitsRadioButton->setChecked( true );
+    }
 
     connect( m_d->ui->insertPriceFieldPushButton, &QPushButton::clicked, this, &PriceListPrinterGUI::insertPriceFieldComboBox );
     connect( m_d->ui->removePriceFieldPushButton, &QPushButton::clicked, this, &PriceListPrinterGUI::removePriceFieldComboBox );
@@ -134,6 +145,12 @@ void PriceListPrinterGUI::setPrintData(){
         m_d->printFields->append( m_d->priceFieldComboBoxList.at(i)->currentIndex() );
     }
     *(m_d->printPriceDataSet) = m_d->ui->priceDataSetSpinBox->value() - 1;
+
+    if( m_d->ui->printNumLettersRadioButton->isChecked() ){
+        *(m_d->printNumLetters) = true;
+    } else if( m_d->ui->printNumDigitsRadioButton->isChecked() ){
+        *(m_d->printNumLetters) = false;
+    }
 
     *(m_d->paperWidth) = m_d->pageSizeList.at( m_d->ui->paperDimensionsComboBox->currentIndex() ).size( QPageSize::Millimeter ).width();
     *(m_d->paperHeight) = m_d->pageSizeList.at( m_d->ui->paperDimensionsComboBox->currentIndex() ).size( QPageSize::Millimeter ).height();

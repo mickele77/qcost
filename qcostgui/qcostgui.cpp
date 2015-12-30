@@ -513,13 +513,15 @@ bool QCostGUI::printODT() {
         PriceListPrinter::PrintPriceItemsOption printItemsOption = PriceListPrinter::PrintLongDesc;
         QList<int> fieldsToPrint;
         int priceDataSetToPrint = 0;
+        bool printNumLetters = false;
         double paperWidth = 210.0;
         double paperHeight = 297.0;
         Qt::Orientation paperOrientation = Qt::Vertical;
         bool printPriceList = true;
         bool printAP = false;
         bool APgroupPrAm = false;
-        PriceListPrinterGUI gui( &printItemsOption, &fieldsToPrint, &paperWidth, &paperHeight, &paperOrientation, &priceDataSetToPrint, &printPriceList, &printAP, &APgroupPrAm, pl->priceDataSetCount(), m_d->project->priceFieldModel(), this );
+        PriceListPrinterGUI gui( &printItemsOption, &fieldsToPrint, &printNumLetters,
+                                 &paperWidth, &paperHeight, &paperOrientation, &priceDataSetToPrint, &printPriceList, &printAP, &APgroupPrAm, pl->priceDataSetCount(), m_d->project->priceFieldModel(), this );
 
         if( gui.exec() == QDialog::Accepted ){
             QString fileName = QFileDialog::getSaveFileName(this,

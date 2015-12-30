@@ -43,9 +43,10 @@ public:
 
     void setPriceList(PriceList * b);
 
-    bool printODT(PrintPriceItemsOption printOption,
+    bool printODT( PrintPriceItemsOption printOption,
                    const QList<int> &fieldsToPrint,
                    int priceDataSetToPrintInput,
+                   bool printNumLetters,
                    bool printPriceList,
                    bool printPriceAP, bool APgroupPrAm,
                    const QString &fileName,

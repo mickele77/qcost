@@ -105,7 +105,11 @@ public:
     QModelIndex index(int row, int column, const QModelIndex &parent) const;
     QModelIndex parent(const QModelIndex &index) const;
 
-    void writeODTOnTable(QTextCursor *cursor, PriceListPrinter::PrintPriceItemsOption printOption, const QList<int> fieldsToPrint, int priceColToPrint );
+    void writeODTOnTable( QTextCursor *cursor,
+                          PriceListPrinter::PrintPriceItemsOption printOption,
+                          const QList<int> fieldsToPrint,
+                          int priceColToPrint,
+                          bool printNumLetters = false ) const;
 
 public slots:
     void setName(const QString &value);

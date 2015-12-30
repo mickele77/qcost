@@ -118,17 +118,17 @@ public:
 
     QString code() const;
     QString codeFull() const;
-    bool inheritCodeFromParent();
-    QString shortDescription();
-    QString shortDescriptionFull();
-    bool inheritShortDescFromParent();
-    QString longDescription();
-    QString longDescriptionFull();
-    bool inheritLongDescFromParent();
+    bool inheritCodeFromParent() const;
+    QString shortDescription() const;
+    QString shortDescriptionFull() const;
+    bool inheritShortDescFromParent() const;
+    QString longDescription() const;
+    QString longDescriptionFull() const;
+    bool inheritLongDescFromParent() const;
 
     UnitMeasure * unitMeasure();
     void setUnitMeasure( UnitMeasure * ump );
-    bool isUsingUnitMeasure( UnitMeasure * );
+    bool isUsingUnitMeasure( UnitMeasure * ) const ;
 
     int firstValueCol();
     double value(int priceField, int priceDataSet ) const;
@@ -148,7 +148,11 @@ public:
     void loadFromXml(const QXmlStreamAttributes &attrs, UnitMeasureModel *uml);
     void readFromXmlTmp(ProjectPriceListParentItem *priceLists);
 
-    void writeODTOnTable(QTextCursor * cursor, PriceListPrinter::PrintPriceItemsOption printOption, const QList<int> fieldsToPrint, int priceDataSetToPrint = 0);
+    void writeODTOnTable( QTextCursor * cursor,
+                          PriceListPrinter::PrintPriceItemsOption printOption,
+                          const QList<int> fieldsToPrint,
+                          int priceDataSetToPrint = 0,
+                          bool printNumLetters = false ) const;
 
     static QString codeSeparator();
     static QString shortDescSeparator();

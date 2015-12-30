@@ -59,6 +59,7 @@ void PriceListPrinter::setPriceList(PriceList *b) {
 bool PriceListPrinter::printODT( PriceListPrinter::PrintPriceItemsOption printOption,
                                  const QList<int> &fieldsToPrint,
                                  int priceDataSetToPrintInput,
+                                 bool printNumLetters,
                                  bool printPriceList,
                                  bool printPriceAP,
                                  bool APgroupPrAm,
@@ -143,7 +144,7 @@ bool PriceListPrinter::printODT( PriceListPrinter::PrintPriceItemsOption printOp
             tableFormat.setHeaderRowCount( 2 );
             cursor.insertTable(1, colWidths.size(), tableFormat);
 
-            m_d->priceList->writeODTOnTable( &cursor, printOption, fieldsToPrint, priceDataSetToPrint );
+            m_d->priceList->writeODTOnTable( &cursor, printOption, fieldsToPrint, priceDataSetToPrint, printNumLetters );
 
             cursor.movePosition( QTextCursor::End );
         }

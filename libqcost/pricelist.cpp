@@ -208,8 +208,12 @@ QModelIndex PriceList::index(PriceItem * item, int column) const {
     }
 }
 
-void PriceList::writeODTOnTable( QTextCursor *cursor, PriceListPrinter::PrintPriceItemsOption printOption, const QList<int> fieldsToPrint, int priceColToPrint ) {
-    m_d->rootItem->writeODTOnTable( cursor, printOption, fieldsToPrint, priceColToPrint );
+void PriceList::writeODTOnTable( QTextCursor *cursor,
+                                 PriceListPrinter::PrintPriceItemsOption printOption,
+                                 const QList<int> fieldsToPrint,
+                                 int priceColToPrint,
+                                 bool printNumLetters ) const {
+    m_d->rootItem->writeODTOnTable( cursor, printOption, fieldsToPrint, priceColToPrint, printNumLetters );
 }
 
 bool PriceList::insertPriceItems(int inputPos, int count, const QModelIndex &parent) {

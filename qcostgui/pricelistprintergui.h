@@ -37,6 +37,7 @@ public:
     @param priceColNumber riceve il numero di colonne prezzo presenti */
     explicit PriceListPrinterGUI( PriceListPrinter::PrintPriceItemsOption * prItemsOption,
                                   QList<int> * printFields,
+                                  bool * printNumLetters,
                                   double *pWidth,
                                   double *pHeight,
                                   Qt::Orientation *pOrient,
