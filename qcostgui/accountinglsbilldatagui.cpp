@@ -133,7 +133,7 @@ void AccountingLSBillDataGUI::setAccountingBill(AccountingLSBill *b) {
             connect( m_d->ui->currentPriceDataSetSpinBox, static_cast<void(QSpinBox::*)(int)>(&QSpinBox::valueChanged), this, &AccountingLSBillDataGUI::setPriceDataSet );
 
             m_d->ui->totalPriceFieldTableView->setModel( m_d->accounting->totalAmountPriceFieldModel() );
-            m_d->ui->attributesTableView->setModel( m_d->accounting->attributeModel() );
+            m_d->ui->attributesTableView->setModel( m_d->accounting->attributesModel() );
 
             connect( m_d->accounting, &AccountingLSBill::aboutToBeDeleted, this, &AccountingLSBillDataGUI::clear );
         }
@@ -167,7 +167,7 @@ void AccountingLSBillDataGUI::addAttribute(){
                 row = selectedRows.last() + 1;
                 count = selectedRows.size();
             }
-            m_d->accounting->attributeModel()->insertRows( row, count );
+            m_d->accounting->attributesModel()->insertRows( row, count );
         }
     }
 }
@@ -184,7 +184,7 @@ void AccountingLSBillDataGUI::removeAttribute(){
                         row = selectedRows.at(i).row();
                     }
                 }
-                m_d->accounting->attributeModel()->removeRows( row, count );
+                m_d->accounting->attributesModel()->removeRows( row, count );
             }
         }
     }
@@ -204,7 +204,7 @@ bool AccountingLSBillDataGUI::printAttributeAccountingODT(){
                                                 &prAttrs,
                                                 &paperWidth, &paperHeight,
                                                 &paperOrientation,
-                                                m_d->accounting->attributeModel(),
+                                                m_d->accounting->attributesModel(),
                                                 this );
         if( printGUI.exec() == QDialog::Accepted ){
             QString fileName = QFileDialog::getSaveFileName( this,

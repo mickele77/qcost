@@ -560,7 +560,7 @@ QString AccountingTAMBill::totalAmountStr() const {
     return m_d->rootItem->totalAmountStr();
 }
 
-AttributesModel *AccountingTAMBill::attributeModel() {
+AttributesModel *AccountingTAMBill::attributesModel() {
     return m_d->attributeModel;
 }
 

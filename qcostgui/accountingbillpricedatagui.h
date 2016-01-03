@@ -16,8 +16,8 @@
    along with this program; if not, write to the Free Software Foundation,
    Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 */
-#ifndef ACCOUNTINGBILLDATAGUI_H
-#define ACCOUNTINGBILLDATAGUI_H
+#ifndef ACCOUNTINGBILLPRICEDATAGUI_H
+#define ACCOUNTINGBILLPRICEDATAGUI_H
 
 class AttributeList;
 class Project;
@@ -27,22 +27,29 @@ class PriceFieldModel;
 
 #include <QWidget>
 
-class AccountingBillDataGUIPrivate;
+class AccountingBillPriceDataGUIPrivate;
 
-class AccountingBillDataGUI : public QWidget {
+class AccountingBillPriceDataGUI : public QWidget {
     Q_OBJECT
 public:
-    explicit AccountingBillDataGUI( PriceFieldModel * pfm, MathParser *prs, AccountingBill * b, Project * prj, QString * wordProcessorFile = NULL, QWidget *parent = 0);
-    ~AccountingBillDataGUI();
+    explicit AccountingBillPriceDataGUI( PriceFieldModel * pfm, MathParser *prs, AccountingBill * b, Project * prj, QString * wordProcessorFile = NULL, QWidget *parent = 0);
+    ~AccountingBillPriceDataGUI();
 
     void setAccountingBill( AccountingBill * b);
 
+    void showEvent(QShowEvent *event);
 private slots:
-    void setDescription();
     void setAccountingNULL();
 
+    void setPriceList();
+    void setPriceDataSet();
+    void setDiscountFromLineEdit();
 private:
-    AccountingBillDataGUIPrivate * m_d;
+    AccountingBillPriceDataGUIPrivate * m_d;
+
+    void populatePriceListComboBox();
+    void setPriceListComboBox();
+    void setPriceDataSetSpinBox();
 };
 
-#endif // ACCOUNTINGBILLDATAGUI_H
+#endif // ACCOUNTINGBILLPRICEDATAGUI_H

@@ -22,6 +22,7 @@
 #include "qcost_export.h"
 
 class AccountingLSBill;
+class AccountingLSBills;
 class AccountingTAMBill;
 class AccountingBill;
 class Bill;
@@ -45,6 +46,7 @@ public:
     explicit AttributesModel( AccountingBill * myBill, MathParser * prs, PriceFieldModel *pfm, QObject *parent = 0);
     explicit AttributesModel( AccountingTAMBill * myBill, MathParser * prs, PriceFieldModel *pfm, QObject *parent = 0);
     explicit AttributesModel( AccountingLSBill * myBill, MathParser * prs, PriceFieldModel *pfm, QObject *parent = 0);
+    explicit AttributesModel( AccountingLSBills * myBills, MathParser * prs, PriceFieldModel *pfm, QObject *parent = 0);
     ~AttributesModel();
 
     AttributesModel & operator= (const AttributesModel & cp );
@@ -62,14 +64,22 @@ public:
 
     bool insertRows(int row, int count=1);
     bool append();
-
     bool removeRows(int row, int count=1);
     bool clear();
 
     void writeXml( QXmlStreamWriter * writer );
     void readXml( QXmlStreamReader * reader );
 
+    /** nel caso il modello sia riferito alla classe Bill, inserice due etichette
+      * una per gli importi soggetti a ribasso ed una per quelli non soggetti. */
     void insertStandardAttributes();
+
+    void setBill(Bill *b);
+    void setBill(AccountingBill *b);
+    void setBill(AccountingTAMBill *b);
+    void setBill(AccountingLSBill *b);
+    void setBill(AccountingLSBills *b);
+
 signals:
     void modelChanged();
     void aboutToBeDeleted();

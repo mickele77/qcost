@@ -19,7 +19,7 @@
 #include "accountingbillgui.h"
 
 #include "accountingbilldatagui.h"
-#include "accountingbillpricegui.h"
+#include "accountingbillpricedatagui.h"
 #include "attributesgui.h"
 #include "varsgui.h"
 #include "accountingtreegui.h"
@@ -89,8 +89,8 @@ public:
         project(prj),
         accountingItemEditingPrice(NULL),
         accountingDataGUI( new AccountingBillDataGUI( prj->priceFieldModel(), prs, NULL, prj, wpf, parent ) ),
-        accountingPriceGUI( new AccountingBillPriceGUI( prj->priceFieldModel(), prs, NULL, prj, wpf, parent ) ),
-        attributesGUI( new AttributesGUI( prj->priceFieldModel(), prs, (AccountingBill *) (NULL), wpf, parent ) ),
+        accountingPriceGUI( new AccountingBillPriceDataGUI( prj->priceFieldModel(), prs, NULL, prj, wpf, parent ) ),
+        attributesGUI( new AttributesGUI( prj->priceFieldModel(), prs, wpf, parent ) ),
         varsGUI( new VarsGUI( (AccountingBill *)(NULL), parent ) ),
         mainSplitter( new QSplitter(Qt::Horizontal, parent ) ),
         accountingTreeGUI( new AccountingTreeGUI( EPAImpOptions, EPAFileName, b, prs, prj, mainSplitter ) ),
@@ -114,7 +114,7 @@ public:
     PriceItem * importingDataPriceItem;
 
     AccountingBillDataGUI * accountingDataGUI;
-    AccountingBillPriceGUI * accountingPriceGUI;
+    AccountingBillPriceDataGUI * accountingPriceGUI;
     AttributesGUI * attributesGUI;
     VarsGUI * varsGUI;
     QSplitter * mainSplitter;

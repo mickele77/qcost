@@ -34,9 +34,10 @@ class AccountingBillGUI : public QTabWidget {
     Q_OBJECT
 public:
     explicit AccountingBillGUI( QMap<PriceListDBWidget::ImportOptions, bool> *EPAImpOptions,
-                      QString * EPAFileName,
-                      MathParser *prs, AccountingBill *b, Project *p,
-                      QString *wordProcessorFile = NULL, QWidget *parent = 0);
+                                QString * EPAFileName,
+                                MathParser *prs, AccountingBill *b, Project *p,
+                                QString *wordProcessorFile = NULL,
+                                QWidget *parent = 0 );
 
     ~AccountingBillGUI();
 

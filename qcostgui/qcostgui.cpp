@@ -32,6 +32,7 @@
 #include "projectitemsview.h"
 #include "accountinggui.h"
 #include "accountingtambillgui.h"
+#include "accountinglsbillsgui.h"
 #include "accountinglsbillgui.h"
 
 #include "billprinter.h"
@@ -106,6 +107,7 @@ public:
     AccountingGUI * accountingGUI;
     AccountingBillGUI * accountingBillGUI;
     AccountingTAMBillGUI * accountingTAMBillGUI;
+    AccountingLSBillsGUI * accountingLSBillsGUI;
     AccountingLSBillGUI * accountingLSBillGUI;
 
     // *** GUI ***
@@ -169,6 +171,9 @@ QCostGUI::QCostGUI(QWidget *parent) :
     m_d->accountingTAMBillGUI = new AccountingTAMBillGUI(  &(m_d->EPAImportOptions), &(m_d->EPAFileName), &(m_d->parser), NULL, m_d->project, &(m_d->sWordProcessorFile), this );
     m_d->mainWidget->addWidget( m_d->accountingTAMBillGUI );
 
+    m_d->accountingLSBillsGUI = new AccountingLSBillsGUI( m_d->project->accountingLSBills(), m_d->project->priceFieldModel(), &(m_d->parser), &(m_d->sWordProcessorFile), this );
+    m_d->mainWidget->addWidget( m_d->accountingLSBillsGUI );
+
     m_d->accountingLSBillGUI = new AccountingLSBillGUI(  &(m_d->EPAImportOptions), &(m_d->EPAFileName), &(m_d->parser), m_d->project, &(m_d->sWordProcessorFile), this );
     m_d->mainWidget->addWidget( m_d->accountingLSBillGUI );
 
@@ -229,7 +234,9 @@ void QCostGUI::saveSettings() {
 
 void QCostGUI::setCurrentItem(ProjectItem *item) {
     if( m_d->project ){
-        if( dynamic_cast<AccountingLSBill *>(item)){
+        if( dynamic_cast<AccountingLSBills *>(item)){
+            m_d->mainWidget->setCurrentWidget( m_d->accountingLSBillsGUI );
+        } else if( dynamic_cast<AccountingLSBill *>(item)){
             m_d->accountingLSBillGUI->setBill( dynamic_cast<AccountingLSBill *>(item) );
             m_d->mainWidget->setCurrentWidget( m_d->accountingLSBillGUI );
         } else if( dynamic_cast<AccountingTAMBill *>(item)){
@@ -533,7 +540,8 @@ bool QCostGUI::printODT() {
                     fileName.append( ".odt" );
                 }
                 PriceListPrinter writer( pl );
-                bool ret = writer.printODT( printItemsOption, fieldsToPrint, priceDataSetToPrint, printPriceList, printAP, APgroupPrAm, fileName, paperWidth, paperHeight, paperOrientation );
+                bool ret = writer.printODT( printItemsOption, fieldsToPrint, priceDataSetToPrint, printNumLetters,
+                                            printPriceList, printAP, APgroupPrAm, fileName, paperWidth, paperHeight, paperOrientation );
                 if( !m_d->sWordProcessorFile.isEmpty() ){
                     if( QFileInfo(m_d->sWordProcessorFile).exists() ){
                         QStringList args;

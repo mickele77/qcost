@@ -136,7 +136,7 @@ public:
     QString amountDiscountedStr() const;
     QString totalAmountStr() const;
 
-    AttributesModel *attributeModel();
+    AttributesModel *attributesModel();
 
     double totalAmountToDiscountAttribute( Attribute * attr ) const;
     QString totalAmountToDiscountAttributeStr( Attribute * attr ) const;

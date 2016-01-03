@@ -21,6 +21,9 @@
 
 class Bill;
 class AccountingBill;
+class AccountingTAMBill;
+class AccountingLSBill;
+class AccountingLSBills;
 class MathParser;
 class PriceFieldModel;
 
@@ -31,12 +34,14 @@ class AttributesGUIPrivate;
 class AttributesGUI : public QWidget {
     Q_OBJECT
 public:
-    explicit AttributesGUI( PriceFieldModel * pfm, MathParser *prs, Bill * b, QString * wordProcessorFile = NULL, QWidget *parent = 0);
-    explicit AttributesGUI( PriceFieldModel * pfm, MathParser *prs, AccountingBill * b, QString * wordProcessorFile = NULL, QWidget *parent = 0);
+    explicit AttributesGUI( PriceFieldModel * pfm, MathParser *prs, QString * wordProcessorFile = NULL, QWidget *parent = 0);
     ~AttributesGUI();
 
     void setBill( Bill * b);
     void setBill( AccountingBill * b);
+    void setBill( AccountingTAMBill * b);
+    void setBill( AccountingLSBills *b);
+    void setBill( AccountingLSBill *b);
 
 private slots:
     void setBillNULL();

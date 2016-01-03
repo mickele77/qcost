@@ -19,11 +19,7 @@
 #ifndef ACCOUNTINGTAMBILLDATAGUI_H
 #define ACCOUNTINGTAMBILLDATAGUI_H
 
-class AttributeList;
-class Project;
 class AccountingTAMBill;
-class MathParser;
-class PriceFieldModel;
 
 #include <QWidget>
 
@@ -32,38 +28,19 @@ class AccountingTAMBillDataGUIPrivate;
 class AccountingTAMBillDataGUI : public QWidget {
     Q_OBJECT
 public:
-    explicit AccountingTAMBillDataGUI( PriceFieldModel * pfm, MathParser *prs, AccountingTAMBill * b, Project * prj, QString * wordProcessorFile = NULL, QWidget *parent = 0);
+    explicit AccountingTAMBillDataGUI(QWidget *parent = 0);
     ~AccountingTAMBillDataGUI();
 
     void setAccountingTAMBill( AccountingTAMBill * b);
-    void showEvent(QShowEvent *event);
 
 private slots:
-    void setDiscount();
     void setAccountingNULL();
-    void addAttribute();
-    void removeAttribute();
 
-    // aggiorna etichette e importi di tutti i campi prezzo
-    void updateAmountsValue();
     // aggiorna solo l'importo di un campo prezzo
     void updateAmountValue(int priceField, const QString &newVal);
 
-    void resizeAttributeColsToContents();
-
-    void attributesTableViewCustomMenuRequested(QPoint pos);
-    void resizeAttributesColToContents();
-
-    bool printAttributeAccountingODT();
-
-    void setPriceList();
-    void setPriceDataSet();
 private:
     AccountingTAMBillDataGUIPrivate * m_d;
-
-    void populatePriceListComboBox();
-    void setPriceListComboBox();
-    void setPriceDataSetSpinBox();
 };
 
 #endif // ACCOUNTINGTAMBILLDATAGUI_H

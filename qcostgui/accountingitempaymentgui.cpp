@@ -205,7 +205,7 @@ void AccountingItemPaymentGUI::setAccountingTAMBill(AccountingTAMBill *b) {
         m_d->TAMBill = b;
 
         if( m_d->TAMBill != NULL ){
-            m_d->itemAttributeModel->setAttributeModel( m_d->TAMBill->attributeModel() );
+            m_d->itemAttributeModel->setAttributeModel( m_d->TAMBill->attributesModel() );
             connect( m_d->TAMBill, &AccountingTAMBill::aboutToBeDeleted, this, &AccountingItemPaymentGUI::setAccountingNULL );
         }
 

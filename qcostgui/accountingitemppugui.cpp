@@ -306,7 +306,7 @@ void AccountingItemPPUGUI::setItem(AccountingBillItem *b) {
 
 void AccountingItemPPUGUI::setAccountingTAMBill(AccountingTAMBill *b) {
     if( b != NULL ){
-        m_d->itemAttributeModel->setAttributeModel( b->attributeModel() );
+        m_d->itemAttributeModel->setAttributeModel( b->attributesModel() );
     } else {
         m_d->itemAttributeModel->setAttributeModel( NULL );
     }

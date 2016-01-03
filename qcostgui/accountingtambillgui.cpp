@@ -19,6 +19,8 @@
 #include "accountingtambillgui.h"
 
 #include "accountingtambilldatagui.h"
+#include "accountingtambillpricedatagui.h"
+#include "attributesgui.h"
 #include "accountingtreegui.h"
 #include "accountingitemppugui.h"
 #include "accountingitemcommentgui.h"
@@ -73,7 +75,9 @@ public:
         currentAccountingTAMBillItem( NULL ),
         project(prj),
         accountingItemEditingPrice(NULL),
-        accountingDataGUI( new AccountingTAMBillDataGUI( prj->priceFieldModel(), prs, NULL, prj, wpf, parent ) ),
+        dataGUI( new AccountingTAMBillDataGUI( parent ) ),
+        priceDataGUI( new AccountingTAMBillPriceDataGUI( prj->priceFieldModel(), NULL, prj, parent ) ),
+        attributesGUI( new AttributesGUI( prj->priceFieldModel(), NULL, wpf, parent ) ),
         mainSplitter( new QSplitter(Qt::Horizontal, parent ) ),
         accountingTreeGUI( new AccountingTreeGUI( EPAImpOptions, EPAFileName, b, prs, prj, mainSplitter ) ),
         accountingTAMBillItemPPUGUI( new AccountingItemPPUGUI( EPAImpOptions, EPAFileName, prs, prj, parent ) ),
@@ -91,7 +95,9 @@ public:
     AccountingTAMBillItem * accountingItemEditingPrice;
     PriceItem * importingDataPriceItem;
 
-    AccountingTAMBillDataGUI * accountingDataGUI;
+    AccountingTAMBillDataGUI * dataGUI;
+    AccountingTAMBillPriceDataGUI * priceDataGUI;
+    AttributesGUI * attributesGUI;
     QSplitter * mainSplitter;
     AccountingTreeGUI * accountingTreeGUI;
     AccountingItemPPUGUI * accountingTAMBillItemPPUGUI;
@@ -107,10 +113,12 @@ AccountingTAMBillGUI::AccountingTAMBillGUI( QMap<PriceListDBWidget::ImportOption
     QTabWidget(parent),
     m_d( new AccountingTAMBillGUIPrivate( EPAImpOptions, EPAFileName, prs, b, p, wordProcessorFile, this ) ){
 
-    addTab( m_d->accountingDataGUI, trUtf8("Opere in economia - Dati generali"));
-    addTab( m_d->mainSplitter, trUtf8("Opere in economia - Liste"));
+    addTab( m_d->dataGUI, trUtf8("Importi complessivi"));
+    addTab( m_d->priceDataGUI, trUtf8("Prezzi"));
+    addTab( m_d->attributesGUI, trUtf8("Etichette"));
+    addTab( m_d->mainSplitter, trUtf8("Liste"));
 
-    setCurrentIndex( 1 );
+    setCurrentIndex( count() - 1 );
     setBill(b);
 
     connect( m_d->accountingTreeGUI, &AccountingTreeGUI::currentTAMBillItemChanged, this, &AccountingTAMBillGUI::setBillItem );
@@ -123,7 +131,9 @@ AccountingTAMBillGUI::~AccountingTAMBillGUI(){
 void AccountingTAMBillGUI::setBill( AccountingTAMBill * b ){
     if( m_d->accountingTAMBill != b ){
         m_d->accountingTAMBill = b;
-        m_d->accountingDataGUI->setAccountingTAMBill( b );
+        m_d->dataGUI->setAccountingTAMBill( b );
+        m_d->priceDataGUI->setAccountingTAMBill( b );
+        m_d->attributesGUI->setBill( b );
         m_d->accountingTreeGUI->setAccountingTAMBill( b );
         m_d->accountingTAMBillItemPPUGUI->setAccountingTAMBill( b );
         m_d->accountingTAMBillItemBillGUI->setAccountingTAMBill( b );

@@ -120,7 +120,7 @@ void AccountingLSBillItemTitleGUI::setBill( AccountingLSBill *b ) {
         m_d->bill = b;
 
         if( m_d->bill != NULL ){
-            m_d->itemAttributeModel->setAttributeModel( m_d->bill->attributeModel() );
+            m_d->itemAttributeModel->setAttributeModel( m_d->bill->attributesModel() );
             connect( m_d->bill, &AccountingLSBill::aboutToBeDeleted, this, &AccountingLSBillItemTitleGUI::setBillNULL );
         }
 

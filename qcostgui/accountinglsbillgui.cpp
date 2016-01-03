@@ -22,6 +22,7 @@
 #include "accountinglstreegui.h"
 #include "accountinglsbillitemgui.h"
 #include "accountinglsbillitemtitlegui.h"
+#include "attributesgui.h"
 
 #include "project.h"
 #include "accountinglsbill.h"
@@ -68,6 +69,7 @@ public:
         project(prj),
         itemEditingPrice(NULL),
         accountingDataGUI( new AccountingLSBillDataGUI( prj->priceFieldModel(), prs, NULL, prj, wpf, parent ) ),
+        attributesGUI( new AttributesGUI(prj->priceFieldModel(), prs, wpf, parent )),
         mainSplitter( new QSplitter(Qt::Horizontal, parent ) ),
         treeGUI( new AccountingLSTreeGUI( EPAImpOptions, EPAFileName, prs, prj, mainSplitter ) ),
         itemGUI( new AccountingLSBillItemGUI( EPAImpOptions, EPAFileName, prs, prj, parent ) ),
@@ -84,6 +86,7 @@ public:
     PriceItem * importingDataPriceItem;
 
     AccountingLSBillDataGUI * accountingDataGUI;
+    AttributesGUI * attributesGUI;
     QSplitter * mainSplitter;
     AccountingLSTreeGUI * treeGUI;
     AccountingLSBillItemGUI * itemGUI;
@@ -98,10 +101,11 @@ AccountingLSBillGUI::AccountingLSBillGUI(QMap<PriceListDBWidget::ImportOptions, 
     QTabWidget(parent),
     m_d( new AccountingLSBillGUIPrivate( EPAImpOptions, EPAFileName, prs, p, wordProcessorFile, this ) ){
 
-    addTab( m_d->accountingDataGUI, trUtf8("Libretto Opere a Corpo - Dati generali"));
-    addTab( m_d->mainSplitter, trUtf8("Libretto Opere a Corpo - Misure"));
+    addTab( m_d->accountingDataGUI, trUtf8("Dati generali"));
+    addTab( m_d->attributesGUI, trUtf8("Etichette"));
+    addTab( m_d->mainSplitter, trUtf8("Misure"));
 
-    setCurrentIndex( 1 );
+    setCurrentIndex( count()-1 );
 
     connect( m_d->treeGUI, &AccountingLSTreeGUI::currentItemChanged, this, &AccountingLSBillGUI::setBillItem );
 }
@@ -113,6 +117,7 @@ AccountingLSBillGUI::~AccountingLSBillGUI(){
 void AccountingLSBillGUI::setBill( AccountingLSBill * b ){
     m_d->bill = b;
     m_d->accountingDataGUI->setAccountingBill( b );
+    m_d->attributesGUI->setBill( b );
     m_d->treeGUI->setBill( b );
     m_d->itemGUI->setBill( b );
     m_d->itemTitleGUI->setBill( b );

@@ -68,7 +68,7 @@ public:
         project(prj),
         billItemEditingPrice(NULL),
         billDataGUI( new BillDataGUI( prj->priceFieldModel(), NULL, parent ) ),
-        billAttributesGUI( new AttributesGUI( prj->priceFieldModel(), prs, (Bill *)(NULL), wpf, parent ) ),
+        billAttributesGUI( new AttributesGUI( prj->priceFieldModel(), prs, wpf, parent ) ),
         billVarsGUI( new VarsGUI( (Bill *) NULL, parent ) ),
         mainSplitter( new QSplitter(Qt::Horizontal, parent ) ),
         billTreeGUI( new BillTreeGUI( EPAImpOptions, EPAFileName, NULL, prs, prj, mainSplitter ) ),

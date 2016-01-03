@@ -25,7 +25,8 @@ class AccountingLSBill;
 class ProjectPriceListParentItem;
 class PriceList;
 class PriceItem;
-class AttributeList;
+class AttributesModel;
+class Attribute;
 class PriceFieldModel;
 class MathParser;
 class QXmlStreamReader;
@@ -41,6 +42,7 @@ class EXPORT_QCOST_LIB_OPT AccountingLSBills : public QObject, public ProjectIte
     Q_OBJECT
 public:
     AccountingLSBills( ProjectItem * parent, PriceFieldModel * pfm, MathParser * p = NULL );
+    ~AccountingLSBills();
 
     int billCount();
     AccountingLSBill *bill( int i );
@@ -66,6 +68,27 @@ public:
 
     void writeXml( QXmlStreamWriter * writer );
     void readXml(QXmlStreamReader *reader, ProjectPriceListParentItem *priceLists);
+
+    /** Importo complessivo lordo */
+    double projAmount() const ;
+    /** Importo complessivo lordo sotto forma di stringa */
+    QString projAmountStr() const ;
+    /** Importo complessivo contabilizzato */
+    double accAmount() const;
+    /** Importo complessivo contabilizzato sotto forma di stringa */
+    QString accAmountStr() const;
+    /** Percentuale contabilizzata */
+    double percentageAccounted() const;
+    /** Percentuale contabilizzata sotto forma di stringa */
+    QString percentageAccountedStr() const;
+    /** Ricalcola gli importi */
+    void updateAmounts();
+
+    AttributesModel * attributesModel();
+    double projAmountAttribute(Attribute * attr);
+    QString projAmountAttributeStr(Attribute * attr);
+    double accAmountAttribute(Attribute * attr);
+    QString accAmountAttributeStr(Attribute * attr);
 
 signals:
     void beginInsertChildren( ProjectItem * item, int first, int last );

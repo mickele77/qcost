@@ -20,6 +20,7 @@
 #include "attributesmodel.h"
 
 #include "attribute.h"
+#include "accountinglsbills.h"
 #include "accountinglsbill.h"
 #include "accountingtambill.h"
 #include "accountingbill.h"
@@ -34,6 +35,7 @@
 class AttributesModelPrivate{
 public:
     AttributesModelPrivate(Bill * b, MathParser *prs, PriceFieldModel * pfm):
+        accountingLSBills(NULL),
         accountingLSBill(NULL),
         accountingTAMBill(NULL),
         accountingBill(NULL),
@@ -42,6 +44,7 @@ public:
         priceFieldModel(pfm) {
     }
     AttributesModelPrivate(AccountingBill * b, MathParser *prs, PriceFieldModel * pfm):
+        accountingLSBills(NULL),
         accountingLSBill(NULL),
         accountingTAMBill(NULL),
         accountingBill(b),
@@ -50,6 +53,7 @@ public:
         priceFieldModel(pfm) {
     }
     AttributesModelPrivate(AccountingTAMBill * b, MathParser *prs, PriceFieldModel * pfm):
+        accountingLSBills(NULL),
         accountingLSBill(NULL),
         accountingTAMBill(b),
         accountingBill(NULL),
@@ -58,7 +62,17 @@ public:
         priceFieldModel(pfm) {
     }
     AttributesModelPrivate(AccountingLSBill * b, MathParser *prs, PriceFieldModel * pfm):
+        accountingLSBills(NULL),
         accountingLSBill(b),
+        accountingTAMBill(NULL),
+        accountingBill(NULL),
+        bill(NULL),
+        parser(prs),
+        priceFieldModel(pfm) {
+    }
+    AttributesModelPrivate(AccountingLSBills * b, MathParser *prs, PriceFieldModel * pfm):
+        accountingLSBills(b),
+        accountingLSBill(NULL),
         accountingTAMBill(NULL),
         accountingBill(NULL),
         bill(NULL),
@@ -86,6 +100,7 @@ public:
         return NULL;
     }
     QList<Attribute *> attributesContainer;
+    AccountingLSBills * accountingLSBills;
     AccountingLSBill * accountingLSBill;
     AccountingTAMBill * accountingTAMBill;
     AccountingBill * accountingBill;
@@ -112,6 +127,12 @@ AttributesModel::AttributesModel(AccountingTAMBill * myBill, MathParser *prs, Pr
 AttributesModel::AttributesModel(AccountingLSBill *myBill, MathParser *prs, PriceFieldModel *pfm, QObject *parent) :
     QAbstractTableModel(parent),
     m_d( new AttributesModelPrivate(myBill, prs, pfm) ){
+}
+
+AttributesModel::AttributesModel(AccountingLSBills *myBills, MathParser *prs, PriceFieldModel *pfm, QObject *parent) :
+    QAbstractTableModel(parent),
+    m_d( new AttributesModelPrivate(myBills, prs, pfm) ){
+
 }
 
 AttributesModel::~AttributesModel() {
@@ -143,6 +164,65 @@ void AttributesModel::insertStandardAttributes() {
     }
 }
 
+void AttributesModel::setBill( Bill * b ) {
+    if( m_d->bill != NULL ){
+        beginResetModel();
+        m_d->bill = b;
+        m_d->accountingBill = NULL;
+        m_d->accountingTAMBill = NULL;
+        m_d->accountingLSBill = NULL;
+        m_d->accountingLSBills = NULL;
+        endResetModel();
+    }
+}
+
+void AttributesModel::setBill( AccountingBill * b ) {
+    if( m_d->accountingBill != NULL ){
+        beginResetModel();
+        m_d->bill = NULL;
+        m_d->accountingBill = b;
+        m_d->accountingTAMBill = NULL;
+        m_d->accountingLSBill = NULL;
+        m_d->accountingLSBills = NULL;
+        endResetModel();
+    }
+}
+
+void AttributesModel::setBill( AccountingTAMBill * b ) {
+    if( m_d->accountingLSBill != NULL ){
+        beginResetModel();
+        m_d->bill = NULL;
+        m_d->accountingBill = NULL;
+        m_d->accountingTAMBill = b;
+        m_d->accountingLSBill = NULL;
+        m_d->accountingLSBills = NULL;
+        endResetModel();
+    }
+}
+
+void AttributesModel::setBill( AccountingLSBill * b ) {
+    if( m_d->accountingLSBill != NULL ){
+        beginResetModel();
+        m_d->bill = NULL;
+        m_d->accountingBill = NULL;
+        m_d->accountingTAMBill = NULL;
+        m_d->accountingLSBill = b;
+        m_d->accountingLSBills = NULL;
+        endResetModel();
+    }
+}
+
+void AttributesModel::setBill( AccountingLSBills * b ) {
+    if( m_d->accountingLSBill != NULL ){
+        beginResetModel();
+        m_d->bill = NULL;
+        m_d->accountingBill = NULL;
+        m_d->accountingTAMBill = NULL;
+        m_d->accountingLSBill = NULL;
+        m_d->accountingLSBills = b;
+        endResetModel();
+    }
+}
 
 int AttributesModel::size() {
     return m_d->attributesContainer.size();
@@ -155,10 +235,22 @@ int AttributesModel::rowCount(const QModelIndex &parent) const {
 
 int AttributesModel::columnCount(const QModelIndex &parent) const {
     Q_UNUSED( parent );
-    if( m_d->priceFieldModel != NULL ){
-        return m_d->priceFieldModel->fieldCount()+1;
+    if( m_d->bill != NULL ){
+        if( m_d->priceFieldModel != NULL ){
+            return m_d->priceFieldModel->fieldCount()+1;
+        } else {
+            return 2;
+        }
+    } else if( m_d->accountingBill != NULL ){
+        return 4;
+    } else if( m_d->accountingTAMBill != NULL ){
+        return 4;
+    } else if( m_d->accountingLSBill != NULL ){
+        return 3;
+    } else if( m_d->accountingLSBills != NULL ){
+        return 3;
     } else {
-        return 2;
+        return 1;
     }
 }
 
@@ -196,15 +288,34 @@ QVariant AttributesModel::data(const QModelIndex &index, int role) const {
         if( index.column() < m_d->priceFieldModel->fieldCount() + 1 ){
             if( m_d->bill != NULL ){
                 return QVariant( m_d->bill->amountAttributeStr( m_d->attributesContainer.at(index.row()), index.column() - 1) );
-            }
-            if( m_d->accountingBill != NULL ){
-                return QVariant( m_d->accountingBill->totalAmountToDiscountStr() );
-            }
-            if( m_d->accountingTAMBill != NULL ){
-                return QVariant( m_d->accountingTAMBill->totalAmountToDiscountStr() );
-            }
-            if( m_d->accountingLSBill != NULL ){
-                return QVariant( m_d->accountingLSBill->projAmountStr() );
+            } else if( m_d->accountingBill != NULL ){
+                if( index.column() == 1 ){
+                    return QVariant( m_d->accountingBill->totalAmountToDiscountAttributeStr( m_d->attributesContainer.at(index.row()) ) );
+                } else if( index.column() == 2 ){
+                    return QVariant( m_d->accountingBill->amountNotToDiscountAttributeStr( m_d->attributesContainer.at(index.row()) ) );
+                } else if( index.column() == 3 ){
+                    return QVariant( m_d->accountingBill->totalAmountAttributeStr( m_d->attributesContainer.at(index.row()) ) );
+                }
+            } else if( m_d->accountingTAMBill != NULL ){
+                if( index.column() == 1 ){
+                    return QVariant( m_d->accountingTAMBill->totalAmountToDiscountAttributeStr( m_d->attributesContainer.at(index.row()) ) );
+                } else if( index.column() == 2 ){
+                    return QVariant( m_d->accountingTAMBill->amountNotToDiscountAttributeStr( m_d->attributesContainer.at(index.row()) ) );
+                } else if( index.column() == 3 ){
+                    return QVariant( m_d->accountingTAMBill->totalAmountAttributeStr( m_d->attributesContainer.at(index.row()) ) );
+                }
+            } else if( m_d->accountingLSBill != NULL ){
+                if( index.column() == 1 ){
+                    return QVariant( m_d->accountingLSBill->PPUTotalToDiscountStr( m_d->attributesContainer.at(index.row()) ) );
+                } else if( index.column() == 2 ){
+                    return QVariant( m_d->accountingLSBill->accAmountAttributeStr( m_d->attributesContainer.at(index.row()) ) );
+                }
+            } else if( m_d->accountingLSBills != NULL ){
+                if( index.column() == 1 ){
+                    return QVariant( m_d->accountingLSBills->projAmountAttributeStr( m_d->attributesContainer.at(index.row()) ) );
+                } else if( index.column() == 2 ){
+                    return QVariant( m_d->accountingLSBills->accAmountAttributeStr( m_d->attributesContainer.at(index.row()) ) );
+                }
             }
         }
     }
@@ -230,8 +341,31 @@ QVariant AttributesModel::headerData(int section, Qt::Orientation orientation, i
         if( section == 0 ) {
             return trUtf8("Nome");
         }
-        if( section < m_d->priceFieldModel->fieldCount() + 1 ){
-            return QVariant( m_d->priceFieldModel->amountName(section - 1) );
+        if( m_d->bill != NULL ){
+            if( section < m_d->priceFieldModel->fieldCount() + 1 ){
+                return QVariant( m_d->priceFieldModel->amountName(section - 1) );
+            }
+        } else if( (m_d->accountingBill != NULL) || (m_d->accountingTAMBill != NULL) ){
+            switch( section ){
+            case 1: {
+                return QVariant( trUtf8("Importo lordo"));
+                break; }
+            case 2: {
+                return QVariant( trUtf8("Importo non ribassabile"));
+                break; }
+            case 3: {
+                return QVariant( trUtf8("Importo"));
+                break; }
+            }
+        } else if( (m_d->accountingLSBill != NULL) || (m_d->accountingLSBills != NULL) ){
+            switch( section ){
+            case 1: {
+                return QVariant( trUtf8("Importo complessivo"));
+                break; }
+            case 2: {
+                return QVariant( trUtf8("Importo contabilizzato"));
+                break; }
+            }
         }
     } else if( orientation == Qt::Vertical ){
         return QVariant( section + 1 );

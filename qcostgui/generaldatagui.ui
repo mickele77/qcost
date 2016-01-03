@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>554</width>
-    <height>379</height>
+    <width>430</width>
+    <height>427</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -24,14 +24,7 @@
        <string>Unità di misura</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout_2">
-       <item row="1" column="2">
-        <widget class="QPushButton" name="unitMeasureDelPButton">
-         <property name="text">
-          <string>-</string>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="0" colspan="5">
+       <item row="0" column="0" colspan="3">
         <widget class="QTableView" name="unitMeasureView">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
@@ -60,7 +53,7 @@
          </property>
          <property name="sizeHint" stdset="0">
           <size>
-           <width>40</width>
+           <width>215</width>
            <height>20</height>
           </size>
          </property>
@@ -70,6 +63,13 @@
         <widget class="QPushButton" name="unitMeasureAddPButton">
          <property name="text">
           <string>+</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="2">
+        <widget class="QPushButton" name="unitMeasureDelPButton">
+         <property name="text">
+          <string>-</string>
          </property>
         </widget>
        </item>

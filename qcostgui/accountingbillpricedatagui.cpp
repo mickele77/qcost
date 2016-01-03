@@ -16,8 +16,8 @@
    along with this program; if not, write to the Free Software Foundation,
    Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 */
-#include "accountingbillpricegui.h"
-#include "ui_accountingbillpricegui.h"
+#include "accountingbillpricedatagui.h"
+#include "ui_accountingbillpricedatagui.h"
 
 #include "accountingattributeprintergui.h"
 #include "accountingbillsetpricelistmodegui.h"
@@ -35,10 +35,10 @@
 #include <QFileDialog>
 #include <QMenu>
 
-class AccountingBillPriceGUIPrivate{
+class AccountingBillPriceDataGUIPrivate{
 public:
-    AccountingBillPriceGUIPrivate(PriceFieldModel * pfm, MathParser * prs, Project * prj, QString * wpf):
-        ui(new Ui::AccountingBillPriceGUI() ),
+    AccountingBillPriceDataGUIPrivate(PriceFieldModel * pfm, MathParser * prs, Project * prj, QString * wpf):
+        ui(new Ui::AccountingBillPriceDataGUI() ),
         project(prj),
         accounting(NULL),
         parser(prs),
@@ -46,7 +46,7 @@ public:
         priceFieldModel(pfm),
         amountSpacer(NULL){
     }
-    Ui::AccountingBillPriceGUI * ui;
+    Ui::AccountingBillPriceDataGUI * ui;
     Project * project;
     AccountingBill * accounting;
     MathParser * parser;
@@ -57,9 +57,9 @@ public:
     QSpacerItem * amountSpacer;
 };
 
-AccountingBillPriceGUI::AccountingBillPriceGUI(PriceFieldModel * pfm, MathParser * prs, AccountingBill * b, Project * prj, QString * wordProcessorFile, QWidget *parent) :
+AccountingBillPriceDataGUI::AccountingBillPriceDataGUI(PriceFieldModel * pfm, MathParser * prs, AccountingBill * b, Project * prj, QString * wordProcessorFile, QWidget *parent) :
     QWidget(parent),
-    m_d( new AccountingBillPriceGUIPrivate( pfm, prs, prj, wordProcessorFile ) ) {
+    m_d( new AccountingBillPriceDataGUIPrivate( pfm, prs, prj, wordProcessorFile ) ) {
     m_d->ui->setupUi( this );
     m_d->ui->totalPriceFieldTableView->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
     m_d->ui->noDiscountPriceFieldTableView->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
@@ -68,21 +68,21 @@ AccountingBillPriceGUI::AccountingBillPriceGUI(PriceFieldModel * pfm, MathParser
 
     setAccountingBill( b );
 
-    connect( m_d->ui->discountLineEdit, &QLineEdit::editingFinished, this, &AccountingBillPriceGUI::setDiscountFromLineEdit );
+    connect( m_d->ui->discountLineEdit, &QLineEdit::editingFinished, this, &AccountingBillPriceDataGUI::setDiscountFromLineEdit );
 }
 
-AccountingBillPriceGUI::~AccountingBillPriceGUI(){
+AccountingBillPriceDataGUI::~AccountingBillPriceDataGUI(){
     delete m_d;
 }
 
-void AccountingBillPriceGUI::setAccountingBill(AccountingBill *b) {
+void AccountingBillPriceDataGUI::setAccountingBill(AccountingBill *b) {
     if( m_d->accounting != b ){
         if( m_d->accounting != NULL ){
             disconnect( m_d->accounting, &AccountingBill::discountChanged, m_d->ui->discountLineEdit, &QLineEdit::setText );
 
-            disconnect( m_d->accounting, &AccountingBill::aboutToBeDeleted, this, &AccountingBillPriceGUI::setAccountingNULL );
-            disconnect( m_d->ui->priceListComboBox, static_cast<void(QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this, &AccountingBillPriceGUI::setPriceList );
-            disconnect( m_d->ui->currentPriceDataSetSpinBox, static_cast<void(QSpinBox::*)(int)>(&QSpinBox::valueChanged), this, &AccountingBillPriceGUI::setPriceDataSet );
+            disconnect( m_d->accounting, &AccountingBill::aboutToBeDeleted, this, &AccountingBillPriceDataGUI::setAccountingNULL );
+            disconnect( m_d->ui->priceListComboBox, static_cast<void(QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this, &AccountingBillPriceDataGUI::setPriceList );
+            disconnect( m_d->ui->currentPriceDataSetSpinBox, static_cast<void(QSpinBox::*)(int)>(&QSpinBox::valueChanged), this, &AccountingBillPriceDataGUI::setPriceDataSet );
         }
         m_d->ui->priceListComboBox->setCurrentIndex( 0 );
         m_d->ui->currentPriceDataSetSpinBox->setMaximum(1);
@@ -105,43 +105,43 @@ void AccountingBillPriceGUI::setAccountingBill(AccountingBill *b) {
             connect( m_d->accounting, &AccountingBill::discountChanged, m_d->ui->discountLineEdit, &QLineEdit::setText );
 
             setPriceListComboBox();
-            connect( m_d->ui->priceListComboBox, static_cast<void(QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this, &AccountingBillPriceGUI::setPriceList );
+            connect( m_d->ui->priceListComboBox, static_cast<void(QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this, &AccountingBillPriceDataGUI::setPriceList );
             setPriceDataSetSpinBox();
-            connect( m_d->ui->currentPriceDataSetSpinBox, static_cast<void(QSpinBox::*)(int)>(&QSpinBox::valueChanged), this, &AccountingBillPriceGUI::setPriceDataSet );
+            connect( m_d->ui->currentPriceDataSetSpinBox, static_cast<void(QSpinBox::*)(int)>(&QSpinBox::valueChanged), this, &AccountingBillPriceDataGUI::setPriceDataSet );
 
             m_d->ui->totalPriceFieldTableView->setModel( m_d->accounting->totalAmountPriceFieldModel() );
             m_d->ui->noDiscountPriceFieldTableView->setModel( m_d->accounting->noDiscountAmountPriceFieldModel() );
 
-            connect( m_d->accounting, &AccountingBill::aboutToBeDeleted, this, &AccountingBillPriceGUI::setAccountingNULL );
+            connect( m_d->accounting, &AccountingBill::aboutToBeDeleted, this, &AccountingBillPriceDataGUI::setAccountingNULL );
         }
     }
 }
 
-void AccountingBillPriceGUI::setDiscountFromLineEdit() {
+void AccountingBillPriceDataGUI::setDiscountFromLineEdit() {
     if( m_d->accounting != NULL ){
         m_d->accounting->setDiscount( m_d->ui->discountLineEdit->text() );
     }
 }
 
-void AccountingBillPriceGUI::setAccountingNULL(){
+void AccountingBillPriceDataGUI::setAccountingNULL(){
     setAccountingBill( NULL );
 }
 
-void AccountingBillPriceGUI::showEvent(QShowEvent *event) {
+void AccountingBillPriceDataGUI::showEvent(QShowEvent *event) {
     if( event->type() == QEvent::Show ){
-        disconnect( m_d->ui->priceListComboBox, static_cast<void(QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this, &AccountingBillPriceGUI::setPriceList );
+        disconnect( m_d->ui->priceListComboBox, static_cast<void(QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this, &AccountingBillPriceDataGUI::setPriceList );
         populatePriceListComboBox();
         setPriceListComboBox();
-        connect( m_d->ui->priceListComboBox, static_cast<void(QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this, &AccountingBillPriceGUI::setPriceList );
+        connect( m_d->ui->priceListComboBox, static_cast<void(QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this, &AccountingBillPriceDataGUI::setPriceList );
 
-        disconnect( m_d->ui->currentPriceDataSetSpinBox, static_cast<void(QSpinBox::*)(int)>(&QSpinBox::valueChanged), this, &AccountingBillPriceGUI::setPriceDataSet );
+        disconnect( m_d->ui->currentPriceDataSetSpinBox, static_cast<void(QSpinBox::*)(int)>(&QSpinBox::valueChanged), this, &AccountingBillPriceDataGUI::setPriceDataSet );
         setPriceDataSetSpinBox();
-        connect( m_d->ui->currentPriceDataSetSpinBox, static_cast<void(QSpinBox::*)(int)>(&QSpinBox::valueChanged), this, &AccountingBillPriceGUI::setPriceDataSet );
+        connect( m_d->ui->currentPriceDataSetSpinBox, static_cast<void(QSpinBox::*)(int)>(&QSpinBox::valueChanged), this, &AccountingBillPriceDataGUI::setPriceDataSet );
     }
     QWidget::showEvent( event );
 }
 
-void AccountingBillPriceGUI::populatePriceListComboBox(){
+void AccountingBillPriceDataGUI::populatePriceListComboBox(){
     m_d->ui->priceListComboBox->clear();
     m_d->ui->priceListComboBox->addItem( QString("---"), qVariantFromValue((void *) NULL ));
     for( int i=0; i < m_d->project->priceListCount(); ++i){
@@ -153,7 +153,7 @@ void AccountingBillPriceGUI::populatePriceListComboBox(){
     }
 }
 
-void AccountingBillPriceGUI::setPriceListComboBox() {
+void AccountingBillPriceDataGUI::setPriceListComboBox() {
     if( m_d->accounting ){
         int i = m_d->ui->priceListComboBox->findData( qVariantFromValue((void *) m_d->accounting->priceList() ));
         if( i < 0 ){
@@ -163,7 +163,7 @@ void AccountingBillPriceGUI::setPriceListComboBox() {
     }
 }
 
-void AccountingBillPriceGUI::setPriceDataSetSpinBox() {
+void AccountingBillPriceDataGUI::setPriceDataSetSpinBox() {
     if( m_d->accounting ){
         if( m_d->accounting->priceList() ){
             m_d->ui->currentPriceDataSetSpinBox->setMaximum( m_d->accounting->priceList()->priceDataSetCount() );
@@ -175,7 +175,7 @@ void AccountingBillPriceGUI::setPriceDataSetSpinBox() {
     }
 }
 
-void AccountingBillPriceGUI::setPriceList() {
+void AccountingBillPriceDataGUI::setPriceList() {
     QVariant v =  m_d->ui->priceListComboBox->itemData( m_d->ui->priceListComboBox->currentIndex() );
     PriceList * currentPriceList = (PriceList *) v.value<void *>();
     if( m_d->accounting ){
@@ -194,7 +194,7 @@ void AccountingBillPriceGUI::setPriceList() {
     }
 }
 
-void AccountingBillPriceGUI::setPriceDataSet() {
+void AccountingBillPriceDataGUI::setPriceDataSet() {
     if( m_d->accounting ){
         if( m_d->accounting->priceList() ){
             if( m_d->ui->currentPriceDataSetSpinBox->value() < 1 ){

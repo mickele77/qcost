@@ -55,8 +55,12 @@ public:
         ResetBill
     };
 
-    AccountingLSBill( const QString &c, const QString &n,
-                      ProjectItem *parent, PriceFieldModel *pfm, MathParser * parser = NULL );
+    AccountingLSBill( const QString &c,
+                      const QString &n,
+                      ProjectItem *parent,
+                      PriceFieldModel *pfm,
+                      AttributesModel * attrsModel,
+                      MathParser * parser = NULL );
     AccountingLSBill( AccountingLSBill & );
 
     AccountingLSBill & operator= (const AccountingLSBill & cp );
@@ -117,18 +121,26 @@ public:
 
     bool moveRows(const QModelIndex & sourceParent, int sourceRow, int count, const QModelIndex & destinationParent, int destinationChild);
 
+    // Importo complessivo lordo
     double projAmount() const ;
+    // Importo complessivo lordo sotto forma di stringa
     QString projAmountStr() const ;
+    // Importo complessivo contabilizzato
     double accAmount() const;
+    // Importo complessivo contabilizzato sotto forma di stringa
     QString accAmountStr() const;
+    // Percentuale contabilizzata
     double percentageAccounted() const;
+    // Percentuale contabilizzata sotto forma di stringa
     QString percentageAccountedStr() const;
-
+    // Percentuale contabilizzata nel range temporale individuato da sBegin e dEnd
     double percentageAccounted( const QDate & dBegin, const QDate & dEnd ) const;
 
-    AttributesModel * attributeModel();
-    double totalAmountAttribute(Attribute * attr);
-    QString totalAmountAttributeStr(Attribute * attr);
+    AttributesModel * attributesModel();
+    double PPUTotalToDiscount(Attribute * attr);
+    QString PPUTotalToDiscountStr(Attribute * attr);
+    double accAmountAttribute(Attribute * attr);
+    QString accAmountAttributeStr(Attribute * attr);
 
     bool isUsingPriceItem( PriceItem * p );
     bool isUsingPriceList( PriceList * pl );
