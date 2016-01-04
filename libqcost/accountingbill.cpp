@@ -600,6 +600,12 @@ AttributesModel *AccountingBill::attributesModel() {
     return m_d->attributesModel;
 }
 
+void AccountingBill::activateAttributeModel() {
+    if( m_d->attributesModel != NULL ){
+        m_d->attributesModel->setBill( this );
+    }
+}
+
 VarsModel *AccountingBill::varsModel() {
     return m_d->varsModel;
 }

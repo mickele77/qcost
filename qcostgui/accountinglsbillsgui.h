@@ -11,6 +11,9 @@ class AccountingLSBillsGUIPrivate;
 class AccountingLSBillsGUI : public QTabWidget {
 public:
     AccountingLSBillsGUI(AccountingLSBills * myBills, PriceFieldModel *pfm, MathParser *prs, QString *wpf, QWidget * parent = 0 );
+
+    void showEvent(QShowEvent *event);
+
 private:
     AccountingLSBillsGUIPrivate * m_d;
 };

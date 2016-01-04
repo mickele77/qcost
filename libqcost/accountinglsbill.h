@@ -137,6 +137,7 @@ public:
     double percentageAccounted( const QDate & dBegin, const QDate & dEnd ) const;
 
     AttributesModel * attributesModel();
+    void activateAttributeModel();
     double PPUTotalToDiscount(Attribute * attr);
     QString PPUTotalToDiscountStr(Attribute * attr);
     double accAmountAttribute(Attribute * attr);
@@ -176,6 +177,7 @@ public:
                                        AccountingPrinter::PrintPPUDescOption prPPUOption,
                                        const QList<Attribute *> &attrsToPrint,
                                        bool writeAmounts = true );
+
 public slots:
     void setCode( const QString & n);
     void setName( const QString & n);

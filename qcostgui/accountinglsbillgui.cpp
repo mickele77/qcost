@@ -167,3 +167,10 @@ void AccountingLSBillGUI::updateItemGUI() {
     m_d->itemTitleGUI->setBillItemNULL();
     m_d->itemTitleGUI->setBillNULL();
 }
+
+void AccountingLSBillGUI::showEvent(QShowEvent * event ) {
+    if( event->type() == QEvent::Show ){
+        m_d->attributesGUI->activateAttributeModel();
+    }
+    QWidget::showEvent( event );
+}

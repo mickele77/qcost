@@ -42,12 +42,12 @@ public:
         parser(prs),
         rootItem(new AccountingTAMBillItem( NULL, AccountingBillItem::Root, pfm, parser )),
         priceList( NULL ),
-        attributeModel( new AttributesModel( b, parser, pfm )),
+        attributesModel( new AttributesModel( b, parser, pfm )),
         priceListIdTmp(0){
     }
     ~AccountingTAMBillPrivate(){
         delete rootItem;
-        delete attributeModel;
+        delete attributesModel;
     }
 
     static void setPriceItemParents( PriceList *pl, PriceItem * basePriceItem, PriceItem * newPriceItem ){
@@ -72,7 +72,7 @@ public:
     MathParser * parser;
     AccountingTAMBillItem * rootItem;
     PriceList * priceList;
-    AttributesModel * attributeModel;
+    AttributesModel * attributesModel;
     unsigned int priceListIdTmp;
 };
 
@@ -92,7 +92,7 @@ AccountingTAMBill::AccountingTAMBill( const QString &n, ProjectItem *parent, Pri
 
     connect( m_d->rootItem, &AccountingTAMBillItem::itemChanged, this, &AccountingTAMBill::modelChanged );
 
-    connect( m_d->attributeModel, &AttributesModel::modelChanged, this, &AccountingTAMBill::modelChanged );
+    connect( m_d->attributesModel, &AttributesModel::modelChanged, this, &AccountingTAMBill::modelChanged );
 }
 
 AccountingTAMBill::AccountingTAMBill(AccountingTAMBill & b):
@@ -112,7 +112,7 @@ AccountingTAMBill::AccountingTAMBill(AccountingTAMBill & b):
 
     connect( m_d->rootItem, &AccountingTAMBillItem::itemChanged, this, &AccountingTAMBill::modelChanged );
 
-    connect( m_d->attributeModel, &AttributesModel::modelChanged, this, &AccountingTAMBill::modelChanged );
+    connect( m_d->attributesModel, &AttributesModel::modelChanged, this, &AccountingTAMBill::modelChanged );
 }
 
 AccountingTAMBill::~AccountingTAMBill(){
@@ -126,7 +126,7 @@ AccountingTAMBill::~AccountingTAMBill(){
 
     disconnect( m_d->rootItem, &AccountingBillItem::itemChanged, this, &AccountingTAMBill::modelChanged );
 
-    disconnect( m_d->attributeModel, &AttributesModel::modelChanged, this, &AccountingTAMBill::modelChanged );
+    disconnect( m_d->attributesModel, &AttributesModel::modelChanged, this, &AccountingTAMBill::modelChanged );
 
     emit aboutToBeDeleted();
 
@@ -561,7 +561,13 @@ QString AccountingTAMBill::totalAmountStr() const {
 }
 
 AttributesModel *AccountingTAMBill::attributesModel() {
-    return m_d->attributeModel;
+    return m_d->attributesModel;
+}
+
+void AccountingTAMBill::activateAttributeModel() {
+    if( m_d->attributesModel != NULL ){
+        m_d->attributesModel->setBill( this );
+    }
 }
 
 double AccountingTAMBill::totalAmountToDiscountAttribute(Attribute *attr) const {
@@ -631,7 +637,7 @@ void AccountingTAMBill::writeXml(QXmlStreamWriter *writer) {
     }
     writer->writeAttribute( "noDiscountAmountPriceFields", fields );
 
-    m_d->attributeModel->writeXml( writer );
+    m_d->attributesModel->writeXml( writer );
 
     m_d->rootItem->writeXml( writer );
 
@@ -648,13 +654,13 @@ void AccountingTAMBill::readXml(QXmlStreamReader *reader, ProjectPriceListParent
         reader->readNext();
         QString tag = reader->name().toString().toUpper();
         if( tag == "ACCOUNTINGATTRIBUTEMODEL" && reader->isStartElement()) {
-            m_d->attributeModel->readXml( reader );
+            m_d->attributesModel->readXml( reader );
         }
         if( tag == "ACCOUNTINGBILLITEM" && reader->isStartElement()) {
             m_d->rootItem->readXmlTmp( reader );
         }
     }
-    m_d->rootItem->readFromXmlTmp( NULL, NULL, m_d->priceList, m_d->attributeModel );
+    m_d->rootItem->readFromXmlTmp( NULL, NULL, m_d->priceList, m_d->attributesModel );
     m_d->rootItem->updateProgCode();
     m_d->rootItem->updateAccountingProgCode();
 }
@@ -762,9 +768,9 @@ void AccountingTAMBill::writeODTAttributeAccountingOnTable(QTextCursor *cursor,
 
 void AccountingTAMBill::readFromXmlTmp( ProjectPriceListParentItem * priceLists ) {
     m_d->priceList = priceLists->priceListId( m_d->priceListIdTmp );
-    m_d->rootItem->readFromXmlTmp( NULL, NULL, m_d->priceList, m_d->attributeModel );
+    m_d->rootItem->readFromXmlTmp( NULL, NULL, m_d->priceList, m_d->attributesModel );
 }
 
 void AccountingTAMBill::insertStandardAttributes(){
-    m_d->attributeModel->insertStandardAttributes();
+    m_d->attributesModel->insertStandardAttributes();
 }

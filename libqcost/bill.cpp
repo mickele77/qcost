@@ -478,6 +478,12 @@ AttributesModel *Bill::attributesModel() {
     return m_d->attributesModel;
 }
 
+void Bill::activateAttributeModel() {
+    if( m_d->attributesModel != NULL ){
+        m_d->attributesModel->setBill( this );
+    }
+}
+
 double Bill::amountAttribute(Attribute *attr, int field) {
     return m_d->rootItem->amountAttribute( attr, field );
 }

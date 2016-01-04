@@ -267,72 +267,56 @@ void AttributesGUI::setBillNULL(){
 }
 
 void AttributesGUI::addAttribute(){
-    if( m_d->bill != NULL ){
-        if( m_d->ui->attributesTableView->selectionModel() ){
-            QModelIndexList selectedIndexes = m_d->ui->attributesTableView->selectionModel()->selectedIndexes();
-            int count = 1;
-            int row = 0;
-            if( selectedIndexes.size() > 0 ){
-                QList<int> selectedRows;
-                for( QModelIndexList::iterator i = selectedIndexes.begin(); i != selectedIndexes.end(); ++ i ){
-                    if( !selectedRows.contains((*i).row()) ){
-                        selectedRows.append( (*i).row() );
-                    }
+    if( m_d->ui->attributesTableView->selectionModel() ){
+        QModelIndexList selectedIndexes = m_d->ui->attributesTableView->selectionModel()->selectedIndexes();
+        int count = 1;
+        int row = 0;
+        if( selectedIndexes.size() > 0 ){
+            QList<int> selectedRows;
+            for( QModelIndexList::iterator i = selectedIndexes.begin(); i != selectedIndexes.end(); ++ i ){
+                if( !selectedRows.contains((*i).row()) ){
+                    selectedRows.append( (*i).row() );
                 }
-                qSort( selectedRows );
-                row = selectedRows.last() + 1;
-                count = selectedRows.size();
             }
-            m_d->bill->attributesModel()->insertRows( row, count );
+            qSort( selectedRows );
+            row = selectedRows.last() + 1;
+            count = selectedRows.size();
         }
-    } else if( m_d->accountingBill != NULL ){
-        if( m_d->ui->attributesTableView->selectionModel() ){
-            QModelIndexList selectedIndexes = m_d->ui->attributesTableView->selectionModel()->selectedIndexes();
-            int count = 1;
-            int row = 0;
-            if( selectedIndexes.size() > 0 ){
-                QList<int> selectedRows;
-                for( QModelIndexList::iterator i = selectedIndexes.begin(); i != selectedIndexes.end(); ++ i ){
-                    if( !selectedRows.contains((*i).row()) ){
-                        selectedRows.append( (*i).row() );
-                    }
-                }
-                qSort( selectedRows );
-                row = selectedRows.last() + 1;
-                count = selectedRows.size();
-            }
+        if( m_d->bill != NULL ){
+            m_d->bill->attributesModel()->insertRows( row, count );
+        } else if( m_d->accountingBill != NULL ){
             m_d->accountingBill->attributesModel()->insertRows( row, count );
+        } else if( m_d->accountingLSBill != NULL ){
+            m_d->accountingLSBill->attributesModel()->insertRows( row, count );
+        } else if( m_d->accountingLSBills != NULL ){
+            m_d->accountingLSBills->attributesModel()->insertRows( row, count );
+        } else if( m_d->accountingTAMBill != NULL ){
+            m_d->accountingTAMBill->attributesModel()->insertRows( row, count );
         }
     }
 }
 
 void AttributesGUI::removeAttribute(){
-    if( m_d->bill != NULL ){
-        if( m_d->ui->attributesTableView->selectionModel() ){
-            QModelIndexList selectedRows = m_d->ui->attributesTableView->selectionModel()->selectedRows();
-            int count = selectedRows.size();
-            if( count > 0 ){
-                int row = selectedRows.at(0).row();
-                for( int i=1; i<selectedRows.size(); ++i){
-                    if( selectedRows.at(i).row() < row ){
-                        row = selectedRows.at(i).row();
-                    }
+    if( m_d->ui->attributesTableView->selectionModel() ){
+        QModelIndexList selectedRows = m_d->ui->attributesTableView->selectionModel()->selectedRows();
+        int count = selectedRows.size();
+        if( count > 0 ){
+            int row = selectedRows.at(0).row();
+            for( int i=1; i<selectedRows.size(); ++i){
+                if( selectedRows.at(i).row() < row ){
+                    row = selectedRows.at(i).row();
                 }
-                m_d->bill->attributesModel()->removeRows( row, count );
             }
-        }
-    } else if( m_d->accountingBill != NULL ){
-        if( m_d->ui->attributesTableView->selectionModel() ){
-            QModelIndexList selectedRows = m_d->ui->attributesTableView->selectionModel()->selectedRows();
-            int count = selectedRows.size();
-            if( count > 0 ){
-                int row = selectedRows.at(0).row();
-                for( int i=1; i<selectedRows.size(); ++i){
-                    if( selectedRows.at(i).row() < row ){
-                        row = selectedRows.at(i).row();
-                    }
-                }
+            if( m_d->bill != NULL ){
+                m_d->bill->attributesModel()->removeRows( row, count );
+            } else if( m_d->accountingBill != NULL ){
                 m_d->accountingBill->attributesModel()->removeRows( row, count );
+            } else if( m_d->accountingLSBill != NULL ){
+                m_d->accountingLSBill->attributesModel()->removeRows( row, count );
+            } else if( m_d->accountingLSBills != NULL ){
+                m_d->accountingLSBills->attributesModel()->removeRows( row, count );
+            } else if( m_d->accountingTAMBill != NULL ){
+                m_d->accountingTAMBill->attributesModel()->removeRows( row, count );
             }
         }
     }
@@ -459,5 +443,19 @@ void AttributesGUI::resizeAttributesColToContents(){
         for( int i=0; i < m_d->ui->attributesTableView->model()->columnCount(); ++i ){
             m_d->ui->attributesTableView->resizeColumnToContents(i);
         }
+    }
+}
+
+void AttributesGUI::activateAttributeModel(){
+    if( m_d->bill != NULL ){
+        m_d->bill->activateAttributeModel();
+    } else if( m_d->accountingBill != NULL ){
+        m_d->accountingBill->activateAttributeModel();
+    } else if( m_d->accountingTAMBill != NULL ){
+        m_d->accountingTAMBill->activateAttributeModel();
+    } else if( m_d->accountingLSBill != NULL ){
+        m_d->accountingLSBill->activateAttributeModel();
+    } else if( m_d->accountingLSBills != NULL ){
+        m_d->accountingLSBills->activateAttributeModel();
     }
 }

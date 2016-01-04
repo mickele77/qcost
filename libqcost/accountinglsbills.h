@@ -85,6 +85,7 @@ public:
     void updateAmounts();
 
     AttributesModel * attributesModel();
+    void activateAttributeModel();
     double projAmountAttribute(Attribute * attr);
     QString projAmountAttributeStr(Attribute * attr);
     double accAmountAttribute(Attribute * attr);

@@ -43,6 +43,8 @@ public:
     void setBill( AccountingLSBills *b);
     void setBill( AccountingLSBill *b);
 
+    void activateAttributeModel();
+
 private slots:
     void setBillNULL();
     void addAttribute();

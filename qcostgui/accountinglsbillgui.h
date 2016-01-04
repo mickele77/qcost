@@ -42,6 +42,8 @@ public:
 
     void setBill(AccountingLSBill *);
 
+    void showEvent(QShowEvent *event);
+
 private slots:
     void setBillItem( AccountingLSBillItem * );
     void setBillItemNULL();

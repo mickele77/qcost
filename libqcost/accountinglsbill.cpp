@@ -723,6 +723,12 @@ void AccountingLSBill::writeODTAttributeBillOnTable(QTextCursor *cursor,
     m_d->rootItem->printODTAttributeBillOnTable( cursor, prOption, prPPUOption, attrsToPrint, writeAmounts );
 }
 
+void AccountingLSBill::activateAttributeModel() {
+    if( m_d->attributesModel != NULL ){
+        m_d->attributesModel->setBill( this );
+    }
+}
+
 
 void AccountingLSBill::writeODTSummaryOnTable(QTextCursor *cursor,
                                               AccountingPrinter::PrintPPUDescOption prItemsOption,

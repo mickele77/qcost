@@ -112,6 +112,7 @@ public:
     QString amountStr( int field ) const ;
 
     AttributesModel * attributesModel();
+    void activateAttributeModel();
     double amountAttribute( Attribute * attr, int field );
     QString amountAttributeStr( Attribute * attr, int field );
 

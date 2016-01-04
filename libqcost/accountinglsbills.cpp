@@ -282,6 +282,12 @@ AttributesModel *AccountingLSBills::attributesModel() {
     return m_d->attributesModel;
 }
 
+void AccountingLSBills::activateAttributeModel() {
+    if( m_d->attributesModel != NULL ){
+        m_d->attributesModel->setBill( this );
+    }
+}
+
 double AccountingLSBills::projAmountAttribute(Attribute *attr) {
     double ret = 0.0;
     for( QList<AccountingLSBill *>::iterator i = m_d->billContainer.begin(); i != m_d->billContainer.end(); ++i ){
