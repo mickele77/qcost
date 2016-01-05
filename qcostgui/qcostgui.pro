@@ -106,7 +106,8 @@ SOURCES += \
     accountingbillpricedatagui.cpp \
     accountingtambillpricedatagui.cpp \
     accountinglsbillsgui.cpp \
-    accountinglsbillsdatagui.cpp
+    accountinglsbillsdatagui.cpp \
+    accountinglsbillpricedatagui.cpp
 
 HEADERS  += \
     projectitemsview.h \
@@ -172,7 +173,8 @@ HEADERS  += \
     accountingbillpricedatagui.h \
     accountingtambillpricedatagui.h \
     accountinglsbillsgui.h \
-    accountinglsbillsdatagui.h
+    accountinglsbillsdatagui.h \
+    accountinglsbillpricedatagui.h
 
 FORMS += \
     generaldatagui.ui \
@@ -215,7 +217,8 @@ FORMS += \
     varsgui.ui \
     accountingbillpricedatagui.ui \
     accountingtambillpricedatagui.ui \
-    accountinglsbillsdatagui.ui
+    accountinglsbillsdatagui.ui \
+    accountinglsbillpricedatagui.ui
 
 OTHER_FILES += \
     ../LICENSE \

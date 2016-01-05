@@ -18,7 +18,7 @@
 */
 #include "attributesgui.h"
 
-#include "ui_billattributesgui.h"
+#include "ui_attributesgui.h"
 
 #include "accountingattributeprintergui.h"
 #include "billattributeprintergui.h"

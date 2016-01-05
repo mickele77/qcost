@@ -16,8 +16,8 @@
    along with this program; if not, write to the Free Software Foundation,
    Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 */
-#ifndef ACCOUNTINGLSBILLDATAGUI_H
-#define ACCOUNTINGLSBILLDATAGUI_H
+#ifndef ACCOUNTINGLSBILLPRICEDATAGUI_H
+#define ACCOUNTINGLSBILLPRICEDATAGUI_H
 
 class AttributeList;
 class Project;
@@ -27,23 +27,29 @@ class PriceFieldModel;
 
 #include <QWidget>
 
-class AccountingLSBillDataGUIPrivate;
+class AccountingLSBillPriceDataGUIPrivate;
 
-class AccountingLSBillDataGUI : public QWidget {
+class AccountingLSBillPriceDataGUI : public QWidget {
     Q_OBJECT
 public:
-    explicit AccountingLSBillDataGUI( QWidget *parent = 0);
-    ~AccountingLSBillDataGUI();
+    explicit AccountingLSBillPriceDataGUI( Project * prj, QWidget *parent = 0);
+    ~AccountingLSBillPriceDataGUI();
 
     void setAccountingBill(AccountingLSBill *b);
+
+    void showEvent(QShowEvent *event);
 private slots:
-    void setDescription();
     void setAccountingBillNULL();
 
-    void setPPUTotalToDiscount();
-    void setPPUNotToDiscount();
+    void setPriceList();
+    void setPriceDataSet();
+
 private:
-    AccountingLSBillDataGUIPrivate * m_d;
+    AccountingLSBillPriceDataGUIPrivate * m_d;
+
+    void populatePriceListComboBox();
+    void setPriceListComboBox();
+    void setPriceDataSetSpinBox();
 };
 
-#endif // ACCOUNTINGLSBILLDATAGUI_H
+#endif // ACCOUNTINGLSBILLPRICEDATAGUI_H

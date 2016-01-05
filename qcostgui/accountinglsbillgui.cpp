@@ -19,6 +19,7 @@
 #include "accountinglsbillgui.h"
 
 #include "accountinglsbilldatagui.h"
+#include "accountinglsbillpricedatagui.h"
 #include "accountinglstreegui.h"
 #include "accountinglsbillitemgui.h"
 #include "accountinglsbillitemtitlegui.h"
@@ -68,7 +69,8 @@ public:
         bill ( NULL ),
         project(prj),
         itemEditingPrice(NULL),
-        accountingDataGUI( new AccountingLSBillDataGUI( prj->priceFieldModel(), prs, NULL, prj, wpf, parent ) ),
+        accountingDataGUI( new AccountingLSBillDataGUI( parent ) ),
+        accountingPriceDataGUI( new AccountingLSBillPriceDataGUI( prj, parent ) ),
         attributesGUI( new AttributesGUI(prj->priceFieldModel(), prs, wpf, parent )),
         mainSplitter( new QSplitter(Qt::Horizontal, parent ) ),
         treeGUI( new AccountingLSTreeGUI( EPAImpOptions, EPAFileName, prs, prj, mainSplitter ) ),
@@ -86,6 +88,7 @@ public:
     PriceItem * importingDataPriceItem;
 
     AccountingLSBillDataGUI * accountingDataGUI;
+    AccountingLSBillPriceDataGUI * accountingPriceDataGUI;
     AttributesGUI * attributesGUI;
     QSplitter * mainSplitter;
     AccountingLSTreeGUI * treeGUI;
@@ -102,6 +105,7 @@ AccountingLSBillGUI::AccountingLSBillGUI(QMap<PriceListDBWidget::ImportOptions, 
     m_d( new AccountingLSBillGUIPrivate( EPAImpOptions, EPAFileName, prs, p, wordProcessorFile, this ) ){
 
     addTab( m_d->accountingDataGUI, trUtf8("Dati generali"));
+    addTab( m_d->accountingPriceDataGUI, trUtf8("Costi Unitari"));
     addTab( m_d->attributesGUI, trUtf8("Etichette"));
     addTab( m_d->mainSplitter, trUtf8("Misure"));
 
@@ -115,13 +119,16 @@ AccountingLSBillGUI::~AccountingLSBillGUI(){
 }
 
 void AccountingLSBillGUI::setBill( AccountingLSBill * b ){
-    m_d->bill = b;
-    m_d->accountingDataGUI->setAccountingBill( b );
-    m_d->attributesGUI->setBill( b );
-    m_d->treeGUI->setBill( b );
-    m_d->itemGUI->setBill( b );
-    m_d->itemTitleGUI->setBill( b );
-    setBillItem( m_d->treeGUI->currentItem() );
+    if( m_d->bill != b ){
+        m_d->bill = b;
+        m_d->accountingDataGUI->setAccountingBill( b );
+        m_d->accountingPriceDataGUI->setAccountingBill( b );
+        m_d->attributesGUI->setBill( b );
+        m_d->treeGUI->setBill( b );
+        m_d->itemGUI->setBill( b );
+        m_d->itemTitleGUI->setBill( b );
+        setBillItem( m_d->treeGUI->currentItem() );
+    }
 }
 
 void AccountingLSBillGUI::setBillItem( AccountingLSBillItem *newItem ) {
