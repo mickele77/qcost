@@ -140,6 +140,8 @@ AccountingBill &AccountingBill::operator=(const AccountingBill &cp) {
     setDescription( cp.m_d->description );
     setPriceList( cp.m_d->priceList );
     *(m_d->rootItem) = *(cp.m_d->rootItem);
+    *(m_d->attributesModel) = *(cp.m_d->attributesModel);
+    *(m_d->varsModel) = *(cp.m_d->varsModel);
     return *this;
 }
 
