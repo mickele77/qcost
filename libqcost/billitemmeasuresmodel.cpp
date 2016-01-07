@@ -259,10 +259,10 @@ void BillItemMeasuresModel::setUnitMeasure(UnitMeasure *ump) {
     }
 }
 
-void BillItemMeasuresModel::writeXml(QXmlStreamWriter *writer) {
+void BillItemMeasuresModel::writeXml10(QXmlStreamWriter *writer) {
     writer->writeStartElement( "BillItemMeasuresModel" );
     for( QList<BillItemMeasure *>::iterator i = m_d->linesContainer.begin(); i != m_d->linesContainer.end(); ++i ){
-        (*i)->writeXml( writer );
+        (*i)->writeXml10( writer );
     }
     writer->writeEndElement();
 }

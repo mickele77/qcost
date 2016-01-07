@@ -371,7 +371,7 @@ void PriceList::writeXml10(QXmlStreamWriter *writer) const {
 
     m_d->rootItem->dataModel()->writeXml10( writer );
 
-    m_d->rootItem->writeXml( writer );
+    m_d->rootItem->writeXml10( writer );
 
     writer->writeEndElement();
 }

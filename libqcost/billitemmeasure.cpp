@@ -110,7 +110,7 @@ QString BillItemMeasure::quantityStr(){
     }
 }
 
-void BillItemMeasure::writeXml( QXmlStreamWriter * writer ){
+void BillItemMeasure::writeXml10( QXmlStreamWriter * writer ){
     writer->writeStartElement( "BillItemMeasure" );
     writer->writeAttribute( "comment", m_d->comment );
     QString f = m_d->formula;

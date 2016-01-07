@@ -902,7 +902,7 @@ void PriceItem::setHasChildrenChanged(PriceItem *p, QList<int> indexes ) {
     }
 }
 
-void PriceItem::writeXml(QXmlStreamWriter *writer) {
+void PriceItem::writeXml10(QXmlStreamWriter *writer) {
     if( m_d->parentItem != NULL ){
         // se non e' l'elemento root
         writer->writeStartElement( "PriceItem" );
@@ -922,14 +922,14 @@ void PriceItem::writeXml(QXmlStreamWriter *writer) {
         }
 
         for( QList<PriceItem *>::iterator i = m_d->childrenContainer.begin(); i != m_d->childrenContainer.end(); ++i){
-            (*i)->writeXml( writer );
+            (*i)->writeXml10( writer );
         }
 
         writer->writeEndElement();
     } else {
         // e' l'elemento root
         for( QList<PriceItem *>::iterator i = m_d->childrenContainer.begin(); i != m_d->childrenContainer.end(); ++i){
-            (*i)->writeXml( writer );
+            (*i)->writeXml10( writer );
         }
     }
 }

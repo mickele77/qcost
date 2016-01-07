@@ -498,7 +498,7 @@ void Bill::removePriceField( int firstPFRemoved, int lastPFRemoved ){
     }
 }
 
-void Bill::writeXml(QXmlStreamWriter *writer) {
+void Bill::writeXml10(QXmlStreamWriter *writer) {
     writer->writeStartElement( "Bill" );
     writer->writeAttribute( "id", QString::number(m_d->id) );
     writer->writeAttribute( "name", m_d->name );
@@ -510,7 +510,7 @@ void Bill::writeXml(QXmlStreamWriter *writer) {
 
     m_d->attributeModel->writeXml( writer );
 
-    m_d->rootItem->writeXml( writer );
+    m_d->rootItem->writeXml10( writer );
 
     writer->writeEndElement();
 }

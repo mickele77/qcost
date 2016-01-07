@@ -63,7 +63,7 @@ public:
     bool isUsingPriceList( PriceList * pl );
     bool isUsingPriceItem(PriceItem * p );
 
-    void writeXml( QXmlStreamWriter * writer );
+    void writeXml(QXmlStreamWriter * writer , const QString &vers) const;
     void readXml(QXmlStreamReader *reader, ProjectPriceListParentItem *priceLists);
 
 signals:
@@ -75,6 +75,7 @@ signals:
 
 private:
     ProjectBillParentItemPrivate * m_d;
+    void writeXml10(QXmlStreamWriter *writer) const;
 };
 
 #endif // PROJECTBILLPARENTITEM_H

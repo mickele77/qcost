@@ -103,7 +103,7 @@ public:
     BillItemMeasuresModel * generateMeasuresModel();
     void removeMeasuresModel();
 
-    void writeXml( QXmlStreamWriter * writer );
+    void writeXml10( QXmlStreamWriter * writer );
     void readXml(QXmlStreamReader *reader, PriceList *priceList, BillAttributeModel * billAttrModel);
     void readXmlTmp(QXmlStreamReader *reader);
     void loadFromXml(const QXmlStreamAttributes &attrs, PriceList *priceList, BillAttributeModel * billAttrModel);

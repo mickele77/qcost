@@ -143,7 +143,7 @@ public:
     Bill *associatedAP( int priceDataSet );
     QList<PriceItem *> connectedPriceItems();
 
-    void writeXml( QXmlStreamWriter * writer );
+    void writeXml10( QXmlStreamWriter * writer );
     void readXml(QXmlStreamReader *reader, UnitMeasureModel *uml);
     void loadFromXml(const QXmlStreamAttributes &attrs, UnitMeasureModel *uml);
     void loadTmpData(ProjectPriceListParentItem *priceLists);

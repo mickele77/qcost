@@ -370,7 +370,7 @@ void Project::writeXml(QXmlStreamWriter *writer, const QString &vers) {
     m_d->priceFieldModel->writeXml( writer, vers );
     m_d->unitMeasureModel->writeXml( writer, vers );
     m_d->priceListParentItem->writeXml( writer, vers );
-    m_d->billParentItem->writeXml( writer );
+    m_d->billParentItem->writeXml( writer, vers );
 
     writer->writeEndElement();
     writer->writeEndDocument();

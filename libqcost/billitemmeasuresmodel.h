@@ -37,7 +37,7 @@ public:
 
     void setUnitMeasure( UnitMeasure * ump );
 
-    void writeXml( QXmlStreamWriter * writer );
+    void writeXml10( QXmlStreamWriter * writer );
     void readXml(QXmlStreamReader *reader);
 
     int billItemMeasureCount();

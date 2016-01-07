@@ -31,7 +31,7 @@ public:
     void setComment(const QString &nc);
     void setUnitMeasure( UnitMeasure * ump );
 
-    void writeXml( QXmlStreamWriter * writer );
+    void writeXml10( QXmlStreamWriter * writer );
     void loadFromXml(const QXmlStreamAttributes &attrs);
 
 signals:

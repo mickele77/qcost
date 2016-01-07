@@ -179,7 +179,7 @@ void PriceItemDataSet::writeXml10(QXmlStreamWriter *writer, bool isRootItem ) {
 
     if( !isRootItem ){
         if( associateAP ){
-            associatedAP->writeXml( writer );
+            associatedAP->writeXml10( writer );
         } else {
             for( int i=0; i < m_d->value.size(); ++i ){
                 writer->writeAttribute( QString("value%1").arg(i), QString::number( m_d->value.at(i) ) );
