@@ -918,7 +918,7 @@ void PriceItem::writeXml(QXmlStreamWriter *writer) {
         }
 
         if( !hasChildren() ){
-            m_d->dataModel->writeXml( writer );
+            m_d->dataModel->writeXml10( writer );
         }
 
         for( QList<PriceItem *>::iterator i = m_d->childrenContainer.begin(); i != m_d->childrenContainer.end(); ++i){

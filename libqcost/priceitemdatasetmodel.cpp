@@ -113,7 +113,7 @@ public:
     void insertPriceField(int row) { m_d->value.insert( row, 0.0 ); }
 
     // scrive su flusso XML
-    void writeXml(QXmlStreamWriter * writer , bool isRootItem);
+    void writeXml10(QXmlStreamWriter * writer , bool isRootItem);
     // legge attributi XML
     void loadFromXml(const QXmlStreamAttributes &attrs);
 
@@ -174,7 +174,7 @@ void PriceItemDataSet::setInheritProfitsFromRoot(bool newVal) {
     }
 }
 
-void PriceItemDataSet::writeXml(QXmlStreamWriter *writer, bool isRootItem ) {
+void PriceItemDataSet::writeXml10(QXmlStreamWriter *writer, bool isRootItem ) {
     writer->writeStartElement( "PriceItemDataSet" );
 
     if( !isRootItem ){
@@ -951,12 +951,12 @@ void PriceItemDataSetModel::setValueFromAP(int priceField, double v){
     }
 }
 
-void PriceItemDataSetModel::writeXml(QXmlStreamWriter *writer) {
+void PriceItemDataSetModel::writeXml10(QXmlStreamWriter *writer) {
     for( QList<PriceItemDataSet *>::iterator i = m_d->dataSetContainer.begin(); i != m_d->dataSetContainer.end(); ++i){
         if( m_d->priceItem->parentItem() == NULL ){
-            (*i)->writeXml( writer, true );
+            (*i)->writeXml10( writer, true );
         } else {
-            (*i)->writeXml( writer, false );
+            (*i)->writeXml10( writer, false );
         }
     }
 }

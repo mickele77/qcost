@@ -39,7 +39,7 @@ public:
         rootItem( new ProjectRootItem() ),
         priceListParentItem( new ProjectPriceListParentItem( rootItem, priceFieldModel, parser )),
         billParentItem(new ProjectBillParentItem( rootItem, priceFieldModel,  parser )),
-        lastXMLVersion(0.3){
+        lastXMLVersion(1.0){
         rootItem->insertChild( new ProjectDataParentItem(rootItem) );
         rootItem->insertChild( priceListParentItem );
         rootItem->insertChild( billParentItem );
@@ -344,7 +344,7 @@ void Project::removePriceList(int position, int count) {
             }
         }
         if( !isUsed ){
-            m_d->priceListParentItem->removeChildrenUnsecure( i );
+            m_d->priceListParentItem->removeChildrenPrivate( i );
         }
     }
 }
@@ -359,17 +359,17 @@ ProjectItem * Project::getItem(const QModelIndex &index) const
     return m_d->rootItem;
 }
 
-void Project::writeXml(QXmlStreamWriter *writer) {
+void Project::writeXml(QXmlStreamWriter *writer, const QString &vers) {
     writer->setAutoFormatting(true);
     writer->setCodec("UTF-8");
 
     writer->writeStartDocument();
     writer->writeStartElement( "QCostProject" );
-    writer->writeAttribute("version", QString::number( m_d->lastXMLVersion ) );
+    writer->writeAttribute("version", vers );
 
-    m_d->priceFieldModel->writeXml( writer );
-    m_d->unitMeasureModel->writeXml( writer );
-    m_d->priceListParentItem->writeXml( writer );
+    m_d->priceFieldModel->writeXml( writer, vers );
+    m_d->unitMeasureModel->writeXml( writer, vers );
+    m_d->priceListParentItem->writeXml( writer, vers );
     m_d->billParentItem->writeXml( writer );
 
     writer->writeEndElement();
@@ -378,7 +378,7 @@ void Project::writeXml(QXmlStreamWriter *writer) {
 }
 
 void Project::readXml(QXmlStreamReader *reader) {
-    while( (reader->name().toString().toUpper() != "QCOSTPROJECT" ) &
+    while( (reader->name().toString().toUpper() != "QCOSTPROJECT" ) &&
            (!reader->atEnd()) &&
            (!reader->hasError())){
         reader->readNext();
@@ -386,14 +386,17 @@ void Project::readXml(QXmlStreamReader *reader) {
     while( (!reader->atEnd()) &&
            (!reader->hasError())){
         reader->readNext();
-        if( reader->isStartElement() && reader->name().toString().toUpper() == "BILLS"){
-            m_d->billParentItem->readXml( reader, m_d->priceListParentItem );
-        } else if( reader->isStartElement() && reader->name().toString().toUpper() == "PRICELISTS"){
-            m_d->priceListParentItem->readXml( reader, m_d->unitMeasureModel );
-        } else if( reader->isStartElement() && reader->name().toString().toUpper() == "UNITMEASUREMODEL"){
-            m_d->unitMeasureModel->readXml( reader );
-        } else if( reader->isStartElement() && reader->name().toString().toUpper() == "PRICEFIELDMODEL"){
-            m_d->priceFieldModel->readXml( reader );
+        if( reader->isStartElement() ){
+            QString tagUp = reader->name().toString().toUpper();
+            if( tagUp == "BILLS"){
+                m_d->billParentItem->readXml( reader, m_d->priceListParentItem );
+            } else if( tagUp == "PRICELISTS"){
+                m_d->priceListParentItem->readXml( reader, m_d->unitMeasureModel );
+            } else if( tagUp == "UNITMEASUREMODEL"){
+                m_d->unitMeasureModel->readXml( reader );
+            } else if( tagUp == "PRICEFIELDMODEL"){
+                m_d->priceFieldModel->readXml( reader );
+            }
         }
     }
 }

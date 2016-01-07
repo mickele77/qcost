@@ -51,7 +51,7 @@ public:
     double applyPrecision( double );
     static double applyPrecision(double value, int precision);
 
-    void writeXml( QXmlStreamWriter * writer );
+    void writeXml10(QXmlStreamWriter *writer) const;
     void loadFromXml( const QXmlStreamAttributes & attrs );
 
 signals:

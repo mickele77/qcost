@@ -127,7 +127,7 @@ public:
         return PriceFieldModel::None;
     }
 
-    void writeXml(QXmlStreamWriter *writer, MathParser * parser ) {
+    void writeXml10(QXmlStreamWriter *writer, MathParser * parser ) {
         writer->writeStartElement( "PriceFieldData" );
         writer->writeAttribute( "priceName", priceName );
         writer->writeAttribute( "amountName", amountName );
@@ -757,10 +757,18 @@ bool PriceFieldModel::moveRows(const QModelIndex &sourceParent, int sourceRow, i
     return false;
 }
 
-void PriceFieldModel::writeXml(QXmlStreamWriter *writer) {
+void PriceFieldModel::writeXml(QXmlStreamWriter *writer, const QString & vers ) const {
+    if( (vers == "1.0") || (vers == "0.3") ){
+        writeXml10( writer );
+    } else {
+        writeXml10( writer );
+    }
+}
+
+void PriceFieldModel::writeXml10(QXmlStreamWriter *writer ) const {
     writer->writeStartElement( "PriceFieldModel" );
     for( QList<PriceFieldData *>::iterator i = m_d->fieldsList.begin(); i != m_d->fieldsList.end(); ++i ){
-        (*i)->writeXml( writer, m_d->parser );
+        (*i)->writeXml10( writer, m_d->parser );
     }
     writer->writeEndElement();
 }

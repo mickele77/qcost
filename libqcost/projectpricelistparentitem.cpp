@@ -115,7 +115,7 @@ bool ProjectPriceListParentItem::removeChildren(int position, int count) {
     return true;
 }
 
-bool ProjectPriceListParentItem::removeChildrenUnsecure(int position, int count) {
+bool ProjectPriceListParentItem::removeChildrenPrivate(int position, int count) {
     if (position < 0 || position + count > m_d->priceListContainer.size())
         return false;
     emit beginRemoveChildren(position, position+count-1);
@@ -163,10 +163,18 @@ PriceList *ProjectPriceListParentItem::priceListId(unsigned int dd) {
     return NULL;
 }
 
-void ProjectPriceListParentItem::writeXml(QXmlStreamWriter *writer) {
+void ProjectPriceListParentItem::writeXml(QXmlStreamWriter *writer, const QString & vers ) const {
+    if( (vers == "1.0") || (vers == "0.3") ){
+        writeXml10(writer);
+    } else {
+        writeXml10(writer);
+    }
+}
+
+void ProjectPriceListParentItem::writeXml10(QXmlStreamWriter *writer) const {
     writer->writeStartElement("PriceLists");
     for( QList<PriceList*>::iterator i = m_d->priceListContainer.begin(); i != m_d->priceListContainer.end(); ++i ){
-        (*i)->writeXml( writer );
+        (*i)->writeXml10( writer );
     }
     writer->writeEndElement();
 }
