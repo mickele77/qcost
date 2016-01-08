@@ -383,19 +383,29 @@ void Project::readXml(QXmlStreamReader *reader) {
            (!reader->hasError())){
         reader->readNext();
     }
-    while( (!reader->atEnd()) &&
-           (!reader->hasError())){
-        reader->readNext();
-        if( reader->isStartElement() ){
-            QString tagUp = reader->name().toString().toUpper();
-            if( tagUp == "BILLS"){
-                m_d->billParentItem->readXml( reader, m_d->priceListParentItem );
-            } else if( tagUp == "PRICELISTS"){
-                m_d->priceListParentItem->readXml( reader, m_d->unitMeasureModel );
-            } else if( tagUp == "UNITMEASUREMODEL"){
-                m_d->unitMeasureModel->readXml( reader );
-            } else if( tagUp == "PRICEFIELDMODEL"){
-                m_d->priceFieldModel->readXml( reader );
+    if(reader->isStartElement() && reader->name().toString().toUpper() == "QCOSTPROJECT"){
+        QString vers = "1.0";
+        QXmlStreamAttributes attrs = reader->attributes();
+        for( QXmlStreamAttributes::const_iterator i = attrs.begin(); i != attrs.end(); ++i ){
+            QString tagUp = (*i).name().toString().toUpper();
+            if( tagUp == "VERSION" ){
+                vers = (*i).value().toString().toUInt();
+            }
+        }
+        while( (!reader->atEnd()) &&
+               (!reader->hasError())){
+            reader->readNext();
+            if( reader->isStartElement() ){
+                QString tagUp = reader->name().toString().toUpper();
+                if( tagUp == "BILLS"){
+                    m_d->billParentItem->readXml( reader, m_d->priceListParentItem );
+                } else if( tagUp == "PRICELISTS"){
+                    m_d->priceListParentItem->readXml( reader, m_d->unitMeasureModel );
+                } else if( tagUp == "UNITMEASUREMODEL"){
+                    m_d->unitMeasureModel->readXml( reader, vers );
+                } else if( tagUp == "PRICEFIELDMODEL"){
+                    m_d->priceFieldModel->readXml( reader, vers );
+                }
             }
         }
     }

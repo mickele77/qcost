@@ -400,13 +400,14 @@ void PriceList::readXml(QXmlStreamReader *reader, UnitMeasureModel * uml ) {
 
 void PriceList::loadFromXml(const QXmlStreamAttributes &attrs ) {
     for( QXmlStreamAttributes::const_iterator i = attrs.begin(); i != attrs.end(); ++i ){
-        if( (*i).name().toString().toUpper() == "ID" ){
+        QString tagUp = (*i).name().toString().toUpper();
+        if( tagUp == "ID" ){
             m_d->id = (*i).value().toString().toUInt();
         }
-        if( (*i).name().toString().toUpper() == "NAME" ){
+        if( tagUp == "NAME" ){
             setName( (*i).value().toString() );
         }
-        if( (*i).name().toString().toUpper() == "DESCRIPTION" ){
+        if( tagUp == "DESCRIPTION" ){
             setDescription( (*i).value().toString() );
         }
     }

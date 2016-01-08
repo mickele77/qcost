@@ -61,8 +61,8 @@ public:
     void removeUnitMeasure(int row, int count=1);
     void clear();
 
-    void writeXml(QXmlStreamWriter * writer , const QString &vers) const;
-    void readXml( QXmlStreamReader * reader );
+    void writeXml(QXmlStreamWriter * writer, const QString &vers) const;
+    void readXml( QXmlStreamReader * reader, const QString &vers);
 
 signals:
     void removeSignal( int row, int count );
@@ -73,6 +73,7 @@ private:
     bool removeUnitMeasurePrivate(int row, int count=1);
     void clearPrivate();
     void writeXml10(QXmlStreamWriter *writer) const;
+    void readXml10(QXmlStreamReader *reader);
 };
 
 #endif // UNITMEASUREMODEL_H

@@ -760,8 +760,6 @@ bool PriceFieldModel::moveRows(const QModelIndex &sourceParent, int sourceRow, i
 void PriceFieldModel::writeXml(QXmlStreamWriter *writer, const QString & vers ) const {
     if( (vers == "1.0") || (vers == "0.3") ){
         writeXml10( writer );
-    } else {
-        writeXml10( writer );
     }
 }
 
@@ -773,7 +771,13 @@ void PriceFieldModel::writeXml10(QXmlStreamWriter *writer ) const {
     writer->writeEndElement();
 }
 
-void PriceFieldModel::readXml(QXmlStreamReader *reader) {
+void PriceFieldModel::readXml(QXmlStreamReader *reader, const QString & vers ) {
+    if( (vers == "0.3") || (vers == "1.0") ){
+        readXml10(reader);
+    }
+}
+
+void PriceFieldModel::readXml10(QXmlStreamReader *reader ) {
     bool firstField = true;
     while( !reader->atEnd() &&
            !reader->hasError() &&

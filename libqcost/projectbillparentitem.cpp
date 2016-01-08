@@ -172,8 +172,6 @@ bool ProjectBillParentItem::isUsingPriceItem(PriceItem *p) {
 void ProjectBillParentItem::writeXml(QXmlStreamWriter *writer, const QString & vers ) const {
     if( (vers == "1.0") || (vers == "0.3") ){
         writeXml10( writer );
-    } else {
-        writeXml10( writer );
     }
 }
 

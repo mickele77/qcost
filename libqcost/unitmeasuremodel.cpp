@@ -311,8 +311,6 @@ int UnitMeasureModel::findTag(const QString & tag) {
 void UnitMeasureModel::writeXml(QXmlStreamWriter *writer, const QString & vers ) const {
     if( (vers == "1.0") || (vers == "0.3")){
         writeXml10( writer );
-    } else {
-        writeXml10( writer );
     }
 }
 
@@ -324,7 +322,13 @@ void UnitMeasureModel::writeXml10(QXmlStreamWriter *writer) const {
     writer->writeEndElement();
 }
 
-void UnitMeasureModel::readXml(QXmlStreamReader *reader) {
+void UnitMeasureModel::readXml(QXmlStreamReader *reader, const QString & vers) {
+    if( (vers == "1.0") || (vers == "0.3") ){
+        readXml10( reader );
+    }
+}
+
+void UnitMeasureModel::readXml10(QXmlStreamReader *reader) {
     bool thereIsSomething = false;
     while( !reader->atEnd() &&
            !reader->hasError() &&
