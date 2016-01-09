@@ -38,8 +38,7 @@ public:
         priceFieldModel( new PriceFieldModel(parser)),
         rootItem( new ProjectRootItem() ),
         priceListParentItem( new ProjectPriceListParentItem( rootItem, priceFieldModel, parser )),
-        billParentItem(new ProjectBillParentItem( rootItem, priceFieldModel,  parser )),
-        lastXMLVersion(1.0){
+        billParentItem(new ProjectBillParentItem( rootItem, priceFieldModel,  parser )){
         rootItem->insertChild( new ProjectDataParentItem(rootItem) );
         rootItem->insertChild( priceListParentItem );
         rootItem->insertChild( billParentItem );
@@ -49,7 +48,6 @@ public:
     ProjectRootItem * rootItem;
     ProjectPriceListParentItem * priceListParentItem;
     ProjectBillParentItem * billParentItem;
-    double lastXMLVersion;
 };
 
 Project::Project( MathParser * p,QObject *parent) :
