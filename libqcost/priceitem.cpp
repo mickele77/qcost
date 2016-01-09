@@ -999,10 +999,10 @@ void PriceItem::loadFromXml10(const QXmlStreamAttributes &attrs, UnitMeasureMode
     }
 }
 
-void PriceItem::loadTmpData( ProjectPriceListParentItem * priceLists ) {
+void PriceItem::loadTmpData10( ProjectPriceListParentItem * priceLists ) {
     if( hasChildren() ){
         for( QList<PriceItem *>::iterator i = m_d->childrenContainer.begin(); i != m_d->childrenContainer.end(); ++i){
-            (*i)->loadTmpData( priceLists );
+            (*i)->loadTmpData10( priceLists );
         }
     } else if(m_d->parentItem != NULL ){
         m_d->dataModel->loadTmpData( priceLists );

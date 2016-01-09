@@ -105,10 +105,10 @@ public:
 
     void writeXml10( QXmlStreamWriter * writer );
     void readXml10(QXmlStreamReader *reader, PriceList *priceList, BillAttributeModel * billAttrModel);
-    void readXmlTmp(QXmlStreamReader *reader);
+    void readXmlTmp10(QXmlStreamReader *reader);
     void loadFromXml10(const QXmlStreamAttributes &attrs, PriceList *priceList, BillAttributeModel * billAttrModel);
-    void loadFromXmlTmp(const QXmlStreamAttributes &attrs);
-    void loadTmpData(PriceList *priceList , BillAttributeModel *billAttrModel);
+    void loadFromXmlTmp10(const QXmlStreamAttributes &attrs);
+    void loadTmpData10(PriceList *priceList , BillAttributeModel *billAttrModel);
 
     bool containsAttribute( BillAttribute * attr );
     bool containsAttributeInherited( BillAttribute * attr );

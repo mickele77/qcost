@@ -399,20 +399,18 @@ void PriceList::readXml10(QXmlStreamReader *reader, UnitMeasureModel * uml ) {
 }
 
 void PriceList::loadFromXml10(const QXmlStreamAttributes &attrs ) {
-    for( QXmlStreamAttributes::const_iterator i = attrs.begin(); i != attrs.end(); ++i ){
-        QString tagUp = (*i).name().toString().toUpper();
-        if( tagUp == "ID" ){
-            m_d->id = (*i).value().toString().toUInt();
-        }
-        if( tagUp == "NAME" ){
-            setName( (*i).value().toString() );
-        }
-        if( tagUp == "DESCRIPTION" ){
-            setDescription( (*i).value().toString() );
+    for( QXmlStreamAttributes::const_iterator attrIter = attrs.begin(); attrIter != attrs.end(); ++attrIter ){
+        QString nameUp = attrIter->name().toString().toUpper();
+        if( nameUp == "ID" ){
+            m_d->id = attrIter->value().toString().toUInt();
+        } else if( nameUp == "NAME" ){
+            setName( attrIter->value().toString() );
+        } else if( nameUp == "DESCRIPTION" ){
+            setDescription( attrIter->value().toString() );
         }
     }
 }
 
 void PriceList::loadTmpData10( ProjectPriceListParentItem * priceLists ) {
-    m_d->rootItem->loadTmpData( priceLists );
+    m_d->rootItem->loadTmpData10( priceLists );
 }

@@ -386,10 +386,9 @@ void Project::readXml(QXmlStreamReader *reader) {
     if(reader->isStartElement() && reader->name().toString().toUpper() == "QCOSTPROJECT"){
         QString vers = "1.0";
         QXmlStreamAttributes attrs = reader->attributes();
-        for( QXmlStreamAttributes::const_iterator i = attrs.begin(); i != attrs.end(); ++i ){
-            QString tagUp = (*i).name().toString().toUpper();
-            if( tagUp == "VERSION" ){
-                vers = (*i).value().toString().toUInt();
+        for( QXmlStreamAttributes::const_iterator attrIter = attrs.begin(); attrIter != attrs.end(); ++attrIter ){
+            if( attrIter->name().toString().toUpper() == "VERSION" ){
+                vers = attrIter->value().toString();
             }
         }
         while( (!reader->atEnd()) &&

@@ -542,65 +542,41 @@ void Bill::readXmlTmp10(QXmlStreamReader *reader ) {
            !(reader->isEndElement() && reader->name().toString().toUpper() == "BILL") ){
         reader->readNext();
         if( reader->name().toString().toUpper() == "BILLITEM" && reader->isStartElement()) {
-            m_d->rootItem->readXmlTmp( reader );
+            m_d->rootItem->readXmlTmp10( reader );
         }
     }
 }
 
 void Bill::loadFromXml10(const QXmlStreamAttributes &attrs, ProjectPriceListParentItem * priceLists) {
-    for( QXmlStreamAttributes::const_iterator i=attrs.begin(); i != attrs.end(); ++i ){
-        QString nameUp = (*i).name().toString().toUpper();
+    for( QXmlStreamAttributes::const_iterator attrIter=attrs.begin(); attrIter != attrs.end(); ++attrIter ){
+        QString nameUp = attrIter->name().toString().toUpper();
         if( nameUp == "ID" ){
-            m_d->id = (*i).value().toUInt();
-        }
-
-        if( attrs.hasAttribute( "id" ) ){
-            m_d->id = attrs.value( "id").toUInt();
-        }
-        if( attrs.hasAttribute( "name" ) ){
-            setName( attrs.value( "name").toString() );
-        }
-        if( attrs.hasAttribute( "description" ) ){
-            setDescription( attrs.value( "description").toString() );
-        }
-        if( attrs.hasAttribute( "priceList" ) ){
-            m_d->priceList = priceLists->priceListId( attrs.value( "priceList").toUInt() );
-        }
-        if( attrs.hasAttribute( "priceCol" ) ){
-            m_d->rootItem->setCurrentPriceDataSet( attrs.value( "priceCol").toInt() );
-        }
-        if( nameUp == "NAME" ){
-            setName( (*i).value().toString() );
-        }
-        if( nameUp == "DESCRIPTION" ){
-            setDescription( (*i).value().toString() );
-        }
-        if( nameUp == "PRICELIST" ){
-            m_d->priceList = priceLists->priceListId( (*i).value().toUInt() );
-        }
-        if( nameUp == "PRICEDATASET" ){
-            m_d->rootItem->setCurrentPriceDataSet( (*i).value().toInt() );
+            m_d->id = attrIter->value().toUInt();
+        } else if( nameUp == "NAME" ){
+            setName( attrIter->value().toString() );
+        } else if( nameUp == "DESCRIPTION" ){
+            setDescription( attrIter->value().toString() );
+        } else if( nameUp == "PRICELIST" ){
+            m_d->priceList = priceLists->priceListId( attrIter->value().toUInt() );
+        } else if( nameUp == "PRICEDATASET" ){
+            m_d->rootItem->setCurrentPriceDataSet( attrIter->value().toInt() );
         }
     }
 }
 
 void Bill::loadFromXmlTmp(const QXmlStreamAttributes &attrs) {
-    for( QXmlStreamAttributes::const_iterator i=attrs.begin(); i != attrs.end(); ++i ){
-        QString nameUp = (*i).name().toString().toUpper();
+    for( QXmlStreamAttributes::const_iterator attrIter=attrs.begin(); attrIter != attrs.end(); ++attrIter ){
+        QString nameUp = attrIter->name().toString().toUpper();
         if( nameUp == "ID" ){
-            m_d->id = (*i).value().toUInt();
-        }
-        if( nameUp == "NAME" ){
-            setName( (*i).value().toString() );
-        }
-        if( nameUp == "DESCRIPTION" ){
-            setDescription( (*i).value().toString() );
-        }
-        if( nameUp == "PRICELIST" ){
-            m_d->priceListIdTmp = (*i).value().toUInt();
-        }
-        if( nameUp == "PRICEDATASET" ){
-            m_d->rootItem->setCurrentPriceDataSet( (*i).value().toInt() );
+            m_d->id = attrIter->value().toUInt();
+        } else if( nameUp == "NAME" ){
+            setName( attrIter->value().toString() );
+        } else if( nameUp == "DESCRIPTION" ){
+            setDescription( attrIter->value().toString() );
+        } else if( nameUp == "PRICELIST" ){
+            m_d->priceListIdTmp = attrIter->value().toUInt();
+        } else if( nameUp == "PRICEDATASET" ){
+            m_d->rootItem->setCurrentPriceDataSet( attrIter->value().toInt() );
         }
     }
 }
@@ -640,7 +616,7 @@ void Bill::writeODTSummaryOnTable(QTextCursor *cursor,
 
 void Bill::loadTmpData(ProjectPriceListParentItem * priceLists) {
     m_d->priceList = priceLists->priceListId( m_d->priceListIdTmp );
-    m_d->rootItem->loadTmpData( m_d->priceList, m_d->attributeModel );
+    m_d->rootItem->loadTmpData10( m_d->priceList, m_d->attributeModel );
 }
 
 void Bill::insertStandardAttributes(){
