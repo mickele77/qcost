@@ -909,10 +909,10 @@ void BillItem::writeXml10(QXmlStreamWriter *writer) {
     }
 }
 
-void BillItem::readXml(QXmlStreamReader *reader, PriceList * priceList, BillAttributeModel * billAttrModel ) {
+void BillItem::readXml10(QXmlStreamReader *reader, PriceList * priceList, BillAttributeModel * billAttrModel ) {
     if( m_d->parentItem != NULL ){
         if(reader->isStartElement() && reader->name().toString().toUpper() == "BILLITEM"){
-            loadFromXml( reader->attributes(), priceList, billAttrModel );
+            loadFromXml10( reader->attributes(), priceList, billAttrModel );
         }
         reader->readNext();
     }
@@ -922,10 +922,10 @@ void BillItem::readXml(QXmlStreamReader *reader, PriceList * priceList, BillAttr
            !(reader->isEndElement() && reader->name().toString().toUpper() == "BILL")  ){
         if( reader->name().toString().toUpper() == "BILLITEM" && reader->isStartElement()) {
             appendChildren();
-            m_d->childrenContainer.last()->readXml( reader, priceList, billAttrModel );
+            m_d->childrenContainer.last()->readXml10( reader, priceList, billAttrModel );
         }
         if( reader->name().toString().toUpper() == "BILLITEMMEASURESMODEL" && reader->isStartElement() ) {
-            generateMeasuresModel()->readXml( reader );
+            generateMeasuresModel()->readXml10( reader );
         }
         reader->readNext();
     }
@@ -947,13 +947,13 @@ void BillItem::readXmlTmp(QXmlStreamReader *reader) {
             m_d->childrenContainer.last()->readXmlTmp( reader );
         }
         if( reader->name().toString().toUpper() == "BILLITEMMEASURESMODEL" && reader->isStartElement() ) {
-            generateMeasuresModel()->readXml( reader );
+            generateMeasuresModel()->readXml10( reader );
         }
         reader->readNext();
     }
 }
 
-void BillItem::loadFromXml(const QXmlStreamAttributes &attrs, PriceList * priceList, BillAttributeModel * billAttrModel) {
+void BillItem::loadFromXml10(const QXmlStreamAttributes &attrs, PriceList * priceList, BillAttributeModel * billAttrModel) {
     if( attrs.hasAttribute( "id" ) ){
         m_d->id = attrs.value( "id").toUInt();
     }
@@ -991,7 +991,7 @@ void BillItem::loadFromXmlTmp(const QXmlStreamAttributes &attrs) {
 
 void BillItem::loadTmpData( PriceList *priceList, BillAttributeModel * billAttrModel) {
     if( !m_d->tmpAttributes.isEmpty() ){
-        loadFromXml(m_d->tmpAttributes, priceList, billAttrModel );
+        loadFromXml10(m_d->tmpAttributes, priceList, billAttrModel );
         m_d->tmpAttributes.clear();
     }
     for( QList<BillItem *>::iterator i = m_d->childrenContainer.begin(); i != m_d->childrenContainer.end(); ++i ){

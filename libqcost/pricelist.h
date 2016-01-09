@@ -94,9 +94,9 @@ public:
     QList<PriceItem *> priceItemList();
 
     void writeXml10( QXmlStreamWriter * writer ) const;
-    void readXml(QXmlStreamReader *reader, UnitMeasureModel *uml);
-    void loadFromXml(const QXmlStreamAttributes &attrs);
-    void loadTmpData(ProjectPriceListParentItem *priceLists);
+    void readXml10(QXmlStreamReader *reader, UnitMeasureModel *uml);
+    void loadFromXml10(const QXmlStreamAttributes &attrs);
+    void loadTmpData10(ProjectPriceListParentItem *priceLists);
 
     void nextId();
     unsigned int id();

@@ -961,7 +961,7 @@ void PriceItemDataSetModel::writeXml10(QXmlStreamWriter *writer) {
     }
 }
 
-void PriceItemDataSetModel::loadXmlPriceDataSet( int priceDataSet, const QXmlStreamAttributes &attrs) {
+void PriceItemDataSetModel::loadXmlPriceDataSet10( int priceDataSet, const QXmlStreamAttributes &attrs) {
     if( (priceDataSet > -1) && (priceDataSet < m_d->dataSetContainer.size()) ){
         m_d->dataSetContainer.at(priceDataSet)->loadFromXml( attrs );
     }

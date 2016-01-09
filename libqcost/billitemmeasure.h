@@ -32,7 +32,7 @@ public:
     void setUnitMeasure( UnitMeasure * ump );
 
     void writeXml10( QXmlStreamWriter * writer );
-    void loadFromXml(const QXmlStreamAttributes &attrs);
+    void loadFromXml10(const QXmlStreamAttributes &attrs);
 
 signals:
     void quantityChanged( double );

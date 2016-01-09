@@ -122,7 +122,7 @@ void BillItemMeasure::writeXml10( QXmlStreamWriter * writer ){
 }
 
 
-void BillItemMeasure::loadFromXml(const QXmlStreamAttributes &attrs) {
+void BillItemMeasure::loadFromXml10(const QXmlStreamAttributes &attrs) {
     if( attrs.hasAttribute( "comment" ) ){
         setComment(  attrs.value( "comment").toString() );
     }

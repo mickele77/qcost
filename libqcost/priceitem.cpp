@@ -934,10 +934,10 @@ void PriceItem::writeXml10(QXmlStreamWriter *writer) {
     }
 }
 
-void PriceItem::readXml(QXmlStreamReader *reader, UnitMeasureModel * uml ) {
+void PriceItem::readXml10(QXmlStreamReader *reader, UnitMeasureModel * uml ) {
     if( m_d->parentItem != NULL ){
         if(reader->isStartElement() && reader->name().toString().toUpper() == "PRICEITEM"){
-            loadFromXml( reader->attributes(), uml );
+            loadFromXml10( reader->attributes(), uml );
         }
         reader->readNext();
     }
@@ -953,7 +953,7 @@ void PriceItem::readXml(QXmlStreamReader *reader, UnitMeasureModel * uml ) {
             if( currentPriceDataSet >= m_d->dataModel->priceDataSetCount() ) {
                 m_d->dataModel->appendPriceDataSet( currentPriceDataSet - m_d->dataModel->priceDataSetCount() + 1);
             }
-            m_d->dataModel->loadXmlPriceDataSet( currentPriceDataSet, reader->attributes() );
+            m_d->dataModel->loadXmlPriceDataSet10( currentPriceDataSet, reader->attributes() );
         }
         if( reader->name().toString().toUpper() == "PRICEITEMDATASET" && reader->isEndElement() ) {
             readingPriceDataSet = false;
@@ -961,18 +961,18 @@ void PriceItem::readXml(QXmlStreamReader *reader, UnitMeasureModel * uml ) {
         if( readingPriceDataSet &&
                 (reader->name().toString().toUpper() == "BILL" && reader->isStartElement())) {
             m_d->dataModel->setAssociateAP( currentPriceDataSet );
-            m_d->dataModel->associatedAP( currentPriceDataSet )->readXmlTmp( reader );
+            m_d->dataModel->associatedAP( currentPriceDataSet )->readXmlTmp10( reader );
         }
         if( reader->name().toString().toUpper() == "PRICEITEM" && reader->isStartElement()) {
             appendChildren();
-            m_d->childrenContainer.last()->readXml( reader, uml );
+            m_d->childrenContainer.last()->readXml10( reader, uml );
         }
 
         reader->readNext();
     }
 }
 
-void PriceItem::loadFromXml(const QXmlStreamAttributes &attrs, UnitMeasureModel * uml ) {
+void PriceItem::loadFromXml10(const QXmlStreamAttributes &attrs, UnitMeasureModel * uml ) {
     if( attrs.hasAttribute( "id" ) ){
         m_d->id = attrs.value( "id").toUInt();
     }

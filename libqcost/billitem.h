@@ -104,9 +104,9 @@ public:
     void removeMeasuresModel();
 
     void writeXml10( QXmlStreamWriter * writer );
-    void readXml(QXmlStreamReader *reader, PriceList *priceList, BillAttributeModel * billAttrModel);
+    void readXml10(QXmlStreamReader *reader, PriceList *priceList, BillAttributeModel * billAttrModel);
     void readXmlTmp(QXmlStreamReader *reader);
-    void loadFromXml(const QXmlStreamAttributes &attrs, PriceList *priceList, BillAttributeModel * billAttrModel);
+    void loadFromXml10(const QXmlStreamAttributes &attrs, PriceList *priceList, BillAttributeModel * billAttrModel);
     void loadFromXmlTmp(const QXmlStreamAttributes &attrs);
     void loadTmpData(PriceList *priceList , BillAttributeModel *billAttrModel);
 

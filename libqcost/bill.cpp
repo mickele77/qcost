@@ -508,16 +508,16 @@ void Bill::writeXml10(QXmlStreamWriter *writer) {
     }
     writer->writeAttribute( "priceDataSet", QString::number( m_d->rootItem->currentPriceDataSet() ) );
 
-    m_d->attributeModel->writeXml( writer );
+    m_d->attributeModel->writeXml10( writer );
 
     m_d->rootItem->writeXml10( writer );
 
     writer->writeEndElement();
 }
 
-void Bill::readXml(QXmlStreamReader *reader, ProjectPriceListParentItem *priceLists) {
+void Bill::readXml10(QXmlStreamReader *reader, ProjectPriceListParentItem *priceLists) {
     if(reader->isStartElement() && reader->name().toString().toUpper() == "BILL"){
-        loadFromXml( reader->attributes(), priceLists );
+        loadFromXml10( reader->attributes(), priceLists );
     }
     while( (!reader->atEnd()) &&
            (!reader->hasError()) &&
@@ -525,15 +525,15 @@ void Bill::readXml(QXmlStreamReader *reader, ProjectPriceListParentItem *priceLi
         reader->readNext();
         QString tag = reader->name().toString().toUpper();
         if( tag == "BILLATTRIBUTEMODEL" && reader->isStartElement()) {
-            m_d->attributeModel->readXml( reader );
+            m_d->attributeModel->readXml10( reader );
         }
         if( tag == "BILLITEM" && reader->isStartElement()) {
-            m_d->rootItem->readXml( reader, m_d->priceList, m_d->attributeModel );
+            m_d->rootItem->readXml10( reader, m_d->priceList, m_d->attributeModel );
         }
     }
 }
 
-void Bill::readXmlTmp(QXmlStreamReader *reader ) {
+void Bill::readXmlTmp10(QXmlStreamReader *reader ) {
     if(reader->isStartElement() && reader->name().toString().toUpper() == "BILL"){
         loadFromXmlTmp( reader->attributes() );
     }
@@ -547,7 +547,7 @@ void Bill::readXmlTmp(QXmlStreamReader *reader ) {
     }
 }
 
-void Bill::loadFromXml(const QXmlStreamAttributes &attrs, ProjectPriceListParentItem * priceLists) {
+void Bill::loadFromXml10(const QXmlStreamAttributes &attrs, ProjectPriceListParentItem * priceLists) {
     for( QXmlStreamAttributes::const_iterator i=attrs.begin(); i != attrs.end(); ++i ){
         QString nameUp = (*i).name().toString().toUpper();
         if( nameUp == "ID" ){

@@ -58,8 +58,8 @@ public:
     bool removeRows(int row, int count=1);
     bool clear();
 
-    void writeXml( QXmlStreamWriter * writer );
-    void readXml( QXmlStreamReader * reader );
+    void writeXml10( QXmlStreamWriter * writer );
+    void readXml10( QXmlStreamReader * reader );
 
     void insertStandardAttributes();
 signals:

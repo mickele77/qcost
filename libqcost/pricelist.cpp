@@ -376,16 +376,16 @@ void PriceList::writeXml10(QXmlStreamWriter *writer) const {
     writer->writeEndElement();
 }
 
-void PriceList::readXml(QXmlStreamReader *reader, UnitMeasureModel * uml ) {
+void PriceList::readXml10(QXmlStreamReader *reader, UnitMeasureModel * uml ) {
     if(reader->isStartElement() && reader->name().toString().toUpper() == "PRICELIST"){
-        loadFromXml( reader->attributes() );
+        loadFromXml10( reader->attributes() );
     }
     while( (!reader->atEnd()) &&
            (!reader->hasError()) &&
            !(reader->isEndElement() && reader->name().toString().toUpper() == "PRICELIST") ){
         reader->readNext();
         if( reader->name().toString().toUpper() == "PRICEITEM" && reader->isStartElement()) {
-            m_d->rootItem->readXml( reader, uml );
+            m_d->rootItem->readXml10( reader, uml );
         }
         int currentPriceDataSet = -1;
         if( reader->name().toString().toUpper() == "PRICEITEMDATASET" && reader->isStartElement()) {
@@ -393,12 +393,12 @@ void PriceList::readXml(QXmlStreamReader *reader, UnitMeasureModel * uml ) {
             if( currentPriceDataSet >= m_d->rootItem->dataModel()->priceDataSetCount() ){
                 m_d->rootItem->dataModel()->appendPriceDataSet( currentPriceDataSet - m_d->rootItem->priceDataSetCount() + 1 );
             }
-            m_d->rootItem->dataModel()->loadXmlPriceDataSet( currentPriceDataSet, reader->attributes() );
+            m_d->rootItem->dataModel()->loadXmlPriceDataSet10( currentPriceDataSet, reader->attributes() );
         }
     }
 }
 
-void PriceList::loadFromXml(const QXmlStreamAttributes &attrs ) {
+void PriceList::loadFromXml10(const QXmlStreamAttributes &attrs ) {
     for( QXmlStreamAttributes::const_iterator i = attrs.begin(); i != attrs.end(); ++i ){
         QString tagUp = (*i).name().toString().toUpper();
         if( tagUp == "ID" ){
@@ -413,6 +413,6 @@ void PriceList::loadFromXml(const QXmlStreamAttributes &attrs ) {
     }
 }
 
-void PriceList::loadTmpData( ProjectPriceListParentItem * priceLists ) {
+void PriceList::loadTmpData10( ProjectPriceListParentItem * priceLists ) {
     m_d->rootItem->loadTmpData( priceLists );
 }

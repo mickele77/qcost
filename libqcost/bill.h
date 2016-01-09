@@ -119,9 +119,9 @@ public:
     bool isUsingPriceList( PriceList * pl );
 
     void writeXml10( QXmlStreamWriter * writer );
-    void readXml(QXmlStreamReader *reader, ProjectPriceListParentItem * priceLists);
-    void readXmlTmp(QXmlStreamReader *reader);
-    void loadFromXml(const QXmlStreamAttributes &attrs, ProjectPriceListParentItem * priceLists);
+    void readXml10(QXmlStreamReader *reader, ProjectPriceListParentItem * priceLists);
+    void readXmlTmp10(QXmlStreamReader *reader);
+    void loadFromXml10(const QXmlStreamAttributes &attrs, ProjectPriceListParentItem * priceLists);
     void loadTmpData( PriceList *priceList );
 
     void nextId();

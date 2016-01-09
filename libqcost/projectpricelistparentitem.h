@@ -62,7 +62,7 @@ public:
     PriceList * priceListId( unsigned int dd );
 
     void writeXml( QXmlStreamWriter * writer, const QString & vers ) const;
-    void readXml(QXmlStreamReader *reader, UnitMeasureModel *uml);
+    void readXml(QXmlStreamReader *reader, UnitMeasureModel *uml, const QString &vers);
 
 signals:
     void removePriceItemSignal(PriceList * pl, int position, int count, const QModelIndex &parent );
@@ -82,6 +82,7 @@ private:
     ProjectPriceListParentItemPrivate * m_d;
     bool removeChildrenPrivate(int position, int count = 1);
     void writeXml10(QXmlStreamWriter *writer) const;
+    void readXml10(QXmlStreamReader *reader, UnitMeasureModel *uml);
 };
 
 #endif // PROJECTPRICELISTPARENTITEM_H

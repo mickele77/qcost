@@ -144,8 +144,8 @@ public:
     QList<PriceItem *> connectedPriceItems();
 
     void writeXml10( QXmlStreamWriter * writer );
-    void readXml(QXmlStreamReader *reader, UnitMeasureModel *uml);
-    void loadFromXml(const QXmlStreamAttributes &attrs, UnitMeasureModel *uml);
+    void readXml10(QXmlStreamReader *reader, UnitMeasureModel *uml);
+    void loadFromXml10(const QXmlStreamAttributes &attrs, UnitMeasureModel *uml);
     void loadTmpData(ProjectPriceListParentItem *priceLists);
 
     void writeODTOnTable(QTextCursor * cursor, PriceListPrinter::PrintPriceItemsOption printOption, const QList<int> fieldsToPrint, int priceDataSetToPrint = 0);

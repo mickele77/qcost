@@ -267,7 +267,7 @@ void BillItemMeasuresModel::writeXml10(QXmlStreamWriter *writer) {
     writer->writeEndElement();
 }
 
-void BillItemMeasuresModel::readXml(QXmlStreamReader *reader) {
+void BillItemMeasuresModel::readXml10(QXmlStreamReader *reader) {
     bool firstLine = true;
     while( !reader->atEnd() &&
            !reader->hasError() &&
@@ -275,11 +275,11 @@ void BillItemMeasuresModel::readXml(QXmlStreamReader *reader) {
         reader->readNext();
         if( reader->name().toString().toUpper() == "BILLITEMMEASURE" && reader->isStartElement()) {
             if( firstLine ){
-                m_d->linesContainer.last()->loadFromXml( reader->attributes() );
+                m_d->linesContainer.last()->loadFromXml10( reader->attributes() );
                 firstLine = false;
             } else {
                 if(append()){
-                    m_d->linesContainer.last()->loadFromXml( reader->attributes() );
+                    m_d->linesContainer.last()->loadFromXml10( reader->attributes() );
                 }
             }
         }

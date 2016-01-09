@@ -43,7 +43,7 @@ public:
         rootItem->insertChild( new ProjectDataParentItem(rootItem) );
         rootItem->insertChild( priceListParentItem );
         rootItem->insertChild( billParentItem );
-    };
+    }
     UnitMeasureModel * unitMeasureModel;
     PriceFieldModel * priceFieldModel;
     ProjectRootItem * rootItem;
@@ -398,9 +398,9 @@ void Project::readXml(QXmlStreamReader *reader) {
             if( reader->isStartElement() ){
                 QString tagUp = reader->name().toString().toUpper();
                 if( tagUp == "BILLS"){
-                    m_d->billParentItem->readXml( reader, m_d->priceListParentItem );
+                    m_d->billParentItem->readXml( reader, m_d->priceListParentItem, vers );
                 } else if( tagUp == "PRICELISTS"){
-                    m_d->priceListParentItem->readXml( reader, m_d->unitMeasureModel );
+                    m_d->priceListParentItem->readXml( reader, m_d->unitMeasureModel, vers );
                 } else if( tagUp == "UNITMEASUREMODEL"){
                     m_d->unitMeasureModel->readXml( reader, vers );
                 } else if( tagUp == "PRICEFIELDMODEL"){
