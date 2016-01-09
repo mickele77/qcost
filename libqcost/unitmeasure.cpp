@@ -119,7 +119,15 @@ void UnitMeasure::setDescription(const QString &d) {
     }
 }
 
-void UnitMeasure::writeXml(QXmlStreamWriter *writer) {
+void UnitMeasure::writeXml10(QXmlStreamWriter *writer ) const {
+    writeXml(writer);
+}
+
+void UnitMeasure::writeXml20(QXmlStreamWriter *writer) const {
+    writeXml(writer);
+}
+
+void UnitMeasure::writeXml(QXmlStreamWriter *writer) const {
     writer->writeStartElement( "UnitMeasure" );
     writer->writeAttribute( "id", QString::number( m_d->id ) );
     writer->writeAttribute( "tag", m_d->tag );

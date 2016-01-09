@@ -436,10 +436,18 @@ Attribute *AttributesModel::attributeId(unsigned int id) {
     return NULL;
 }
 
-void AttributesModel::writeXml(QXmlStreamWriter *writer) {
+void AttributesModel::writeXml10(QXmlStreamWriter *writer) const {
+    writer->writeStartElement( "BillAttributeModel" );
+    for( QList<Attribute *>::iterator i = m_d->attributesContainer.begin(); i != m_d->attributesContainer.end(); ++i ){
+        (*i)->writeXml10( writer );
+    }
+    writer->writeEndElement();
+}
+
+void AttributesModel::writeXml20(QXmlStreamWriter *writer) const {
     writer->writeStartElement( "AttributesModel" );
     for( QList<Attribute *>::iterator i = m_d->attributesContainer.begin(); i != m_d->attributesContainer.end(); ++i ){
-        (*i)->writeXml( writer );
+        (*i)->writeXml20( writer );
     }
     writer->writeEndElement();
 }

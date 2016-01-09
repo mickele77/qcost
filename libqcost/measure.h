@@ -26,7 +26,7 @@ public:
 
     QString comment() const;
     QString formula() const;
-    QString effectiveFormula();
+    QString effectiveFormula() const;
     double quantity() const;
     QString quantityStr() const;
 
@@ -37,7 +37,8 @@ public:
     void setComment(const QString &nc);
     void setUnitMeasure( UnitMeasure * ump );
 
-    void writeXml( QXmlStreamWriter * writer );
+    void writeXml10(QXmlStreamWriter *writer) const;
+    void writeXml20( QXmlStreamWriter * writer ) const;
     void loadFromXmlTmp();
     void loadXmlTmp(const QXmlStreamAttributes &attrs);
 

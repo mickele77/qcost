@@ -520,7 +520,7 @@ void Bill::removePriceField( int firstPFRemoved, int lastPFRemoved ){
     }
 }
 
-void Bill::writeXml(QXmlStreamWriter *writer) {
+void Bill::writeXml10(QXmlStreamWriter *writer) {
     writer->writeStartElement( "Bill" );
     writer->writeAttribute( "id", QString::number(m_d->id) );
     writer->writeAttribute( "name", m_d->name );
@@ -530,10 +530,27 @@ void Bill::writeXml(QXmlStreamWriter *writer) {
     }
     writer->writeAttribute( "priceDataSet", QString::number( m_d->rootItem->currentPriceDataSet() ) );
 
-    m_d->attributesModel->writeXml( writer );
-    m_d->varsModel->writeXml( writer );
+    m_d->attributesModel->writeXml10( writer );
 
-    m_d->rootItem->writeXml( writer );
+    m_d->rootItem->writeXml10( writer );
+
+    writer->writeEndElement();
+}
+
+void Bill::writeXml20(QXmlStreamWriter *writer) {
+    writer->writeStartElement( "Bill" );
+    writer->writeAttribute( "id", QString::number(m_d->id) );
+    writer->writeAttribute( "name", m_d->name );
+    writer->writeAttribute( "description", m_d->description );
+    if( m_d->priceList ){
+        writer->writeAttribute( "priceList", QString::number( m_d->priceList->id() ) );
+    }
+    writer->writeAttribute( "priceDataSet", QString::number( m_d->rootItem->currentPriceDataSet() ) );
+
+    m_d->attributesModel->writeXml20( writer );
+    m_d->varsModel->writeXml20( writer );
+
+    m_d->rootItem->writeXml20( writer );
 
     writer->writeEndElement();
 }

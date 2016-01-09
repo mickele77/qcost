@@ -94,7 +94,8 @@ public:
 
     QList<PriceItem *> priceItemList();
 
-    void writeXml( QXmlStreamWriter * writer );
+    void writeXml10(QXmlStreamWriter *writer) const;
+    void writeXml20( QXmlStreamWriter * writer ) const;
     void readXml(QXmlStreamReader *reader, UnitMeasureModel *uml);
     void readFromXmlTmp(ProjectPriceListParentItem *priceLists);
 

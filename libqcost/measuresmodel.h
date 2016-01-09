@@ -41,7 +41,8 @@ public:
 
     void setUnitMeasure( UnitMeasure * ump );
 
-    void writeXml( QXmlStreamWriter * writer );
+    void writeXml10( QXmlStreamWriter * writer ) const;
+    void writeXml20( QXmlStreamWriter * writer ) const;
     void readFromXmlTmp();
     void readXmlTmp(QXmlStreamReader *reader);
 

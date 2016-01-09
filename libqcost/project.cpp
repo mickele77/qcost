@@ -42,8 +42,7 @@ public:
         rootItem( new ProjectRootItem() ),
         priceListParentItem( new ProjectPriceListParentItem( rootItem, priceFieldModel, parser )),
         billParentItem(new ProjectBillParentItem( rootItem, priceFieldModel,  parser )),
-        accountingParentItem(new ProjectAccountingParentItem( rootItem, priceFieldModel,  parser )),
-        lastXMLVersion(0.4){
+        accountingParentItem(new ProjectAccountingParentItem( rootItem, priceFieldModel,  parser )){
         rootItem->insertChild( new ProjectDataParentItem(rootItem) );
         rootItem->insertChild( priceListParentItem );
         rootItem->insertChild( billParentItem );
@@ -55,7 +54,6 @@ public:
     ProjectPriceListParentItem * priceListParentItem;
     ProjectBillParentItem * billParentItem;
     ProjectAccountingParentItem * accountingParentItem;
-    double lastXMLVersion;
 };
 
 Project::Project( MathParser * p,QObject *parent) :
@@ -372,18 +370,18 @@ ProjectItem * Project::getItem(const QModelIndex &index) const
     return m_d->rootItem;
 }
 
-void Project::writeXml(QXmlStreamWriter *writer) {
+void Project::writeXml(QXmlStreamWriter *writer, const QString &vers){
     writer->setAutoFormatting(true);
     writer->setCodec("UTF-8");
 
     writer->writeStartDocument();
     writer->writeStartElement( "QCostProject" );
-    writer->writeAttribute("version", QString::number( m_d->lastXMLVersion ) );
+    writer->writeAttribute("version", vers );
 
-    m_d->priceFieldModel->writeXml( writer );
-    m_d->unitMeasureModel->writeXml( writer );
-    m_d->priceListParentItem->writeXml( writer );
-    m_d->billParentItem->writeXml( writer );
+    m_d->priceFieldModel->writeXml( writer, vers );
+    m_d->unitMeasureModel->writeXml( writer, vers );
+    m_d->priceListParentItem->writeXml( writer, vers );
+    m_d->billParentItem->writeXml( writer, vers );
     m_d->accountingParentItem->writeXml( writer );
 
     writer->writeEndElement();

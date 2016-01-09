@@ -936,7 +936,7 @@ Qt::ItemFlags BillItem::flags(int column) const {
     return Qt::ItemIsSelectable | Qt::ItemIsEnabled;
 }
 
-void BillItem::writeXml(QXmlStreamWriter *writer) {
+void BillItem::writeXml10(QXmlStreamWriter *writer) const {
     if( m_d->parentItem != NULL ){
         // se non e' l'elemento root
         writer->writeStartElement( "BillItem" );
@@ -957,7 +957,7 @@ void BillItem::writeXml(QXmlStreamWriter *writer) {
         if( m_d->childrenContainer.size() > 0 ){
             writer->writeAttribute( "name", m_d->name );
             for( QList<BillItem *>::iterator i = m_d->childrenContainer.begin(); i != m_d->childrenContainer.end(); ++i){
-                (*i)->writeXml( writer );
+                (*i)->writeXml10( writer );
             }
         } else {
             if( m_d->priceItem != NULL ){
@@ -967,7 +967,7 @@ void BillItem::writeXml(QXmlStreamWriter *writer) {
             writer->writeAttribute( "priceDataSet", QString::number(m_d->currentPriceDataSet) );
 
             if( m_d->measuresModel ){
-                m_d->measuresModel->writeXml( writer );
+                m_d->measuresModel->writeXml10( writer );
             }
         }
 
@@ -975,7 +975,51 @@ void BillItem::writeXml(QXmlStreamWriter *writer) {
     } else {
         // e' l'elemento root
         for( QList<BillItem *>::iterator i = m_d->childrenContainer.begin(); i != m_d->childrenContainer.end(); ++i){
-            (*i)->writeXml( writer );
+            (*i)->writeXml10( writer );
+        }
+    }
+}
+
+void BillItem::writeXml20(QXmlStreamWriter *writer) const {
+    if( m_d->parentItem != NULL ){
+        // se non e' l'elemento root
+        writer->writeStartElement( "BillItem" );
+        writer->writeAttribute( "id", QString::number(m_d->id) );
+
+        QString attrs;
+        for( QList<Attribute *>::iterator i = m_d->attributes.begin(); i != m_d->attributes.end(); ++i ){
+            if( attrs.isEmpty() ){
+                attrs = QString::number( (*i)->id() );
+            } else {
+                attrs = QString( "%1, %2" ).arg( attrs, QString::number( (*i)->id() ) );
+            }
+        }
+        if( !attrs.isEmpty() ){
+            writer->writeAttribute( "attributes", attrs );
+        }
+
+        if( m_d->childrenContainer.size() > 0 ){
+            writer->writeAttribute( "name", m_d->name );
+            for( QList<BillItem *>::iterator i = m_d->childrenContainer.begin(); i != m_d->childrenContainer.end(); ++i){
+                (*i)->writeXml20( writer );
+            }
+        } else {
+            if( m_d->priceItem != NULL ){
+                writer->writeAttribute( "priceItem", QString::number( m_d->priceItem->id() ) );
+            }
+            writer->writeAttribute( "quantity", QString::number( m_d->quantity ) );
+            writer->writeAttribute( "priceDataSet", QString::number(m_d->currentPriceDataSet) );
+
+            if( m_d->measuresModel ){
+                m_d->measuresModel->writeXml20( writer );
+            }
+        }
+
+        writer->writeEndElement();
+    } else {
+        // e' l'elemento root
+        for( QList<BillItem *>::iterator i = m_d->childrenContainer.begin(); i != m_d->childrenContainer.end(); ++i){
+            (*i)->writeXml20( writer );
         }
     }
 }

@@ -637,7 +637,7 @@ void AccountingTAMBill::writeXml(QXmlStreamWriter *writer) {
     }
     writer->writeAttribute( "noDiscountAmountPriceFields", fields );
 
-    m_d->attributesModel->writeXml( writer );
+    m_d->attributesModel->writeXml20( writer );
 
     m_d->rootItem->writeXml( writer );
 

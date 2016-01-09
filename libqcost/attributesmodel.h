@@ -67,7 +67,8 @@ public:
     bool removeRows(int row, int count=1);
     bool clear();
 
-    void writeXml( QXmlStreamWriter * writer );
+    void writeXml10(QXmlStreamWriter *writer) const;
+    void writeXml20( QXmlStreamWriter * writer ) const;
     void readXml( QXmlStreamReader * reader );
 
     /** nel caso il modello sia riferito alla classe Bill, inserice due etichette

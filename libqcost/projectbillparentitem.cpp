@@ -169,14 +169,29 @@ bool ProjectBillParentItem::isUsingPriceItem(PriceItem *p) {
     return false;
 }
 
-void ProjectBillParentItem::writeXml(QXmlStreamWriter *writer) {
+void ProjectBillParentItem::writeXml(QXmlStreamWriter *writer, const QString & vers ) const {
+    if( (vers == "0.3") || (vers == "1.0") ){
+        writeXml10(writer);
+    } else if( vers == "2.0" ){
+        writeXml20(writer);
+    }
+}
+
+void ProjectBillParentItem::writeXml10(QXmlStreamWriter *writer) const{
     writer->writeStartElement( "Bills");
     for( QList<Bill *>::iterator i = m_d->billContainer.begin(); i != m_d->billContainer.end(); ++i ){
-        (*i)->writeXml( writer );
+        (*i)->writeXml10( writer );
     }
     writer->writeEndElement();
 }
 
+void ProjectBillParentItem::writeXml20(QXmlStreamWriter *writer) const{
+    writer->writeStartElement( "Bills");
+    for( QList<Bill *>::iterator i = m_d->billContainer.begin(); i != m_d->billContainer.end(); ++i ){
+        (*i)->writeXml20( writer );
+    }
+    writer->writeEndElement();
+}
 
 void ProjectBillParentItem::readXml(QXmlStreamReader *reader, ProjectPriceListParentItem * priceLists) {
     while( (!reader->atEnd()) &&

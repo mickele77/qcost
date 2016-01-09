@@ -163,10 +163,26 @@ PriceList *ProjectPriceListParentItem::priceListId(unsigned int dd) {
     return NULL;
 }
 
-void ProjectPriceListParentItem::writeXml(QXmlStreamWriter *writer) {
+void ProjectPriceListParentItem::writeXml(QXmlStreamWriter *writer, const QString & vers ) const {
+    if( (vers == "0.3") || (vers == "1.0") ){
+        writeXml10(writer);
+    } else if( vers == "2.0" ){
+        writeXml20(writer);
+    }
+}
+
+void ProjectPriceListParentItem::writeXml10(QXmlStreamWriter *writer) const {
     writer->writeStartElement("PriceLists");
     for( QList<PriceList*>::iterator i = m_d->priceListContainer.begin(); i != m_d->priceListContainer.end(); ++i ){
-        (*i)->writeXml( writer );
+        (*i)->writeXml10( writer );
+    }
+    writer->writeEndElement();
+}
+
+void ProjectPriceListParentItem::writeXml20(QXmlStreamWriter *writer) const {
+    writer->writeStartElement("PriceLists");
+    for( QList<PriceList*>::iterator i = m_d->priceListContainer.begin(); i != m_d->priceListContainer.end(); ++i ){
+        (*i)->writeXml20( writer );
     }
     writer->writeEndElement();
 }

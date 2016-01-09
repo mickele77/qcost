@@ -81,7 +81,7 @@ public:
     ProjectItem *getItem(const QModelIndex &index) const;
     bool canChildrenBeInserted(const QModelIndex &index);
 
-    void writeXml( QXmlStreamWriter * writer );
+    void writeXml(QXmlStreamWriter * writer , const QString &vers = QString("2.0"));
     void readXml( QXmlStreamReader * reader );
 
     void createSimpleProject( SimpleProjectType projType = ProjectEmpty );

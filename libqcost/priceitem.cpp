@@ -899,7 +899,7 @@ void PriceItem::setHasChildrenChanged(PriceItem *p, QList<int> indexes ) {
     }
 }
 
-void PriceItem::writeXml(QXmlStreamWriter *writer) {
+void PriceItem::writeXml10(QXmlStreamWriter *writer) {
     if( m_d->parentItem != NULL ){
         // se non e' l'elemento root
         writer->writeStartElement( "PriceItem" );
@@ -915,18 +915,50 @@ void PriceItem::writeXml(QXmlStreamWriter *writer) {
         }
 
         if( !hasChildren() ){
-            m_d->dataModel->writeXml( writer );
+            m_d->dataModel->writeXml10( writer );
         }
 
         for( QList<PriceItem *>::iterator i = m_d->childrenContainer.begin(); i != m_d->childrenContainer.end(); ++i){
-            (*i)->writeXml( writer );
+            (*i)->writeXml10( writer );
         }
 
         writer->writeEndElement();
     } else {
         // e' l'elemento root
         for( QList<PriceItem *>::iterator i = m_d->childrenContainer.begin(); i != m_d->childrenContainer.end(); ++i){
-            (*i)->writeXml( writer );
+            (*i)->writeXml10( writer );
+        }
+    }
+}
+
+void PriceItem::writeXml20(QXmlStreamWriter *writer) {
+    if( m_d->parentItem != NULL ){
+        // se non e' l'elemento root
+        writer->writeStartElement( "PriceItem" );
+        writer->writeAttribute( "id", QString::number(m_d->id) );
+        writer->writeAttribute( "code", m_d->code );
+        writer->writeAttribute( "inheritCodeFromParent", PriceItemPrivate::boolToQString( m_d->inheritCodeFromParent ) );
+        writer->writeAttribute( "shortDescription", m_d->shortDescription );
+        writer->writeAttribute( "inheritShortDescFromParent", PriceItemPrivate::boolToQString( m_d->inheritShortDescFromParent ) );
+        writer->writeAttribute( "longDescription", m_d->longDescription );
+        writer->writeAttribute( "inheritLongDescFromParent", PriceItemPrivate::boolToQString( m_d->inheritLongDescFromParent ) );
+        if( m_d->unitMeasure ){
+            writer->writeAttribute( "unitMeasure", QString::number(m_d->unitMeasure->id()) );
+        }
+
+        if( !hasChildren() ){
+            m_d->dataModel->writeXml20( writer );
+        }
+
+        for( QList<PriceItem *>::iterator i = m_d->childrenContainer.begin(); i != m_d->childrenContainer.end(); ++i){
+            (*i)->writeXml20( writer );
+        }
+
+        writer->writeEndElement();
+    } else {
+        // e' l'elemento root
+        for( QList<PriceItem *>::iterator i = m_d->childrenContainer.begin(); i != m_d->childrenContainer.end(); ++i){
+            (*i)->writeXml20( writer );
         }
     }
 }

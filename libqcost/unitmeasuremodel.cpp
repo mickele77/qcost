@@ -308,10 +308,26 @@ int UnitMeasureModel::findTag(const QString & tag) {
     return -1;
 }
 
-void UnitMeasureModel::writeXml(QXmlStreamWriter *writer) {
+void UnitMeasureModel::writeXml(QXmlStreamWriter *writer, const QString & vers) const {
+    if( (vers == "1.0") || (vers == "0.3") ){
+        writeXml10( writer );
+    } else if( vers == "2.0" ){
+        writeXml20( writer );
+    }
+}
+
+void UnitMeasureModel::writeXml10(QXmlStreamWriter *writer) const {
     writer->writeStartElement( "UnitMeasureModel" );
     for( QList<UnitMeasure *>::iterator i = m_d->unitMeasureModel.begin(); i != m_d->unitMeasureModel.end(); ++i ){
-        (*i)->writeXml( writer );
+        (*i)->writeXml10( writer );
+    }
+    writer->writeEndElement();
+}
+
+void UnitMeasureModel::writeXml20(QXmlStreamWriter *writer) const {
+    writer->writeStartElement( "UnitMeasureModel" );
+    for( QList<UnitMeasure *>::iterator i = m_d->unitMeasureModel.begin(); i != m_d->unitMeasureModel.end(); ++i ){
+        (*i)->writeXml20( writer );
     }
     writer->writeEndElement();
 }

@@ -673,8 +673,8 @@ void AccountingBill::writeXml(QXmlStreamWriter *writer) {
     }
     writer->writeAttribute( "priceDataSet", QString::number( m_d->rootItem->currentPriceDataSet() ) );
 
-    m_d->attributesModel->writeXml( writer );
-    m_d->varsModel->writeXml( writer );
+    m_d->attributesModel->writeXml20( writer );
+    m_d->varsModel->writeXml20( writer );
 
     m_d->rootItem->writeXml( writer );
 

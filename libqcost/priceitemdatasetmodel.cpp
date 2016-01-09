@@ -112,8 +112,9 @@ public:
     // rimuove un campo prezzo
     void insertPriceField(int row) { m_d->value.insert( row, 0.0 ); }
 
+    void writeXml10(QXmlStreamWriter *writer, bool isRootItem) const;
     // scrive su flusso XML
-    void writeXml(QXmlStreamWriter * writer , bool isRootItem);
+    void writeXml20(QXmlStreamWriter * writer , bool isRootItem) const;
     // legge attributi XML
     void loadFromXml(const QXmlStreamAttributes &attrs);
 
@@ -174,12 +175,35 @@ void PriceItemDataSet::setInheritProfitsFromRoot(bool newVal) {
     }
 }
 
-void PriceItemDataSet::writeXml(QXmlStreamWriter *writer, bool isRootItem ) {
+void PriceItemDataSet::writeXml10(QXmlStreamWriter *writer, bool isRootItem ) const {
     writer->writeStartElement( "PriceItemDataSet" );
 
     if( !isRootItem ){
         if( associateAP ){
-            associatedAP->writeXml( writer );
+            associatedAP->writeXml10( writer );
+        } else {
+            for( int i=0; i < m_d->value.size(); ++i ){
+                writer->writeAttribute( QString("value%1").arg(i), QString::number( m_d->value.at(i) ) );
+            }
+        }
+    }
+
+    if( !(m_d->inheritOverheadsFromRoot) ){
+        writer->writeAttribute( QString("overheads"), QString::number(m_d->overheads) );
+    }
+    if( !(m_d->inheritProfitsFromRoot) ){
+        writer->writeAttribute( QString("profits"), QString::number(m_d->profits) );
+    }
+
+    writer->writeEndElement();
+}
+
+void PriceItemDataSet::writeXml20(QXmlStreamWriter *writer, bool isRootItem ) const {
+    writer->writeStartElement( "PriceItemDataSet" );
+
+    if( !isRootItem ){
+        if( associateAP ){
+            associatedAP->writeXml20( writer );
         } else {
             for( int i=0; i < m_d->value.size(); ++i ){
                 writer->writeAttribute( QString("value%1").arg(i), QString::number( m_d->value.at(i) ) );
@@ -951,12 +975,22 @@ void PriceItemDataSetModel::setValueFromAP(int priceField, double v){
     }
 }
 
-void PriceItemDataSetModel::writeXml(QXmlStreamWriter *writer) {
+void PriceItemDataSetModel::writeXml10(QXmlStreamWriter *writer) const{
     for( QList<PriceItemDataSet *>::iterator i = m_d->dataSetContainer.begin(); i != m_d->dataSetContainer.end(); ++i){
         if( m_d->priceItem->parentItem() == NULL ){
-            (*i)->writeXml( writer, true );
+            (*i)->writeXml10( writer, true );
         } else {
-            (*i)->writeXml( writer, false );
+            (*i)->writeXml10( writer, false );
+        }
+    }
+}
+
+void PriceItemDataSetModel::writeXml20(QXmlStreamWriter *writer) const {
+    for( QList<PriceItemDataSet *>::iterator i = m_d->dataSetContainer.begin(); i != m_d->dataSetContainer.end(); ++i){
+        if( m_d->priceItem->parentItem() == NULL ){
+            (*i)->writeXml20( writer, true );
+        } else {
+            (*i)->writeXml20( writer, false );
         }
     }
 }

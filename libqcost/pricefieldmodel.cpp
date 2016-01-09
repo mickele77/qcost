@@ -777,7 +777,23 @@ bool PriceFieldModel::moveRows(const QModelIndex &sourceParent, int sourceRow, i
     return false;
 }
 
-void PriceFieldModel::writeXml(QXmlStreamWriter *writer) {
+void PriceFieldModel::writeXml(QXmlStreamWriter *writer, const QString & vers ) const {
+    if( (vers == "1.0") || (vers == "0.3") ){
+        writeXml10( writer );
+    } else if( vers == "2.0" ){
+        writeXml20( writer );
+    }
+}
+
+void PriceFieldModel::writeXml10(QXmlStreamWriter *writer ) const {
+    writer->writeStartElement( "PriceFieldModel" );
+    for( QList<PriceFieldData *>::iterator i = m_d->fieldsList.begin(); i != m_d->fieldsList.end(); ++i ){
+        (*i)->writeXml( writer, m_d->parser );
+    }
+    writer->writeEndElement();
+}
+
+void PriceFieldModel::writeXml20(QXmlStreamWriter *writer) const {
     writer->writeStartElement( "PriceFieldModel" );
     for( QList<PriceFieldData *>::iterator i = m_d->fieldsList.begin(); i != m_d->fieldsList.end(); ++i ){
         (*i)->writeXml( writer, m_d->parser );
@@ -794,16 +810,16 @@ void PriceFieldModel::readXml(QXmlStreamReader *reader) {
         if( (reader->name().toString().toUpper() == "PRICEFIELDDATA") &&
                 reader->isStartElement() ) {
             if( firstField ) {
-                loadFromXml( m_d->fieldsList.size() - 1, reader->attributes() );
+                loadFromXml20( m_d->fieldsList.size() - 1, reader->attributes() );
                 firstField = false;
             } else if(appendRow()){
-                loadFromXml( m_d->fieldsList.size() - 1, reader->attributes() );
+                loadFromXml20( m_d->fieldsList.size() - 1, reader->attributes() );
             }
         }
     }
 }
 
-void PriceFieldModel::loadFromXml(int pf, const QXmlStreamAttributes &attrs) {
+void PriceFieldModel::loadFromXml20(int pf, const QXmlStreamAttributes &attrs) {
     if( attrs.hasAttribute( "priceName" ) ){
         setPriceName( pf, attrs.value( "priceName" ).toString() );
     }

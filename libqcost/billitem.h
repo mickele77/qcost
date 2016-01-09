@@ -117,7 +117,8 @@ public:
 
     void appendConnectedItems( QList<BillItem *> * itemsList );
 
-    void writeXml( QXmlStreamWriter * writer );
+    void writeXml10(QXmlStreamWriter *writer) const;
+    void writeXml20( QXmlStreamWriter * writer ) const;
     void readXmlTmp(QXmlStreamReader *reader);
     void readFromXmlTmp(PriceList *priceList , AttributesModel *billAttrModel);
 

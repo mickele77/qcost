@@ -291,10 +291,18 @@ void MeasuresModel::setUnitMeasure(UnitMeasure *ump) {
     }
 }
 
-void MeasuresModel::writeXml(QXmlStreamWriter *writer) {
+void MeasuresModel::writeXml10(QXmlStreamWriter *writer) const {
+    writer->writeStartElement( "BillItemMeasuresModel" );
+    for( QList<Measure *>::iterator i = m_d->linesContainer.begin(); i != m_d->linesContainer.end(); ++i ){
+        (*i)->writeXml10( writer );
+    }
+    writer->writeEndElement();
+}
+
+void MeasuresModel::writeXml20(QXmlStreamWriter *writer) const {
     writer->writeStartElement( "MeasuresModel" );
     for( QList<Measure *>::iterator i = m_d->linesContainer.begin(); i != m_d->linesContainer.end(); ++i ){
-        (*i)->writeXml( writer );
+        (*i)->writeXml20( writer );
     }
     writer->writeEndElement();
 }

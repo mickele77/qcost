@@ -1465,7 +1465,7 @@ void AccountingBillItem::writeXml(QXmlStreamWriter *writer) {
         }
 
         if( m_d->measuresModel != NULL ){
-            m_d->measuresModel->writeXml( writer );
+            m_d->measuresModel->writeXml20( writer );
         } else {
             writer->writeAttribute( "quantity", QString::number( m_d->quantity ) );
         }

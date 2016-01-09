@@ -51,7 +51,8 @@ public:
     double applyPrecision( double );
     static double applyPrecision(double value, int precision);
 
-    void writeXml( QXmlStreamWriter * writer );
+    void writeXml10( QXmlStreamWriter * writer ) const;
+    void writeXml20( QXmlStreamWriter * writer ) const;
     void loadFromXml( const QXmlStreamAttributes & attrs );
 
 signals:
@@ -61,6 +62,7 @@ signals:
 
 private:
     UnitMeasurePrivate * m_d;
+    void writeXml( QXmlStreamWriter * writer ) const;
 };
 
 #endif // UNITMEASURE_H

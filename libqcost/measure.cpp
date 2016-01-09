@@ -419,7 +419,7 @@ void Measure::setFormula( const QString & nf, bool connItemFromId ){
     }
 }
 
-QString Measure::effectiveFormula(){
+QString Measure::effectiveFormula() const{
     QString effFormula = m_d->formula;
     if( m_d->billItem != NULL ){
         QRegExp rx("(\\[|\\])");
@@ -568,7 +568,18 @@ QString Measure::quantityStr() const{
     }
 }
 
-void Measure::writeXml( QXmlStreamWriter * writer ){
+void Measure::writeXml10( QXmlStreamWriter * writer ) const {
+    writer->writeStartElement( "BillItemMeasure" );
+    writer->writeAttribute( "comment", m_d->comment );
+    QString f = effectiveFormula();
+    if( m_d->parser->decimalSeparator() != "." ){
+        f.replace( m_d->parser->decimalSeparator(), ".");
+    }
+    writer->writeAttribute( "formula", f );
+    writer->writeEndElement();
+}
+
+void Measure::writeXml20( QXmlStreamWriter * writer ) const {
     writer->writeStartElement( "Measure" );
     writer->writeAttribute( "comment", comment() );
     QString f = formula();
@@ -578,7 +589,6 @@ void Measure::writeXml( QXmlStreamWriter * writer ){
     writer->writeAttribute( "formula", f );
     writer->writeEndElement();
 }
-
 
 void Measure::loadFromXmlTmp() {
     if( m_d->tmpAttrs.hasAttribute( "comment" ) ){

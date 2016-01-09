@@ -86,7 +86,7 @@ public:
     bool clear();
     bool moveRows(const QModelIndex &sourceParent, int sourceRow, int count, const QModelIndex &destinationParent, int destinationRow);
 
-    void writeXml( QXmlStreamWriter * writer );
+    void writeXml(QXmlStreamWriter * writer , const QString &vers) const;
     void readXml(QXmlStreamReader *reader);
 
     double calcFormula( bool * ok, int field, QList<double> fieldValues, double overheads, double profits );
@@ -110,7 +110,9 @@ signals:
 
 private:
     PriceFieldModelPrivate * m_d;
-    void loadFromXml(int pf, const QXmlStreamAttributes &attrs);
+    void loadFromXml20(int pf, const QXmlStreamAttributes &attrs);
+    void writeXml10(QXmlStreamWriter *writer) const;
+    void writeXml20(QXmlStreamWriter *writer) const;
 };
 
 

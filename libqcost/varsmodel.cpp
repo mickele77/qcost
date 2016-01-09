@@ -205,7 +205,7 @@ bool VarsModel::append( int count ){
     return insertRows( m_d->varsContainer.size(), count );
 }
 
-void VarsModel::writeXml(QXmlStreamWriter *writer) {
+void VarsModel::writeXml20(QXmlStreamWriter *writer) {
     writer->writeStartElement( "VarsModel" );
     for( QList<Var *>::iterator i = m_d->varsContainer.begin(); i != m_d->varsContainer.end(); ++i ){
         (*i)->writeXml( writer );

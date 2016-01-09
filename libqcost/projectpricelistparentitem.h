@@ -61,7 +61,7 @@ public:
     PriceList * priceList( int i );
     PriceList * priceListId( unsigned int dd );
 
-    void writeXml( QXmlStreamWriter * writer );
+    void writeXml(QXmlStreamWriter * writer , const QString &vers) const;
     void readXml(QXmlStreamReader *reader, UnitMeasureModel *uml);
 
 signals:
@@ -82,6 +82,8 @@ private:
     ProjectPriceListParentItemPrivate * m_d;
 
     bool removeChildrenUnsecure(int position, int count = 1);
+    void writeXml10(QXmlStreamWriter *writer) const;
+    void writeXml20(QXmlStreamWriter *writer) const;
 };
 
 #endif // PROJECTPRICELISTPARENTITEM_H
