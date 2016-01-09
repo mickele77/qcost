@@ -46,7 +46,7 @@ public:
 
     unsigned int id();
 
-    void writeXml( QXmlStreamWriter * writer );
+    void writeXml10( QXmlStreamWriter * writer );
     void loadFromXml(const QXmlStreamAttributes &attrs);
 
 private:

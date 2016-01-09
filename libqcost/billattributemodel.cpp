@@ -222,10 +222,10 @@ BillAttribute *BillAttributeModel::attributeId(unsigned int id) {
     return NULL;
 }
 
-void BillAttributeModel::writeXml10(QXmlStreamWriter *writer) {
+void BillAttributeModel::writeXml10(QXmlStreamWriter *writer) const {
     writer->writeStartElement( "BillAttributeModel" );
     for( QList<BillAttribute *>::iterator i = m_d->attributeContainer.begin(); i != m_d->attributeContainer.end(); ++i ){
-        (*i)->writeXml( writer );
+        (*i)->writeXml10( writer );
     }
     writer->writeEndElement();
 }

@@ -63,7 +63,7 @@ unsigned int BillAttribute::id() {
     return m_d->id;
 }
 
-void BillAttribute::writeXml(QXmlStreamWriter *writer) {
+void BillAttribute::writeXml10(QXmlStreamWriter *writer) {
     writer->writeStartElement( "BillAttribute" );
     writer->writeAttribute( "id", QString::number( m_d->id ) );
     writer->writeAttribute( "name", m_d->name );
