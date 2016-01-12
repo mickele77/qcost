@@ -122,13 +122,13 @@ public:
     void readXml10(QXmlStreamReader *reader, ProjectPriceListParentItem * priceLists);
     void readXmlTmp10(QXmlStreamReader *reader);
     void loadFromXml10(const QXmlStreamAttributes &attrs, ProjectPriceListParentItem * priceLists);
-    void loadTmpData( PriceList *priceList );
+    void loadTmpData10( PriceList *priceList );
 
     void nextId();
     unsigned int id();
 
-    void loadTmpData( ProjectPriceListParentItem *priceLists );
-    void loadFromXmlTmp(const QXmlStreamAttributes &attrs);
+    void loadTmpData10( ProjectPriceListParentItem *priceLists );
+    void loadFromXmlTmp10(const QXmlStreamAttributes &attrs);
     void setTmpData(ProjectPriceListParentItem *priceLists);
 
     QList<PriceItem *> connectedPriceItems();

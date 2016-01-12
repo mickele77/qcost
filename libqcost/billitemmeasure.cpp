@@ -16,7 +16,7 @@ public:
         comment(""),
         formula(""),
         quantity(0.0){
-    };
+    }
     QString	toString(double i, char f = 'g', int prec = 6) const{
         if( parser != NULL ){
             return parser->toString( i, f, prec );
@@ -120,7 +120,6 @@ void BillItemMeasure::writeXml10( QXmlStreamWriter * writer ){
     writer->writeAttribute( "formula", f );
     writer->writeEndElement();
 }
-
 
 void BillItemMeasure::loadFromXml10(const QXmlStreamAttributes &attrs) {
     if( attrs.hasAttribute( "comment" ) ){

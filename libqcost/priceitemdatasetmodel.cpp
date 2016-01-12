@@ -115,7 +115,7 @@ public:
     // scrive su flusso XML
     void writeXml10(QXmlStreamWriter * writer , bool isRootItem);
     // legge attributi XML
-    void loadFromXml(const QXmlStreamAttributes &attrs);
+    void loadFromXml10(const QXmlStreamAttributes &attrs);
 
 private:
     PriceItemDataSetPrivate * m_d;
@@ -197,7 +197,7 @@ void PriceItemDataSet::writeXml10(QXmlStreamWriter *writer, bool isRootItem ) {
     writer->writeEndElement();
 }
 
-void PriceItemDataSet::loadFromXml(const QXmlStreamAttributes &attrs ){
+void PriceItemDataSet::loadFromXml10(const QXmlStreamAttributes &attrs ){
     for( int i=0; i<attrs.size(); ++i){
         QString nStr = attrs.at(i).qualifiedName().toString().toUpper();
         QString strVal("VALUE");
@@ -399,7 +399,7 @@ bool PriceItemDataSetModel::appendPriceDataSet(int count) {
 bool PriceItemDataSetModel::appendPriceDataSet(const QXmlStreamAttributes &attrs) {
     bool ret = insertPriceDataSet( m_d->dataSetContainer.size(), 1 );
     if( ret ){
-        m_d->dataSetContainer.last()->loadFromXml( attrs );
+        m_d->dataSetContainer.last()->loadFromXml10( attrs );
     }
     return ret;
 }
@@ -963,14 +963,14 @@ void PriceItemDataSetModel::writeXml10(QXmlStreamWriter *writer) {
 
 void PriceItemDataSetModel::loadXmlPriceDataSet10( int priceDataSet, const QXmlStreamAttributes &attrs) {
     if( (priceDataSet > -1) && (priceDataSet < m_d->dataSetContainer.size()) ){
-        m_d->dataSetContainer.at(priceDataSet)->loadFromXml( attrs );
+        m_d->dataSetContainer.at(priceDataSet)->loadFromXml10( attrs );
     }
 }
 
 void PriceItemDataSetModel::loadTmpData( ProjectPriceListParentItem *priceLists ) {
     for( QList<PriceItemDataSet *>::iterator i = m_d->dataSetContainer.begin(); i != m_d->dataSetContainer.end(); ++i){
         if( (*i)->associateAP ){
-            (*i)->associatedAP->loadTmpData( priceLists );
+            (*i)->associatedAP->loadTmpData10( priceLists );
         }
     }
 }

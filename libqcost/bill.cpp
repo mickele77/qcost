@@ -535,7 +535,7 @@ void Bill::readXml10(QXmlStreamReader *reader, ProjectPriceListParentItem *price
 
 void Bill::readXmlTmp10(QXmlStreamReader *reader ) {
     if(reader->isStartElement() && reader->name().toString().toUpper() == "BILL"){
-        loadFromXmlTmp( reader->attributes() );
+        loadFromXmlTmp10( reader->attributes() );
     }
     while( (!reader->atEnd()) &&
            (!reader->hasError()) &&
@@ -564,7 +564,7 @@ void Bill::loadFromXml10(const QXmlStreamAttributes &attrs, ProjectPriceListPare
     }
 }
 
-void Bill::loadFromXmlTmp(const QXmlStreamAttributes &attrs) {
+void Bill::loadFromXmlTmp10(const QXmlStreamAttributes &attrs) {
     for( QXmlStreamAttributes::const_iterator attrIter=attrs.begin(); attrIter != attrs.end(); ++attrIter ){
         QString nameUp = attrIter->name().toString().toUpper();
         if( nameUp == "ID" ){
@@ -614,7 +614,7 @@ void Bill::writeODTSummaryOnTable(QTextCursor *cursor,
     m_d->rootItem->writeODTSummaryOnTable(cursor, prItemsOption, fieldsToPrint, groupPrAm, writeDetails );
 }
 
-void Bill::loadTmpData(ProjectPriceListParentItem * priceLists) {
+void Bill::loadTmpData10(ProjectPriceListParentItem * priceLists) {
     m_d->priceList = priceLists->priceListId( m_d->priceListIdTmp );
     m_d->rootItem->loadTmpData10( m_d->priceList, m_d->attributeModel );
 }
