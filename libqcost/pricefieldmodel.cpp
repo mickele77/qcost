@@ -801,7 +801,33 @@ void PriceFieldModel::writeXml20(QXmlStreamWriter *writer) const {
     writer->writeEndElement();
 }
 
-void PriceFieldModel::readXml(QXmlStreamReader *reader) {
+void PriceFieldModel::readXml(QXmlStreamReader *reader, const QString & vers ) {
+    if( (vers == "0.3") || (vers == "1.0") ){
+        readXml10(reader);
+    } else if( "2.0" ){
+        readXml20(reader);
+    }
+}
+
+void PriceFieldModel::readXml10(QXmlStreamReader *reader ) {
+    bool firstField = true;
+    while( !reader->atEnd() &&
+           !reader->hasError() &&
+           !(reader->isEndElement() && reader->name().toString().toUpper() == "PRICEFIELDMODEL") ){
+        reader->readNext();
+        if( (reader->name().toString().toUpper() == "PRICEFIELDDATA") &&
+                reader->isStartElement() ) {
+            if( firstField ) {
+                loadFromXml10( m_d->fieldsList.size() - 1, reader->attributes() );
+                firstField = false;
+            } else if(appendRow()){
+                loadFromXml10( m_d->fieldsList.size() - 1, reader->attributes() );
+            }
+        }
+    }
+}
+
+void PriceFieldModel::readXml20(QXmlStreamReader *reader ) {
     bool firstField = true;
     while( !reader->atEnd() &&
            !reader->hasError() &&
@@ -816,6 +842,34 @@ void PriceFieldModel::readXml(QXmlStreamReader *reader) {
                 loadFromXml20( m_d->fieldsList.size() - 1, reader->attributes() );
             }
         }
+    }
+}
+
+void PriceFieldModel::loadFromXml10(int pf, const QXmlStreamAttributes &attrs) {
+    if( attrs.hasAttribute( "priceName" ) ){
+        setPriceName( pf, attrs.value( "priceName" ).toString() );
+    }
+    if( attrs.hasAttribute( "amountName" ) ){
+        setAmountName( pf, attrs.value( "amountName" ).toString() );
+    }
+    if( attrs.hasAttribute( "unitMeasure" ) ){
+        setUnitMeasure( pf, attrs.value( "unitMeasure" ).toString() );
+    }
+    if( attrs.hasAttribute( "precision" ) ){
+        setPrecision( pf, attrs.value( "precision" ).toInt() );
+    }
+    if( attrs.hasAttribute( "applyFormula" ) ){
+        setApplyFormula( pf, PriceFieldData::fromQStringToBool( attrs.value( "applyFormula" ).toString() ) );
+    }
+    if( attrs.hasAttribute( "formula" ) ){
+        QString f = attrs.value( "formula" ).toString();
+        if( m_d->parser != NULL ){
+            f.replace( ".", m_d->parser->decimalSeparator() );
+        }
+        setFormula( pf, f );
+    }
+    if( attrs.hasAttribute( "fieldType" ) ){
+        setFieldType( pf, PriceFieldData::fromQStringToFieldType( attrs.value( "fieldType" ).toString() ), false );
     }
 }
 

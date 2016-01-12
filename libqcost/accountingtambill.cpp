@@ -602,7 +602,7 @@ unsigned int AccountingTAMBill::id() {
     return m_d->id;
 }
 
-void AccountingTAMBill::writeXml(QXmlStreamWriter *writer) {
+void AccountingTAMBill::writeXml20(QXmlStreamWriter *writer) const {
     writer->writeStartElement( "AccountingTAMBill" );
     writer->writeAttribute( "id", QString::number(m_d->id) );
     writer->writeAttribute( "name", m_d->name );
@@ -639,7 +639,7 @@ void AccountingTAMBill::writeXml(QXmlStreamWriter *writer) {
 
     m_d->attributesModel->writeXml20( writer );
 
-    m_d->rootItem->writeXml( writer );
+    m_d->rootItem->writeXml20( writer );
 
     writer->writeEndElement();
 }

@@ -531,7 +531,6 @@ void Bill::writeXml10(QXmlStreamWriter *writer) {
     writer->writeAttribute( "priceDataSet", QString::number( m_d->rootItem->currentPriceDataSet() ) );
 
     m_d->attributesModel->writeXml10( writer );
-
     m_d->rootItem->writeXml10( writer );
 
     writer->writeEndElement();
@@ -549,7 +548,6 @@ void Bill::writeXml20(QXmlStreamWriter *writer) {
 
     m_d->attributesModel->writeXml20( writer );
     m_d->varsModel->writeXml20( writer );
-
     m_d->rootItem->writeXml20( writer );
 
     writer->writeEndElement();

@@ -105,8 +105,8 @@ void Project::createSimpleProject(SimpleProjectType projType){
         m_d->billParentItem->insertChildren( 0 );
         m_d->billParentItem->bill(0)->insertStandardAttributes();
         m_d->billParentItem->bill(0)->setPriceList( m_d->priceListParentItem->priceList(0) );
-//        m_d->accountingParentItem->accountingBills()->insertChildren( 0 );
-//        m_d->accountingParentItem->accountingBills()->bill(0)->setPriceList( m_d->priceListParentItem->priceList(0) );
+        //        m_d->accountingParentItem->accountingBills()->insertChildren( 0 );
+        //        m_d->accountingParentItem->accountingBills()->bill(0)->setPriceList( m_d->priceListParentItem->priceList(0) );
         m_d->accountingParentItem->timeAndMaterialBill()->setPriceList( m_d->priceListParentItem->priceList(0) );
     } else if( projType == ProjectHumanNetNoDiscount ){
         clear();
@@ -116,8 +116,8 @@ void Project::createSimpleProject(SimpleProjectType projType){
         m_d->billParentItem->insertChildren( 0 );
         m_d->billParentItem->bill(0)->insertStandardAttributes();
         m_d->billParentItem->bill(0)->setPriceList( m_d->priceListParentItem->priceList(0) );
-  //      m_d->accountingParentItem->accountingBills()->insertChildren( 0 );
-  //      m_d->accountingParentItem->accountingBills()->bill(0)->setPriceList( m_d->priceListParentItem->priceList(0) );
+        //      m_d->accountingParentItem->accountingBills()->insertChildren( 0 );
+        //      m_d->accountingParentItem->accountingBills()->bill(0)->setPriceList( m_d->priceListParentItem->priceList(0) );
         m_d->accountingParentItem->timeAndMaterialBill()->setPriceList( m_d->priceListParentItem->priceList(0) );
     }
 }
@@ -382,7 +382,7 @@ void Project::writeXml(QXmlStreamWriter *writer, const QString &vers){
     m_d->unitMeasureModel->writeXml( writer, vers );
     m_d->priceListParentItem->writeXml( writer, vers );
     m_d->billParentItem->writeXml( writer, vers );
-    m_d->accountingParentItem->writeXml( writer );
+    m_d->accountingParentItem->writeXml( writer, vers );
 
     writer->writeEndElement();
     writer->writeEndDocument();
@@ -395,19 +395,48 @@ void Project::readXml(QXmlStreamReader *reader) {
            (!reader->hasError())){
         reader->readNext();
     }
-    while( (!reader->atEnd()) &&
-           (!reader->hasError())){
-        reader->readNext();
-        if( reader->isStartElement() && reader->name().toString().toUpper() == "ACCOUNTING"){
-            m_d->accountingParentItem->readXml( reader, m_d->priceListParentItem );
-        } else if( reader->isStartElement() && reader->name().toString().toUpper() == "BILLS"){
-            m_d->billParentItem->readXml( reader, m_d->priceListParentItem );
-        } else if( reader->isStartElement() && reader->name().toString().toUpper() == "PRICELISTS"){
-            m_d->priceListParentItem->readXml( reader, m_d->unitMeasureModel );
-        } else if( reader->isStartElement() && reader->name().toString().toUpper() == "UNITMEASUREMODEL"){
-            m_d->unitMeasureModel->readXml( reader );
-        } else if( reader->isStartElement() && reader->name().toString().toUpper() == "PRICEFIELDMODEL"){
-            m_d->priceFieldModel->readXml( reader );
+    if(reader->isStartElement() && reader->name().toString().toUpper() == "QCOSTPROJECT"){
+        QString vers = "1.0";
+        QXmlStreamAttributes attrs = reader->attributes();
+        for( QXmlStreamAttributes::const_iterator attrIter = attrs.begin(); attrIter != attrs.end(); ++attrIter ){
+            if( attrIter->name().toString().toUpper() == "VERSION" ){
+                vers = attrIter->value().toString();
+            }
+        }
+        if( (vers == "0.3") || (vers == "1.0") ){
+            while( (!reader->atEnd()) &&
+                   (!reader->hasError())){
+                reader->readNext();
+                if( reader->isStartElement() ){
+                    QString tagUp = reader->name().toString().toUpper();
+                    if( tagUp == "BILLS"){
+                        m_d->billParentItem->readXml( reader, m_d->priceListParentItem );
+                    } else if( tagUp == "PRICELISTS"){
+                        m_d->priceListParentItem->readXml( reader, m_d->unitMeasureModel );
+                    } else if( tagUp == "UNITMEASUREMODEL"){
+                        m_d->unitMeasureModel->readXml( reader, vers );
+                    } else if( tagUp == "PRICEFIELDMODEL"){
+                        m_d->priceFieldModel->readXml( reader, vers );
+                    }
+                }
+            }
+        }
+        if( vers == "2.0" ){
+            while( (!reader->atEnd()) &&
+                   (!reader->hasError())){
+                reader->readNext();
+                if( reader->isStartElement() && reader->name().toString().toUpper() == "ACCOUNTING"){
+                    m_d->accountingParentItem->readXml( reader, m_d->priceListParentItem );
+                } else if( reader->isStartElement() && reader->name().toString().toUpper() == "BILLS"){
+                    m_d->billParentItem->readXml( reader, m_d->priceListParentItem );
+                } else if( reader->isStartElement() && reader->name().toString().toUpper() == "PRICELISTS"){
+                    m_d->priceListParentItem->readXml( reader, m_d->unitMeasureModel );
+                } else if( reader->isStartElement() && reader->name().toString().toUpper() == "UNITMEASUREMODEL"){
+                    m_d->unitMeasureModel->readXml( reader, vers );
+                } else if( reader->isStartElement() && reader->name().toString().toUpper() == "PRICEFIELDMODEL"){
+                    m_d->priceFieldModel->readXml( reader, vers );
+                }
+            }
         }
     }
 }

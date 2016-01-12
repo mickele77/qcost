@@ -149,8 +149,8 @@ public:
     bool isUsingPriceItem( PriceItem * p );
     bool isUsingPriceList( PriceList * pl );
 
-    void writeXml( QXmlStreamWriter * writer );
-    void readXml(QXmlStreamReader *reader, ProjectPriceListParentItem * priceLists);
+    void writeXml20( QXmlStreamWriter * writer ) const;
+    void readXml( QXmlStreamReader *reader, ProjectPriceListParentItem * priceLists );
 
     void nextId();
     unsigned int id();

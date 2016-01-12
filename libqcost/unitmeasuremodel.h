@@ -62,7 +62,7 @@ public:
     void clear();
 
     void writeXml(QXmlStreamWriter * writer , const QString &vers) const;
-    void readXml( QXmlStreamReader * reader );
+    void readXml(QXmlStreamReader * reader , const QString &vers);
 
 signals:
     void removeSignal( int row, int count );
@@ -74,6 +74,7 @@ private:
     void clearPrivate();
     void writeXml10(QXmlStreamWriter *writer) const;
     void writeXml20(QXmlStreamWriter *writer) const;
+    void readXml10(QXmlStreamReader *reader);
 };
 
 #endif // UNITMEASUREMODEL_H

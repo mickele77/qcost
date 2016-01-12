@@ -220,10 +220,10 @@ bool AccountingLSBills::isUsingPriceItem(PriceItem *p) {
     return false;
 }
 
-void AccountingLSBills::writeXml(QXmlStreamWriter *writer) {
+void AccountingLSBills::writeXml20(QXmlStreamWriter *writer) const {
     writer->writeStartElement( "AccountingLSBills");
     for( QList<AccountingLSBill *>::iterator i = m_d->billContainer.begin(); i != m_d->billContainer.end(); ++i ){
-        (*i)->writeXml( writer );
+        (*i)->writeXml20( writer );
     }
     writer->writeEndElement();
 }

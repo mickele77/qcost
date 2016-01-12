@@ -1434,11 +1434,11 @@ Qt::ItemFlags AccountingBillItem::flags(int column) const {
     return Qt::ItemIsSelectable | Qt::ItemIsEnabled;
 }
 
-void AccountingBillItem::writeXml(QXmlStreamWriter *writer) {
+void AccountingBillItem::writeXml20(QXmlStreamWriter *writer) {
 
     if( m_d->itemType == Root ){
         for( QList<AccountingBillItem *>::iterator i = m_d->childrenContainer.begin(); i != m_d->childrenContainer.end(); ++i){
-            (*i)->writeXml( writer );
+            (*i)->writeXml20( writer );
         }
     } else if( m_d->itemType == Payment ){
         writer->writeStartElement( "AccountingBillItem" );
@@ -1448,7 +1448,7 @@ void AccountingBillItem::writeXml(QXmlStreamWriter *writer) {
             writer->writeAttribute( "attributes", attrs );
         }
         for( QList<AccountingBillItem *>::iterator i = m_d->childrenContainer.begin(); i != m_d->childrenContainer.end(); ++i){
-            (*i)->writeXml( writer );
+            (*i)->writeXml20( writer );
         }
         writer->writeEndElement();
     } else if( m_d->itemType == PPU ){

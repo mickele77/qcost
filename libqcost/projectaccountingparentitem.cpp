@@ -227,11 +227,16 @@ bool ProjectAccountingParentItem::isUsingPriceItem(PriceItem *p) {
     return false;
 }
 
-void ProjectAccountingParentItem::writeXml(QXmlStreamWriter *writer) {
+void ProjectAccountingParentItem::writeXml(QXmlStreamWriter *writer, const QString & vers ) const {
+    if( vers == "2.0" ){
+        writeXml20( writer );
+    }
+}
+void ProjectAccountingParentItem::writeXml20(QXmlStreamWriter *writer) const {
     writer->writeStartElement( "Accounting");
-    m_d->measuresBill->writeXml( writer );
-    m_d->lumpSumBills->writeXml( writer );
-    m_d->timeAndMaterialBill->writeXml( writer );
+    m_d->lumpSumBills->writeXml20( writer );
+    m_d->timeAndMaterialBill->writeXml20( writer );
+    m_d->measuresBill->writeXml20( writer );
     writer->writeEndElement();
 }
 

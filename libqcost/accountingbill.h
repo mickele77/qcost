@@ -164,7 +164,7 @@ public:
     void setBillDateEnd( const QDate & newDate, int position);
     void setBillDateBegin( const QDate & newDate, int position);
 
-    void writeXml( QXmlStreamWriter * writer );
+    void writeXml20( QXmlStreamWriter * writer ) const;
     void readXml(QXmlStreamReader *reader, ProjectPriceListParentItem *priceLists, AccountingLSBills *lsBills, AccountingTAMBill *tamBill);
     void setTmpData(ProjectPriceListParentItem *priceLists);
 

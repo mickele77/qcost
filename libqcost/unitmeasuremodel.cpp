@@ -332,7 +332,15 @@ void UnitMeasureModel::writeXml20(QXmlStreamWriter *writer) const {
     writer->writeEndElement();
 }
 
-void UnitMeasureModel::readXml(QXmlStreamReader *reader) {
+void UnitMeasureModel::readXml(QXmlStreamReader *reader, const QString & vers ) {
+    if( (vers == "1.0") || (vers == "0.3") ){
+        readXml10( reader );
+    } else if( vers == "2.0") {
+        readXml10( reader );
+    }
+}
+
+void UnitMeasureModel::readXml10(QXmlStreamReader *reader ) {
     bool thereIsSomething = false;
     while( !reader->atEnd() &&
            !reader->hasError() &&

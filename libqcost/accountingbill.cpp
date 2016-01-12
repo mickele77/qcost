@@ -639,7 +639,7 @@ void AccountingBill::setBillDateBegin(const QDate &newDate, int position) {
     }
 }
 
-void AccountingBill::writeXml(QXmlStreamWriter *writer) {
+void AccountingBill::writeXml20(QXmlStreamWriter *writer) const {
     writer->writeStartElement( "AccountingBill" );
     writer->writeAttribute( "discount", QString::number(m_d->rootItem->discount()) );
 
@@ -676,7 +676,7 @@ void AccountingBill::writeXml(QXmlStreamWriter *writer) {
     m_d->attributesModel->writeXml20( writer );
     m_d->varsModel->writeXml20( writer );
 
-    m_d->rootItem->writeXml( writer );
+    m_d->rootItem->writeXml20( writer );
 
     writer->writeEndElement();
 }

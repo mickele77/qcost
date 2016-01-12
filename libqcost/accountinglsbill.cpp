@@ -592,7 +592,7 @@ unsigned int AccountingLSBill::id() {
     return m_d->id;
 }
 
-void AccountingLSBill::writeXml(QXmlStreamWriter *writer) {
+void AccountingLSBill::writeXml20(QXmlStreamWriter *writer) {
     writer->writeStartElement( "AccountingLSBill" );
     writer->writeAttribute( "id", QString::number(m_d->id) );
     writer->writeAttribute( "name", m_d->name );
