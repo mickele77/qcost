@@ -389,19 +389,21 @@ void Project::readXml(QXmlStreamReader *reader) {
                 vers = attrIter->value().toString();
             }
         }
-        while( (!reader->atEnd()) &&
-               (!reader->hasError())){
-            reader->readNext();
-            if( reader->isStartElement() ){
-                QString tagUp = reader->name().toString().toUpper();
-                if( tagUp == "BILLS"){
-                    m_d->billParentItem->readXml( reader, m_d->priceListParentItem, vers );
-                } else if( tagUp == "PRICELISTS"){
-                    m_d->priceListParentItem->readXml( reader, m_d->unitMeasureModel, vers );
-                } else if( tagUp == "UNITMEASUREMODEL"){
-                    m_d->unitMeasureModel->readXml( reader, vers );
-                } else if( tagUp == "PRICEFIELDMODEL"){
-                    m_d->priceFieldModel->readXml( reader, vers );
+        if( (vers == "0.3") || (vers == "1.0") ){
+            while( (!reader->atEnd()) &&
+                   (!reader->hasError())){
+                reader->readNext();
+                if( reader->isStartElement() ){
+                    QString tagUp = reader->name().toString().toUpper();
+                    if( tagUp == "BILLS"){
+                        m_d->billParentItem->readXml( reader, m_d->priceListParentItem, vers );
+                    } else if( tagUp == "PRICELISTS"){
+                        m_d->priceListParentItem->readXml( reader, m_d->unitMeasureModel, vers );
+                    } else if( tagUp == "UNITMEASUREMODEL"){
+                        m_d->unitMeasureModel->readXml( reader, vers );
+                    } else if( tagUp == "PRICEFIELDMODEL"){
+                        m_d->priceFieldModel->readXml( reader, vers );
+                    }
                 }
             }
         }
