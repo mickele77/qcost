@@ -165,7 +165,7 @@ public:
     void setBillDateBegin( const QDate & newDate, int position);
 
     void writeXml20( QXmlStreamWriter * writer ) const;
-    void readXml(QXmlStreamReader *reader, ProjectPriceListParentItem *priceLists, AccountingLSBills *lsBills, AccountingTAMBill *tamBill);
+    void readXml20(QXmlStreamReader *reader, ProjectPriceListParentItem *priceLists, AccountingLSBills *lsBills, AccountingTAMBill *tamBill);
     void setTmpData(ProjectPriceListParentItem *priceLists);
 
     QList<PriceItem *> connectedPriceItems();
@@ -257,7 +257,7 @@ private slots:
 private:
     AccountingBillPrivate * m_d;
 
-    void loadXml( const QXmlStreamAttributes &attrs,
+    void loadXml20( const QXmlStreamAttributes &attrs,
                   ProjectPriceListParentItem * priceLists);
 };
 

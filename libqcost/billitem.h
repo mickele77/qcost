@@ -118,9 +118,12 @@ public:
     void appendConnectedItems( QList<BillItem *> * itemsList );
 
     void writeXml10(QXmlStreamWriter *writer) const;
+    void readXml10(QXmlStreamReader *reader, PriceList *priceList, AttributesModel *billAttrModel);
+    void readXmlTmp10(QXmlStreamReader *reader);
+
     void writeXml20( QXmlStreamWriter * writer ) const;
-    void readXmlTmp(QXmlStreamReader *reader);
-    void readFromXmlTmp(PriceList *priceList , AttributesModel *billAttrModel);
+    void readXmlTmp20(QXmlStreamReader *reader);
+    void readFromXmlTmp20(PriceList *priceList , AttributesModel *billAttrModel);
 
     bool containsAttribute( Attribute * attr );
     bool containsAttributeInherited( Attribute * attr );
@@ -149,6 +152,7 @@ public:
                                        bool groupPrAm = false );
 
 
+    void loadTmpData10(PriceList *priceList, AttributesModel *billAttrModel);
 public slots:
     void setCurrentPriceDataSet( int );
     void setName(const QString &newName);
@@ -189,7 +193,8 @@ private:
 
     void appendUsedPriceItems( QList<PriceItem *> * usedPriceItems ) const;
 
-    void loadXml(const QXmlStreamAttributes &attrs, PriceList *priceList, AttributesModel * billAttrModel);
+    void loadXml10(const QXmlStreamAttributes &attrs, PriceList *priceList, AttributesModel *billAttrModel);
+    void loadXml20(const QXmlStreamAttributes &attrs, PriceList *priceList, AttributesModel * billAttrModel);
 
     void writeODTSummaryLine(PriceItem * priceItem,
                              QTextCursor *cursor,
@@ -280,6 +285,7 @@ private:
     QList<Attribute *> allAttributes();
     QList<Attribute *> directAttributes();
     QList<Attribute *> inheritedAttributes();
+    void loadFromXmlTmp10(const QXmlStreamAttributes &attrs);
 private slots:
     void emitPriceDataUpdated();
     void setUnitMeasure( UnitMeasure * ump );

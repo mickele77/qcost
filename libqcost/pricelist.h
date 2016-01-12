@@ -95,9 +95,11 @@ public:
     QList<PriceItem *> priceItemList();
 
     void writeXml10(QXmlStreamWriter *writer) const;
+    void readXml10(QXmlStreamReader *reader, UnitMeasureModel *uml);
+    void readFromXmlTmp10(ProjectPriceListParentItem *priceLists);
     void writeXml20( QXmlStreamWriter * writer ) const;
-    void readXml(QXmlStreamReader *reader, UnitMeasureModel *uml);
-    void readFromXmlTmp(ProjectPriceListParentItem *priceLists);
+    void readXml20(QXmlStreamReader *reader, UnitMeasureModel *uml);
+    void readFromXmlTmp20(ProjectPriceListParentItem *priceLists);
 
     void nextId();
     unsigned int id();
@@ -134,8 +136,8 @@ private slots:
 
 private:
     PriceListPrivate * m_d;
-
-    void loadFromXml(const QXmlStreamAttributes &attrs);
+    void loadFromXml10(const QXmlStreamAttributes &attrs);
+    void loadFromXml20(const QXmlStreamAttributes &attrs);
     bool removePriceItems(int position = -1, int rows = 1, const QModelIndex &parent = QModelIndex() );
 };
 

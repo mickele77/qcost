@@ -67,7 +67,7 @@ public:
     bool isUsingPriceItem(PriceItem * p );
 
     void writeXml20( QXmlStreamWriter * writer ) const;
-    void readXml(QXmlStreamReader *reader, ProjectPriceListParentItem *priceLists);
+    void readXml20(QXmlStreamReader *reader, ProjectPriceListParentItem *priceLists);
 
     /** Importo complessivo lordo */
     double projAmount() const ;

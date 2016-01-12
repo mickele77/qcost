@@ -644,9 +644,9 @@ void AccountingTAMBill::writeXml20(QXmlStreamWriter *writer) const {
     writer->writeEndElement();
 }
 
-void AccountingTAMBill::readXml(QXmlStreamReader *reader, ProjectPriceListParentItem *priceLists) {
+void AccountingTAMBill::readXml20(QXmlStreamReader *reader, ProjectPriceListParentItem *priceLists) {
     if(reader->isStartElement() && reader->name().toString().toUpper() == "ACCOUNTINGTAMBILL"){
-        loadFromXml( reader->attributes(), priceLists );
+        loadFromXml20( reader->attributes(), priceLists );
     }
     while( (!reader->atEnd()) &&
            (!reader->hasError()) &&
@@ -654,18 +654,18 @@ void AccountingTAMBill::readXml(QXmlStreamReader *reader, ProjectPriceListParent
         reader->readNext();
         QString tag = reader->name().toString().toUpper();
         if( tag == "ACCOUNTINGATTRIBUTEMODEL" && reader->isStartElement()) {
-            m_d->attributesModel->readXml( reader );
+            m_d->attributesModel->readXml20( reader );
         }
         if( tag == "ACCOUNTINGBILLITEM" && reader->isStartElement()) {
-            m_d->rootItem->readXmlTmp( reader );
+            m_d->rootItem->readXmlTmp20( reader );
         }
     }
-    m_d->rootItem->readFromXmlTmp( NULL, NULL, m_d->priceList, m_d->attributesModel );
+    m_d->rootItem->readFromXmlTmp20( NULL, NULL, m_d->priceList, m_d->attributesModel );
     m_d->rootItem->updateProgCode();
     m_d->rootItem->updateAccountingProgCode();
 }
 
-void AccountingTAMBill::loadFromXml(const QXmlStreamAttributes &attrs, ProjectPriceListParentItem * priceLists) {
+void AccountingTAMBill::loadFromXml20(const QXmlStreamAttributes &attrs, ProjectPriceListParentItem * priceLists) {
     for( QXmlStreamAttributes::const_iterator i=attrs.begin(); i != attrs.end(); ++i ){
         QString nameUp = (*i).name().toString().toUpper();
         if( nameUp == "ID" ){
@@ -716,7 +716,7 @@ void AccountingTAMBill::loadFromXml(const QXmlStreamAttributes &attrs, ProjectPr
     }
 }
 
-void AccountingTAMBill::loadFromXmlTmp(const QXmlStreamAttributes &attrs) {
+void AccountingTAMBill::loadFromXmlTmp20(const QXmlStreamAttributes &attrs) {
     for( QXmlStreamAttributes::const_iterator i=attrs.begin(); i != attrs.end(); ++i ){
         QString nameUp = (*i).name().toString().toUpper();
         if( nameUp == "ID" ){
@@ -768,7 +768,7 @@ void AccountingTAMBill::writeODTAttributeAccountingOnTable(QTextCursor *cursor,
 
 void AccountingTAMBill::readFromXmlTmp( ProjectPriceListParentItem * priceLists ) {
     m_d->priceList = priceLists->priceListId( m_d->priceListIdTmp );
-    m_d->rootItem->readFromXmlTmp( NULL, NULL, m_d->priceList, m_d->attributesModel );
+    m_d->rootItem->readFromXmlTmp20( NULL, NULL, m_d->priceList, m_d->attributesModel );
 }
 
 void AccountingTAMBill::insertStandardAttributes(){

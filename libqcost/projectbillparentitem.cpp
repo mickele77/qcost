@@ -193,14 +193,35 @@ void ProjectBillParentItem::writeXml20(QXmlStreamWriter *writer) const{
     writer->writeEndElement();
 }
 
-void ProjectBillParentItem::readXml(QXmlStreamReader *reader, ProjectPriceListParentItem * priceLists) {
+void ProjectBillParentItem::readXml(QXmlStreamReader *reader, ProjectPriceListParentItem * priceLists, const QString & vers ) {
+    if( (vers == "0.3") || (vers == "1.0") ){
+        readXml10( reader, priceLists );
+    } else if( vers == "2.0" ){
+        readXml20( reader, priceLists );
+    }
+}
+
+void ProjectBillParentItem::readXml10(QXmlStreamReader *reader, ProjectPriceListParentItem * priceLists ) {
     while( (!reader->atEnd()) &&
            (!reader->hasError()) &&
            !(reader->isEndElement() && reader->name().toString().toUpper() == "BILLS") ){
         reader->readNext();
         if( reader->name().toString().toUpper() == "BILL" && reader->isStartElement()) {
             if(appendChild()){
-                m_d->billContainer.last()->readXml( reader, priceLists );
+                m_d->billContainer.last()->readXml10( reader, priceLists );
+            }
+        }
+    }
+}
+
+void ProjectBillParentItem::readXml20(QXmlStreamReader *reader, ProjectPriceListParentItem * priceLists ) {
+    while( (!reader->atEnd()) &&
+           (!reader->hasError()) &&
+           !(reader->isEndElement() && reader->name().toString().toUpper() == "BILLS") ){
+        reader->readNext();
+        if( reader->name().toString().toUpper() == "BILL" && reader->isStartElement()) {
+            if(appendChild()){
+                m_d->billContainer.last()->readXml20( reader, priceLists );
             }
         }
     }

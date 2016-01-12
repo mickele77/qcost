@@ -122,11 +122,13 @@ public:
     bool isUsingPriceList( PriceList * pl );
 
     void writeXml10(QXmlStreamWriter *writer);
+    void readXml10(QXmlStreamReader *reader, ProjectPriceListParentItem * priceLists);
+    void readXmlTmp10(QXmlStreamReader *reader);
+    void readFromXmlTmp10( ProjectPriceListParentItem *priceLists );
     void writeXml20( QXmlStreamWriter * writer );
-    void readXml(QXmlStreamReader *reader, ProjectPriceListParentItem * priceLists);
-
-    void readXmlTmp(QXmlStreamReader *reader);
-    void readFromXmlTmp( ProjectPriceListParentItem *priceLists );
+    void readXml20(QXmlStreamReader *reader, ProjectPriceListParentItem * priceLists);
+    void readXmlTmp20(QXmlStreamReader *reader);
+    void readFromXmlTmp20( ProjectPriceListParentItem *priceLists );
 
     void nextId();
     unsigned int id();
@@ -174,9 +176,12 @@ private slots:
 private:
     BillPrivate * m_d;
 
-    void loadXml( const QXmlStreamAttributes &attrs,
-                  ProjectPriceListParentItem * priceLists);
-    void loadFromXmlTmp( const QXmlStreamAttributes &attrs );
+    void loadXml10( const QXmlStreamAttributes &attrs,
+                    ProjectPriceListParentItem * priceLists);
+    void loadFromXmlTmp10( const QXmlStreamAttributes &attrs );
+    void loadXml20( const QXmlStreamAttributes &attrs,
+                    ProjectPriceListParentItem * priceLists);
+    void loadFromXmlTmp20( const QXmlStreamAttributes &attrs );
 };
 
 #endif // BILL_H

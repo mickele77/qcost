@@ -579,6 +579,19 @@ void Measure::writeXml10( QXmlStreamWriter * writer ) const {
     writer->writeEndElement();
 }
 
+void Measure::loadFromXml10(const QXmlStreamAttributes &attrs) {
+    if( attrs.hasAttribute( "comment" ) ){
+        setComment(  attrs.value( "comment").toString() );
+    }
+    if( attrs.hasAttribute( "formula" ) ){
+        QString f = attrs.value( "formula").toString();
+        if( m_d->parser->decimalSeparator() != "." ){
+            f.replace( ".", m_d->parser->decimalSeparator());
+        }
+        setFormula( f );
+    }
+}
+
 void Measure::writeXml20( QXmlStreamWriter * writer ) const {
     writer->writeStartElement( "Measure" );
     writer->writeAttribute( "comment", comment() );
@@ -590,7 +603,7 @@ void Measure::writeXml20( QXmlStreamWriter * writer ) const {
     writer->writeEndElement();
 }
 
-void Measure::loadFromXmlTmp() {
+void Measure::loadFromXmlTmp20() {
     if( m_d->tmpAttrs.hasAttribute( "comment" ) ){
         setComment(  m_d->tmpAttrs.value( "comment").toString() );
     }
@@ -604,7 +617,7 @@ void Measure::loadFromXmlTmp() {
     m_d->tmpAttrs.clear();
 }
 
-void Measure::loadXmlTmp(const QXmlStreamAttributes &attrs) {
+void Measure::loadXmlTmp20(const QXmlStreamAttributes &attrs) {
     m_d->tmpAttrs.clear();
     m_d->tmpAttrs = attrs;
 }

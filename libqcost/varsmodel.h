@@ -37,7 +37,7 @@ public:
     double quantity();
 
     void writeXml20( QXmlStreamWriter * writer );
-    void readXml(QXmlStreamReader *reader);
+    void readXml20(QXmlStreamReader *reader);
 
     int varsCount();
     Var * var( int i );

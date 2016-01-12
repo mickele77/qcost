@@ -85,9 +85,11 @@ public:
     void setInheritProfitsFromRoot( int priceDataSet, bool newVal );
 
     void writeXml10(QXmlStreamWriter *writer) const;
+    void loadXmlPriceDataSet10(int priceDataSet, const QXmlStreamAttributes &attrs);
+    void readFromXmlTmp10( ProjectPriceListParentItem *priceLists );
     void writeXml20( QXmlStreamWriter * writer ) const;
-    void loadXmlPriceDataSet(int priceDataSet, const QXmlStreamAttributes &attrs);
-    void readFromXmlTmp( ProjectPriceListParentItem *priceLists );
+    void loadXmlPriceDataSet20(int priceDataSet, const QXmlStreamAttributes &attrs);
+    void readFromXmlTmp20( ProjectPriceListParentItem *priceLists );
 
     int priceDataSetCount() const ;
     int lastValueRow() const;

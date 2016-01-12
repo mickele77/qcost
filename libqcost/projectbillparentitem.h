@@ -64,7 +64,7 @@ public:
     bool isUsingPriceItem(PriceItem * p );
 
     void writeXml( QXmlStreamWriter * writer, const QString & vers ) const;
-    void readXml(QXmlStreamReader *reader, ProjectPriceListParentItem *priceLists);
+    void readXml(QXmlStreamReader *reader, ProjectPriceListParentItem *priceLists, const QString & vers);
 
 signals:
     void beginInsertChildren( ProjectItem * item, int first, int last );
@@ -76,7 +76,9 @@ signals:
 private:
     ProjectBillParentItemPrivate * m_d;
     void writeXml10(QXmlStreamWriter *writer) const;
+    void readXml10(QXmlStreamReader *reader, ProjectPriceListParentItem *priceLists);
     void writeXml20(QXmlStreamWriter *writer) const;
+    void readXml20(QXmlStreamReader *reader, ProjectPriceListParentItem *priceLists);
 };
 
 #endif // PROJECTBILLPARENTITEM_H

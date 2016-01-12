@@ -177,8 +177,8 @@ public:
     int childNumber() const;
 
     void writeXml20( QXmlStreamWriter * writer );
-    void readXmlTmp(QXmlStreamReader *reader);
-    virtual void readFromXmlTmp( AccountingLSBills *lsBills,
+    void readXmlTmp20(QXmlStreamReader *reader);
+    virtual void readFromXmlTmp20( AccountingLSBills *lsBills,
                                  AccountingTAMBill *tamBill,
                                  PriceList *priceList,
                                  AttributesModel *billAttrModel );

@@ -68,8 +68,9 @@ public:
     bool clear();
 
     void writeXml10(QXmlStreamWriter *writer) const;
+    void readXml10( QXmlStreamReader * reader );
     void writeXml20( QXmlStreamWriter * writer ) const;
-    void readXml( QXmlStreamReader * reader );
+    void readXml20( QXmlStreamReader * reader );
 
     /** nel caso il modello sia riferito alla classe Bill, inserice due etichette
       * una per gli importi soggetti a ribasso ed una per quelli non soggetti. */

@@ -121,7 +121,7 @@ public:
     MeasuresLSModel *measuresModel();
 
     void writeXml( QXmlStreamWriter * writer );
-    void readXml(QXmlStreamReader *reader, PriceList *priceList, AttributesModel * billAttrModel);
+    void readXml20(QXmlStreamReader *reader, PriceList *priceList, AttributesModel * billAttrModel);
     void readXmlTmp(QXmlStreamReader *reader);
     void loadFromXml(const QXmlStreamAttributes &attrs, PriceList *priceList, AttributesModel * billAttrModel);
     void loadFromXmlTmp(const QXmlStreamAttributes &attrs);

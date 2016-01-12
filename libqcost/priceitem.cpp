@@ -963,10 +963,10 @@ void PriceItem::writeXml20(QXmlStreamWriter *writer) {
     }
 }
 
-void PriceItem::readXml(QXmlStreamReader *reader, UnitMeasureModel * uml ) {
+void PriceItem::readXml10(QXmlStreamReader *reader, UnitMeasureModel * uml ) {
     if( m_d->parentItem != NULL ){
         if(reader->isStartElement() && reader->name().toString().toUpper() == "PRICEITEM"){
-            loadFromXml( reader->attributes(), uml );
+            loadFromXml10( reader->attributes(), uml );
         }
         reader->readNext();
     }
@@ -982,7 +982,7 @@ void PriceItem::readXml(QXmlStreamReader *reader, UnitMeasureModel * uml ) {
             if( currentPriceDataSet >= m_d->dataModel->priceDataSetCount() ) {
                 m_d->dataModel->appendPriceDataSet( currentPriceDataSet - m_d->dataModel->priceDataSetCount() + 1);
             }
-            m_d->dataModel->loadXmlPriceDataSet( currentPriceDataSet, reader->attributes() );
+            m_d->dataModel->loadXmlPriceDataSet10( currentPriceDataSet, reader->attributes() );
         }
         if( reader->name().toString().toUpper() == "PRICEITEMDATASET" && reader->isEndElement() ) {
             readingPriceDataSet = false;
@@ -990,18 +990,18 @@ void PriceItem::readXml(QXmlStreamReader *reader, UnitMeasureModel * uml ) {
         if( readingPriceDataSet &&
                 (reader->name().toString().toUpper() == "BILL" && reader->isStartElement())) {
             m_d->dataModel->setAssociateAP( currentPriceDataSet );
-            m_d->dataModel->associatedAP( currentPriceDataSet )->readXmlTmp( reader );
+            m_d->dataModel->associatedAP( currentPriceDataSet )->readXmlTmp10( reader );
         }
         if( reader->name().toString().toUpper() == "PRICEITEM" && reader->isStartElement()) {
             appendChildren();
-            m_d->childrenContainer.last()->readXml( reader, uml );
+            m_d->childrenContainer.last()->readXml10( reader, uml );
         }
 
         reader->readNext();
     }
 }
 
-void PriceItem::loadFromXml(const QXmlStreamAttributes &attrs, UnitMeasureModel * uml ) {
+void PriceItem::loadFromXml10(const QXmlStreamAttributes &attrs, UnitMeasureModel * uml ) {
     if( attrs.hasAttribute( "id" ) ){
         m_d->id = attrs.value( "id").toUInt();
     }
@@ -1028,13 +1028,88 @@ void PriceItem::loadFromXml(const QXmlStreamAttributes &attrs, UnitMeasureModel 
     }
 }
 
-void PriceItem::readFromXmlTmp( ProjectPriceListParentItem * priceLists ) {
+void PriceItem::readFromXmlTmp10( ProjectPriceListParentItem * priceLists ) {
     if( hasChildren() ){
         for( QList<PriceItem *>::iterator i = m_d->childrenContainer.begin(); i != m_d->childrenContainer.end(); ++i){
-            (*i)->readFromXmlTmp( priceLists );
+            (*i)->readFromXmlTmp10( priceLists );
         }
     } else if(m_d->parentItem != NULL ){
-        m_d->dataModel->readFromXmlTmp( priceLists );
+        m_d->dataModel->readFromXmlTmp10( priceLists );
+    }
+}
+
+void PriceItem::readXml20(QXmlStreamReader *reader, UnitMeasureModel * uml ) {
+    if( m_d->parentItem != NULL ){
+        if(reader->isStartElement() && reader->name().toString().toUpper() == "PRICEITEM"){
+            loadFromXml20( reader->attributes(), uml );
+        }
+        reader->readNext();
+    }
+    bool readingPriceDataSet = false;
+    int currentPriceDataSet = -1;
+    while( (!reader->atEnd()) &&
+           (!reader->hasError()) &&
+           !(reader->isEndElement() && reader->name().toString().toUpper() == "PRICEITEM") &&
+           !(reader->isEndElement() && reader->name().toString().toUpper() == "PRICELIST") ){
+        if( reader->name().toString().toUpper() == "PRICEITEMDATASET" && reader->isStartElement()) {
+            readingPriceDataSet = true;
+            currentPriceDataSet++;
+            if( currentPriceDataSet >= m_d->dataModel->priceDataSetCount() ) {
+                m_d->dataModel->appendPriceDataSet( currentPriceDataSet - m_d->dataModel->priceDataSetCount() + 1);
+            }
+            m_d->dataModel->loadXmlPriceDataSet20( currentPriceDataSet, reader->attributes() );
+        }
+        if( reader->name().toString().toUpper() == "PRICEITEMDATASET" && reader->isEndElement() ) {
+            readingPriceDataSet = false;
+        }
+        if( readingPriceDataSet &&
+                (reader->name().toString().toUpper() == "BILL" && reader->isStartElement())) {
+            m_d->dataModel->setAssociateAP( currentPriceDataSet );
+            m_d->dataModel->associatedAP( currentPriceDataSet )->readXmlTmp20( reader );
+        }
+        if( reader->name().toString().toUpper() == "PRICEITEM" && reader->isStartElement()) {
+            appendChildren();
+            m_d->childrenContainer.last()->readXml20( reader, uml );
+        }
+
+        reader->readNext();
+    }
+}
+
+void PriceItem::loadFromXml20(const QXmlStreamAttributes &attrs, UnitMeasureModel * uml ) {
+    if( attrs.hasAttribute( "id" ) ){
+        m_d->id = attrs.value( "id").toUInt();
+    }
+    if( attrs.hasAttribute( "code" ) ){
+        setCode( attrs.value( "code").toString() );
+    }
+    if( attrs.hasAttribute( "inheritCodeFromParent" ) ){
+        setInheritCodeFromParent( PriceItemPrivate::QStringToBool( attrs.value( "inheritCodeFromParent").toString() ) );
+    }
+    if( attrs.hasAttribute( "shortDescription" ) ){
+        setShortDescription( attrs.value( "shortDescription").toString() );
+    }
+    if( attrs.hasAttribute( "inheritShortDescFromParent" ) ){
+        setInheritShortDescFromParent( PriceItemPrivate::QStringToBool( attrs.value( "inheritShortDescFromParent").toString() ) );
+    }
+    if( attrs.hasAttribute( "longDescription" ) ){
+        setLongDescription( attrs.value( "longDescription").toString() );
+    }
+    if( attrs.hasAttribute( "inheritLongDescFromParent" ) ){
+        setInheritLongDescFromParent( PriceItemPrivate::QStringToBool( attrs.value( "inheritLongDescFromParent").toString() ) );
+    }
+    if( attrs.hasAttribute( "unitMeasure" ) ){
+        setUnitMeasure( uml->unitMeasureId( attrs.value( "unitMeasure").toUInt() ) );
+    }
+}
+
+void PriceItem::readFromXmlTmp20( ProjectPriceListParentItem * priceLists ) {
+    if( hasChildren() ){
+        for( QList<PriceItem *>::iterator i = m_d->childrenContainer.begin(); i != m_d->childrenContainer.end(); ++i){
+            (*i)->readFromXmlTmp20( priceLists );
+        }
+    } else if(m_d->parentItem != NULL ){
+        m_d->dataModel->readFromXmlTmp20( priceLists );
     }
 }
 

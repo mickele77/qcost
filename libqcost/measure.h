@@ -38,9 +38,10 @@ public:
     void setUnitMeasure( UnitMeasure * ump );
 
     void writeXml10(QXmlStreamWriter *writer) const;
+    void loadFromXml10(const QXmlStreamAttributes &attrs);
     void writeXml20( QXmlStreamWriter * writer ) const;
-    void loadFromXmlTmp();
-    void loadXmlTmp(const QXmlStreamAttributes &attrs);
+    void loadFromXmlTmp20();
+    void loadXmlTmp20(const QXmlStreamAttributes &attrs);
 
     QList<BillItem *> connectedBillItems();
     QList<AccountingBillItem *> connectedAccBillItems();

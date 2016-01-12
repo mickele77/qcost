@@ -71,7 +71,7 @@ public:
     bool isUsingPriceItem(PriceItem * p );
 
     void writeXml(QXmlStreamWriter * writer , const QString &vers) const;
-    void readXml(QXmlStreamReader *reader, ProjectPriceListParentItem *priceLists);
+    void readXml(QXmlStreamReader *reader, ProjectPriceListParentItem *priceLists, const QString & vers);
 
     PaymentDataModel *dataModel();
 
@@ -97,6 +97,7 @@ signals:
 private:
     ProjectAccountingParentItemPrivate * m_d;
     void writeXml20(QXmlStreamWriter *writer) const;
+    void readXml20(QXmlStreamReader *reader, ProjectPriceListParentItem *priceLists);
 };
 
 #endif // PROJECTACCOUNTINGPARENTITEM_H

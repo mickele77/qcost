@@ -228,14 +228,14 @@ void AccountingLSBills::writeXml20(QXmlStreamWriter *writer) const {
     writer->writeEndElement();
 }
 
-void AccountingLSBills::readXml(QXmlStreamReader *reader, ProjectPriceListParentItem * priceLists) {
+void AccountingLSBills::readXml20(QXmlStreamReader *reader, ProjectPriceListParentItem * priceLists) {
     while( (!reader->atEnd()) &&
            (!reader->hasError()) &&
            !(reader->isEndElement() && reader->name().toString().toUpper() == "ACCOUNTINGLSBILLS") ){
         reader->readNext();
         if( reader->name().toString().toUpper() == "ACCOUNTINGLSBILL" && reader->isStartElement()) {
             if(appendChild()){
-                m_d->billContainer.last()->readXml( reader, priceLists );
+                m_d->billContainer.last()->readXml20( reader, priceLists );
             }
         }
     }

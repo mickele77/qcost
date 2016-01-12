@@ -213,7 +213,7 @@ void VarsModel::writeXml20(QXmlStreamWriter *writer) {
     writer->writeEndElement();
 }
 
-void VarsModel::readXml(QXmlStreamReader *reader) {
+void VarsModel::readXml20(QXmlStreamReader *reader) {
     bool firstLine = true;
     while( !reader->atEnd() &&
            !reader->hasError() &&

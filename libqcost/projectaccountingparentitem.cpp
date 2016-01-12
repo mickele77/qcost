@@ -240,7 +240,13 @@ void ProjectAccountingParentItem::writeXml20(QXmlStreamWriter *writer) const {
     writer->writeEndElement();
 }
 
-void ProjectAccountingParentItem::readXml(QXmlStreamReader *reader, ProjectPriceListParentItem * priceLists) {
+void ProjectAccountingParentItem::readXml(QXmlStreamReader *reader, ProjectPriceListParentItem * priceLists, const QString & vers ) {
+    if( vers == "2.0"){
+        readXml20( reader, priceLists );
+    }
+}
+
+void ProjectAccountingParentItem::readXml20(QXmlStreamReader *reader, ProjectPriceListParentItem * priceLists ) {
     while( (!reader->atEnd()) &&
            (!reader->hasError()) &&
            !(reader->isEndElement() && reader->name().toString().toUpper() == "ACCOUNTING") ){
@@ -248,13 +254,13 @@ void ProjectAccountingParentItem::readXml(QXmlStreamReader *reader, ProjectPrice
         QString nodeName = reader->name().toString().toUpper();
         nodeName = reader->name().toString().toUpper();
         if( nodeName == "ACCOUNTINGBILL" && reader->isStartElement()) {
-            m_d->measuresBill->readXml( reader, priceLists, m_d->lumpSumBills, m_d->timeAndMaterialBill );
+            m_d->measuresBill->readXml20( reader, priceLists, m_d->lumpSumBills, m_d->timeAndMaterialBill );
         }
         if( nodeName == "ACCOUNTINGLSBILLS" && reader->isStartElement()) {
-            m_d->lumpSumBills->readXml( reader, priceLists );
+            m_d->lumpSumBills->readXml20( reader, priceLists );
         }
         if( nodeName == "ACCOUNTINGTAMBILL" && reader->isStartElement()) {
-            m_d->timeAndMaterialBill->readXml( reader, priceLists );
+            m_d->timeAndMaterialBill->readXml20( reader, priceLists );
         }
     }
 }

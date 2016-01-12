@@ -150,7 +150,7 @@ public:
     bool isUsingPriceList( PriceList * pl );
 
     void writeXml20( QXmlStreamWriter * writer ) const;
-    void readXml( QXmlStreamReader *reader, ProjectPriceListParentItem * priceLists );
+    void readXml20( QXmlStreamReader *reader, ProjectPriceListParentItem * priceLists );
 
     void nextId();
     unsigned int id();
@@ -195,8 +195,8 @@ private:
     AccountingTAMBillPrivate * m_d;
 
     void readFromXmlTmp( ProjectPriceListParentItem *priceLists );
-    void loadFromXml(const QXmlStreamAttributes &attrs, ProjectPriceListParentItem * priceLists);
-    void loadFromXmlTmp(const QXmlStreamAttributes &attrs);
+    void loadFromXml20(const QXmlStreamAttributes &attrs, ProjectPriceListParentItem * priceLists);
+    void loadFromXmlTmp20(const QXmlStreamAttributes &attrs);
 };
 
 #endif // ACCOUNTINGTAMBILL_H

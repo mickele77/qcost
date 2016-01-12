@@ -1062,7 +1062,7 @@ void AccountingLSBillItem::writeXml(QXmlStreamWriter *writer) {
     }
 }
 
-void AccountingLSBillItem::readXml(QXmlStreamReader *reader, PriceList * priceList, AttributesModel * billAttrModel ) {
+void AccountingLSBillItem::readXml20(QXmlStreamReader *reader, PriceList * priceList, AttributesModel * billAttrModel ) {
     if( m_d->parentItem != NULL ){
         if(reader->isStartElement() && reader->name().toString().toUpper() == "ACCOUNTINGLSBILLITEM"){
             loadFromXml( reader->attributes(), priceList, billAttrModel );
@@ -1075,7 +1075,7 @@ void AccountingLSBillItem::readXml(QXmlStreamReader *reader, PriceList * priceLi
            !(reader->isEndElement() && reader->name().toString().toUpper() == "ACCOUNTINGLSBILL")  ){
         if( reader->name().toString().toUpper() == "ACCOUNTINGLSBILLITEM" && reader->isStartElement()) {
             appendChildren();
-            m_d->childrenContainer.last()->readXml( reader, priceList, billAttrModel );
+            m_d->childrenContainer.last()->readXml20( reader, priceList, billAttrModel );
         }
         if( reader->name().toString().toUpper() == "MEASURESLSMODEL" && reader->isStartElement() ) {
             m_d->measuresModel->readXml( reader );

@@ -187,19 +187,43 @@ void ProjectPriceListParentItem::writeXml20(QXmlStreamWriter *writer) const {
     writer->writeEndElement();
 }
 
-void ProjectPriceListParentItem::readXml(QXmlStreamReader *reader, UnitMeasureModel * uml ) {
+void ProjectPriceListParentItem::readXml(QXmlStreamReader *reader, UnitMeasureModel * uml, const QString & vers ) {
+    if( (vers == "1.0") || (vers == "0.3") ){
+
+    } else if( vers == "2.0" ){
+        readXml20( reader, uml );
+    }
+}
+
+void ProjectPriceListParentItem::readXml10(QXmlStreamReader *reader, UnitMeasureModel * uml) {
     while( (!reader->atEnd()) &&
            (!reader->hasError()) &&
            !(reader->isEndElement() && reader->name().toString().toUpper() == "PRICELISTS") ){
         reader->readNext();
         if( reader->name().toString().toUpper() == "PRICELIST" && reader->isStartElement()) {
             if(appendChildren()){
-                m_d->priceListContainer.last()->readXml( reader, uml );
+                m_d->priceListContainer.last()->readXml10( reader, uml );
             }
         }
     }
     for( QList<PriceList*>::iterator i = m_d->priceListContainer.begin(); i != m_d->priceListContainer.end(); ++i ){
-        (*i)->readFromXmlTmp( this );
+        (*i)->readFromXmlTmp10( this );
+    }
+}
+
+void ProjectPriceListParentItem::readXml20(QXmlStreamReader *reader, UnitMeasureModel * uml ) {
+    while( (!reader->atEnd()) &&
+           (!reader->hasError()) &&
+           !(reader->isEndElement() && reader->name().toString().toUpper() == "PRICELISTS") ){
+        reader->readNext();
+        if( reader->name().toString().toUpper() == "PRICELIST" && reader->isStartElement()) {
+            if(appendChildren()){
+                m_d->priceListContainer.last()->readXml20( reader, uml );
+            }
+        }
+    }
+    for( QList<PriceList*>::iterator i = m_d->priceListContainer.begin(); i != m_d->priceListContainer.end(); ++i ){
+        (*i)->readFromXmlTmp20( this );
     }
 }
 

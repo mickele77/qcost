@@ -42,9 +42,10 @@ public:
     void setUnitMeasure( UnitMeasure * ump );
 
     void writeXml10( QXmlStreamWriter * writer ) const;
+    void readXml10(QXmlStreamReader *reader);
     void writeXml20( QXmlStreamWriter * writer ) const;
-    void readFromXmlTmp();
-    void readXmlTmp(QXmlStreamReader *reader);
+    void readFromXmlTmp20();
+    void readXmlTmp20(QXmlStreamReader *reader);
 
     int measuresCount();
     Measure * measure( int i );

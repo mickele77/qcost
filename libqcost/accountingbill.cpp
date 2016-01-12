@@ -681,7 +681,7 @@ void AccountingBill::writeXml20(QXmlStreamWriter *writer) const {
     writer->writeEndElement();
 }
 
-void AccountingBill::readXml(QXmlStreamReader *reader,
+void AccountingBill::readXml20(QXmlStreamReader *reader,
                              ProjectPriceListParentItem * priceLists,
                              AccountingLSBills * lsBills,
                              AccountingTAMBill * tamBill ) {
@@ -696,23 +696,23 @@ void AccountingBill::readXml(QXmlStreamReader *reader,
         if( reader->isStartElement() ){
             QString tag = reader->name().toString().toUpper();
             if( tag == "ATTRIBUTESMODEL" ) {
-                m_d->attributesModel->readXml( reader );
+                m_d->attributesModel->readXml20( reader );
             }
             if( tag == "VARSMODEL" ) {
-                m_d->varsModel->readXml( reader );
+                m_d->varsModel->readXml20( reader );
             }
             if( tag == "ACCOUNTINGBILLITEM" ) {
-                m_d->rootItem->readXmlTmp( reader );
+                m_d->rootItem->readXmlTmp20( reader );
             }
         }
     }
-    loadXml( m_d->tmpAttributes, priceLists );
-    m_d->rootItem->readFromXmlTmp( lsBills, tamBill, m_d->priceList, m_d->attributesModel );
+    loadXml20( m_d->tmpAttributes, priceLists );
+    m_d->rootItem->readFromXmlTmp20( lsBills, tamBill, m_d->priceList, m_d->attributesModel );
     m_d->rootItem->updateAccountingProgCode();
     m_d->rootItem->updateProgCode();
 }
 
-void AccountingBill::loadXml( const QXmlStreamAttributes &attrs, ProjectPriceListParentItem * priceLists ) {
+void AccountingBill::loadXml20( const QXmlStreamAttributes &attrs, ProjectPriceListParentItem * priceLists ) {
     for( QXmlStreamAttributes::const_iterator i=attrs.begin(); i != attrs.end(); ++i ){
         QString tagUp = (*i).name().toString().toUpper();
         if( tagUp == "DESCRIPTION" ){

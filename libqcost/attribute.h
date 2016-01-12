@@ -49,8 +49,9 @@ public:
     unsigned int id();
 
     void writeXml10(QXmlStreamWriter *writer);
+    void loadFromXml10(const QXmlStreamAttributes &attrs);
     void writeXml20( QXmlStreamWriter * writer );
-    void loadFromXml(const QXmlStreamAttributes &attrs);
+    void loadFromXml20(const QXmlStreamAttributes &attrs);
 
 private:
     AttributePrivate * m_d;

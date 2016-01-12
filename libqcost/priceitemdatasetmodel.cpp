@@ -113,10 +113,12 @@ public:
     void insertPriceField(int row) { m_d->value.insert( row, 0.0 ); }
 
     void writeXml10(QXmlStreamWriter *writer, bool isRootItem) const;
+    // legge attributi XML
+    void loadFromXml10(const QXmlStreamAttributes &attrs);
     // scrive su flusso XML
     void writeXml20(QXmlStreamWriter * writer , bool isRootItem) const;
     // legge attributi XML
-    void loadFromXml(const QXmlStreamAttributes &attrs);
+    void loadFromXml20(const QXmlStreamAttributes &attrs);
 
 private:
     PriceItemDataSetPrivate * m_d;
@@ -221,7 +223,31 @@ void PriceItemDataSet::writeXml20(QXmlStreamWriter *writer, bool isRootItem ) co
     writer->writeEndElement();
 }
 
-void PriceItemDataSet::loadFromXml(const QXmlStreamAttributes &attrs ){
+void PriceItemDataSet::loadFromXml10(const QXmlStreamAttributes &attrs ){
+    for( int i=0; i<attrs.size(); ++i){
+        QString nStr = attrs.at(i).qualifiedName().toString().toUpper();
+        QString strVal("VALUE");
+        if( nStr.startsWith(strVal) ){
+            nStr.remove(0,strVal.size() );
+            bool ok = false;
+            int n = nStr.toInt( & ok );
+            if( ok ){
+                for( int j=0; j < (n + 1 - m_d->value.size()); ++j ){
+                    m_d->value.append(0.0);
+                }
+                setValue(n, attrs.at(i).value().toDouble() );
+            }
+        } else if( nStr == "OVERHEADS" ){
+            setInheritOverheadsFromRoot( true );
+            setOverheads( attrs.at(i).value().toDouble() );
+        } else if( nStr == "PROFITS" ){
+            setInheritProfitsFromRoot( true );
+            setProfits( attrs.at(i).value().toDouble() );
+        }
+    }
+}
+
+void PriceItemDataSet::loadFromXml20(const QXmlStreamAttributes &attrs ){
     for( int i=0; i<attrs.size(); ++i){
         QString nStr = attrs.at(i).qualifiedName().toString().toUpper();
         QString strVal("VALUE");
@@ -423,7 +449,7 @@ bool PriceItemDataSetModel::appendPriceDataSet(int count) {
 bool PriceItemDataSetModel::appendPriceDataSet(const QXmlStreamAttributes &attrs) {
     bool ret = insertPriceDataSet( m_d->dataSetContainer.size(), 1 );
     if( ret ){
-        m_d->dataSetContainer.last()->loadFromXml( attrs );
+        m_d->dataSetContainer.last()->loadFromXml20( attrs );
     }
     return ret;
 }
@@ -995,16 +1021,30 @@ void PriceItemDataSetModel::writeXml20(QXmlStreamWriter *writer) const {
     }
 }
 
-void PriceItemDataSetModel::loadXmlPriceDataSet( int priceDataSet, const QXmlStreamAttributes &attrs) {
+void PriceItemDataSetModel::loadXmlPriceDataSet10( int priceDataSet, const QXmlStreamAttributes &attrs) {
     if( (priceDataSet > -1) && (priceDataSet < m_d->dataSetContainer.size()) ){
-        m_d->dataSetContainer.at(priceDataSet)->loadFromXml( attrs );
+        m_d->dataSetContainer.at(priceDataSet)->loadFromXml20( attrs );
     }
 }
 
-void PriceItemDataSetModel::readFromXmlTmp( ProjectPriceListParentItem *priceLists ) {
+void PriceItemDataSetModel::readFromXmlTmp10( ProjectPriceListParentItem *priceLists ) {
     for( QList<PriceItemDataSet *>::iterator i = m_d->dataSetContainer.begin(); i != m_d->dataSetContainer.end(); ++i){
         if( (*i)->associateAP ){
-            (*i)->associatedAP->readFromXmlTmp( priceLists );
+            (*i)->associatedAP->readFromXmlTmp10( priceLists );
+        }
+    }
+}
+
+void PriceItemDataSetModel::loadXmlPriceDataSet20( int priceDataSet, const QXmlStreamAttributes &attrs) {
+    if( (priceDataSet > -1) && (priceDataSet < m_d->dataSetContainer.size()) ){
+        m_d->dataSetContainer.at(priceDataSet)->loadFromXml20( attrs );
+    }
+}
+
+void PriceItemDataSetModel::readFromXmlTmp20( ProjectPriceListParentItem *priceLists ) {
+    for( QList<PriceItemDataSet *>::iterator i = m_d->dataSetContainer.begin(); i != m_d->dataSetContainer.end(); ++i){
+        if( (*i)->associateAP ){
+            (*i)->associatedAP->readFromXmlTmp20( priceLists );
         }
     }
 }

@@ -84,7 +84,16 @@ void Attribute::writeXml20(QXmlStreamWriter *writer) {
     writer->writeEndElement();
 }
 
-void Attribute::loadFromXml(const QXmlStreamAttributes &attrs) {
+void Attribute::loadFromXml10(const QXmlStreamAttributes &attrs) {
+    if( attrs.hasAttribute( "id" ) ){
+        m_d->id = attrs.value( "id").toUInt();
+    }
+    if( attrs.hasAttribute( "name" ) ){
+        setName( attrs.value( "name").toString() );
+    }
+}
+
+void Attribute::loadFromXml20(const QXmlStreamAttributes &attrs) {
     if( attrs.hasAttribute( "id" ) ){
         m_d->id = attrs.value( "id").toUInt();
     }

@@ -536,6 +536,77 @@ void Bill::writeXml10(QXmlStreamWriter *writer) {
     writer->writeEndElement();
 }
 
+void Bill::readXml10(QXmlStreamReader *reader, ProjectPriceListParentItem *priceLists) {
+    if(reader->isStartElement() && reader->name().toString().toUpper() == "BILL"){
+        loadXml10( reader->attributes(), priceLists );
+    }
+    while( (!reader->atEnd()) &&
+           (!reader->hasError()) &&
+           !(reader->isEndElement() && reader->name().toString().toUpper() == "BILL") ){
+        reader->readNext();
+        QString tag = reader->name().toString().toUpper();
+        if( tag == "BILLATTRIBUTEMODEL" && reader->isStartElement()) {
+            m_d->attributesModel->readXml10( reader );
+        }
+        if( tag == "BILLITEM" && reader->isStartElement()) {
+            m_d->rootItem->readXml10( reader, m_d->priceList, m_d->attributesModel );
+        }
+    }
+}
+
+void Bill::readXmlTmp10(QXmlStreamReader *reader ) {
+    if(reader->isStartElement() && reader->name().toString().toUpper() == "BILL"){
+        loadFromXmlTmp10( reader->attributes() );
+    }
+    while( (!reader->atEnd()) &&
+           (!reader->hasError()) &&
+           !(reader->isEndElement() && reader->name().toString().toUpper() == "BILL") ){
+        reader->readNext();
+        if( reader->name().toString().toUpper() == "BILLITEM" && reader->isStartElement()) {
+            m_d->rootItem->readXmlTmp10( reader );
+        }
+    }
+}
+
+void Bill::readFromXmlTmp10(ProjectPriceListParentItem *priceLists) {
+    m_d->priceList = priceLists->priceListId( m_d->priceListIdTmp );
+    m_d->rootItem->readFromXmlTmp20( m_d->priceList, m_d->attributesModel );
+}
+
+void Bill::loadXml10(const QXmlStreamAttributes &attrs, ProjectPriceListParentItem * priceLists) {
+    for( QXmlStreamAttributes::const_iterator attrIter=attrs.begin(); attrIter != attrs.end(); ++attrIter ){
+        QString nameUp = attrIter->name().toString().toUpper();
+        if( nameUp == "ID" ){
+            m_d->id = attrIter->value().toUInt();
+        } else if( nameUp == "NAME" ){
+            setName( attrIter->value().toString() );
+        } else if( nameUp == "DESCRIPTION" ){
+            setDescription( attrIter->value().toString() );
+        } else if( nameUp == "PRICELIST" ){
+            m_d->priceList = priceLists->priceListId( attrIter->value().toUInt() );
+        } else if( nameUp == "PRICEDATASET" ){
+            m_d->rootItem->setCurrentPriceDataSet( attrIter->value().toInt() );
+        }
+    }
+}
+
+void Bill::loadFromXmlTmp10(const QXmlStreamAttributes &attrs) {
+    for( QXmlStreamAttributes::const_iterator attrIter=attrs.begin(); attrIter != attrs.end(); ++attrIter ){
+        QString nameUp = attrIter->name().toString().toUpper();
+        if( nameUp == "ID" ){
+            m_d->id = attrIter->value().toUInt();
+        } else if( nameUp == "NAME" ){
+            setName( attrIter->value().toString() );
+        } else if( nameUp == "DESCRIPTION" ){
+            setDescription( attrIter->value().toString() );
+        } else if( nameUp == "PRICELIST" ){
+            m_d->priceListIdTmp = attrIter->value().toUInt();
+        } else if( nameUp == "PRICEDATASET" ){
+            m_d->rootItem->setCurrentPriceDataSet( attrIter->value().toInt() );
+        }
+    }
+}
+
 void Bill::writeXml20(QXmlStreamWriter *writer) {
     writer->writeStartElement( "Bill" );
     writer->writeAttribute( "id", QString::number(m_d->id) );
@@ -553,9 +624,9 @@ void Bill::writeXml20(QXmlStreamWriter *writer) {
     writer->writeEndElement();
 }
 
-void Bill::readXml(QXmlStreamReader *reader, ProjectPriceListParentItem *priceLists) {
+void Bill::readXml20(QXmlStreamReader *reader, ProjectPriceListParentItem *priceLists) {
     if(reader->isStartElement() && reader->name().toString().toUpper() == "BILL"){
-        loadXml( reader->attributes(), priceLists );
+        loadXml20( reader->attributes(), priceLists );
     }
     while( (!reader->atEnd()) &&
            (!reader->hasError()) &&
@@ -564,22 +635,22 @@ void Bill::readXml(QXmlStreamReader *reader, ProjectPriceListParentItem *priceLi
         if( reader->isStartElement() ){
             QString tag = reader->name().toString().toUpper();
             if( tag == "ATTRIBUTESMODEL" ) {
-                m_d->attributesModel->readXml( reader );
+                m_d->attributesModel->readXml20( reader );
             }
             if( tag == "VARSMODEL" ) {
-                m_d->varsModel->readXml( reader );
+                m_d->varsModel->readXml20( reader );
             }
             if( tag == "BILLITEM" ) {
-                m_d->rootItem->readXmlTmp( reader );
+                m_d->rootItem->readXmlTmp20( reader );
             }
         }
     }
-    m_d->rootItem->readFromXmlTmp( m_d->priceList, m_d->attributesModel );
+    m_d->rootItem->readFromXmlTmp20( m_d->priceList, m_d->attributesModel );
 }
 
-void Bill::readXmlTmp(QXmlStreamReader *reader ) {
+void Bill::readXmlTmp20(QXmlStreamReader *reader ) {
     if(reader->isStartElement() && reader->name().toString().toUpper() == "BILL"){
-        loadFromXmlTmp( reader->attributes() );
+        loadFromXmlTmp20( reader->attributes() );
     }
     while( (!reader->atEnd()) &&
            (!reader->hasError()) &&
@@ -588,24 +659,24 @@ void Bill::readXmlTmp(QXmlStreamReader *reader ) {
         if( reader->isStartElement() ){
             QString tag = reader->name().toString().toUpper();
             if( tag == "ATTRIBUTESMODEL" ) {
-                m_d->attributesModel->readXml( reader );
+                m_d->attributesModel->readXml20( reader );
             }
             if( tag == "VARSMODEL" ) {
-                m_d->varsModel->readXml( reader );
+                m_d->varsModel->readXml20( reader );
             }
             if( tag == "BILLITEM" ) {
-                m_d->rootItem->readXmlTmp( reader );
+                m_d->rootItem->readXmlTmp20( reader );
             }
         }
     }
 }
 
-void Bill::readFromXmlTmp(ProjectPriceListParentItem * priceLists) {
+void Bill::readFromXmlTmp20(ProjectPriceListParentItem * priceLists) {
     m_d->priceList = priceLists->priceListId( m_d->priceListIdTmp );
-    m_d->rootItem->readFromXmlTmp( m_d->priceList, m_d->attributesModel );
+    m_d->rootItem->readFromXmlTmp20( m_d->priceList, m_d->attributesModel );
 }
 
-void Bill::loadXml(const QXmlStreamAttributes &attrs, ProjectPriceListParentItem * priceLists) {
+void Bill::loadXml20(const QXmlStreamAttributes &attrs, ProjectPriceListParentItem * priceLists) {
     for( QXmlStreamAttributes::const_iterator i=attrs.begin(); i != attrs.end(); ++i ){
         QString nameUp = (*i).name().toString().toUpper();
         if( nameUp == "ID" ){
@@ -626,7 +697,7 @@ void Bill::loadXml(const QXmlStreamAttributes &attrs, ProjectPriceListParentItem
     }
 }
 
-void Bill::loadFromXmlTmp(const QXmlStreamAttributes &attrs) {
+void Bill::loadFromXmlTmp20(const QXmlStreamAttributes &attrs) {
     for( QXmlStreamAttributes::const_iterator i=attrs.begin(); i != attrs.end(); ++i ){
         QString nameUp = (*i).name().toString().toUpper();
         if( nameUp == "ID" ){

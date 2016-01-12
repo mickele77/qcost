@@ -147,9 +147,9 @@ public:
     bool isUsingPriceList( PriceList * pl );
 
     void writeXml20( QXmlStreamWriter * writer );
-    void readXml(QXmlStreamReader *reader, ProjectPriceListParentItem * priceLists);
+    void readXml20(QXmlStreamReader *reader, ProjectPriceListParentItem * priceLists);
     void readXmlTmp(QXmlStreamReader *reader);
-    void loadFromXml(const QXmlStreamAttributes &attrs, ProjectPriceListParentItem * priceLists);
+    void loadFromXml20(const QXmlStreamAttributes &attrs, ProjectPriceListParentItem * priceLists);
     void loadTmpData( PriceList *priceList );
 
     void nextId();

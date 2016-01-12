@@ -299,6 +299,25 @@ void MeasuresModel::writeXml10(QXmlStreamWriter *writer) const {
     writer->writeEndElement();
 }
 
+void MeasuresModel::readXml10(QXmlStreamReader *reader) {
+    bool firstLine = true;
+    while( !reader->atEnd() &&
+           !reader->hasError() &&
+           !(reader->isEndElement() && reader->name().toString().toUpper() == "BILLITEMMEASURESMODEL") ){
+        reader->readNext();
+        if( reader->name().toString().toUpper() == "BILLITEMMEASURE" && reader->isStartElement()) {
+            if( firstLine ){
+                m_d->linesContainer.last()->loadFromXml10( reader->attributes() );
+                firstLine = false;
+            } else {
+                if(append()){
+                    m_d->linesContainer.last()->loadFromXml10( reader->attributes() );
+                }
+            }
+        }
+    }
+}
+
 void MeasuresModel::writeXml20(QXmlStreamWriter *writer) const {
     writer->writeStartElement( "MeasuresModel" );
     for( QList<Measure *>::iterator i = m_d->linesContainer.begin(); i != m_d->linesContainer.end(); ++i ){
@@ -307,7 +326,7 @@ void MeasuresModel::writeXml20(QXmlStreamWriter *writer) const {
     writer->writeEndElement();
 }
 
-void MeasuresModel::readXmlTmp(QXmlStreamReader *reader) {
+void MeasuresModel::readXmlTmp20(QXmlStreamReader *reader) {
     bool firstLine = true;
     while( !reader->atEnd() &&
            !reader->hasError() &&
@@ -315,20 +334,20 @@ void MeasuresModel::readXmlTmp(QXmlStreamReader *reader) {
         reader->readNext();
         if( reader->name().toString().toUpper() == "MEASURE" && reader->isStartElement()) {
             if( firstLine ){
-                m_d->linesContainer.last()->loadXmlTmp( reader->attributes() );
+                m_d->linesContainer.last()->loadXmlTmp20( reader->attributes() );
                 firstLine = false;
             } else {
                 if(append()){
-                    m_d->linesContainer.last()->loadXmlTmp( reader->attributes() );
+                    m_d->linesContainer.last()->loadXmlTmp20( reader->attributes() );
                 }
             }
         }
     }
 }
 
-void MeasuresModel::readFromXmlTmp() {
+void MeasuresModel::readFromXmlTmp20() {
     for( QList<Measure *>::iterator i = m_d->linesContainer.begin(); i != m_d->linesContainer.end(); ++i ){
-        (*i)->loadFromXmlTmp();
+        (*i)->loadFromXmlTmp20();
     }
 }
 

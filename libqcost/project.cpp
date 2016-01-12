@@ -410,9 +410,9 @@ void Project::readXml(QXmlStreamReader *reader) {
                 if( reader->isStartElement() ){
                     QString tagUp = reader->name().toString().toUpper();
                     if( tagUp == "BILLS"){
-                        m_d->billParentItem->readXml( reader, m_d->priceListParentItem );
+                        m_d->billParentItem->readXml( reader, m_d->priceListParentItem, vers );
                     } else if( tagUp == "PRICELISTS"){
-                        m_d->priceListParentItem->readXml( reader, m_d->unitMeasureModel );
+                        m_d->priceListParentItem->readXml( reader, m_d->unitMeasureModel, vers );
                     } else if( tagUp == "UNITMEASUREMODEL"){
                         m_d->unitMeasureModel->readXml( reader, vers );
                     } else if( tagUp == "PRICEFIELDMODEL"){
@@ -426,11 +426,11 @@ void Project::readXml(QXmlStreamReader *reader) {
                    (!reader->hasError())){
                 reader->readNext();
                 if( reader->isStartElement() && reader->name().toString().toUpper() == "ACCOUNTING"){
-                    m_d->accountingParentItem->readXml( reader, m_d->priceListParentItem );
+                    m_d->accountingParentItem->readXml( reader, m_d->priceListParentItem, vers );
                 } else if( reader->isStartElement() && reader->name().toString().toUpper() == "BILLS"){
-                    m_d->billParentItem->readXml( reader, m_d->priceListParentItem );
+                    m_d->billParentItem->readXml( reader, m_d->priceListParentItem, vers );
                 } else if( reader->isStartElement() && reader->name().toString().toUpper() == "PRICELISTS"){
-                    m_d->priceListParentItem->readXml( reader, m_d->unitMeasureModel );
+                    m_d->priceListParentItem->readXml( reader, m_d->unitMeasureModel, vers );
                 } else if( reader->isStartElement() && reader->name().toString().toUpper() == "UNITMEASUREMODEL"){
                     m_d->unitMeasureModel->readXml( reader, vers );
                 } else if( reader->isStartElement() && reader->name().toString().toUpper() == "PRICEFIELDMODEL"){

@@ -144,10 +144,13 @@ public:
     QList<PriceItem *> connectedPriceItems();
 
     void writeXml10(QXmlStreamWriter *writer);
+    void readXml10(QXmlStreamReader *reader, UnitMeasureModel *uml);
+    void loadFromXml10(const QXmlStreamAttributes &attrs, UnitMeasureModel *uml);
+    void readFromXmlTmp10(ProjectPriceListParentItem *priceLists);
     void writeXml20( QXmlStreamWriter * writer );
-    void readXml(QXmlStreamReader *reader, UnitMeasureModel *uml);
-    void loadFromXml(const QXmlStreamAttributes &attrs, UnitMeasureModel *uml);
-    void readFromXmlTmp(ProjectPriceListParentItem *priceLists);
+    void readXml20(QXmlStreamReader *reader, UnitMeasureModel *uml);
+    void loadFromXml20(const QXmlStreamAttributes &attrs, UnitMeasureModel *uml);
+    void readFromXmlTmp20(ProjectPriceListParentItem *priceLists);
 
     void writeODTOnTable( QTextCursor * cursor,
                           PriceListPrinter::PrintPriceItemsOption printOption,

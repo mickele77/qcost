@@ -452,14 +452,27 @@ void AttributesModel::writeXml20(QXmlStreamWriter *writer) const {
     writer->writeEndElement();
 }
 
-void AttributesModel::readXml(QXmlStreamReader *reader) {
+void AttributesModel::readXml10(QXmlStreamReader *reader) {
+    while( !reader->atEnd() &&
+           !reader->hasError() &&
+           !(reader->isEndElement() && reader->name().toString().toUpper() == "BILLATTRIBUTEMODEL") ){
+        reader->readNext();
+        if( reader->name().toString().toUpper() == "BILLATTRIBUTE" && reader->isStartElement()) {
+            if(append()){
+                m_d->attributesContainer.last()->loadFromXml10( reader->attributes() );
+            }
+        }
+    }
+}
+
+void AttributesModel::readXml20(QXmlStreamReader *reader) {
     while( !reader->atEnd() &&
            !reader->hasError() &&
            !(reader->isEndElement() && reader->name().toString().toUpper() == "ATTRIBUTESMODEL") ){
         reader->readNext();
         if( reader->name().toString().toUpper() == "ATTRIBUTE" && reader->isStartElement()) {
             if(append()){
-                m_d->attributesContainer.last()->loadFromXml( reader->attributes() );
+                m_d->attributesContainer.last()->loadFromXml20( reader->attributes() );
             }
         }
     }

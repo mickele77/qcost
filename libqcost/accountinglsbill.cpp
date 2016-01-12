@@ -625,9 +625,9 @@ void AccountingLSBill::writeXml20(QXmlStreamWriter *writer) {
     writer->writeEndElement();
 }
 
-void AccountingLSBill::readXml(QXmlStreamReader *reader, ProjectPriceListParentItem *priceLists) {
+void AccountingLSBill::readXml20(QXmlStreamReader *reader, ProjectPriceListParentItem *priceLists) {
     if(reader->isStartElement() && reader->name().toString().toUpper() == "ACCOUNTINGLSBILL"){
-        loadFromXml( reader->attributes(), priceLists );
+        loadFromXml20( reader->attributes(), priceLists );
     }
     while( (!reader->atEnd()) &&
            (!reader->hasError()) &&
@@ -635,10 +635,10 @@ void AccountingLSBill::readXml(QXmlStreamReader *reader, ProjectPriceListParentI
         reader->readNext();
         QString tag = reader->name().toString().toUpper();
         if( tag == "ATTRIBUTEMODEL" && reader->isStartElement()) {
-            m_d->attributesModel->readXml( reader );
+            m_d->attributesModel->readXml20( reader );
         }
         if( tag == "ACCOUNTINGLSBILLITEM" && reader->isStartElement()) {
-            m_d->rootItem->readXml( reader, m_d->priceList, m_d->attributesModel );
+            m_d->rootItem->readXml20( reader, m_d->priceList, m_d->attributesModel );
         }
     }
 }
@@ -657,7 +657,7 @@ void AccountingLSBill::readXmlTmp(QXmlStreamReader *reader ) {
     }
 }
 
-void AccountingLSBill::loadFromXml(const QXmlStreamAttributes &attrs, ProjectPriceListParentItem * priceLists) {
+void AccountingLSBill::loadFromXml20(const QXmlStreamAttributes &attrs, ProjectPriceListParentItem * priceLists) {
     for( QXmlStreamAttributes::const_iterator i=attrs.begin(); i != attrs.end(); ++i ){
         QString nameUp = (*i).name().toString().toUpper();
         if( nameUp == "ID" ){

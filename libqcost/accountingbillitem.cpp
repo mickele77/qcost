@@ -1506,7 +1506,7 @@ void AccountingBillItem::writeXml20(QXmlStreamWriter *writer) {
     }
 }
 
-void AccountingBillItem::readXmlTmp( QXmlStreamReader *reader ) {
+void AccountingBillItem::readXmlTmp20( QXmlStreamReader *reader ) {
     if( m_d->itemType != Root ){
         if(reader->isStartElement() && reader->name().toString().toUpper() == "ACCOUNTINGBILLITEM"){
             m_d->tmpAttributes.clear();
@@ -1525,7 +1525,7 @@ void AccountingBillItem::readXmlTmp( QXmlStreamReader *reader ) {
                 if( reader->attributes().hasAttribute( "itemType" ) ){
                     if( reader->attributes().value( "itemType" ).toString().toUpper() == "PAYMENT" ){
                         appendChildren( Payment );
-                        m_d->childrenContainer.last()->readXmlTmp( reader );
+                        m_d->childrenContainer.last()->readXmlTmp20( reader );
                     }
                 }
             }
@@ -1543,12 +1543,12 @@ void AccountingBillItem::readXmlTmp( QXmlStreamReader *reader ) {
                         iType = LumpSum;
                     }
                     appendChildren( iType );
-                    m_d->childrenContainer.last()->readXmlTmp( reader );
+                    m_d->childrenContainer.last()->readXmlTmp20( reader );
                 }
             }
         }  else if( m_d->itemType == PPU ){
             if( reader->name().toString().toUpper() == "MEASURESMODEL" && reader->isStartElement() ) {
-                generateMeasuresModel()->readXmlTmp( reader );
+                generateMeasuresModel()->readXmlTmp20( reader );
             }
         }
         reader->readNext();
@@ -1556,16 +1556,16 @@ void AccountingBillItem::readXmlTmp( QXmlStreamReader *reader ) {
     }
 }
 
-void AccountingBillItem::readFromXmlTmp( AccountingLSBills * lsBills, AccountingTAMBill * tamBill ,PriceList * priceList, AttributesModel * billAttrModel ) {
+void AccountingBillItem::readFromXmlTmp20( AccountingLSBills * lsBills, AccountingTAMBill * tamBill ,PriceList * priceList, AttributesModel * billAttrModel ) {
     if( !m_d->tmpAttributes.isEmpty() ){
         loadFromXml( m_d->tmpAttributes, lsBills, tamBill, priceList, billAttrModel );
         m_d->tmpAttributes.clear();
         if( m_d->measuresModel != NULL ){
-            m_d->measuresModel->readFromXmlTmp();
+            m_d->measuresModel->readFromXmlTmp20();
         }
     }
     for( QList<AccountingBillItem *>::iterator i = m_d->childrenContainer.begin(); i != m_d->childrenContainer.end(); ++i ){
-        (*i)->readFromXmlTmp( lsBills, tamBill, priceList, billAttrModel );
+        (*i)->readFromXmlTmp20( lsBills, tamBill, priceList, billAttrModel );
     }
 }
 
