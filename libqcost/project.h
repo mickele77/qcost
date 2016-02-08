@@ -82,7 +82,7 @@ public:
     bool canChildrenBeInserted(const QModelIndex &index);
 
     void writeXml(QXmlStreamWriter * writer , const QString &vers = QString("2.0"));
-    void readXml( QXmlStreamReader * reader );
+    void readXml(QXmlStreamReader * reader , QString *fileVers);
 
     void createSimpleProject( SimpleProjectType projType = ProjectEmpty );
 

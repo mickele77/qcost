@@ -34,6 +34,8 @@
 #include <QXmlStreamReader>
 #include <QTextStream>
 
+#include <QDebug>
+
 class ProjectPrivate{
 public:
     ProjectPrivate( MathParser * parser ):
@@ -386,55 +388,54 @@ void Project::writeXml(QXmlStreamWriter *writer, const QString &vers){
 
     writer->writeEndElement();
     writer->writeEndDocument();
-
 }
 
-void Project::readXml(QXmlStreamReader *reader) {
-    while( (reader->name().toString().toUpper() != "QCOSTPROJECT" ) &
-           (!reader->atEnd()) &&
-           (!reader->hasError())){
+void Project::readXml(QXmlStreamReader *reader, QString * fileVers ) {
+    while( (reader->name().toString().toUpper() != "QCOSTPROJECT" ) &&
+           !(reader->atEnd()) &&
+           !(reader->hasError())){
         reader->readNext();
     }
     if(reader->isStartElement() && reader->name().toString().toUpper() == "QCOSTPROJECT"){
-        QString vers = "1.0";
+        *fileVers = "2.0";
         QXmlStreamAttributes attrs = reader->attributes();
         for( QXmlStreamAttributes::const_iterator attrIter = attrs.begin(); attrIter != attrs.end(); ++attrIter ){
             if( attrIter->name().toString().toUpper() == "VERSION" ){
-                vers = attrIter->value().toString();
+                *fileVers = attrIter->value().toString();
             }
         }
-        if( (vers == "0.3") || (vers == "1.0") ){
+        if( (*fileVers == "0.3") || (*fileVers == "1.0") ){
             while( (!reader->atEnd()) &&
                    (!reader->hasError())){
                 reader->readNext();
                 if( reader->isStartElement() ){
                     QString tagUp = reader->name().toString().toUpper();
                     if( tagUp == "BILLS"){
-                        m_d->billParentItem->readXml( reader, m_d->priceListParentItem, vers );
+                        m_d->billParentItem->readXml( reader, m_d->priceListParentItem, *fileVers );
                     } else if( tagUp == "PRICELISTS"){
-                        m_d->priceListParentItem->readXml( reader, m_d->unitMeasureModel, vers );
+                        m_d->priceListParentItem->readXml( reader, m_d->unitMeasureModel, *fileVers );
                     } else if( tagUp == "UNITMEASUREMODEL"){
-                        m_d->unitMeasureModel->readXml( reader, vers );
+                        m_d->unitMeasureModel->readXml( reader, *fileVers );
                     } else if( tagUp == "PRICEFIELDMODEL"){
-                        m_d->priceFieldModel->readXml( reader, vers );
+                        m_d->priceFieldModel->readXml( reader, *fileVers );
                     }
                 }
             }
         }
-        if( vers == "2.0" ){
+        if( *fileVers == "2.0" ){
             while( (!reader->atEnd()) &&
                    (!reader->hasError())){
                 reader->readNext();
                 if( reader->isStartElement() && reader->name().toString().toUpper() == "ACCOUNTING"){
-                    m_d->accountingParentItem->readXml( reader, m_d->priceListParentItem, vers );
+                    m_d->accountingParentItem->readXml( reader, m_d->priceListParentItem, *fileVers );
                 } else if( reader->isStartElement() && reader->name().toString().toUpper() == "BILLS"){
-                    m_d->billParentItem->readXml( reader, m_d->priceListParentItem, vers );
+                    m_d->billParentItem->readXml( reader, m_d->priceListParentItem, *fileVers );
                 } else if( reader->isStartElement() && reader->name().toString().toUpper() == "PRICELISTS"){
-                    m_d->priceListParentItem->readXml( reader, m_d->unitMeasureModel, vers );
+                    m_d->priceListParentItem->readXml( reader, m_d->unitMeasureModel, *fileVers );
                 } else if( reader->isStartElement() && reader->name().toString().toUpper() == "UNITMEASUREMODEL"){
-                    m_d->unitMeasureModel->readXml( reader, vers );
+                    m_d->unitMeasureModel->readXml( reader, *fileVers );
                 } else if( reader->isStartElement() && reader->name().toString().toUpper() == "PRICEFIELDMODEL"){
-                    m_d->priceFieldModel->readXml( reader, vers );
+                    m_d->priceFieldModel->readXml( reader, *fileVers );
                 }
             }
         }

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<QCostProject version="0.4">
+<QCostProject version="2.0">
     <PriceFieldModel>
         <PriceFieldData priceName="Costo Unitario" amountName="Importo" unitMeasure="€" precision="2" applyFormula="false" formula="" fieldType="PriceTotal"/>
         <PriceFieldData priceName="Costo Unitario M.O." amountName="Importo M.O." unitMeasure="€" precision="2" applyFormula="false" formula="" fieldType="PriceHuman"/>

@@ -189,7 +189,7 @@ void ProjectPriceListParentItem::writeXml20(QXmlStreamWriter *writer) const {
 
 void ProjectPriceListParentItem::readXml(QXmlStreamReader *reader, UnitMeasureModel * uml, const QString & vers ) {
     if( (vers == "1.0") || (vers == "0.3") ){
-
+        readXml10( reader, uml );
     } else if( vers == "2.0" ){
         readXml20( reader, uml );
     }

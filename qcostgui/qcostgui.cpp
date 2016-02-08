@@ -84,6 +84,7 @@ public:
         accountingBillGUI(NULL),
         accountingTAMBillGUI(NULL),
         accountingLSBillGUI(NULL),
+        currentFileVersion("2.0"),
         EPAFileName(){
 
         projectItemsViewDock->setWidget( projectItemsView );
@@ -113,6 +114,7 @@ public:
     // *** GUI ***
     // file corrente
     QFile currentFile;
+    QString currentFileVersion;
     // Elenco file recenti
     QStringList recentFiles;
 
@@ -403,8 +405,9 @@ bool QCostGUI::setCurrentFile(const QString &fileName, bool readContent ) {
             // legge il contenuto del file se richiesto
             if( readContent ){
                 m_d->project->clear();
-                QXmlStreamReader reader( &m_d->currentFile );
-                m_d->project->readXml( &reader );
+                QXmlStreamReader reader( &(m_d->currentFile) );
+                m_d->currentFileVersion = "2.0";
+                m_d->project->readXml( &reader, &(m_d->currentFileVersion) );
             }
         }
 
@@ -477,9 +480,9 @@ void QCostGUI::newProject() {
 
 void QCostGUI::openFile() {
     if (okToContinue()) {
-        QString fileName = QFileDialog::getOpenFileName(this,
-                                                        trUtf8("Apri il progetto"), ".",
-                                                        trUtf8("File progetto QCost(*.qct)"));
+        QString fileName = QFileDialog::getOpenFileName( this,
+                                                         trUtf8("Apri il progetto"), ".",
+                                                         trUtf8("File progetto QCost (*.qct)"));
         setCurrentFile( fileName, true );
     }
 }
@@ -503,13 +506,31 @@ bool QCostGUI::save(){
 }
 
 bool QCostGUI::saveAs(){
-    QString fileName = QFileDialog::getSaveFileName(this,
-                                                    trUtf8("Salva il progetto"), ".",
-                                                    trUtf8("File progetto QCost(*.qct)"));
+    QString saveVersion2 = trUtf8("File progetto QCost 2.0 (*.qct)");
+    QString saveVersion1 = trUtf8("File progetto QCost 1.0 (*.qct)");
+    QString selectedFilter = saveVersion2;
+    if( m_d->currentFileVersion == "2.0" ){
+        selectedFilter = saveVersion2;
+    } else if( m_d->currentFileVersion == "1.0" ){
+        selectedFilter = saveVersion1;
+    }
+
+    QString fileName = QFileDialog::getSaveFileName( this,
+                                                     trUtf8("Salva il progetto"), ".",
+                                                     saveVersion2 + ";;" + saveVersion1,
+                                                     &selectedFilter);
     if (fileName.isEmpty()){
         return false;
     } else {
         setCurrentFile( fileName );
+        if( selectedFilter == saveVersion2 ){
+            m_d->currentFileVersion = "2.0";
+        } else if( selectedFilter == saveVersion1 ){
+            m_d->currentFileVersion = "1.0";
+        } else {
+            m_d->currentFileVersion = "2.0";
+        }
+
         return saveCurrentFile();
     }
 }
@@ -745,7 +766,7 @@ bool QCostGUI::saveCurrentFile(){
         m_d->currentFile.resize(0);
         QXmlStreamWriter writer(&m_d->currentFile);
         if( m_d->project ){
-            m_d->project->writeXml( &writer );
+            m_d->project->writeXml( &writer, m_d->currentFileVersion );
         }
         m_d->currentFile.flush();
         setModified( false );
