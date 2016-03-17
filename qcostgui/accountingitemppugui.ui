@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>506</width>
-    <height>793</height>
+    <height>913</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -24,261 +24,359 @@
        <string>Dati</string>
       </attribute>
       <layout class="QGridLayout" name="dataTabLayout">
-       <item row="5" column="0">
-        <widget class="QGroupBox" name="valueDataGroupBox">
-         <property name="title">
-          <string>Misure</string>
-         </property>
-         <layout class="QGridLayout" name="valueDataLayout">
-          <item row="1" column="1">
-           <widget class="QLabel" name="quantityLabel">
-            <property name="text">
-             <string>Quantità</string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="2">
-           <widget class="QLineEdit" name="quantityLineEdit">
-            <property name="alignment">
-             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="3">
-           <widget class="QCheckBox" name="associateLinesCheckBox">
-            <property name="text">
-             <string>Associa misure</string>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="1" colspan="3">
-           <widget class="QGroupBox" name="itemMeasuresGroupBox">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="title">
-             <string>Misure</string>
-            </property>
-            <layout class="QGridLayout" name="gridLayout_6">
-             <item row="0" column="0">
-              <widget class="QPushButton" name="addItemLinePushButton">
-               <property name="text">
-                <string>+</string>
-               </property>
-              </widget>
-             </item>
-             <item row="0" column="1">
-              <widget class="QPushButton" name="delItemLinePushButton">
-               <property name="text">
-                <string>-</string>
-               </property>
-              </widget>
-             </item>
-             <item row="0" column="2">
-              <widget class="QPushButton" name="importItemMeasuresTXTPushButton">
-               <property name="text">
-                <string>TXT</string>
-               </property>
-              </widget>
-             </item>
-             <item row="1" column="0" colspan="3">
-              <widget class="QTableView" name="itemMeasuresTableView"/>
-             </item>
-            </layout>
-           </widget>
-          </item>
-          <item row="0" column="1">
-           <widget class="QLabel" name="dateLabel">
-            <property name="text">
-             <string>Data</string>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="2">
-           <widget class="QLineEdit" name="dateLineEdit">
-            <property name="alignment">
-             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-            </property>
-            <property name="readOnly">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </widget>
-       </item>
        <item row="0" column="0">
-        <widget class="QCheckBox" name="priceGBCheckBox">
-         <property name="text">
-          <string>Prezzo</string>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="0">
-        <widget class="QGroupBox" name="priceGroupBox">
-         <property name="title">
-          <string>Prezzo</string>
-         </property>
-         <property name="checkable">
+        <widget class="QScrollArea" name="scrollArea">
+         <property name="widgetResizable">
           <bool>true</bool>
          </property>
-         <property name="checked">
-          <bool>false</bool>
-         </property>
-         <layout class="QGridLayout" name="priceDataLayout">
-          <item row="0" column="1">
-           <widget class="QLineEdit" name="priceCodeLineEdit">
-            <property name="readOnly">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="1">
-           <widget class="QLineEdit" name="priceUnitMeasureLineEdit">
-            <property name="readOnly">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="0">
-           <widget class="QLabel" name="priceUnitMeasureLabel">
-            <property name="text">
-             <string>Unità di misura</string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="1">
-           <widget class="QLineEdit" name="priceShortDescLineEdit">
-            <property name="readOnly">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="0">
-           <widget class="QLabel" name="priceShortDescLabel">
-            <property name="text">
-             <string>Descrizione</string>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="0">
-           <widget class="QLabel" name="priceCodeLabel">
-            <property name="text">
-             <string>Codice</string>
-            </property>
-           </widget>
-          </item>
-          <item row="3" column="0">
-           <widget class="QLabel" name="PPUTotalToDiscountLabel">
-            <property name="text">
-             <string>Costo Unitario Lordo</string>
-            </property>
-           </widget>
-          </item>
-          <item row="4" column="0">
-           <widget class="QLabel" name="PPUNotToDiscountLabel">
-            <property name="text">
-             <string>Costo Unitario non Ribassabile</string>
-            </property>
-           </widget>
-          </item>
-          <item row="3" column="1">
-           <widget class="QLineEdit" name="PPUTotalToDiscountLineEdit">
-            <property name="alignment">
-             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-            </property>
-            <property name="readOnly">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-          <item row="4" column="1">
-           <widget class="QLineEdit" name="PPUNotToBDiscountedLineEdit">
-            <property name="alignment">
-             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-            </property>
-            <property name="readOnly">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </widget>
-       </item>
-       <item row="3" column="0">
-        <widget class="QGroupBox" name="amountsGroupBox">
-         <property name="title">
-          <string>I&amp;mporti contabilizzati</string>
-         </property>
-         <property name="checkable">
-          <bool>true</bool>
-         </property>
-         <property name="checked">
-          <bool>false</bool>
-         </property>
-         <layout class="QGridLayout" name="amountsDataLayout">
-          <item row="0" column="0">
-           <widget class="QLabel" name="totalAmountToDiscountLabel">
-            <property name="text">
-             <string>Importo al lordo del ribasso</string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="0">
-           <widget class="QLabel" name="amountNotToDiscountLabel">
-            <property name="text">
-             <string>Importo non ribassabile</string>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="1">
-           <widget class="QLineEdit" name="totalAmountToDiscountLineEdit">
-            <property name="alignment">
-             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-            </property>
-            <property name="readOnly">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="0">
-           <widget class="QLabel" name="totalAmountLabel">
-            <property name="text">
-             <string>Importo al netto del ribasso</string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="1">
-           <widget class="QLineEdit" name="amountNotToDiscountLineEdit">
-            <property name="alignment">
-             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-            </property>
-            <property name="readOnly">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="1">
-           <widget class="QLineEdit" name="totalAmountLineEdit">
-            <property name="alignment">
-             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-            </property>
-            <property name="readOnly">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </widget>
-       </item>
-       <item row="2" column="0">
-        <widget class="QCheckBox" name="amountsGBCheckBox">
-         <property name="text">
-          <string>Importi contabilizzati</string>
-         </property>
+         <widget class="QWidget" name="scrollAreaWidgetContents">
+          <property name="geometry">
+           <rect>
+            <x>0</x>
+            <y>-19</y>
+            <width>451</width>
+            <height>864</height>
+           </rect>
+          </property>
+          <layout class="QGridLayout" name="gridLayout_2">
+           <item row="2" column="0">
+            <widget class="QCheckBox" name="priceGBCheckBox">
+             <property name="text">
+              <string>Prezzo</string>
+             </property>
+            </widget>
+           </item>
+           <item row="5" column="0">
+            <widget class="QGroupBox" name="amountsGroupBox">
+             <property name="title">
+              <string>I&amp;mporti contabilizzati</string>
+             </property>
+             <property name="checkable">
+              <bool>true</bool>
+             </property>
+             <property name="checked">
+              <bool>false</bool>
+             </property>
+             <layout class="QGridLayout" name="amountsDataLayout">
+              <item row="0" column="0">
+               <widget class="QLabel" name="totalAmountToDiscountLabel">
+                <property name="text">
+                 <string>Importo al lordo del ribasso</string>
+                </property>
+               </widget>
+              </item>
+              <item row="1" column="0">
+               <widget class="QLabel" name="amountNotToDiscountLabel">
+                <property name="text">
+                 <string>Importo non ribassabile</string>
+                </property>
+               </widget>
+              </item>
+              <item row="0" column="1">
+               <widget class="QLineEdit" name="totalAmountToDiscountLineEdit">
+                <property name="alignment">
+                 <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                </property>
+                <property name="readOnly">
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+              <item row="2" column="0">
+               <widget class="QLabel" name="totalAmountLabel">
+                <property name="text">
+                 <string>Importo al netto del ribasso</string>
+                </property>
+               </widget>
+              </item>
+              <item row="1" column="1">
+               <widget class="QLineEdit" name="amountNotToDiscountLineEdit">
+                <property name="alignment">
+                 <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                </property>
+                <property name="readOnly">
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+              <item row="2" column="1">
+               <widget class="QLineEdit" name="totalAmountLineEdit">
+                <property name="alignment">
+                 <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                </property>
+                <property name="readOnly">
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </widget>
+           </item>
+           <item row="3" column="0">
+            <widget class="QGroupBox" name="priceGroupBox">
+             <property name="title">
+              <string>Prezzo</string>
+             </property>
+             <property name="checkable">
+              <bool>true</bool>
+             </property>
+             <property name="checked">
+              <bool>false</bool>
+             </property>
+             <layout class="QGridLayout" name="priceDataLayout">
+              <item row="0" column="1">
+               <widget class="QLineEdit" name="priceCodeLineEdit">
+                <property name="readOnly">
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+              <item row="2" column="1">
+               <widget class="QLineEdit" name="priceUnitMeasureLineEdit">
+                <property name="readOnly">
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+              <item row="2" column="0">
+               <widget class="QLabel" name="priceUnitMeasureLabel">
+                <property name="text">
+                 <string>Unità di misura</string>
+                </property>
+               </widget>
+              </item>
+              <item row="1" column="1">
+               <widget class="QLineEdit" name="priceShortDescLineEdit">
+                <property name="readOnly">
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+              <item row="1" column="0">
+               <widget class="QLabel" name="priceShortDescLabel">
+                <property name="text">
+                 <string>Descrizione</string>
+                </property>
+               </widget>
+              </item>
+              <item row="0" column="0">
+               <widget class="QLabel" name="priceCodeLabel">
+                <property name="text">
+                 <string>Codice</string>
+                </property>
+               </widget>
+              </item>
+              <item row="3" column="0">
+               <widget class="QLabel" name="PPUTotalToDiscountLabel">
+                <property name="text">
+                 <string>Costo Unitario Lordo</string>
+                </property>
+               </widget>
+              </item>
+              <item row="4" column="0">
+               <widget class="QLabel" name="PPUNotToDiscountLabel">
+                <property name="text">
+                 <string>Costo Unitario non Ribassabile</string>
+                </property>
+               </widget>
+              </item>
+              <item row="3" column="1">
+               <widget class="QLineEdit" name="PPUTotalToDiscountLineEdit">
+                <property name="alignment">
+                 <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                </property>
+                <property name="readOnly">
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+              <item row="4" column="1">
+               <widget class="QLineEdit" name="PPUNotToBDiscountedLineEdit">
+                <property name="alignment">
+                 <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                </property>
+                <property name="readOnly">
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </widget>
+           </item>
+           <item row="4" column="0">
+            <widget class="QCheckBox" name="amountsGBCheckBox">
+             <property name="text">
+              <string>Importi contabilizzati</string>
+             </property>
+            </widget>
+           </item>
+           <item row="6" column="0">
+            <widget class="QGroupBox" name="valueDataGroupBox">
+             <property name="title">
+              <string>Misure</string>
+             </property>
+             <layout class="QGridLayout" name="valueDataLayout">
+              <item row="1" column="1">
+               <widget class="QLabel" name="quantityLabel">
+                <property name="text">
+                 <string>Quantità</string>
+                </property>
+               </widget>
+              </item>
+              <item row="1" column="2">
+               <widget class="QLineEdit" name="quantityLineEdit">
+                <property name="alignment">
+                 <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                </property>
+               </widget>
+              </item>
+              <item row="1" column="3">
+               <widget class="QCheckBox" name="associateLinesCheckBox">
+                <property name="text">
+                 <string>Associa misure</string>
+                </property>
+               </widget>
+              </item>
+              <item row="2" column="1" colspan="3">
+               <widget class="QGroupBox" name="itemMeasuresGroupBox">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="title">
+                 <string>Misure</string>
+                </property>
+                <layout class="QGridLayout" name="gridLayout_6">
+                 <item row="0" column="0">
+                  <widget class="QPushButton" name="addItemLinePushButton">
+                   <property name="text">
+                    <string>+</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="0" column="1">
+                  <widget class="QPushButton" name="delItemLinePushButton">
+                   <property name="text">
+                    <string>-</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="0" column="2">
+                  <widget class="QPushButton" name="importItemMeasuresTXTPushButton">
+                   <property name="text">
+                    <string>TXT</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="1" column="0" colspan="3">
+                  <widget class="QTableView" name="itemMeasuresTableView"/>
+                 </item>
+                </layout>
+               </widget>
+              </item>
+              <item row="0" column="1">
+               <widget class="QLabel" name="dateLabel">
+                <property name="text">
+                 <string>Data</string>
+                </property>
+               </widget>
+              </item>
+              <item row="0" column="2">
+               <widget class="QLineEdit" name="dateLineEdit">
+                <property name="alignment">
+                 <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                </property>
+                <property name="readOnly">
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </widget>
+           </item>
+           <item row="0" column="0">
+            <widget class="QCheckBox" name="progNumberCheckBox">
+             <property name="text">
+              <string>N.Prog</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="0">
+            <widget class="QGroupBox" name="progNumberGroupBox">
+             <property name="title">
+              <string>N.Prog</string>
+             </property>
+             <property name="checkable">
+              <bool>true</bool>
+             </property>
+             <property name="checked">
+              <bool>false</bool>
+             </property>
+             <layout class="QGridLayout" name="gridLayout">
+              <item row="1" column="0">
+               <widget class="QLabel" name="accountingProgNumberLabel">
+                <property name="text">
+                 <string>N. Prog. Registro</string>
+                </property>
+               </widget>
+              </item>
+              <item row="0" column="0">
+               <widget class="QLabel" name="progNumberLabel">
+                <property name="text">
+                 <string>N. Prog. Libretto</string>
+                </property>
+               </widget>
+              </item>
+              <item row="0" column="1">
+               <widget class="QLineEdit" name="progNumberLineEdit">
+                <property name="alignment">
+                 <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                </property>
+                <property name="readOnly">
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+              <item row="1" column="1">
+               <widget class="QLineEdit" name="accountingProgNumberLineEdit">
+                <property name="alignment">
+                 <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                </property>
+                <property name="readOnly">
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </widget>
+           </item>
+           <item row="7" column="0">
+            <spacer name="verticalSpacer">
+             <property name="orientation">
+              <enum>Qt::Vertical</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>20</width>
+               <height>40</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+          </layout>
+          <zorder>progNumberGroupBox</zorder>
+          <zorder>progNumberCheckBox</zorder>
+          <zorder>valueDataGroupBox</zorder>
+          <zorder>amountsGroupBox</zorder>
+          <zorder>priceGBCheckBox</zorder>
+          <zorder>priceGroupBox</zorder>
+          <zorder>progNumberCheckBox</zorder>
+          <zorder>amountsGBCheckBox</zorder>
+          <zorder>progNumberGroupBox</zorder>
+          <zorder>verticalSpacer</zorder>
+         </widget>
         </widget>
        </item>
       </layout>
@@ -448,6 +546,70 @@
     <hint type="destinationlabel">
      <x>252</x>
      <y>313</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>progNumberGroupBox</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>progNumberCheckBox</receiver>
+   <slot>setChecked(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>252</x>
+     <y>135</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>252</x>
+     <y>64</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>progNumberGroupBox</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>progNumberGroupBox</receiver>
+   <slot>setVisible(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>252</x>
+     <y>135</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>252</x>
+     <y>135</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>progNumberCheckBox</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>progNumberGroupBox</receiver>
+   <slot>setChecked(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>252</x>
+     <y>64</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>252</x>
+     <y>135</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>progNumberCheckBox</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>progNumberCheckBox</receiver>
+   <slot>setHidden(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>252</x>
+     <y>64</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>252</x>
+     <y>64</y>
     </hint>
    </hints>
   </connection>

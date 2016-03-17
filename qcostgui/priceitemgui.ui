@@ -24,8 +24,8 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>473</width>
-        <height>735</height>
+        <width>476</width>
+        <height>729</height>
        </rect>
       </property>
       <layout class="QGridLayout" name="gridLayout_13">
@@ -81,19 +81,6 @@
               </item>
               <item row="0" column="2">
                <widget class="QLineEdit" name="codeLineEdit"/>
-              </item>
-              <item row="0" column="3">
-               <spacer name="horizontalSpacer">
-                <property name="orientation">
-                 <enum>Qt::Horizontal</enum>
-                </property>
-                <property name="sizeHint" stdset="0">
-                 <size>
-                  <width>259</width>
-                  <height>20</height>
-                 </size>
-                </property>
-               </spacer>
               </item>
              </layout>
             </widget>
@@ -223,8 +210,8 @@
                       <rect>
                        <x>0</x>
                        <y>0</y>
-                       <width>385</width>
-                       <height>215</height>
+                       <width>369</width>
+                       <height>210</height>
                       </rect>
                      </property>
                      <layout class="QGridLayout" name="gridLayout_12">

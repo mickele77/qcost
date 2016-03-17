@@ -75,6 +75,7 @@ AccountingItemPPUGUI::AccountingItemPPUGUI( QMap<PriceListDBWidget::ImportOption
     QWidget(parent),
     m_d(new AccountingItemPPUGUIPrivate( EPAImpOptions, EPAFileName, prs, prj ) ) {
     m_d->ui->setupUi(this);
+    m_d->ui->progNumberGroupBox->setHidden( true );
     m_d->ui->priceGroupBox->setHidden( true );
     m_d->ui->amountsGroupBox->setHidden( true );
     m_d->ui->priceTab->layout()->addWidget( m_d->priceItemGUI );
@@ -253,6 +254,9 @@ void AccountingItemPPUGUI::setItem(AccountingBillItem *b) {
         m_d->itemAttributeModel->setItem( b );
 
         if( m_d->billItem != NULL ){
+            m_d->ui->accountingProgNumberLineEdit->setText( m_d->billItem->accountingProgCode() );
+            m_d->ui->progNumberLineEdit->setText( m_d->billItem->progCode() );
+
             m_d->ui->dateLineEdit->setText( m_d->billItem->dateStr() );
             connect( m_d->billItem, &AccountingBillItem::dateChanged, m_d->ui->dateLineEdit, &QLineEdit::setText );
             connect( m_d->ui->dateLineEdit, &QLineEdit::editingFinished, this, &AccountingItemPPUGUI::setDateLE );
@@ -286,6 +290,8 @@ void AccountingItemPPUGUI::setItem(AccountingBillItem *b) {
 
             connect( m_d->billItem, &AccountingBillItem::aboutToBeDeleted, this, &AccountingItemPPUGUI::setAccountingItemNULL );
         } else {
+            m_d->ui->progNumberLineEdit->clear();
+            m_d->ui->accountingProgNumberLineEdit->clear();
             m_d->ui->quantityLineEdit->clear();
             m_d->ui->priceCodeLineEdit->clear();
             m_d->ui->priceShortDescLineEdit->clear();

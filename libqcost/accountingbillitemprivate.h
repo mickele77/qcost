@@ -38,6 +38,9 @@ public:
     QList<AccountingBillItem *> childrenContainer;
     QList<Attribute *> attributes;
     MathParser * parser;
+    /** Numero progressivo all'interno del registro di contabilità.
+     * E' un numero progressivo unico indipendente dal numero del
+     * registro di contabilità. */
     int accountingProgCode;
     int progCode;
     PriceFieldModel * priceFieldModel;

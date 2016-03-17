@@ -71,7 +71,6 @@ AccountingBillItem::AccountingBillItem(AccountingBillItem *parentItem, Accountin
     connect( this, &AccountingBillItem::currentPriceDataSetChanged, this, &AccountingBillItem::itemChanged );
     connect( this, &AccountingBillItem::discountChanged, this, &AccountingBillItem::itemChanged );
 
-
     if( m_d->itemType == LumpSum ){
         if( m_d->parentItem != NULL ){
             if( m_d->parentItem->m_d->itemType == Payment ){
@@ -3024,8 +3023,7 @@ void AccountingBillItem::writeODTMeasuresOnTable( QTextCursor *cursor, int payTo
                                   tagBlockFormat, txtBlockFormat, numBlockFormat,
                                   leftFormat, centralFormat, rightFormat,
                                   centralQuantityTotalFormat, rightQuantityTotalFormat,
-                                  txtCharFormat, txtCommentCharFormat,
-                                  true );
+                                  txtCharFormat, txtCommentCharFormat );
             }
 
             // *** Riga vuota ***
