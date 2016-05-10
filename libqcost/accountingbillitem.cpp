@@ -1572,7 +1572,7 @@ void AccountingBillItem::loadFromXml( const QXmlStreamAttributes &attrs,
                                       AccountingLSBills * lsBills,
                                       AccountingTAMBill * tamBill,
                                       PriceList * priceList,
-                                      AttributesModel * billAttrModel ) {
+                                      AttributesModel * attrModel ) {
     if( attrs.hasAttribute( "id" ) ){
         m_d->id = attrs.value( "id").toUInt();
     }
@@ -1594,7 +1594,10 @@ void AccountingBillItem::loadFromXml( const QXmlStreamAttributes &attrs,
             bool ok = false;
             unsigned int attrId = (*i).toUInt(&ok);
             if( ok ){
-                addAttribute( billAttrModel->attributeId( attrId ) );
+                Attribute * attr = attrModel->attributeId( attrId );
+                if( attr != NULL ) {
+                    addAttribute( attr );
+                }
             }
         }
     }
