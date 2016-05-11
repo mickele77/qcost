@@ -113,11 +113,11 @@ AccountingLSBillPrinterGUI::AccountingLSBillPrinterGUI( AccountingBill * measure
     connect( m_d->ui->printAccountingSummaryButton, &QRadioButton::toggled, this, &AccountingLSBillPrinterGUI::updateOptionsAvailable );
     connect( m_d->ui->printRawMeasuresButton, &QRadioButton::toggled, this, &AccountingLSBillPrinterGUI::updateOptionsAvailable );
 
-    m_d->ui->billToPrintComboBox->insertItem(0, trUtf8("Tutti"));
     for( int i=0; i < measuresBill->paymentsCount(); ++i ){
-        m_d->ui->billToPrintComboBox->insertItem((i+1), measuresBill->payment(i)->name() );
+        m_d->ui->payToPrintComboBox->addItem( measuresBill->payment(i)->title(), QVariant(i) );
     }
-    m_d->ui->billToPrintComboBox->setCurrentIndex(*(payToPrint)+1);
+    m_d->ui->payToPrintComboBox->addItem(trUtf8("Tutti"), QVariant(-1) );
+    m_d->ui->payToPrintComboBox->setCurrentIndex(*(payToPrint)+1);
 
     Qt::WindowFlags flags = windowFlags();
     flags |= Qt::WindowMaximizeButtonHint;
@@ -156,7 +156,7 @@ void AccountingLSBillPrinterGUI::setPrintData(){
         *(m_d->printOption) = AccountingPrinter::PrintRawMeasures;
     }
 
-    *(m_d->paymentToPrint) = m_d->ui->billToPrintComboBox->currentIndex() - 1;
+    *(m_d->paymentToPrint) = m_d->ui->payToPrintComboBox->currentIndex() - 1;
 
     *(m_d->paperWidth) = m_d->pageSizeList.at( m_d->ui->paperDimensionsComboBox->currentIndex() ).size( QPageSize::Millimeter ).width();
     *(m_d->paperHeight) = m_d->pageSizeList.at( m_d->ui->paperDimensionsComboBox->currentIndex() ).size( QPageSize::Millimeter ).height();

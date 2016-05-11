@@ -15,7 +15,7 @@
     </UnitMeasureModel>
     <PriceLists>
         <PriceList id="0" name="Prezzario Misura" description="">
-            <PriceItemDataSet overheads="0.13" profits="0.1"/>
+            <PriceItemDataSet/>
             <PriceItem id="1" code="A001" inheritCodeFromParent="true" shortDescription="Denominazione 1" inheritShortDescFromParent="false" longDescription="Descrizione 1" inheritLongDescFromParent="false" unitMeasure="2">
                 <PriceItemDataSet value0="20" value1="3" value2="2.41" value3="17.59"/>
             </PriceItem>
@@ -49,7 +49,7 @@
             </PriceItem>
         </PriceList>
         <PriceList id="1" name="Prezzario Corpo" description="">
-            <PriceItemDataSet overheads="0.13" profits="0.1"/>
+            <PriceItemDataSet/>
             <PriceItem id="1" code="01.A02.A05" inheritCodeFromParent="false" shortDescription="Demolizione completa di fabbricati sino al piano di spiccato, valut..." inheritShortDescFromParent="false" longDescription="Demolizione completa di fabbricati sino al piano di spiccato, valutata a metro cubo vuoto per pieno compreso l'accatastamento entro l'area di cantiere del materiale di spoglio ed il carico ed il trasporto delle macerie alle discariche, esclusi eventuali corrispettivi per diritti di discarica" inheritLongDescFromParent="false">
                 <PriceItem id="2" code="01.A02.A05.020" inheritCodeFromParent="false" shortDescription="Con struttura portante in muratura e solai in legno, ferro, voltini..." inheritShortDescFromParent="true" longDescription="Con struttura portante in muratura e solai in legno, ferro, voltini o a volta" inheritLongDescFromParent="true" unitMeasure="0">
                     <PriceItemDataSet value0="11.14" value1="4.32" value2="3.48" value3="7.66"/>
@@ -67,8 +67,14 @@
     </Bills>
     <Accounting>
         <AccountingLSBills>
-            <AccountingLSBill id="0" name="Categoria 1" description="" PPUTotalToDiscount="0" PPUNotToDiscount="0" totalAmountPriceFields="" priceList="1" priceDataSet="0">
+            <AccountingLSBill id="0" name="Categoria 1" description="" PPUTotalToDiscount="0" PPUNotToDiscount="0" totalAmountPriceFields="0" priceList="1" priceDataSet="0">
                 <AttributesModel/>
+                <AccountingLSBillItem id="1" priceItem="2" quantity="35.8" priceDataSet="0">
+                    <MeasuresLSModel>
+                        <MeasureLS comment="" projFormula="25.6" accDate="2457520" accFormulaFromProj="true"/>
+                        <MeasureLS comment="" projFormula="10.2" accDate="2457520" accFormula=""/>
+                    </MeasuresLSModel>
+                </AccountingLSBillItem>
             </AccountingLSBill>
         </AccountingLSBills>
         <AccountingTAMBill id="0" name="Opere in economia" priceDataSet="0" discount="0" totalAmountPriceFields="" noDiscountAmountPriceFields="">

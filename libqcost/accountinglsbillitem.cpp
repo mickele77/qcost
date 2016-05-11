@@ -1492,13 +1492,13 @@ void AccountingLSBillItem::writeODTAccountingOnTable( QTextCursor *cursor,
             if( writeAmounts ){
                 AccountingLSBillItemPrivate::writeCell( cursor, table, centralHeaderFormat, headerBlockFormat, trUtf8("Costo Unitario"));
             }
-            AccountingLSBillItemPrivate::writeCell( cursor, table, centralHeaderFormat, headerBlockFormat, trUtf8("Quantità prog."));
+            AccountingLSBillItemPrivate::writeCell( cursor, table, centralHeaderFormat, headerBlockFormat, trUtf8("Quantità prog. (1)"));
             if( writeAmounts ){
                 AccountingLSBillItemPrivate::writeCell( cursor, table, centralHeaderFormat, headerBlockFormat, trUtf8("Importo prog."));
             }
             AccountingLSBillItemPrivate::writeCell( cursor, table, centralHeaderFormat, headerBlockFormat, trUtf8("Data cont."));
             if( writeAmounts ){
-                AccountingLSBillItemPrivate::writeCell( cursor, table, centralHeaderFormat, headerBlockFormat, trUtf8("Quantità cont."));
+                AccountingLSBillItemPrivate::writeCell( cursor, table, centralHeaderFormat, headerBlockFormat, trUtf8("Quantità cont. (2)"));
                 AccountingLSBillItemPrivate::writeCell( cursor, table, rightHeaderFormat, headerBlockFormat, trUtf8("Importo cont."));
             } else {
                 AccountingLSBillItemPrivate::writeCell( cursor, table, rightHeaderFormat, headerBlockFormat, trUtf8("Quantità cont."));
@@ -2794,8 +2794,8 @@ void AccountingLSBillItem::writeODTBillLine( QTextCursor *cursor,
                             ( ((measure->accDate() >= dateBegin) && (measure->accDate() <= dateEnd)) &&
                               (!(projFormula.isEmpty()) || !(accFormula.isEmpty())) ) ){
                         cursor->insertText( measure->comment() );
+                        cursor->insertBlock();
                     }
-                    cursor->insertBlock();
                     cursor->setCharFormat( txtFormulaCharFormat );
                     if( !(projFormula.isEmpty()) ){
                         cursor->insertText( "(1) " + measure->projFormula() );
