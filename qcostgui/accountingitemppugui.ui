@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>506</width>
-    <height>913</height>
+    <width>484</width>
+    <height>759</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -33,9 +33,9 @@
           <property name="geometry">
            <rect>
             <x>0</x>
-            <y>-19</y>
-            <width>451</width>
-            <height>864</height>
+            <y>0</y>
+            <width>429</width>
+            <height>862</height>
            </rect>
           </property>
           <layout class="QGridLayout" name="gridLayout_2">
@@ -366,8 +366,6 @@
             </spacer>
            </item>
           </layout>
-          <zorder>progNumberGroupBox</zorder>
-          <zorder>progNumberCheckBox</zorder>
           <zorder>valueDataGroupBox</zorder>
           <zorder>amountsGroupBox</zorder>
           <zorder>priceGBCheckBox</zorder>

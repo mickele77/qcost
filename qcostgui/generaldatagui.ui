@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>430</width>
-    <height>427</height>
+    <width>864</width>
+    <height>563</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,7 +17,7 @@
    <item row="0" column="0">
     <widget class="QTabWidget" name="priceFieldTab">
      <property name="currentIndex">
-      <number>0</number>
+      <number>1</number>
      </property>
      <widget class="QWidget" name="unitMeasureTab">
       <attribute name="title">
@@ -36,12 +36,6 @@
           <size>
            <width>350</width>
            <height>0</height>
-          </size>
-         </property>
-         <property name="maximumSize">
-          <size>
-           <width>600</width>
-           <height>16777215</height>
           </size>
          </property>
         </widget>
