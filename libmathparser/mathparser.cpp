@@ -38,6 +38,7 @@ public:
     MathParserPrivate( const QLocale & loc ):
         locale(loc),
         decimalSeparator(loc.decimalPoint()),
+        thousandSeparator(loc.groupSeparator()),
         numChar( QString("1234567890%1").arg(decimalSeparator) ),
         numCharMinus( numChar + "-" ),
         numCharMinusPlus( numChar + "-+" ),
@@ -78,6 +79,8 @@ public:
     QLocale locale;
     // separatore decimale
     QChar decimalSeparator;
+    // separatore migliaia
+    QChar thousandSeparator;
     // caratteri numerici
     QString numChar;
     // caratteri numerici con segno -
@@ -193,6 +196,7 @@ public:
     double evaluate(const QString &exprInput, QString * errorMsg){
         QString expr = exprInput;
         expr.remove(" ");
+        expr.remove(thousandSeparator);
 
         for( int i=0; i < operatorsChar.size(); ++i){
             // cerca l'operatore i-esimo
