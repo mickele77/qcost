@@ -444,6 +444,10 @@ bool QCostGUI::saveAs(){
     if (fileName.isEmpty()){
         return false;
     } else {
+        QString fileNameUp = fileName.toUpper();
+        if( !(fileNameUp.endsWith( ".QCT")) ){
+            fileName.append( ".qct");
+        }
         setCurrentFile( fileName );
         return saveCurrentFile();
     }
