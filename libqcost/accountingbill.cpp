@@ -47,6 +47,7 @@ public:
     }
     ~AccountingBillPrivate(){
         delete rootItem;
+        delete varsModel;
         delete attributesModel;
     }
 
@@ -189,18 +190,6 @@ int AccountingBill::childNumber(ProjectItem * /*item*/) {
     return -1;
 }
 
-bool AccountingBill::clear() {
-    beginResetModel();
-    bool ret = m_d->rootItem->clear();
-    m_d->rootItem->setCurrentPriceDataSet( 0 );
-    setName("");
-    setPriceList( NULL );
-    m_d->attributesModel->clear();
-    m_d->varsModel->clear();
-    endResetModel();
-    return ret;
-}
-
 bool AccountingBill::canChildrenBeInserted() {
     return false;
 }
@@ -219,6 +208,18 @@ bool AccountingBill::removeChildren(int position, int count) {
 
 Qt::ItemFlags AccountingBill::flags() const {
     return Qt::ItemIsSelectable | Qt::ItemIsEnabled;
+}
+
+bool AccountingBill::clear() {
+    beginResetModel();
+    bool ret = m_d->rootItem->clear();
+    m_d->rootItem->setCurrentPriceDataSet( 0 );
+    setName("");
+    setPriceList( NULL );
+    m_d->attributesModel->clear();
+    m_d->varsModel->clear();
+    endResetModel();
+    return ret;
 }
 
 QVariant AccountingBill::data() const {
@@ -694,14 +695,14 @@ void AccountingBill::readXml20(QXmlStreamReader *reader,
            !(reader->isEndElement() && reader->name().toString().toUpper() == "ACCOUNTINGBILL") ){
         reader->readNext();
         if( reader->isStartElement() ){
-            QString tag = reader->name().toString().toUpper();
-            if( tag == "ATTRIBUTESMODEL" ) {
+            QString tagUp = reader->name().toString().toUpper();
+            if( tagUp == "ATTRIBUTESMODEL" ) {
                 m_d->attributesModel->readXml20( reader );
             }
-            if( tag == "VARSMODEL" ) {
+            if( tagUp == "VARSMODEL" ) {
                 m_d->varsModel->readXml20( reader );
             }
-            if( tag == "ACCOUNTINGBILLITEM" ) {
+            if( tagUp == "ACCOUNTINGBILLITEM" ) {
                 m_d->rootItem->readXmlTmp20( reader );
             }
         }

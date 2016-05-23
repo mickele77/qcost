@@ -1506,21 +1506,22 @@ void AccountingBillItem::writeXml20(QXmlStreamWriter *writer) {
 }
 
 void AccountingBillItem::readXmlTmp20( QXmlStreamReader *reader ) {
+    QString tagUp = reader->name().toString().toUpper();
+
     if( m_d->itemType != Root ){
-        if(reader->isStartElement() && reader->name().toString().toUpper() == "ACCOUNTINGBILLITEM"){
+        if(reader->isStartElement() && tagUp == "ACCOUNTINGBILLITEM"){
             m_d->tmpAttributes.clear();
             m_d->tmpAttributes = reader->attributes();
         }
         reader->readNext();
     }
 
-    QString tag = reader->name().toString().toUpper();
     while( (!reader->atEnd()) &&
            (!reader->hasError()) &&
-           !(reader->isEndElement() && tag == "ACCOUNTINGBILLITEM")&&
-           !(reader->isEndElement() && tag == "ACCOUNTINGBILL")  ){
+           !(reader->isEndElement() && tagUp == "ACCOUNTINGBILLITEM")&&
+           !(reader->isEndElement() && tagUp == "ACCOUNTINGBILL")  ){
         if( m_d->itemType == Root ){
-            if( tag == "ACCOUNTINGBILLITEM" && reader->isStartElement()) {
+            if( tagUp == "ACCOUNTINGBILLITEM" && reader->isStartElement()) {
                 if( reader->attributes().hasAttribute( "itemType" ) ){
                     if( reader->attributes().value( "itemType" ).toString().toUpper() == "PAYMENT" ){
                         appendChildren( Payment );
@@ -1529,7 +1530,7 @@ void AccountingBillItem::readXmlTmp20( QXmlStreamReader *reader ) {
                 }
             }
         } else if( m_d->itemType == Payment ){
-            if( tag == "ACCOUNTINGBILLITEM" && reader->isStartElement()) {
+            if( tagUp == "ACCOUNTINGBILLITEM" && reader->isStartElement()) {
                 if( reader->attributes().hasAttribute( "itemType" ) ){
                     AccountingBillItem::ItemType iType = PPU;
                     if( reader->attributes().value( "itemType" ).toString().toUpper() == "COMMENT" ){
@@ -1551,7 +1552,7 @@ void AccountingBillItem::readXmlTmp20( QXmlStreamReader *reader ) {
             }
         }
         reader->readNext();
-        tag = reader->name().toString().toUpper();
+        tagUp = reader->name().toString().toUpper();
     }
 }
 

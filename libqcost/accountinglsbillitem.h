@@ -122,10 +122,7 @@ public:
 
     void writeXml( QXmlStreamWriter * writer );
     void readXml20(QXmlStreamReader *reader, PriceList *priceList, AttributesModel * billAttrModel);
-    void readXmlTmp(QXmlStreamReader *reader);
     void loadFromXml(const QXmlStreamAttributes &attrs, PriceList *priceList, AttributesModel * billAttrModel);
-    void loadFromXmlTmp(const QXmlStreamAttributes &attrs);
-    void loadTmpData(PriceList *priceList , AttributesModel *billAttrModel);
 
     bool containsAttribute( Attribute * attr );
     bool containsAttributeInherited( Attribute * attr );

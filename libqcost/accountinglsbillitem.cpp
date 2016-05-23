@@ -219,6 +219,7 @@ public:
     static int percentagePrecision;
 
     QXmlStreamAttributes tmpAttributes;
+
 };
 
 int AccountingLSBillItemPrivate::progNumberCol = 0;
@@ -1063,8 +1064,10 @@ void AccountingLSBillItem::writeXml(QXmlStreamWriter *writer) {
 }
 
 void AccountingLSBillItem::readXml20(QXmlStreamReader *reader, PriceList * priceList, AttributesModel * billAttrModel ) {
+    QString tagUp = reader->name().toString().toUpper();
+
     if( m_d->parentItem != NULL ){
-        if(reader->isStartElement() && reader->name().toString().toUpper() == "ACCOUNTINGLSBILLITEM"){
+        if(reader->isStartElement() && tagUp == "ACCOUNTINGLSBILLITEM"){
             loadFromXml( reader->attributes(), priceList, billAttrModel );
         }
         reader->readNext();
@@ -1081,28 +1084,7 @@ void AccountingLSBillItem::readXml20(QXmlStreamReader *reader, PriceList * price
             m_d->measuresModel->readXml( reader );
         }
         reader->readNext();
-    }
-}
-
-void AccountingLSBillItem::readXmlTmp(QXmlStreamReader *reader) {
-    if( m_d->parentItem != NULL ){
-        if(reader->isStartElement() && reader->name().toString().toUpper() == "BILLITEM"){
-            loadFromXmlTmp( reader->attributes() );
-        }
-        reader->readNext();
-    }
-    while( (!reader->atEnd()) &&
-           (!reader->hasError()) &&
-           !(reader->isEndElement() && reader->name().toString().toUpper() == "BILLITEM")&&
-           !(reader->isEndElement() && reader->name().toString().toUpper() == "BILL")  ){
-        if( reader->name().toString().toUpper() == "BILLITEM" && reader->isStartElement()) {
-            appendChildren();
-            m_d->childrenContainer.last()->readXmlTmp( reader );
-        }
-        if( reader->name().toString().toUpper() == "MEASURESLSMODEL" && reader->isStartElement() ) {
-            m_d->measuresModel->readXml( reader );
-        }
-        reader->readNext();
+        tagUp = reader->name().toString().toUpper();
     }
 }
 
@@ -1133,21 +1115,6 @@ void AccountingLSBillItem::loadFromXml(const QXmlStreamAttributes &attrs, PriceL
     }
     if( attrs.hasAttribute( "priceDataSet" ) ){
         setCurrentPriceDataSet( attrs.value( "priceDataSet").toInt() );
-    }
-}
-
-void AccountingLSBillItem::loadFromXmlTmp(const QXmlStreamAttributes &attrs) {
-    m_d->tmpAttributes.clear();
-    m_d->tmpAttributes = attrs;
-}
-
-void AccountingLSBillItem::loadTmpData( PriceList *priceList, AttributesModel * billAttrModel) {
-    if( !m_d->tmpAttributes.isEmpty() ){
-        loadFromXml(m_d->tmpAttributes, priceList, billAttrModel );
-        m_d->tmpAttributes.clear();
-    }
-    for( QList<AccountingLSBillItem *>::iterator i = m_d->childrenContainer.begin(); i != m_d->childrenContainer.end(); ++i ){
-        (*i)->loadTmpData( priceList, billAttrModel );
     }
 }
 

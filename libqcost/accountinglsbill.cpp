@@ -21,6 +21,7 @@
 
 #include "billprinter.h"
 #include "attributesmodel.h"
+#include "varsmodel.h"
 #include "accountinglsbillitem.h"
 #include "pricelist.h"
 #include "priceitem.h"
@@ -45,6 +46,7 @@ public:
         PPUNotToDiscount(0.0),
         priceFieldModel(pfm),
         attributesModel(attrsModel),
+        varsModel( new VarsModel(parser) ),
         parser(prs),
         rootItem(new AccountingLSBillItem( NULL, NULL, pfm, parser )),
         priceList( NULL ),
@@ -78,6 +80,7 @@ public:
 
     PriceFieldModel * priceFieldModel;
     AttributesModel * attributesModel;
+    VarsModel * varsModel;
     MathParser * parser;
     AccountingLSBillItem * rootItem;
     PriceList * priceList;
@@ -633,74 +636,52 @@ void AccountingLSBill::readXml20(QXmlStreamReader *reader, ProjectPriceListParen
            (!reader->hasError()) &&
            !(reader->isEndElement() && reader->name().toString().toUpper() == "ACCOUNTINGLSBILL") ){
         reader->readNext();
-        QString tag = reader->name().toString().toUpper();
-        if( tag == "ATTRIBUTEMODEL" && reader->isStartElement()) {
-            m_d->attributesModel->readXml20( reader );
-        }
-        if( tag == "ACCOUNTINGLSBILLITEM" && reader->isStartElement()) {
-            m_d->rootItem->readXml20( reader, m_d->priceList, m_d->attributesModel );
-        }
-    }
-}
-
-void AccountingLSBill::readXmlTmp(QXmlStreamReader *reader ) {
-    if(reader->isStartElement() && reader->name().toString().toUpper() == "BILL"){
-        loadFromXmlTmp( reader->attributes() );
-    }
-    while( (!reader->atEnd()) &&
-           (!reader->hasError()) &&
-           !(reader->isEndElement() && reader->name().toString().toUpper() == "BILL") ){
-        reader->readNext();
-        if( reader->name().toString().toUpper() == "BILLITEM" && reader->isStartElement()) {
-            m_d->rootItem->readXmlTmp( reader );
+        if( reader->isStartElement() ){
+            QString tagUp = reader->name().toString().toUpper();
+            if( tagUp == "ATTRIBUTESMODEL" ) {
+                m_d->attributesModel->readXml20( reader );
+            }
+            if( tagUp == "VARSMODEL" ) {
+                m_d->varsModel->readXml20( reader );
+            }
+            if( tagUp == "ACCOUNTINGLSBILLITEM" ) {
+                m_d->rootItem->readXml20( reader, m_d->priceList, m_d->attributesModel );
+            }
         }
     }
 }
 
 void AccountingLSBill::loadFromXml20(const QXmlStreamAttributes &attrs, ProjectPriceListParentItem * priceLists) {
     for( QXmlStreamAttributes::const_iterator i=attrs.begin(); i != attrs.end(); ++i ){
-        QString nameUp = (*i).name().toString().toUpper();
-        if( nameUp == "ID" ){
+        QString tagUp = (*i).name().toString().toUpper();
+        if( tagUp == "ID" ){
             m_d->id = (*i).value().toUInt();
         }
-        if( nameUp == "NAME" ){
+        if( tagUp == "NAME" ){
             setName( (*i).value().toString() );
         }
-        if( nameUp == "DESCRIPTION" ){
+        if( tagUp == "DESCRIPTION" ){
             setDescription( (*i).value().toString() );
         }
-        if( nameUp == "PRICELIST" ){
+        if( tagUp == "PRICELIST" ){
             m_d->priceList = priceLists->priceListId( (*i).value().toUInt() );
         }
-        if( nameUp == "PRICEDATASET" ){
+        if( tagUp == "PRICEDATASET" ){
             m_d->rootItem->setCurrentPriceDataSet( (*i).value().toInt() );
         }
-    }
-}
-
-void AccountingLSBill::loadFromXmlTmp(const QXmlStreamAttributes &attrs) {
-    for( QXmlStreamAttributes::const_iterator i=attrs.begin(); i != attrs.end(); ++i ){
-        QString nameUp = (*i).name().toString().toUpper();
-        if( nameUp == "ID" ){
-            m_d->id = (*i).value().toUInt();
-        }
-        if( nameUp == "NAME" ){
-            setName( (*i).value().toString() );
-        }
-        if( nameUp == "DESCRIPTION" ){
-            setDescription( (*i).value().toString() );
-        }
-        if( nameUp == "PRICELIST" ){
-            m_d->priceListIdTmp = (*i).value().toUInt();
-        }
-        if( nameUp == "PRICEDATASET" ){
-            m_d->rootItem->setCurrentPriceDataSet( (*i).value().toInt() );
+        if( tagUp == "TOTALAMOUNTPRICEFIELDS" ){
+            QStringList pFieldsStr = (*i).value().toString().split(",");
+            QList<int> pFields;
+            for(QStringList::const_iterator pStr = pFieldsStr.constBegin(); pStr != pFieldsStr.constEnd(); pStr++ ){
+                bool ok = false;
+                int p = (*pStr).toInt( &ok );
+                if( ok ){
+                    pFields << p;
+                }
+            }
+            m_d->rootItem->setTotalAmountPriceFields( pFields );
         }
     }
-}
-
-void AccountingLSBill::setTmpData( ProjectPriceListParentItem * priceLists ) {
-    m_d->priceList = priceLists->priceListId( m_d->priceListIdTmp );
 }
 
 QList<PriceItem *> AccountingLSBill::connectedPriceItems() {
@@ -735,9 +716,4 @@ void AccountingLSBill::writeODTSummaryOnTable(QTextCursor *cursor,
                                               bool writeAmounts,
                                               bool writeDetails ) {
     m_d->rootItem->printODTSummaryOnTable( cursor, prItemsOption, writeAmounts, writeDetails );
-}
-
-void AccountingLSBill::loadTmpData(ProjectPriceListParentItem * priceLists) {
-    m_d->priceList = priceLists->priceListId( m_d->priceListIdTmp );
-    m_d->rootItem->loadTmpData( m_d->priceList, m_d->attributesModel );
 }

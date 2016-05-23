@@ -67,7 +67,7 @@
     </Bills>
     <Accounting>
         <AccountingLSBills>
-            <AccountingLSBill id="0" name="Categoria 1" description="" PPUTotalToDiscount="0" PPUNotToDiscount="0" totalAmountPriceFields="0" priceList="1" priceDataSet="0">
+            <AccountingLSBill id="0" name="Categoria 1" description="" PPUTotalToDiscount="0" PPUNotToDiscount="0" totalAmountPriceFields="0, 1" priceList="1" priceDataSet="0">
                 <AttributesModel/>
                 <AccountingLSBillItem id="1" priceItem="2" quantity="35.8" priceDataSet="0">
                     <MeasuresLSModel>

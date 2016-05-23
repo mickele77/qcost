@@ -148,16 +148,10 @@ public:
 
     void writeXml20( QXmlStreamWriter * writer );
     void readXml20(QXmlStreamReader *reader, ProjectPriceListParentItem * priceLists);
-    void readXmlTmp(QXmlStreamReader *reader);
     void loadFromXml20(const QXmlStreamAttributes &attrs, ProjectPriceListParentItem * priceLists);
-    void loadTmpData( PriceList *priceList );
 
     void nextId();
     unsigned int id();
-
-    void loadTmpData( ProjectPriceListParentItem *priceLists );
-    void loadFromXmlTmp(const QXmlStreamAttributes &attrs);
-    void setTmpData(ProjectPriceListParentItem *priceLists);
 
     QList<PriceItem *> connectedPriceItems();
 
