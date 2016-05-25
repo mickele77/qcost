@@ -296,6 +296,7 @@ void PriceItemGUI::setPriceItem(PriceItem * newPriceItem, int newCurPriceDataSet
 
             // connette dati prezzo
             updatePriceDataGUI();
+
             // valori
             connect( m_d->priceItem, &PriceItem::valueChanged, this, &PriceItemGUI::setPriceValueToLineEdit );
             connect( m_d->ui->singleDataEditAPPushButton, &QPushButton::clicked, this, static_cast<void(PriceItemGUI::*)()> (&PriceItemGUI::editPriceItemAP) );
@@ -629,6 +630,8 @@ void PriceItemGUI::updatePriceDataGUI(){
             disconnect( m_d->ui->singleDataAssociateAPCheckBox, &QCheckBox::toggled, this, &PriceItemGUI::setPriceValueAssociateAP );
             m_d->ui->singleDataAssociateAPCheckBox->setChecked( m_d->priceItem->associateAP(m_d->currentPriceDataSet) );
             connect( m_d->ui->singleDataAssociateAPCheckBox, &QCheckBox::toggled, this, &PriceItemGUI::setPriceValueAssociateAP );
+
+            m_d->ui->singleDataEditAPPushButton->setEnabled( m_d->priceItem->associateAP(m_d->currentPriceDataSet) );
         }
     }
 }

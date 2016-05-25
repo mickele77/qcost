@@ -928,6 +928,7 @@ void PriceItem::writeXml10(QXmlStreamWriter *writer) {
         writer->writeEndElement();
     } else {
         // e' l'elemento root
+        m_d->dataModel->writeXml10( writer );
         for( QList<PriceItem *>::iterator i = m_d->childrenContainer.begin(); i != m_d->childrenContainer.end(); ++i){
             (*i)->writeXml10( writer );
         }

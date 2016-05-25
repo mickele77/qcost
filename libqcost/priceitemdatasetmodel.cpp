@@ -212,10 +212,10 @@ void PriceItemDataSet::loadFromXml10(const QXmlStreamAttributes &attrs ){
                 setValue(n, attrs.at(i).value().toDouble() );
             }
         } else if( nStr == "OVERHEADS" ){
-            setInheritOverheadsFromRoot( true );
+            setInheritOverheadsFromRoot( false );
             setOverheads( attrs.at(i).value().toDouble() );
         } else if( nStr == "PROFITS" ){
-            setInheritProfitsFromRoot( true );
+            setInheritProfitsFromRoot( false );
             setProfits( attrs.at(i).value().toDouble() );
         }
     }
@@ -321,6 +321,8 @@ PriceItemDataSetModel::PriceItemDataSetModel(MathParser * prs, PriceFieldModel *
     connect( this, &PriceItemDataSetModel::rowsMoved, this, &PriceItemDataSetModel::modelChanged );
     connect( this, &PriceItemDataSetModel::columnsInserted, this, &PriceItemDataSetModel::modelChanged );
     connect( this, &PriceItemDataSetModel::columnsMoved, this, &PriceItemDataSetModel::modelChanged );
+    connect( this, &PriceItemDataSetModel::overheadsChanged, this, &PriceItemDataSetModel::modelChanged );
+    connect( this, &PriceItemDataSetModel::profitsChanged, this, &PriceItemDataSetModel::modelChanged );
 }
 
 PriceItemDataSetModel::~PriceItemDataSetModel(){
