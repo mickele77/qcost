@@ -124,7 +124,11 @@ AccountingBillPrinterGUI::AccountingBillPrinterGUI( AccountingBill * measuresBil
         m_d->ui->payToPrintComboBox->addItem( measuresBill->payment(i)->title(), QVariant(i) );
     }
     m_d->ui->payToPrintComboBox->addItem(trUtf8("Tutti"), QVariant(-1) );
-    m_d->ui->payToPrintComboBox->setCurrentIndex(*(payToPrint)+1);
+    if( *payToPrint < 0 ){
+        m_d->ui->payToPrintComboBox->setCurrentIndex( measuresBill->paymentsCount() );
+    } else {
+        m_d->ui->payToPrintComboBox->setCurrentIndex( *(payToPrint) );
+    }
 
     Qt::WindowFlags flags = windowFlags();
     flags |= Qt::WindowMaximizeButtonHint;

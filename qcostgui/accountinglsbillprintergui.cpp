@@ -117,7 +117,11 @@ AccountingLSBillPrinterGUI::AccountingLSBillPrinterGUI( AccountingBill * measure
         m_d->ui->payToPrintComboBox->addItem( measuresBill->payment(i)->title(), QVariant(i) );
     }
     m_d->ui->payToPrintComboBox->addItem(trUtf8("Tutti"), QVariant(-1) );
-    m_d->ui->payToPrintComboBox->setCurrentIndex(*(payToPrint)+1);
+    if( *payToPrint < 0 ){
+        m_d->ui->payToPrintComboBox->setCurrentIndex( measuresBill->paymentsCount() );
+    } else {
+        m_d->ui->payToPrintComboBox->setCurrentIndex( *(payToPrint) );
+    }
 
     Qt::WindowFlags flags = windowFlags();
     flags |= Qt::WindowMaximizeButtonHint;
@@ -156,7 +160,7 @@ void AccountingLSBillPrinterGUI::setPrintData(){
         *(m_d->printOption) = AccountingPrinter::PrintRawMeasures;
     }
 
-    *(m_d->paymentToPrint) = m_d->ui->payToPrintComboBox->currentIndex() - 1;
+    *(m_d->paymentToPrint) = m_d->ui->payToPrintComboBox->currentData().toInt();
 
     *(m_d->paperWidth) = m_d->pageSizeList.at( m_d->ui->paperDimensionsComboBox->currentIndex() ).size( QPageSize::Millimeter ).width();
     *(m_d->paperHeight) = m_d->pageSizeList.at( m_d->ui->paperDimensionsComboBox->currentIndex() ).size( QPageSize::Millimeter ).height();

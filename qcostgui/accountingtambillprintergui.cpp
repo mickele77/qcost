@@ -110,13 +110,17 @@ AccountingTAMBillPrinterGUI::AccountingTAMBillPrinterGUI(AccountingTAMBill *bill
         m_d->ui->printNoAmountsRadioButton->setChecked( true );
     }
 
-    m_d->ui->billToPrintComboBox->insertItem(0, trUtf8("Tutti"));
     int i = 0;
     for( QList<AccountingTAMBillItem *>::iterator iter = bill->bills().begin(); iter != bill->bills().end(); ++iter ){
-        m_d->ui->billToPrintComboBox->insertItem((i+1), (*iter)->title() );
+        m_d->ui->billToPrintComboBox->addItem( (*iter)->title(), QVariant(i) );
         ++i;
     }
-    m_d->ui->billToPrintComboBox->setCurrentIndex(*(billToPrint)+1);
+    m_d->ui->billToPrintComboBox->addItem( trUtf8("Tutti"), QVariant(-1) );
+    if( *billToPrint < 0 ){
+        m_d->ui->billToPrintComboBox->setCurrentIndex( bill->bills().size() );
+    } else {
+        m_d->ui->billToPrintComboBox->setCurrentIndex( *billToPrint );
+    }
 
     Qt::WindowFlags flags = windowFlags();
     flags |= Qt::WindowMaximizeButtonHint;
@@ -162,7 +166,7 @@ void AccountingTAMBillPrinterGUI::setPrintData(){
         *(m_d->printOption) = AccountingPrinter::PrintRawMeasures;
     }
 
-    *(m_d->paymentToPrint) = m_d->ui->billToPrintComboBox->currentIndex() - 1;
+    *(m_d->paymentToPrint) = m_d->ui->billToPrintComboBox->currentData().toInt();
 
     *(m_d->paperWidth) = m_d->pageSizeList.at( m_d->ui->paperDimensionsComboBox->currentIndex() ).size( QPageSize::Millimeter ).width();
     *(m_d->paperHeight) = m_d->pageSizeList.at( m_d->ui->paperDimensionsComboBox->currentIndex() ).size( QPageSize::Millimeter ).height();
