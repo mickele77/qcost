@@ -377,8 +377,6 @@ void PriceList::writeXml10(QXmlStreamWriter *writer) const {
     writer->writeAttribute( "name", m_d->name );
     writer->writeAttribute( "description", m_d->description );
 
-    m_d->rootItem->dataModel()->writeXml10( writer );
-
     m_d->rootItem->writeXml10( writer );
 
     writer->writeEndElement();
@@ -389,8 +387,6 @@ void PriceList::writeXml20(QXmlStreamWriter *writer) const {
     writer->writeAttribute( "id", QString::number(m_d->id) );
     writer->writeAttribute( "name", m_d->name );
     writer->writeAttribute( "description", m_d->description );
-
-    m_d->rootItem->dataModel()->writeXml20( writer );
 
     m_d->rootItem->writeXml20( writer );
 

@@ -249,23 +249,23 @@ void PriceItemDataSet::loadFromXml10(const QXmlStreamAttributes &attrs ){
 
 void PriceItemDataSet::loadFromXml20(const QXmlStreamAttributes &attrs ){
     for( int i=0; i<attrs.size(); ++i){
-        QString nStr = attrs.at(i).qualifiedName().toString().toUpper();
+        QString strUp = attrs.at(i).qualifiedName().toString().toUpper();
         QString strVal("VALUE");
-        if( nStr.startsWith(strVal) ){
-            nStr.remove(0,strVal.size() );
+        if( strUp.startsWith(strVal) ){
+            strUp.remove(0,strVal.size() );
             bool ok = false;
-            int n = nStr.toInt( & ok );
+            int n = strUp.toInt( & ok );
             if( ok ){
                 for( int j=0; j < (n + 1 - m_d->value.size()); ++j ){
                     m_d->value.append(0.0);
                 }
                 setValue(n, attrs.at(i).value().toDouble() );
             }
-        } else if( nStr == "OVERHEADS" ){
-            setInheritOverheadsFromRoot( true );
+        } else if( strUp == "OVERHEADS" ){
+            setInheritOverheadsFromRoot( false );
             setOverheads( attrs.at(i).value().toDouble() );
-        } else if( nStr == "PROFITS" ){
-            setInheritProfitsFromRoot( true );
+        } else if( strUp == "PROFITS" ){
+            setInheritProfitsFromRoot( false );
             setProfits( attrs.at(i).value().toDouble() );
         }
     }

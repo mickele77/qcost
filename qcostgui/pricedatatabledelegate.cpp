@@ -41,9 +41,8 @@ void PriceDataTableDelegate::paint(QPainter *painter, const QStyleOptionViewItem
             if( index.data(Qt::CheckStateRole).toInt() == Qt::Checked ){
                 if( m_d->currentCol == index.column() ){
                     button.state = m_d->buttonState;
-                } else {
-                    button.state = QStyle::State_Enabled;
                 }
+                button.state = QStyle::State_Enabled;
             } else {
                 button.state = QStyle::State_None;
                 button.palette.setCurrentColorGroup( QPalette::Disabled );

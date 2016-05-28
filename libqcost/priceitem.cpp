@@ -924,6 +924,9 @@ void PriceItem::writeXml10(QXmlStreamWriter *writer) {
 
         writer->writeEndElement();
     } else {
+        // scrive i dati numerici generali
+        m_d->dataModel->writeXml10( writer );
+
         // e' l'elemento root
         for( QList<PriceItem *>::iterator i = m_d->childrenContainer.begin(); i != m_d->childrenContainer.end(); ++i){
             (*i)->writeXml10( writer );
@@ -956,6 +959,9 @@ void PriceItem::writeXml20(QXmlStreamWriter *writer) {
 
         writer->writeEndElement();
     } else {
+        // scrive i dati numerici generali
+        m_d->dataModel->writeXml10( writer );
+
         // e' l'elemento root
         for( QList<PriceItem *>::iterator i = m_d->childrenContainer.begin(); i != m_d->childrenContainer.end(); ++i){
             (*i)->writeXml20( writer );
