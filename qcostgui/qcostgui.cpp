@@ -580,7 +580,7 @@ void QCostGUI::setOptions(){
 void QCostGUI::about() {
     QMessageBox::about(this, trUtf8("Informazioni su QCost"),
                        trUtf8("<h1>QCost</h1>"
-                              "<h2>v0.8.1</h2>"
+                              "<h2>v0.8.2</h2>"
                               "<p>QCost è un software per la redazione di computi metrici estimativi."
                               "<p>Questo programma è software libero; puoi ridistribuirlo e/o modificarlo nei termini della GNU General Public License cos' come pubblicata dalla Free Software Foundation; sia nei termini della versione 3 della licenza che (a tua scelta) nei termini di qualsiasi altra versione successiva."
                               "<p>Questo programma è distribuito nella speranza che sia utile, ma SENZA ALCUNA GARANZIA; neanche l'implicita garanzia di COMMERCIABILITÀ o di IDONEITÀ AD UN PARTICOLARE IMPIEGO. Consulta la GNU General Public License per maggiori dettagli. "
