@@ -3,4 +3,5 @@ QCost is released under GPL v3 license. A copy of GPL v3 is present in tha base 
 All files report copyright and terms of license. Almost all files were created by Michele Mocciola, with exception
 of file in libodtcreator that were obtained modifiying some files contained in the QtGui module of the Qt Toolkit
 (http://qt.digia.com/). All these files are released under GPL v3, in accordance with Qt's LICENSE.
+
 Icons are taken from Tango Desktop Project (http://tango.freedesktop.org/) and are released to the Public Domain.
