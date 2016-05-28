@@ -53,7 +53,7 @@ public:
 
         createUMTableQuery = "unitMeasureId INTEGER PRIMARY KEY, unitMeasureOrderNum FLOAT, unitMeasureTag TEXT";
         db.exec( QString("CREATE TABLE unitMeasureTable (%1)").arg(createUMTableQuery) );
-        createPLTableQuery = "id INTEGER PRIMARY KEY, parentId INTEGER, orderNum FLOAT, code TEXT, shortDesc TEXT, longDesc TEXT, unitMeasure INT DEFAULT 0, priceTotal FLOAT DEFAULT 0.0, priceHuman FLOAT DEFAULT 0.0, priceEquipment FLOAT DEFAULT 0.0, priceMaterial FLOAT DEFAULT 0.0, overheads FLOAT DEFAULT 0.13, profits FLOAT DEFAULT 0.10";
+        createPLTableQuery = "id INTEGER PRIMARY KEY, parentId INTEGER, orderNum FLOAT, code TEXT, shortDesc TEXT, longDesc TEXT, unitMeasure INT DEFAULT 0, priceTotal FLOAT DEFAULT 0.0, priceSafety FLOAT DEFAULT 0.0, priceHuman FLOAT DEFAULT 0.0, priceEquipment FLOAT DEFAULT 0.0, priceMaterial FLOAT DEFAULT 0.0, overheads FLOAT DEFAULT 0.13, profits FLOAT DEFAULT 0.10";
         db.exec( QString("CREATE TABLE priceListTable (%1)" ).arg(createPLTableQuery) );
         db.exec( "CREATE INDEX index_id on priceListTable (id)" );
         db.exec( "CREATE INDEX index_parentId on priceListTable (parentId)" );
@@ -65,9 +65,9 @@ public:
                         << TableCol( PriceListDBModel::shortDescCol, "shortDesc", "Denominazione")
                         << TableCol( PriceListDBModel::unitMeasureCol, "unitMeasure", "UdM")
                         << TableCol( PriceListDBModel::priceTotalCol, "priceTotal", "Costo Unitario")
-                        << TableCol( PriceListDBModel::priceHumanCol, "priceHuman", "Costo Manodopera")
+                        << TableCol( PriceListDBModel::priceSafetyCol, "priceSafety", "Costo Sicurezza")
                         << TableCol( PriceListDBModel::priceHumanCol, "priceEquipment", "Costo Mezzi d'opera")
-                        << TableCol( PriceListDBModel::priceHumanCol, "priceMaterial", "Costo Materiali")
+                        << TableCol( PriceListDBModel::priceMaterialCol, "priceMaterial", "Costo Materiali")
                         << TableCol( PriceListDBModel::overheadsCol, "overheads", "Spese Generali")
                         << TableCol( PriceListDBModel::profitsCol, "profits", "Utili");
 
@@ -77,6 +77,7 @@ public:
                  << TableCol( PriceListDBModel::longDescCol, "longDesc", "Descrizione")
                  << TableCol( PriceListDBModel::unitMeasureCol, "unitMeasure", "UdM")
                  << TableCol( PriceListDBModel::priceTotalCol, "priceTotal", "Costo Unitario")
+                 << TableCol( PriceListDBModel::priceSafetyCol, "priceSafety", "C.U. Sicurezza")
                  << TableCol( PriceListDBModel::priceHumanCol, "priceHuman", "C.U. Manodopera")
                  << TableCol( PriceListDBModel::priceEquipmentCol, "priceEquipment", "C.U. Mezzi d'opera")
                  << TableCol( PriceListDBModel::priceMaterialCol, "priceMaterial", "C.U. Materiali")
@@ -89,6 +90,7 @@ public:
                       << TableCol( PriceListDBModel::longDescCol, "longDesc", "Descrizione")
                       << TableCol( PriceListDBModel::unitMeasureCol, "unitMeasure", "UdM")
                       << TableCol( PriceListDBModel::priceTotalCol, "priceTotal", "Costo Unitario")
+                      << TableCol( PriceListDBModel::priceSafetyCol, "priceSafety", "Costo Sicurezza")
                       << TableCol( PriceListDBModel::priceHumanCol, "priceHuman", "C.U. Manodopera")
                       << TableCol( PriceListDBModel::perPriceHumanCol, "perPriceHuman", "% Costo Manodopera")
                       << TableCol( PriceListDBModel::priceEquipmentCol, "priceEquipment", "C.U. Mezzi d'opera")
@@ -316,6 +318,7 @@ QVariant PriceListDBModel::data(const QModelIndex &index, int role) const {
             if( query.next() ){
                 QString ret;
                 if( (m_d->visibleColsList.at(index.column()).priceColType == priceTotalCol) ||
+                        (m_d->visibleColsList.at(index.column()).priceColType == priceSafetyCol) ||
                         (m_d->visibleColsList.at(index.column()).priceColType == priceHumanCol) ||
                         (m_d->visibleColsList.at(index.column()).priceColType == priceEquipmentCol) ||
                         (m_d->visibleColsList.at(index.column()).priceColType == priceMaterialCol) ){
@@ -395,7 +398,7 @@ bool PriceListDBModel::insertRows(int row, int count, const QModelIndex &parent)
                 after = before + 2.0;
             }
             double ord = (before + after) * 0.50;
-            QString queryStr = QString("INSERT INTO priceListTable (id, parentId, orderNum, code, shortDesc, longDesc, unitMeasure, priceTotal, priceHuman, priceEquipment, priceMaterial) VALUES (%1, %2, %3, '', '', '', 0, 0.0, 0.0, 0.0, 0.0)").arg(
+            QString queryStr = QString("INSERT INTO priceListTable (id, parentId, orderNum, code, shortDesc, longDesc, unitMeasure, priceTotal, priceSafety, priceHuman, priceEquipment, priceMaterial) VALUES (%1, %2, %3, '', '', '', 0, 0.0, 0.0, 0.0, 0.0)").arg(
                         QString::number(nextId()), QString::number( parentId ), QString::number(ord) );
             execTransaction( queryStr );
             before = ord;
@@ -529,6 +532,16 @@ double PriceListDBModel::priceTotal(const QModelIndex &index) {
     return 0.0;
 }
 
+double PriceListDBModel::priceSafety(const QModelIndex &index) {
+    // non e' necessario ordinare
+    QString queryStr = QString("SELECT %1 FROM priceListTable WHERE id=%2").arg( "priceSafety", QString::number( index.internalId() ));
+    QSqlQuery query( queryStr, m_d->db );
+    if( query.next() ){
+        return query.value(0).toDouble();
+    }
+    return 0.0;
+}
+
 double PriceListDBModel::priceHuman(const QModelIndex &index) {
     // non e' necessario ordinare
     QString queryStr = QString("SELECT %1 FROM priceListTable WHERE id=%2").arg( "priceHuman", QString::number( index.internalId() ));
@@ -629,6 +642,15 @@ void PriceListDBModel::setPriceTotal(double v, const QPersistentModelIndex &inde
         QString queryStr = QString("UPDATE priceListTable SET %1='%2' WHERE id=%3").arg( "priceTotal", QString::number(v), QString::number(index.internalId()) );
         execTransaction( queryStr );
         QModelIndex i = createIndex( index.row(), m_d->indexColVisible(PriceListDBModel::priceTotalCol), index.internalId() );
+        emit dataChanged( i, i);
+    }
+}
+
+void PriceListDBModel::setPriceSafety(double v, const QPersistentModelIndex &index) {
+    if( index.isValid() ){
+        QString queryStr = QString("UPDATE priceListTable SET %1='%2' WHERE id=%3").arg( "priceSafety", QString::number(v), QString::number(index.internalId()) );
+        execTransaction( queryStr );
+        QModelIndex i = createIndex( index.row(), m_d->indexColVisible(PriceListDBModel::priceSafetyCol), index.internalId() );
         emit dataChanged( i, i);
     }
 }
@@ -798,7 +820,7 @@ bool PriceListDBModel::loadFromDBChildren(int fileParentId,
         fileShortDesc.replace("'", "''");
         QString fileLongDesc = filePLQuery.value("longDesc").toString();
         fileLongDesc.replace("'", "''");
-        queryStr = QString("INSERT INTO priceListTable (id, parentId, orderNum, code, shortDesc, longDesc, unitMeasure, priceTotal, priceHuman, priceEquipment, priceMaterial) VALUES (");
+        queryStr = QString("INSERT INTO priceListTable (id, parentId, orderNum, code, shortDesc, longDesc, unitMeasure, priceTotal, priceSafety, priceHuman, priceEquipment, priceMaterial) VALUES (");
         queryStr.append( QString::number(id) + ", ");
         queryStr.append( QString::number( parentId ) + ", ");
         queryStr.append( QString::number(ord) + ", ");
@@ -807,6 +829,7 @@ bool PriceListDBModel::loadFromDBChildren(int fileParentId,
         queryStr.append( "\"" + fileLongDesc + "\", ");
         queryStr.append( QString::number(UMId) + ", ");
         queryStr.append( filePLQuery.value("priceTotal").toString() + ", ");
+        queryStr.append( filePLQuery.value("priceSafety").toString() + ", ");
         queryStr.append( filePLQuery.value("priceHuman").toString() + ", ");
         queryStr.append( filePLQuery.value("priceEquipment").toString() + ", ");
         queryStr.append( filePLQuery.value("priceMaterial").toString()  + ")");
@@ -930,7 +953,10 @@ QStringList PriceListDBModel::loadFromTXTChildren(int * progNumber,
                     afterApp.prepend("'");
                     afterApp.append("'");
                 } else if( (pCols->at(i) == priceTotalCol) ||
-                           (pCols->at(i) == priceHumanCol)){
+                           (pCols->at(i) == priceSafetyCol) ||
+                           (pCols->at(i) == priceHumanCol) ||
+                           (pCols->at(i) == priceMaterialCol) ||
+                           (pCols->at(i) == priceEquipmentCol) ){
                     QString l = line.at(i);
                     l.remove(thousandSeparator);
                     l.replace( decimalSeparator, ".");

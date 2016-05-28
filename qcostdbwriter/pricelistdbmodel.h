@@ -38,6 +38,7 @@ public:
         longDescCol,
         unitMeasureCol,
         priceTotalCol,
+        priceSafetyCol,
         priceHumanCol,
         perPriceHumanCol,
         priceEquipmentCol,
@@ -71,6 +72,7 @@ public:
     QString longDescription( const QModelIndex &index );
     int unitMeasure( const QModelIndex &index );
     double priceTotal( const QModelIndex &index );
+    double priceSafety(const QModelIndex &index);
     double priceHuman( const QModelIndex &index );
     double priceEquipment( const QModelIndex &index );
     double priceMaterial( const QModelIndex &index );
@@ -82,6 +84,7 @@ public:
     void setLongDescription( const QString & v, const QPersistentModelIndex &index );
     void setUnitMeasure( int v, const QPersistentModelIndex &index );
     void setPriceTotal( double v, const QPersistentModelIndex &index );
+    void setPriceSafety( double v, const QPersistentModelIndex &index );
     void setPriceHuman( double v, const QPersistentModelIndex &index );
     void setPriceEquipment( double v, const QPersistentModelIndex &index );
     void setPriceMaterial( double v, const QPersistentModelIndex &index );
