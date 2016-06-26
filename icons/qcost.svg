@@ -16,7 +16,7 @@
    sodipodi:version="0.32"
    inkscape:version="0.91 r13725"
    sodipodi:docname="qcost.svg"
-   inkscape:export-filename="/home/jimmac/ximian_art/icons/nautilus/snowdunes/gnome-fs-directory-accept.png"
+   inkscape:export-filename="C:\Users\mickele\Desktop\qcost_installer-x86\qcost.png"
    inkscape:export-xdpi="90.000000"
    inkscape:export-ydpi="90.000000"
    inkscape:output_extension="org.inkscape.output.svg.inkscape"
@@ -230,16 +230,16 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="7.9999999"
-     inkscape:cx="28.747765"
+     inkscape:cx="5.4352647"
      inkscape:cy="22.723718"
      inkscape:current-layer="layer3"
      showgrid="false"
      inkscape:grid-bbox="true"
      inkscape:document-units="px"
-     inkscape:window-width="1324"
-     inkscape:window-height="739"
-     inkscape:window-x="-4"
-     inkscape:window-y="0"
+     inkscape:window-width="1304"
+     inkscape:window-height="745"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
      inkscape:showpageshadow="false"
      inkscape:window-maximized="1" />
   <metadata
@@ -258,7 +258,7 @@
           </cc:Agent>
         </dc:creator>
         <cc:license
-           rdf:resource="http://creativecommons.org/licenses/publicdomain/" />
+           rdf:resource="http://creativecommons.org/publicdomain/zero/1.0/" />
         <dc:source>http://jimmac.musichall.cz</dc:source>
         <dc:description>Active state - when files are being dragged to.</dc:description>
         <dc:publisher>
@@ -268,7 +268,7 @@
         </dc:publisher>
       </cc:Work>
       <cc:License
-         rdf:about="http://creativecommons.org/licenses/publicdomain/">
+         rdf:about="http://creativecommons.org/publicdomain/zero/1.0/">
         <cc:permits
            rdf:resource="http://creativecommons.org/ns#Reproduction" />
         <cc:permits
@@ -290,13 +290,22 @@
      inkscape:label="Open"
      id="layer3"
      inkscape:groupmode="layer">
+    <rect
+       style="fill:#feffff;fill-opacity:0.93779901;stroke:none;stroke-width:0.30000001;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="rect4230"
+       width="46.375"
+       height="42.375"
+       x="0.625"
+       y="0.7499994"
+       rx="16.625"
+       ry="16.625" />
     <g
-       transform="matrix(0.99173066,0,0,1.0083383,0,0.25)"
-       style="font-size:26.21697044000000076px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:url(#linearGradient3032);fill-opacity:1;stroke:none;font-family:Sans"
+       transform="matrix(0.99173066,0,0,0.93472889,2,1.939639)"
+       style="font-style:normal;font-weight:normal;font-size:26.21697044px;line-height:125%;font-family:Sans;letter-spacing:0px;word-spacing:0px;fill:url(#linearGradient3032);fill-opacity:1;stroke:none"
        id="text3279">
       <path
          d="m 18.864317,5.0930548 c -3.769458,3.48e-5 -6.767875,1.4050071 -8.9952582,4.2149211 -2.210273,2.8099751 -3.3154037,6.6393811 -3.3153953,11.4882301 -8.4e-6,4.831753 1.1051223,8.652593 3.3153953,11.46253 2.2273832,2.809952 5.2258002,4.214924 8.9952582,4.214921 3.769418,3e-6 6.7507,-1.404969 8.943857,-4.214921 2.210232,-2.809937 3.315363,-6.630777 3.315396,-11.46253 -3.3e-5,-4.848849 -1.105164,-8.678255 -3.315396,-11.4882301 -2.193157,-2.809914 -5.174439,-4.2148863 -8.943857,-4.2149211 m 7.273309,34.1562812 6.836397,7.478915 -6.27098,0 -5.679864,-6.142476 c -0.565438,0.03427 -1.00235,0.05997 -1.310737,0.0771 -0.291297,0.01713 -0.574004,0.0257 -0.848125,0.0257 -5.39717,-10e-7 -9.7148899,-1.799051 -12.9531719,-5.397155 -3.2211638,-3.615226 -4.8317419,-8.44696 -4.8317389,-14.495214 -3e-6,-6.065349 1.6105751,-10.8970831 4.8317389,-14.4952165 3.238282,-3.6152 7.5560019,-5.42281681 12.9531719,-5.42285588 5.379996,3.907e-5 9.680581,1.80765588 12.901771,5.42285588 3.221123,3.5981334 4.831701,8.4298675 4.831739,14.4952165 -3.8e-5,4.454809 -0.899563,8.267082 -2.698578,11.436829 -1.781951,3.169762 -4.369157,5.508527 -7.761623,7.016301"
-         style="font-size:52.63511275999999839px;fill:url(#linearGradient3816);fill-opacity:1"
+         style="font-size:52.63511276px;fill:url(#linearGradient3816);fill-opacity:1"
          id="path3028"
          inkscape:connector-curvature="0" />
     </g>
