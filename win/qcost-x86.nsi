@@ -8,6 +8,8 @@ InstallDir $PROGRAMFILES\QCost
 ; The text to prompt the user to enter a directory
 DirText "This will install QCost on your computer. Choose a directory"
 
+!include x64.nsh
+
 Section "QCost"
   SetOutPath $INSTDIR
   File "QCost.exe"
@@ -30,20 +32,24 @@ Section "QCost"
   File Qt5Gui.dll
   File Qt5Sql.dll
   File Qt5Svg.dll
+  ClearErrors
+  ${If} ${RunningX64}
+    SetRegView 64
+  ${EndIf}
   ReadRegStr $1 HKLM "SOFTWARE\Microsoft\DevDiv\vc\Servicing\12.0\RuntimeMinimum" "Install"
   StrCmp $1 1 vcrinstalled
   ExecWait 'vcredist_x86.exe'
   vcrinstalled:
   WriteUninstaller $INSTDIR\Uninstall.exe
-  createDirectory "$SMPROGRAMS\QCost"
-  CreateShortCut "$SMPROGRAMS\QCost\QCost.lnk" "$INSTDIR\QCost.exe" "" "$INSTDIR\QCost.ico"
-  CreateShortCut "$SMPROGRAMS\QCost\Uninstall QCost.lnk" "$INSTDIR\Uninstall.exe" ""
   WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\QCost" \ 
                "DisplayName" "QCost"
   WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\QCost" \ 
                "Publisher" "IngegneriaLibera"
   WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\QCost" \
                "UninstallString" "$\"$INSTDIR\Uninstall.exe$\""
+  createDirectory "$SMPROGRAMS\QCost"
+  CreateShortCut "$SMPROGRAMS\QCost\QCost.lnk" "$INSTDIR\QCost.exe" "" "$INSTDIR\QCost.ico"
+  CreateShortCut "$SMPROGRAMS\QCost\Uninstall QCost.lnk" "$INSTDIR\Uninstall.exe" ""
 SectionEnd
 
 Section "Uninstall"

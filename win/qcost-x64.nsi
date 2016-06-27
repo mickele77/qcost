@@ -33,6 +33,7 @@ Section "QCost"
     File Qt5Gui.dll
     File Qt5Sql.dll
     File Qt5Svg.dll
+    SetRegView 64
     ReadRegStr $1 HKLM "SOFTWARE\Microsoft\DevDiv\vc\Servicing\12.0\RuntimeMinimum" "Install"
     StrCmp $1 1 vcrinstalled
     ExecWait 'vcredist_x64.exe'
@@ -48,6 +49,7 @@ Section "QCost"
     WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\QCost" \
                 "UninstallString" "$\"$INSTDIR\Uninstall.exe$\""
   ${Else}
+    MessageBox MB_OK "This is 64 bit version of QCost. You need 32 bit version."
     Quit
   ${EndIf}
 SectionEnd
