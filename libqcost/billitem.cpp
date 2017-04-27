@@ -1553,26 +1553,26 @@ void BillItem::writeODTBillOnTable( QTextCursor *cursor,
                 BillItemPrivate::writeCell( cursor, table, rightSubTitleFormat, numBlockFormat );
             } else { // fieldsToPrint.size() > 0
                 BillItemPrivate::writeCell( cursor, table, centralSubTitleFormat, numBlockFormat );
-            }
-            if( groupPrAm ){
-                for( int i=0; i < fieldsToPrint.size(); ++i ){
-                    BillItemPrivate::writeCell( cursor, table, centralSubTitleFormat, numBlockFormat );
-                }
-                for( int i=0; i < fieldsToPrint.size(); ++i ){
-                    if( i == fieldsToPrint.size() - 1 ){
-                        BillItemPrivate::writeCell( cursor, table, rightSubTitleFormat, numBlockFormat );
-                    } else {
+                if( groupPrAm ){
+                    for( int i=0; i < fieldsToPrint.size(); ++i ){
                         BillItemPrivate::writeCell( cursor, table, centralSubTitleFormat, numBlockFormat );
                     }
-                }
-            } else {
-                for( int i=0; i < fieldsToPrint.size(); ++i ){
-                    if( i == fieldsToPrint.size() - 1 ){
-                        BillItemPrivate::writeCell( cursor, table, centralSubTitleFormat, numBlockFormat );
-                        BillItemPrivate::writeCell( cursor, table, rightSubTitleFormat, numBlockFormat );
-                    } else {
-                        BillItemPrivate::writeCell( cursor, table, centralSubTitleFormat, numBlockFormat );
-                        BillItemPrivate::writeCell( cursor, table, centralSubTitleFormat, numBlockFormat );
+                    for( int i=0; i < fieldsToPrint.size(); ++i ){
+                        if( i == fieldsToPrint.size() - 1 ){
+                            BillItemPrivate::writeCell( cursor, table, rightSubTitleFormat, numBlockFormat );
+                        } else {
+                            BillItemPrivate::writeCell( cursor, table, centralSubTitleFormat, numBlockFormat );
+                        }
+                    }
+                } else {
+                    for( int i=0; i < fieldsToPrint.size(); ++i ){
+                        if( i == fieldsToPrint.size() - 1 ){
+                            BillItemPrivate::writeCell( cursor, table, centralSubTitleFormat, numBlockFormat );
+                            BillItemPrivate::writeCell( cursor, table, rightSubTitleFormat, numBlockFormat );
+                        } else {
+                            BillItemPrivate::writeCell( cursor, table, centralSubTitleFormat, numBlockFormat );
+                            BillItemPrivate::writeCell( cursor, table, centralSubTitleFormat, numBlockFormat );
+                        }
                     }
                 }
             }
