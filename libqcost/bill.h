@@ -138,7 +138,8 @@ public:
     void writeODTBillOnTable( QTextCursor * cursor,
                               BillPrinter::PrintBillItemsOption prItemsOption,
                               QList<int> fieldsToPrint,
-                              bool groupPrAm = false );
+                              bool groupPrAm = false,
+                              const QString & umTag = QString() );
     void writeODTSummaryOnTable( QTextCursor * cursor,
                                  BillPrinter::PrintBillItemsOption prItemsOption,
                                  QList<int> fieldsToPrint,

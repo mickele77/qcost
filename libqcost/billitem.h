@@ -135,10 +135,11 @@ public:
     double amountAttribute( Attribute * attr, int field );
     QString amountAttributeStr( Attribute * attr, int field );
 
-    void writeODTBillOnTable( QTextCursor * cursor,
+    void writeODTBillOnTable(QTextCursor * cursor,
                               BillPrinter::PrintBillItemsOption prItemsOption,
                               const QList<int> fieldsToPrint ,
-                              bool groupPrAm);
+                              bool groupPrAm = false,
+                             const QString &umTag = QString() );
     void writeODTSummaryOnTable( QTextCursor *cursor,
                                  BillPrinter::PrintBillItemsOption prItemsOption,
                                  const QList<int> fieldsToPrint,

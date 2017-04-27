@@ -1345,7 +1345,8 @@ void BillItem::removeAmount(int pf){
 void BillItem::writeODTBillOnTable( QTextCursor *cursor,
                                     BillPrinter::PrintBillItemsOption prItemsOption,
                                     const QList<int> fieldsToPrint,
-                                    bool groupPrAm  ) {
+                                    bool groupPrAm,
+                                    const QString & umTag ) {
     // spessore del bordo della tabella
     double borderWidth = 1.0f;
 
@@ -1508,7 +1509,7 @@ void BillItem::writeODTBillOnTable( QTextCursor *cursor,
             BillItemPrivate::writeCell( cursor, table, leftTitleFormat, tagBlockFormat );
             BillItemPrivate::writeCell( cursor, table, centralTitleFormat, txtBlockFormat );
             BillItemPrivate::writeCell( cursor, table, centralTitleFormat, txtBlockFormat, trUtf8("Totale complessivo") );
-            BillItemPrivate::writeCell( cursor, table, centralTitleFormat, tagBlockFormat );
+            BillItemPrivate::writeCell( cursor, table, centralTitleFormat, tagBlockFormat, umTag );
             BillItemPrivate::writeCell( cursor, table, centralTitleFormat, numBlockFormat );
 
             if( groupPrAm ){
