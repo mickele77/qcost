@@ -1399,37 +1399,35 @@ void BillItem::writeODTBillOnTable( QTextCursor *cursor,
                 (*i)->writeODTBillOnTable( cursor, prItemsOption, fieldsToPrint, groupPrAm );
             }
 
-            table->appendRows(1);
-            cursor->movePosition(QTextCursor::PreviousRow );
+            if( fieldsToPrint.size() > 0 ){
+                table->appendRows(1);
+                cursor->movePosition(QTextCursor::PreviousRow );
 
-            BillItemPrivate::writeCell( cursor, table, leftSubTitleFormat, tagBlockFormat );
-            BillItemPrivate::writeCell( cursor, table, centralSubTitleFormat, txtBlockFormat );
-            BillItemPrivate::writeCell( cursor, table, centralSubTitleFormat, txtBlockFormat, trUtf8("Totale %1").arg( m_d->name ) );
-            BillItemPrivate::writeCell( cursor, table, centralSubTitleFormat, tagBlockFormat );
-            if( fieldsToPrint.size() == 0 ){
-                BillItemPrivate::writeCell( cursor, table, rightSubTitleFormat, numBlockFormat );
-            } else { // fieldsToPrint.size() > 0
+                BillItemPrivate::writeCell( cursor, table, leftSubTitleFormat, tagBlockFormat );
+                BillItemPrivate::writeCell( cursor, table, centralSubTitleFormat, txtBlockFormat );
+                BillItemPrivate::writeCell( cursor, table, centralSubTitleFormat, txtBlockFormat, trUtf8("Totale %1").arg( m_d->name ) );
+                BillItemPrivate::writeCell( cursor, table, centralSubTitleFormat, tagBlockFormat );
                 BillItemPrivate::writeCell( cursor, table, centralSubTitleFormat, numBlockFormat );
-            }
-            if( groupPrAm ){
-                for( int i=0; i < fieldsToPrint.size(); ++i ){
-                    BillItemPrivate::writeCell( cursor, table, centralSubTitleFormat, numBlockFormat );
-                }
-                for( int i=0; i < fieldsToPrint.size(); ++i ){
-                    if( i == fieldsToPrint.size() - 1 ){
-                        BillItemPrivate::writeCell( cursor, table, rightSubTitleFormat, numBlockFormat, amountStr(fieldsToPrint.at(i)) );
-                    } else {
-                        BillItemPrivate::writeCell( cursor, table, centralSubTitleFormat, numBlockFormat, amountStr(fieldsToPrint.at(i)) );
+                if( groupPrAm ){
+                    for( int i=0; i < fieldsToPrint.size(); ++i ){
+                        BillItemPrivate::writeCell( cursor, table, centralSubTitleFormat, numBlockFormat );
                     }
-                }
-            } else {
-                for( int i=0; i < fieldsToPrint.size(); ++i ){
-                    if( i == fieldsToPrint.size() - 1 ){
-                        BillItemPrivate::writeCell( cursor, table, centralSubTitleFormat, numBlockFormat );
-                        BillItemPrivate::writeCell( cursor, table, rightSubTitleFormat, numBlockFormat, amountStr(fieldsToPrint.at(i)) );
-                    } else {
-                        BillItemPrivate::writeCell( cursor, table, centralSubTitleFormat, numBlockFormat );
-                        BillItemPrivate::writeCell( cursor, table, centralSubTitleFormat, numBlockFormat, amountStr(fieldsToPrint.at(i)) );
+                    for( int i=0; i < fieldsToPrint.size(); ++i ){
+                        if( i == fieldsToPrint.size() - 1 ){
+                            BillItemPrivate::writeCell( cursor, table, rightSubTitleFormat, numBlockFormat, amountStr(fieldsToPrint.at(i)) );
+                        } else {
+                            BillItemPrivate::writeCell( cursor, table, centralSubTitleFormat, numBlockFormat, amountStr(fieldsToPrint.at(i)) );
+                        }
+                    }
+                } else {
+                    for( int i=0; i < fieldsToPrint.size(); ++i ){
+                        if( i == fieldsToPrint.size() - 1 ){
+                            BillItemPrivate::writeCell( cursor, table, centralSubTitleFormat, numBlockFormat );
+                            BillItemPrivate::writeCell( cursor, table, rightSubTitleFormat, numBlockFormat, amountStr(fieldsToPrint.at(i)) );
+                        } else {
+                            BillItemPrivate::writeCell( cursor, table, centralSubTitleFormat, numBlockFormat );
+                            BillItemPrivate::writeCell( cursor, table, centralSubTitleFormat, numBlockFormat, amountStr(fieldsToPrint.at(i)) );
+                        }
                     }
                 }
             }
@@ -2333,17 +2331,23 @@ void BillItem::writeODTBillLine( BillPrinter::PrintBillItemsOption prItemsOption
         // celle vuote
         // tag unita misura
         BillItemPrivate::writeCell( cursor, table, centralFormat, tagBlockFormat );
-        // quantita'
-        BillItemPrivate::writeCell( cursor, table, centralFormat, numBlockFormat );
-        // campi
-        for( int i=0; i < fieldsToPrint.size(); ++i ){
-            if( i == fieldsToPrint.size() - 1 ){
-                BillItemPrivate::writeCell( cursor, table, centralFormat, numBlockFormat );
-                BillItemPrivate::writeCell( cursor, table, rightFormat, numBlockFormat  );
-            } else {
-                BillItemPrivate::writeCell( cursor, table, centralFormat, numBlockFormat );
-                BillItemPrivate::writeCell( cursor, table, centralFormat, numBlockFormat );
+
+        if( fieldsToPrint.size() > 0 ){
+            // quantita'
+            BillItemPrivate::writeCell( cursor, table, centralFormat, numBlockFormat );
+            // campi
+            for( int i=0; i < fieldsToPrint.size(); ++i ){
+                if( i == fieldsToPrint.size() - 1 ){
+                    BillItemPrivate::writeCell( cursor, table, centralFormat, numBlockFormat );
+                    BillItemPrivate::writeCell( cursor, table, rightFormat, numBlockFormat  );
+                } else {
+                    BillItemPrivate::writeCell( cursor, table, centralFormat, numBlockFormat );
+                    BillItemPrivate::writeCell( cursor, table, centralFormat, numBlockFormat );
+                }
             }
+        } else {
+            // quantita'
+            BillItemPrivate::writeCell( cursor, table, rightFormat, numBlockFormat );
         }
 
         table->appendRows(1);

@@ -594,7 +594,7 @@ void Bill::writeODTBillOnTable( QTextCursor *cursor,
                                 const QList<int> fieldsToPrint,
                                 bool groupPrAm,
                                 const QString& UMTag ) {
-    m_d->rootItem->writeODTBillOnTable(cursor, prItemsOption, fieldsToPrint, groupPrAm );
+    m_d->rootItem->writeODTBillOnTable(cursor, prItemsOption, fieldsToPrint, groupPrAm, UMTag );
 }
 
 void Bill::writeODTAttributeBillOnTable(QTextCursor *cursor,
