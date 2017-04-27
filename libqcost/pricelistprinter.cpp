@@ -22,6 +22,7 @@
 #include "bill.h"
 #include "pricelist.h"
 #include "priceitem.h"
+#include "unitmeasure.h"
 #include "odtwriter.h"
 
 #include <QTextDocument>
@@ -295,7 +296,7 @@ bool PriceListPrinter::printODT( PriceListPrinter::PrintPriceItemsOption printOp
                     } else if( printOption == PriceListPrinter::PrintShortLongDescOpt ){
                         billPrItemsOption = BillPrinter::PrintShortLongDescOpt;
                     }
-                    priceItemList.at(i)->associatedAP(priceDataSetToPrint)->writeODTBillOnTable( &cursor, billPrItemsOption, fieldsToPrint, APgroupPrAm );
+                    priceItemList.at(i)->associatedAP(priceDataSetToPrint)->writeODTBillOnTable( &cursor, billPrItemsOption, fieldsToPrint, APgroupPrAm, priceItemList.at(i)->unitMeasure()->tag() );
 
                     cursor.movePosition( QTextCursor::End );
                 }

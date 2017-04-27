@@ -133,10 +133,11 @@ public:
 
     QList<PriceItem *> connectedPriceItems();
 
-    void writeODTBillOnTable( QTextCursor * cursor,
+    void writeODTBillOnTable( QTextCursor *cursor,
                               BillPrinter::PrintBillItemsOption prItemsOption,
-                              QList<int> fieldsToPrint,
-                              bool groupPrAm = false );
+                              const QList<int> fieldsToPrint,
+                              bool groupPrAm = false,
+                              const QString& UMTag = QString() );
     void writeODTSummaryOnTable( QTextCursor * cursor,
                                  BillPrinter::PrintBillItemsOption prItemsOption,
                                  QList<int> fieldsToPrint,

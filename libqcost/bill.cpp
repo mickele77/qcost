@@ -592,7 +592,8 @@ QList<PriceItem *> Bill::connectedPriceItems() {
 void Bill::writeODTBillOnTable( QTextCursor *cursor,
                                 BillPrinter::PrintBillItemsOption prItemsOption,
                                 const QList<int> fieldsToPrint,
-                                bool groupPrAm ) {
+                                bool groupPrAm,
+                                const QString& UMTag ) {
     m_d->rootItem->writeODTBillOnTable(cursor, prItemsOption, fieldsToPrint, groupPrAm );
 }
 

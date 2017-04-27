@@ -34,10 +34,10 @@ public:
         name( n ),
         rootItem( new PriceItem( NULL, priceFields, prs ) ),
         parser(prs) {
-    };
+    }
     ~PriceListPrivate(){
         delete rootItem;
-    };
+    }
 
     unsigned int id;
     QString name;
