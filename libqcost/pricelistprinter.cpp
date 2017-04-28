@@ -204,8 +204,8 @@ bool PriceListPrinter::printODT( PriceListPrinter::PrintPriceItemsOption printOp
                     tableFormat.setBorderStyle( QTextFrameFormat::BorderStyle_Solid);
                     tableFormat.setWidth( QTextLength( QTextLength::FixedLength, tableWidth ) );
                     QVector<QTextLength> colWidths;
-                    colWidths << QTextLength( QTextLength::FixedLength, 25 )
-                              << QTextLength( QTextLength::FixedLength, pageWidth-2.0*margin - 25 );
+                    colWidths << QTextLength( QTextLength::FixedLength, 30 )
+                              << QTextLength( QTextLength::FixedLength, pageWidth-2.0*margin - 30 );
                     tableFormat.setColumnWidthConstraints( colWidths );
                     QTextTable * table = cursor.insertTable(1, colWidths.size(), tableFormat);
 
@@ -222,7 +222,18 @@ bool PriceListPrinter::printODT( PriceListPrinter::PrintPriceItemsOption printOp
                     cursor.movePosition(QTextCursor::NextCell );
                     table->cellAt( cursor ).setFormat( bottomFormat );
                     cursor.insertText( priceItemList.at(i)->longDescriptionFull() );
-                    cursor.movePosition( QTextCursor::End );
+
+                    // cursor.movePosition( QTextCursor::End );
+
+                    table->appendRows(1);
+                    cursor.movePosition(QTextCursor::PreviousRow );
+                    cursor.movePosition(QTextCursor::NextCell );
+                    table->cellAt( cursor ).setFormat( topLeftFormat );
+                    cursor.insertText( QObject::trUtf8("Unità di Misura") );
+
+                    cursor.movePosition(QTextCursor::NextCell);
+                    table->cellAt( cursor ).setFormat( topRightFormat );
+                    cursor.insertText( priceItemList.at(i)->unitMeasure()->tag() );
 
                     // tabella con l'analisi prezzi vera e propria
                     tableFormat.setCellPadding(5);
