@@ -6,7 +6,7 @@ UI_DIR = ../ui
 QMAKE_LFLAGS += " -Wl,--no-undefined"
 
 # uncomment to build release version
-DEFINES += BUILD_RELEASE
+# DEFINES += BUILD_RELEASE
 
 win32 {
     win32-msvc* {

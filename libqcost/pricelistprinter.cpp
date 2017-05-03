@@ -35,9 +35,9 @@ class PriceListPrinterPrivate{
 public:
     PriceListPrinterPrivate(PriceList * b):
         priceList(b) {
-    };
+    }
     ~PriceListPrinterPrivate(){
-    };
+    }
 
     PriceList * priceList;
 };
@@ -189,13 +189,21 @@ bool PriceListPrinter::printODT( PriceListPrinter::PrintPriceItemsOption printOp
                     topRightFormat.setProperty( QTextFormatUserDefined::TableCellBorderRightWidth, QVariant(borderWidth) );
                     topRightFormat.setProperty( QTextFormatUserDefined::TableCellBorderTopStyle, QVariant(QTextFrameFormat::BorderStyle_Solid) );
                     topRightFormat.setProperty( QTextFormatUserDefined::TableCellBorderTopWidth, QVariant(borderWidth) );
-                    QTextTableCellFormat bottomFormat;
-                    bottomFormat.setProperty( QTextFormatUserDefined::TableCellBorderLeftStyle, QVariant(QTextFrameFormat::BorderStyle_Solid) );
-                    bottomFormat.setProperty( QTextFormatUserDefined::TableCellBorderLeftWidth, QVariant(borderWidth) );
-                    bottomFormat.setProperty( QTextFormatUserDefined::TableCellBorderRightStyle, QVariant(QTextFrameFormat::BorderStyle_Solid) );
-                    bottomFormat.setProperty( QTextFormatUserDefined::TableCellBorderRightWidth, QVariant(borderWidth) );
-                    bottomFormat.setProperty( QTextFormatUserDefined::TableCellBorderBottomStyle, QVariant(QTextFrameFormat::BorderStyle_Solid) );
-                    bottomFormat.setProperty( QTextFormatUserDefined::TableCellBorderBottomWidth, QVariant(borderWidth) );
+                    QTextTableCellFormat leftRightFormat;
+                    leftRightFormat.setProperty( QTextFormatUserDefined::TableCellBorderLeftStyle, QVariant(QTextFrameFormat::BorderStyle_Solid) );
+                    leftRightFormat.setProperty( QTextFormatUserDefined::TableCellBorderLeftWidth, QVariant(borderWidth) );
+                    leftRightFormat.setProperty( QTextFormatUserDefined::TableCellBorderRightStyle, QVariant(QTextFrameFormat::BorderStyle_Solid) );
+                    leftRightFormat.setProperty( QTextFormatUserDefined::TableCellBorderRightWidth, QVariant(borderWidth) );
+                    QTextTableCellFormat bottomLeftFormat;
+                    bottomLeftFormat.setProperty( QTextFormatUserDefined::TableCellBorderLeftStyle, QVariant(QTextFrameFormat::BorderStyle_Solid) );
+                    bottomLeftFormat.setProperty( QTextFormatUserDefined::TableCellBorderLeftWidth, QVariant(borderWidth) );
+                    bottomLeftFormat.setProperty( QTextFormatUserDefined::TableCellBorderBottomStyle, QVariant(QTextFrameFormat::BorderStyle_Solid) );
+                    bottomLeftFormat.setProperty( QTextFormatUserDefined::TableCellBorderBottomWidth, QVariant(borderWidth) );
+                    QTextTableCellFormat bottomRightFormat;
+                    bottomRightFormat.setProperty( QTextFormatUserDefined::TableCellBorderRightStyle, QVariant(QTextFrameFormat::BorderStyle_Solid) );
+                    bottomRightFormat.setProperty( QTextFormatUserDefined::TableCellBorderRightWidth, QVariant(borderWidth) );
+                    bottomRightFormat.setProperty( QTextFormatUserDefined::TableCellBorderBottomStyle, QVariant(QTextFrameFormat::BorderStyle_Solid) );
+                    bottomRightFormat.setProperty( QTextFormatUserDefined::TableCellBorderBottomWidth, QVariant(borderWidth) );
 
                     // tabella con informazioni generali sul prezzo
                     // descrizione, codice, etc
@@ -220,20 +228,20 @@ bool PriceListPrinter::printODT( PriceListPrinter::PrintPriceItemsOption printOp
                     table->mergeCells( 1, 0, 1, 2 );
                     cursor.movePosition(QTextCursor::PreviousRow );
                     cursor.movePosition(QTextCursor::NextCell );
-                    table->cellAt( cursor ).setFormat( bottomFormat );
+                    table->cellAt( cursor ).setFormat( leftRightFormat );
                     cursor.insertText( priceItemList.at(i)->longDescriptionFull() );
-
-                    // cursor.movePosition( QTextCursor::End );
 
                     table->appendRows(1);
                     cursor.movePosition(QTextCursor::PreviousRow );
                     cursor.movePosition(QTextCursor::NextCell );
-                    table->cellAt( cursor ).setFormat( topLeftFormat );
+                    table->cellAt( cursor ).setFormat( bottomLeftFormat );
                     cursor.insertText( QObject::trUtf8("Unità di Misura") );
 
                     cursor.movePosition(QTextCursor::NextCell);
-                    table->cellAt( cursor ).setFormat( topRightFormat );
+                    table->cellAt( cursor ).setFormat( bottomRightFormat );
                     cursor.insertText( priceItemList.at(i)->unitMeasure()->tag() );
+
+                    cursor.movePosition( QTextCursor::End );
 
                     // tabella con l'analisi prezzi vera e propria
                     tableFormat.setCellPadding(5);
