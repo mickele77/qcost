@@ -154,6 +154,19 @@ AccountingTAMBill *ProjectAccountingParentItem::timeAndMaterialBill() {
     return m_d->timeAndMaterialBill;
 }
 
+bool ProjectAccountingParentItem::isEmpty() {
+    if( !(m_d->measuresBill->isEmpty()) ){
+        return false;
+    }
+    if( !(m_d->lumpSumBills->isEmpty()) ) {
+        return false;
+    }
+    if( !(m_d->timeAndMaterialBill->isEmpty()) ) {
+        return false;
+    }
+    return true;
+}
+
 ProjectItem *ProjectAccountingParentItem::child(int number) {
     if( number == 0 ){
         return m_d->measuresBill;

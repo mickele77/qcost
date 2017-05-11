@@ -39,12 +39,12 @@ void AccountingItemCommentGUI::setAccountingItem(AccountingTAMBillItem *b) {
         if( m_d->TAMBillItem != NULL ){
             disconnect( m_d->TAMBillItem, &AccountingTAMBillItem::textChanged, this, &AccountingItemCommentGUI::updateTextLineEdit );
             disconnect( m_d->TAMBillItem, &AccountingTAMBillItem::aboutToBeDeleted, this, &AccountingItemCommentGUI::setAccountingItemNULL );
-            disconnect( m_d->ui->titleLineEdit, &QLineEdit::textEdited, this, &AccountingItemCommentGUI::updateTextMeasure );
+            disconnect( m_d->ui->titleLineEdit, &QLineEdit::editingFinished, this, &AccountingItemCommentGUI::updateTextMeasure );
         }
         if( m_d->billItem != NULL ){
             disconnect( m_d->billItem, &AccountingBillItem::textChanged, this, &AccountingItemCommentGUI::updateTextLineEdit );
             disconnect( m_d->billItem, &AccountingBillItem::aboutToBeDeleted, this, &AccountingItemCommentGUI::setAccountingItemNULL );
-            disconnect( m_d->ui->titleLineEdit, &QLineEdit::textEdited, this, &AccountingItemCommentGUI::updateTextMeasure );
+            disconnect( m_d->ui->titleLineEdit, &QLineEdit::editingFinished, this, &AccountingItemCommentGUI::updateTextMeasure );
         }
 
         m_d->ui->titleLineEdit->clear();
@@ -55,7 +55,7 @@ void AccountingItemCommentGUI::setAccountingItem(AccountingTAMBillItem *b) {
             m_d->ui->titleLineEdit->setText( m_d->TAMBillItem->text() );
             connect( m_d->TAMBillItem, &AccountingTAMBillItem::textChanged, this, &AccountingItemCommentGUI::updateTextLineEdit );
             connect( m_d->TAMBillItem, &AccountingTAMBillItem::aboutToBeDeleted, this, &AccountingItemCommentGUI::setAccountingItemNULL );
-            connect( m_d->ui->titleLineEdit, &QLineEdit::textEdited, this, &AccountingItemCommentGUI::updateTextMeasure );
+            connect( m_d->ui->titleLineEdit, &QLineEdit::editingFinished, this, &AccountingItemCommentGUI::updateTextMeasure );
         }
     }
 }
@@ -65,12 +65,12 @@ void AccountingItemCommentGUI::setAccountingItem(AccountingBillItem *b) {
         if( m_d->TAMBillItem != NULL ){
             disconnect( m_d->TAMBillItem, &AccountingTAMBillItem::textChanged, this, &AccountingItemCommentGUI::updateTextLineEdit );
             disconnect( m_d->TAMBillItem, &AccountingTAMBillItem::aboutToBeDeleted, this, &AccountingItemCommentGUI::setAccountingItemNULL );
-            disconnect( m_d->ui->titleLineEdit, &QLineEdit::textEdited, this, &AccountingItemCommentGUI::updateTextMeasure );
+            disconnect( m_d->ui->titleLineEdit, &QLineEdit::editingFinished, this, &AccountingItemCommentGUI::updateTextMeasure );
         }
         if( m_d->billItem != NULL ){
             disconnect( m_d->billItem, &AccountingBillItem::textChanged, this, &AccountingItemCommentGUI::updateTextLineEdit );
             disconnect( m_d->billItem, &AccountingBillItem::aboutToBeDeleted, this, &AccountingItemCommentGUI::setAccountingItemNULL );
-            disconnect( m_d->ui->titleLineEdit, &QLineEdit::textEdited, this, &AccountingItemCommentGUI::updateTextMeasure );
+            disconnect( m_d->ui->titleLineEdit, &QLineEdit::editingFinished, this, &AccountingItemCommentGUI::updateTextMeasure );
         }
 
         m_d->ui->titleLineEdit->clear();
@@ -81,7 +81,7 @@ void AccountingItemCommentGUI::setAccountingItem(AccountingBillItem *b) {
             m_d->ui->titleLineEdit->setText( m_d->billItem->text() );
             connect( m_d->billItem, &AccountingBillItem::textChanged, this, &AccountingItemCommentGUI::updateTextLineEdit );
             connect( m_d->billItem, &AccountingBillItem::aboutToBeDeleted, this, &AccountingItemCommentGUI::setAccountingItemNULL );
-            connect( m_d->ui->titleLineEdit, &QLineEdit::textEdited, this, &AccountingItemCommentGUI::updateTextMeasure );
+            connect( m_d->ui->titleLineEdit, &QLineEdit::editingFinished, this, &AccountingItemCommentGUI::updateTextMeasure );
         }
     }
 }

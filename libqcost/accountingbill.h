@@ -71,6 +71,8 @@ public:
 
     AccountingBill & operator= (const AccountingBill & cp );
 
+    bool isEmpty();
+
     virtual ~AccountingBill();
 
     /** Nome associato al libretto delle misure */

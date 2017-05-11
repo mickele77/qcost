@@ -146,6 +146,10 @@ AccountingBill &AccountingBill::operator=(const AccountingBill &cp) {
     return *this;
 }
 
+bool AccountingBill::isEmpty() {
+    return !(m_d->rootItem->hasChildren());
+}
+
 QString AccountingBill::name() {
     return m_d->name;
 }

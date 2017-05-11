@@ -133,6 +133,10 @@ AccountingTAMBill::~AccountingTAMBill(){
     delete m_d;
 }
 
+bool AccountingTAMBill::isEmpty() {
+    return !(m_d->rootItem->hasChildren());
+}
+
 AccountingTAMBill &AccountingTAMBill::operator=(const AccountingTAMBill &cp) {
     setName( cp.m_d->name );
     setPriceList( cp.m_d->priceList );

@@ -66,6 +66,8 @@ public:
 
     virtual ~AccountingTAMBill();
 
+    bool isEmpty();
+
     QString name();
 
     ProjectItem *child(int number);

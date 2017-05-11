@@ -54,6 +54,8 @@ public:
     AccountingLSBills * lumpSumBills();
     AccountingTAMBill * timeAndMaterialBill();
 
+    bool isEmpty();
+
     ProjectItem *child(int number);
     int childCount() const;
 

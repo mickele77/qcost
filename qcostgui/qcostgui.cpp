@@ -770,6 +770,15 @@ bool QCostGUI::saveCurrentFile(){
         m_d->currentFile.resize(0);
         QXmlStreamWriter writer(&m_d->currentFile);
         if( m_d->project ){
+            if( m_d->currentFileVersion == "1.0" ){
+                if( ! m_d->project->accounting()->isEmpty() ){
+                    QMessageBox msgBox;
+                    msgBox.setText( trUtf8("La versione 1.0 non supporta la contabilità di cantiere") );
+                    msgBox.setInformativeText(trUtf8("Poiché il progetto contiene dati contabili, si consiglia di salvare in una versione successiva alla 1.0.") );
+                    msgBox.setStandardButtons(QMessageBox::Ok );
+                    msgBox.exec();
+                }
+            }
             m_d->project->writeXml( &writer, m_d->currentFileVersion );
         }
         m_d->currentFile.flush();

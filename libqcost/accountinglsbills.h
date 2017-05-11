@@ -44,6 +44,8 @@ public:
     AccountingLSBills( ProjectItem * parent, PriceFieldModel * pfm, MathParser * p = NULL );
     ~AccountingLSBills();
 
+    bool isEmpty();
+
     int billCount();
     AccountingLSBill *bill( int i );
     AccountingLSBill *billId(unsigned int dd );

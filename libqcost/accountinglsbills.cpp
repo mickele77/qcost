@@ -78,6 +78,10 @@ AccountingLSBills::~AccountingLSBills(){
     delete m_d;
 }
 
+bool AccountingLSBills::isEmpty() {
+    return (m_d->billContainer.size() == 0);
+}
+
 int AccountingLSBills::billCount() {
     return m_d->billContainer.size();
 }
