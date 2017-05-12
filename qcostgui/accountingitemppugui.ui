@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>485</width>
-    <height>610</height>
+    <width>554</width>
+    <height>515</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -23,22 +23,22 @@
       <attribute name="title">
        <string>Dati</string>
       </attribute>
-      <layout class="QGridLayout" name="dataTabLayout">
+      <layout class="QGridLayout" name="gridLayout_7">
        <item row="0" column="0">
-        <widget class="QScrollArea" name="scrollArea">
+        <widget class="QScrollArea" name="dataTabScrollArea">
          <property name="widgetResizable">
           <bool>true</bool>
          </property>
-         <widget class="QWidget" name="scrollAreaWidgetContents">
+         <widget class="QWidget" name="dataTabSAContents">
           <property name="geometry">
            <rect>
             <x>0</x>
-            <y>0</y>
-            <width>424</width>
+            <y>-213</y>
+            <width>493</width>
             <height>664</height>
            </rect>
           </property>
-          <layout class="QGridLayout" name="gridLayout_2">
+          <layout class="QGridLayout" name="dataTabSAContentsLayout">
            <item row="2" column="0">
             <widget class="QCheckBox" name="priceGBCheckBox">
              <property name="text">
@@ -296,7 +296,7 @@
               <item row="2" column="1" colspan="3">
                <widget class="QGroupBox" name="itemMeasuresGroupBox">
                 <property name="sizePolicy">
-                 <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+                 <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
                   <horstretch>0</horstretch>
                   <verstretch>0</verstretch>
                  </sizepolicy>
