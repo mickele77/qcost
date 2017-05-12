@@ -48,6 +48,10 @@ public:
 signals:
     void modelChanged();
 
+private slots:
+    void updatePriceName( int pf );
+    void beginPriceFieldCountChange();
+    void endPriceFieldCountChange();
 private:
     AccountingPriceFieldModelPrivate * m_d;
 };

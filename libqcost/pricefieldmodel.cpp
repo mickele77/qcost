@@ -254,7 +254,7 @@ QList<QPair<PriceFieldModel::FieldType, QString> > PriceFieldModel::standardFiel
     ret.append(qMakePair( PriceTotal, trUtf8("Costo Unitario")));
     ret.append(qMakePair( PriceHuman, trUtf8("Costo M.O.")));
     ret.append(qMakePair( PriceHumanNet, trUtf8("Costo M.O. netto")));
-    ret.append(qMakePair( PriceNoHumanNet, trUtf8("Costo sogg. ribasso")));
+    ret.append(qMakePair( PriceNoHumanNet, trUtf8("Costo extra M.O.")));
     return ret;
 }
 
@@ -449,8 +449,8 @@ bool PriceFieldModel::setFieldType(int pf, PriceFieldModel::FieldType newVal, bo
                 setFormula( pf, QString() );
             }
             if( newVal == PriceNoHumanNet ){
-                setPriceName( pf, trUtf8("Costo Unitario sog. rib.") );
-                setAmountName( pf, trUtf8("Importo sogg. ribasso") );
+                setPriceName( pf, trUtf8("Costo Unitario senza M.O.") );
+                setAmountName( pf, trUtf8("Importo senza M.O.") );
                 setUnitMeasure( pf, trUtf8("€"));
                 setPrecision( pf, 2 );
                 setApplyFormula( pf, false );

@@ -36,6 +36,24 @@ public:
 AccountingPriceFieldModel::AccountingPriceFieldModel(QList<int> * selList, PriceFieldModel * pfm, QObject *parent) :
     QAbstractTableModel(parent),
     m_d(new AccountingPriceFieldModelPrivate(selList, pfm)){
+    connect( pfm, &PriceFieldModel::priceNameChanged, this, &AccountingPriceFieldModel::updatePriceName );
+    connect( pfm, &PriceFieldModel::beginInsertPriceField, this, &AccountingPriceFieldModel::beginPriceFieldCountChange );
+    connect( pfm, &PriceFieldModel::endInsertPriceField, this, &AccountingPriceFieldModel::endPriceFieldCountChange );
+    connect( pfm, &PriceFieldModel::beginRemovePriceField, this, &AccountingPriceFieldModel::beginPriceFieldCountChange );
+    connect( pfm, &PriceFieldModel::endRemovePriceField, this, &AccountingPriceFieldModel::endPriceFieldCountChange );
+}
+
+void AccountingPriceFieldModel::updatePriceName( int pf ) {
+    QModelIndex cellChanged = createIndex(pf, 0);
+    emit dataChanged( cellChanged, cellChanged );
+}
+
+void AccountingPriceFieldModel::beginPriceFieldCountChange() {
+    beginResetModel();
+}
+
+void AccountingPriceFieldModel::endPriceFieldCountChange() {
+    endResetModel();
 }
 
 AccountingPriceFieldModel::~AccountingPriceFieldModel() {
