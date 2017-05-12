@@ -436,7 +436,6 @@ void AccountingItemPPUGUI::associateLinesModel(bool ass) {
             m_d->ui->itemMeasuresTableView->setModel( m_d->billItem->generateMeasuresModel() );
         }
         if( m_d->vSpacer != NULL ){
-            // here
             m_d->ui->dataTabSAContentsLayout->removeItem( m_d->vSpacer);
             delete m_d->vSpacer;
             m_d->vSpacer = NULL;
@@ -451,7 +450,6 @@ void AccountingItemPPUGUI::associateLinesModel(bool ass) {
         m_d->ui->itemMeasuresTableView->setModel( NULL );
         if( m_d->vSpacer == NULL ){
             m_d->vSpacer = new QSpacerItem(0,0, QSizePolicy::Minimum, QSizePolicy::Expanding);
-            // here
             m_d->ui->dataTabSAContentsLayout->addItem( m_d->vSpacer, m_d->ui->dataTabSAContentsLayout->rowCount(), 0, 1, 3 );
         }
     }
