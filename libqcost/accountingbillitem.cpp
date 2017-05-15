@@ -244,14 +244,19 @@ void AccountingBillItem::setParent(AccountingBillItem * newParent, int position 
             if( oldPosition > position ){
                 oldPosition++;
             }
-            m_d->parentItem->addChild( this, position );
-            m_d->parentItem->removeChildren( oldPosition );
+            m_d->parentItem->m_d->childrenContainer.insert( position, this );
+            m_d->parentItem->m_d->childrenContainer.removeAt( oldPosition );
         }
     }
 }
 
 void AccountingBillItem::addChild(AccountingBillItem * newChild, int position ) {
     m_d->childrenContainer.insert( position, newChild );
+    connect( newChild, static_cast<void(AccountingBillItem::*)(AccountingBillItem*,int)> (&AccountingBillItem::dataChanged), this, static_cast<void(AccountingBillItem::*)(AccountingBillItem*,int)> (&AccountingBillItem::dataChanged) );
+    connect( newChild, &AccountingBillItem::totalAmountToDiscountChanged, this, &AccountingBillItem::updateTotalAmountToDiscount );
+    connect( newChild, &AccountingBillItem::amountNotToDiscountChanged, this, &AccountingBillItem::updateAmountNotToDiscount );
+    connect( this, &AccountingBillItem::currentPriceDataSetChanged, newChild, &AccountingBillItem::setCurrentPriceDataSet );
+    connect( newChild, &AccountingBillItem::itemChanged, this, &AccountingBillItem::itemChanged );
 }
 
 AccountingBillItem *AccountingBillItem::itemFromId( unsigned int itemId ) {

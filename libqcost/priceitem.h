@@ -169,6 +169,7 @@ public slots:
     void setInheritShortDescFromParent( bool );
     void setLongDescription( const QString & );
     void setInheritLongDescFromParent( bool );
+    void sortByCode();
 
 signals:
     void aboutToBeDeleted();

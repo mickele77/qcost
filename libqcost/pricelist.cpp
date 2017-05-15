@@ -270,6 +270,7 @@ bool PriceList::moveRows(const QModelIndex &sourceParent, int sourceRow, int cou
         }
 
         endMoveRows();
+        emit modelChanged();
         return true;
     }
     return false;

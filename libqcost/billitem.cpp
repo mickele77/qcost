@@ -300,8 +300,8 @@ void BillItem::setParent(BillItem * newParent, int position ) {
             if( oldPosition > position ){
                 oldPosition++;
             }
-            m_d->parentItem->addChild( this, position );
-            m_d->parentItem->removeChild( oldPosition );
+            m_d->parentItem->m_d->childrenContainer.insert( position, this );
+            m_d->parentItem->m_d->childrenContainer.removeAt( oldPosition );
         }
     }
 }
@@ -311,6 +311,10 @@ void BillItem::addChild(BillItem * newChild, int position ) {
         m_d->priceItem = NULL;
     }
     m_d->childrenContainer.insert( position, newChild );
+    connect( newChild, static_cast<void(BillItem::*)(BillItem*,int)> (&BillItem::dataChanged), this, static_cast<void(BillItem::*)(BillItem*,int)> (&BillItem::dataChanged) );
+    connect( newChild, static_cast<void(BillItem::*)(int,double)>(&BillItem::amountChanged), this, &BillItem::updateAmounts );
+    connect( this, &BillItem::currentPriceDataSetChanged, newChild, &BillItem::setCurrentPriceDataSet );
+    connect( newChild, &BillItem::itemChanged, this, &BillItem::itemChanged );
 }
 
 void BillItem::removeChild( int position ) {
