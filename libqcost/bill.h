@@ -93,15 +93,15 @@ public:
 
     Qt::ItemFlags flags(const QModelIndex &index) const;
     bool setData(const QModelIndex &index, const QVariant &value, int role = Qt::EditRole);
-    bool insertBillItems(PriceItem * p, int position = -1, int count = 1, const QModelIndex &parent = QModelIndex() );
-    bool removeBillItems(int position = -1, int rows = 1, const QModelIndex &parent = QModelIndex() );
+    bool insertItems(PriceItem * p, int position = -1, int count = 1, const QModelIndex &parent = QModelIndex() );
+    bool removeItems(int position = -1, int rows = 1, const QModelIndex &parent = QModelIndex() );
     void clear();
 
-    BillItem *billItem(const QModelIndex &index ) const;
-    BillItem *billItem(int childNum, const QModelIndex &parentIndex = QModelIndex() );
-    BillItem *lastBillItem( const QModelIndex &parentIndex = QModelIndex() );
+    BillItem *item(const QModelIndex &index ) const;
+    BillItem *item(int childNum, const QModelIndex &parentIndex = QModelIndex() );
+    BillItem *lastItem( const QModelIndex &parentIndex = QModelIndex() );
 
-    BillItem *billItemId(unsigned int itemId);
+    BillItem *itemId(unsigned int itemId);
     QModelIndex parent(const QModelIndex &index) const;
     QModelIndex index(int row, int column, const QModelIndex &parent) const;
     QModelIndex index(BillItem *item, int column) const;

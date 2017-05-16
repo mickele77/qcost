@@ -132,7 +132,7 @@ void BillTreeGUI::copyToClipboard(){
             QModelIndexList selRows = m_d->ui->treeView->selectionModel()->selectedRows();
             QList<BillItem *> copiedBillItems;
             for( int i=0; i < selRows.size(); ++i ){
-                copiedBillItems << m_d->bill->billItem( selRows.at(i)) ;
+                copiedBillItems << m_d->bill->item( selRows.at(i)) ;
             }
             data->setCopiedBillItems( copiedBillItems, m_d->bill, QCostClipboardData::Copy );
             QApplication::clipboard()->setMimeData( data );
@@ -151,7 +151,7 @@ void BillTreeGUI::cutToClipboard(){
             QModelIndexList selRows = m_d->ui->treeView->selectionModel()->selectedRows();
             QList<BillItem *> copiedBillItems;
             for( int i=0; i < selRows.size(); ++i ){
-                copiedBillItems << m_d->bill->billItem( selRows.at(i)) ;
+                copiedBillItems << m_d->bill->item( selRows.at(i)) ;
             }
             data->setCopiedBillItems( copiedBillItems, m_d->bill, QCostClipboardData::Cut );
             QApplication::clipboard()->setMimeData( data );
@@ -205,8 +205,8 @@ void BillTreeGUI::pasteFromClipboard(){
                                 }
                             }
                             if( !containsParent ){
-                                if(m_d->bill->insertBillItems( NULL, currRow+1, 1, currParent )) {
-                                    *(m_d->bill->billItem( m_d->bill->index(currRow+1, 0, currParent ) ) ) = *(*i);
+                                if(m_d->bill->insertItems( NULL, currRow+1, 1, currParent )) {
+                                    *(m_d->bill->item( m_d->bill->index(currRow+1, 0, currParent ) ) ) = *(*i);
                                 }
                             }
                             currRow++;
@@ -242,7 +242,7 @@ void BillTreeGUI::editAttributes(){
         if( m_d->ui->treeView->selectionModel() ){
             QModelIndexList selRows = m_d->ui->treeView->selectionModel()->selectedRows();
             for( int i=0; i < selRows.size(); ++i ){
-                itemsList << m_d->bill->billItem( selRows.at(i)) ;
+                itemsList << m_d->bill->item( selRows.at(i)) ;
             }
         }
         AttributeChangeDialog dialog( &itemsList, m_d->bill->attributesModel(), this );
@@ -262,8 +262,8 @@ void BillTreeGUI::editBillItemPrice( const QModelIndex & index ){
                 msgBox.setStandardButtons(QMessageBox::Ok );
                 msgBox.exec();
             } else {
-                if( !m_d->bill->billItem( index )->hasChildren() ){
-                    EditPriceItemDialog dialog( m_d->EPAImportOptions, m_d->EPAFileName, m_d->bill->priceList(), m_d->bill->priceDataSet(), m_d->bill->billItem( index ), m_d->parser, m_d->project, this );
+                if( !m_d->bill->item( index )->hasChildren() ){
+                    EditPriceItemDialog dialog( m_d->EPAImportOptions, m_d->EPAFileName, m_d->bill->priceList(), m_d->bill->priceDataSet(), m_d->bill->item( index ), m_d->parser, m_d->project, this );
                     dialog.exec();
                 }
             }
@@ -275,7 +275,7 @@ BillItem *BillTreeGUI::currentBillItem() {
     if( m_d->ui->treeView->selectionModel() ){
         if( m_d->bill != NULL ){
             if( m_d->ui->treeView->selectionModel()->currentIndex().isValid() ){
-                return m_d->bill->billItem( m_d->ui->treeView->selectionModel()->currentIndex() );
+                return m_d->bill->item( m_d->ui->treeView->selectionModel()->currentIndex() );
             }
         }
     }
@@ -350,14 +350,14 @@ void BillTreeGUI::addItems(){
                         }
                     }
                 }
-                m_d->bill->insertBillItems( NULL, rowList.last().row()+1, rowList.size(), rowList.last().parent() );
+                m_d->bill->insertItems( NULL, rowList.last().row()+1, rowList.size(), rowList.last().parent() );
                 if( m_d->ui->treeView->selectionModel() ){
                     m_d->ui->treeView->selectionModel()->clearSelection();
                     m_d->ui->treeView->selectionModel()->setCurrentIndex( m_d->bill->index( rowList.last().row()+rowList.size(), 0, rowList.last().parent() ),
                                                                           QItemSelectionModel::Rows | QItemSelectionModel::SelectCurrent );
                 }
             } else {
-                m_d->bill->insertBillItems( NULL, 0 );
+                m_d->bill->insertItems( NULL, 0 );
                 if( m_d->ui->treeView->selectionModel() ){
                     m_d->ui->treeView->selectionModel()->clearSelection();
                     m_d->ui->treeView->selectionModel()->setCurrentIndex( m_d->bill->index( 0, 0, QModelIndex() ),
@@ -373,7 +373,7 @@ void BillTreeGUI::addChildItems(){
         if( m_d->ui->treeView->selectionModel() ){
             QModelIndexList rowListSel = m_d->ui->treeView->selectionModel()->selectedRows();
             for( int i=0; i < rowListSel.size(); ++i){
-                m_d->bill->insertBillItems( NULL, 0, 1, rowListSel.at(i) );
+                m_d->bill->insertItems( NULL, 0, 1, rowListSel.at(i) );
             }
             if( m_d->ui->treeView->selectionModel() ){
                 m_d->ui->treeView->selectionModel()->clearSelection();
@@ -398,7 +398,7 @@ void BillTreeGUI::removeItems(){
             }
 
             for( int i=selRowsEff.size() - 1; i >= 0; --i){
-                    m_d->bill->removeBillItems( selRowsEff.at(i).row(), 1, selRowsEff.at(i).parent() );
+                    m_d->bill->removeItems( selRowsEff.at(i).row(), 1, selRowsEff.at(i).parent() );
             }
         }
     }
@@ -407,7 +407,7 @@ void BillTreeGUI::removeItems(){
 void BillTreeGUI::changeCurrentItem(const QModelIndex &currentIndex  ) {
     if( currentIndex.isValid() ){
         if( m_d->bill != NULL ){
-            emit currentItemChanged( m_d->bill->billItem( currentIndex ));
+            emit currentItemChanged( m_d->bill->item( currentIndex ));
             return;
         }
     }

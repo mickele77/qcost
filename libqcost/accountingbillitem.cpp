@@ -238,6 +238,7 @@ void AccountingBillItem::setParent(AccountingBillItem * newParent, int position 
             newParent->addChild( this, position);
             connect( m_d->parentItem, &AccountingBillItem::attributesChanged, this, &AccountingBillItem::attributesChanged );
         }
+        emit itemChanged();
     } else {
         int oldPosition = childNumber();
         if( oldPosition != position ){
@@ -246,6 +247,7 @@ void AccountingBillItem::setParent(AccountingBillItem * newParent, int position 
             }
             m_d->parentItem->m_d->childrenContainer.insert( position, this );
             m_d->parentItem->m_d->childrenContainer.removeAt( oldPosition );
+            emit itemChanged();
         }
     }
 }

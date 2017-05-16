@@ -291,10 +291,9 @@ void AccountingTreeGUI::pasteFromClipboard(){
                                 }
                             }
                             if( !containsParent ){
-                                // TODO
-                                /*if(m_d->accounting->insertMeasures( currRow+1, 1, currParent )) {
-                                    *(m_d->accounting->accountingItem( m_d->accounting->index(currRow+1, 0, currParent ) ) ) = *(*i);
-                                }*/
+                                if( m_d->accountingBill->insertItems( (*i)->itemType(), currRow+1, 1, currParent ) ) {
+                                    *(m_d->accountingBill->item( m_d->accountingBill->index(currRow+1, 0, currParent ) ) ) = *(*i);
+                                }
                             }
                         }
                     } else if( mode == QCostClipboardData::Cut ){

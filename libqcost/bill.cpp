@@ -264,7 +264,7 @@ void Bill::setPriceList(PriceList *pl, Bill::SetPriceListMode plMode) {
                     }
                 } else if( plMode == ResetBill ){
                     // resetta il computo
-                    removeBillItems( 0, m_d->rootItem->childrenCount() );
+                    removeItems( 0, m_d->rootItem->childrenCount() );
                 }
                 if( pl == NULL ){
                     m_d->rootItem->setCurrentPriceDataSet( 0 );
@@ -289,14 +289,14 @@ int Bill::priceDataSet() {
 }
 
 
-BillItem *Bill::billItem(const QModelIndex &index ) const {
+BillItem *Bill::item(const QModelIndex &index ) const {
     if (index.isValid()) {
         return static_cast<BillItem *>(index.internalPointer());
     }
     return m_d->rootItem;
 }
 
-BillItem *Bill::billItem(int childNum, const QModelIndex &parentIndex ) {
+BillItem *Bill::item(int childNum, const QModelIndex &parentIndex ) {
     if (parentIndex.isValid()) {
         BillItem * parentItem = static_cast<BillItem *>(parentIndex.internalPointer());
         if( childNum > -1 && childNum < parentItem->childrenCount() ){
@@ -306,7 +306,7 @@ BillItem *Bill::billItem(int childNum, const QModelIndex &parentIndex ) {
     return m_d->rootItem;
 }
 
-BillItem *Bill::lastBillItem(const QModelIndex &parentIndex) {
+BillItem *Bill::lastItem(const QModelIndex &parentIndex) {
     if (parentIndex.isValid()) {
         BillItem * parentItem = static_cast<BillItem *>(parentIndex.internalPointer());
         return parentItem->childItem( parentItem->childrenCount()-1 );
@@ -314,7 +314,7 @@ BillItem *Bill::lastBillItem(const QModelIndex &parentIndex) {
     return m_d->rootItem;
 }
 
-BillItem *Bill::billItemId(unsigned int itemId) {
+BillItem *Bill::itemId(unsigned int itemId) {
     return m_d->rootItem->itemFromId( itemId );
 }
 
@@ -322,7 +322,7 @@ QVariant Bill::data(const QModelIndex &index, int role) const {
     if (!index.isValid())
         return QVariant();
 
-    BillItem *i = billItem(index);
+    BillItem *i = item(index);
 
     return i->data(index.column(), role);
 }
@@ -336,7 +336,7 @@ QVariant Bill::headerData(int section, Qt::Orientation orientation, int role) co
 }
 
 int Bill::rowCount(const QModelIndex &parent) const {
-    BillItem *parentItem = billItem(parent);
+    BillItem *parentItem = item(parent);
     return parentItem->childrenCount();
 }
 
@@ -345,7 +345,7 @@ int Bill::columnCount(const QModelIndex &) const {
 }
 
 Qt::ItemFlags Bill::flags(const QModelIndex &index) const {
-    BillItem *b = billItem(index);
+    BillItem *b = item(index);
     if( b ){
         return (b->flags(  index.column() ) );
     } else {
@@ -357,7 +357,7 @@ bool Bill::setData(const QModelIndex &index, const QVariant &value, int role) {
     if (role != Qt::EditRole)
         return false;
 
-    BillItem *b = billItem(index);
+    BillItem *b = item(index);
     bool result = b->setData(index.column(), value);
 
     if (result)
@@ -366,8 +366,8 @@ bool Bill::setData(const QModelIndex &index, const QVariant &value, int role) {
     return result;
 }
 
-bool Bill::insertBillItems(PriceItem *p, int inputPos, int count, const QModelIndex &parent) {
-    BillItem *parentItem = billItem(parent);
+bool Bill::insertItems(PriceItem *p, int inputPos, int count, const QModelIndex &parent) {
+    BillItem *parentItem = item(parent);
 
     int position = inputPos;
     if( position == -1 ){
@@ -383,8 +383,8 @@ bool Bill::insertBillItems(PriceItem *p, int inputPos, int count, const QModelIn
     return success;
 }
 
-bool Bill::removeBillItems(int position, int rows, const QModelIndex &parent) {
-    BillItem *parentItem = billItem(parent);
+bool Bill::removeItems(int position, int rows, const QModelIndex &parent) {
+    BillItem *parentItem = item(parent);
     bool success = true;
 
     beginRemoveRows(parent, position, position + rows - 1);
@@ -395,7 +395,7 @@ bool Bill::removeBillItems(int position, int rows, const QModelIndex &parent) {
 }
 
 void Bill::clear() {
-    removeBillItems( 0, m_d->rootItem->childrenCount() );
+    removeItems( 0, m_d->rootItem->childrenCount() );
     m_d->attributesModel->clear();
     m_d->varsModel->clear();
 }
@@ -404,7 +404,7 @@ QModelIndex Bill::parent(const QModelIndex &index) const {
     if (!index.isValid())
         return QModelIndex();
 
-    BillItem *childItem = billItem(index);
+    BillItem *childItem = item(index);
     BillItem *parentItem = dynamic_cast<BillItem *>( childItem->parent());
 
     if (parentItem == m_d->rootItem || parentItem == 0 )
@@ -417,7 +417,7 @@ QModelIndex Bill::index(int row, int column, const QModelIndex &parent) const {
     if (parent.isValid() && parent.column() != 0)
         return QModelIndex();
 
-    BillItem *parentItem = dynamic_cast<BillItem *>(billItem(parent));
+    BillItem *parentItem = dynamic_cast<BillItem *>(item(parent));
 
     if( parentItem ){
         BillItem *childItem = dynamic_cast<BillItem *>(parentItem->child(row));
@@ -441,8 +441,8 @@ QModelIndex Bill::index(BillItem *item, int column) const {
 bool Bill::moveRows(const QModelIndex &sourceParent, int sourceRow, int count, const QModelIndex &destinationParent, int destinationRow ) {
 
     if(beginMoveRows( sourceParent, sourceRow, sourceRow + count - 1, destinationParent, destinationRow )){
-        BillItem * srcParent = billItem( sourceParent );
-        BillItem * dstParent = billItem( destinationParent );
+        BillItem * srcParent = item( sourceParent );
+        BillItem * dstParent = item( destinationParent );
         for( int i=0; i<count; ++i ){
             srcParent->childItem( (sourceRow+count-1)-i )->setParent( dstParent, destinationRow );
         }

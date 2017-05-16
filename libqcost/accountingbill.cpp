@@ -528,9 +528,18 @@ bool AccountingBill::moveRows(const QModelIndex &sourceParent, int sourceRow, in
 
     if(beginMoveRows( sourceParent, sourceRow, sourceRow + count - 1, destinationParent, destinationRow )){
         AccountingBillItem * srcParent = item( sourceParent );
-        AccountingBillItem * dstParent = item( destinationParent );
+        AccountingBillItem * itemToMove = item( sourceRow, sourceParent );
+        AccountingBillItem * dstItem = item( destinationRow, destinationParent );
+
+        AccountingBillItem * newParent = item( destinationParent );
+        int newRow = destinationRow;
+        if( dstItem->itemType() == AccountingBillItem::Payment && itemToMove->itemType() != AccountingBillItem::Payment ){
+            newParent = dstItem;
+            newRow = 0;
+        }
+
         for( int i=0; i<count; ++i ){
-            srcParent->childItem( (sourceRow+count-1)-i )->setParent( dstParent, destinationRow );
+            srcParent->childItem( (sourceRow+count-1)-i )->setParent( newParent, newRow );
         }
 
         endMoveRows();
@@ -687,9 +696,9 @@ void AccountingBill::writeXml20(QXmlStreamWriter *writer) const {
 }
 
 void AccountingBill::readXml20(QXmlStreamReader *reader,
-                             ProjectPriceListParentItem * priceLists,
-                             AccountingLSBills * lsBills,
-                             AccountingTAMBill * tamBill ) {
+                               ProjectPriceListParentItem * priceLists,
+                               AccountingLSBills * lsBills,
+                               AccountingTAMBill * tamBill ) {
     if(reader->isStartElement() && reader->name().toString().toUpper() == "ACCOUNTINGBILL"){
         m_d->tmpAttributes.clear();
         m_d->tmpAttributes = reader->attributes();
