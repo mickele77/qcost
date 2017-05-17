@@ -68,7 +68,7 @@ public:
     QAction * addPaymentAction;
     QAction * addCommentAction;
     QAction * addPPUAction;
-    QAction * addLSAction;
+    QAction * addLSAction;pase
     QAction * addTAMAction;
 
     QAction * addTAMBillAction;

@@ -890,7 +890,7 @@ bool PriceItem::sortByCode() {
             m_d->childrenContainer.at(i)->sortByCode();
         }
     }
-    return canged;
+    return changed;
 }
 
 bool PriceItem::sortByCodeInv() {

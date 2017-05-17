@@ -141,8 +141,8 @@ void AccountingLSTreeGUI::copyToClipboard(){
             for( int i=0; i < selRows.size(); ++i ){
                 copiedBillItems << m_d->bill->item( selRows.at(i)) ;
             }
-            /*data->setCopiedBillItems( copiedBillItems, m_d->bill, QCostClipboardData::Copy );
-            QApplication::clipboard()->setMimeData( data );*/
+            data->setCopiedAccountingLSBillItems( copiedBillItems, m_d->bill, QCostClipboardData::Copy );
+            QApplication::clipboard()->setMimeData( data );
         }
     }
 }
@@ -160,8 +160,8 @@ void AccountingLSTreeGUI::cutToClipboard(){
             for( int i=0; i < selRows.size(); ++i ){
                 copiedBillItems << m_d->bill->item( selRows.at(i)) ;
             }
-            /*data->setCopiedBillItems( copiedBillItems, m_d->bill, QCostClipboardData::Cut );
-            QApplication::clipboard()->setMimeData( data );*/
+            data->setCopiedAccountingLSBillItems( copiedBillItems, m_d->bill, QCostClipboardData::Cut );
+            QApplication::clipboard()->setMimeData( data );
         }
     }
 }
