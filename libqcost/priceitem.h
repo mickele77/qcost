@@ -162,6 +162,9 @@ public:
     static QString shortDescSeparator();
     static QString longDescSeparator();
 
+    bool sortByCode();
+    bool sortByCodeInv();
+
 public slots:
     void setCode( const QString & );
     void setInheritCodeFromParent( bool );
@@ -169,7 +172,6 @@ public slots:
     void setInheritShortDescFromParent( bool );
     void setLongDescription( const QString & );
     void setInheritLongDescFromParent( bool );
-    void sortByCode();
 
 signals:
     void aboutToBeDeleted();

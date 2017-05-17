@@ -104,6 +104,9 @@ public:
     void nextId();
     unsigned int id();
 
+    void sortByCode();
+    void sortByCodeInv();
+
     QModelIndex index(PriceItem *priceItem, int column) const;
     QModelIndex index(int row, int column, const QModelIndex &parent) const;
     QModelIndex parent(const QModelIndex &index) const;

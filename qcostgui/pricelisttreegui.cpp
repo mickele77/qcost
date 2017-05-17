@@ -245,6 +245,18 @@ void PriceListTreeGUI::removeItems(){
     }
 }
 
+void PriceListTreeGUI::sortByCode() {
+    if( m_d->priceList != NULL ){
+        m_d->priceList->sortByCode();
+    }
+}
+
+void PriceListTreeGUI::sortByCodeInv() {
+    if( m_d->priceList != NULL ){
+        m_d->priceList->sortByCodeInv();
+    }
+}
+
 void PriceListTreeGUI::copyToClipboard(){
     if( m_d->priceList != NULL ){
         if( m_d->ui->treeView->selectionModel() ){
@@ -387,6 +399,14 @@ void PriceListTreeGUI::treeViewCustomMenuRequested(QPoint pos){
     QAction * resizeColToContent = new QAction( trUtf8("Ottimizza colonne"), this);
     connect( resizeColToContent, &QAction::triggered, this, &PriceListTreeGUI::resizeColumnsToContents );
     menu->addAction( resizeColToContent );
+
+    menu->addSeparator();
+    QAction * sortByCodeAction = new QAction( trUtf8("Ordina per codice crescente"), this);
+    connect( sortByCodeAction, &QAction::triggered, this, &PriceListTreeGUI::sortByCode );
+    menu->addAction( sortByCodeAction );
+    QAction * sortByCodeInvAction = new QAction( trUtf8("Ordina per codice decrescente"), this);
+    connect( sortByCodeInvAction, &QAction::triggered, this, &PriceListTreeGUI::sortByCodeInv );
+    menu->addAction( sortByCodeInvAction );
 
     menu->popup( m_d->ui->treeView->viewport()->mapToGlobal(pos) );
 }

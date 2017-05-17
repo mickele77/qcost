@@ -352,6 +352,18 @@ void PriceList::setDescription(const QString &value) {
     }
 }
 
+void PriceList::sortByCode() {
+    if( m_d->rootItem->sortByCode() ) {
+        emit modelChanged();
+    }
+}
+
+void PriceList::sortByCodeInv() {
+    if( m_d->rootItem->sortByCodeInv() ) {
+        emit modelChanged();
+    }
+}
+
 void PriceList::updateValueTotal(PriceItem * item, int column) {
     QModelIndex i = index( item, column);
     emit dataChanged( i, i);

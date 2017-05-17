@@ -63,6 +63,9 @@ private slots:
     void addChildItems();
     void removeItems();
 
+    void sortByCode();
+    void sortByCodeInv();
+
     void changeCurrentItem( QModelIndex currentIndex );
 
     void treeViewCustomMenuRequested(QPoint pos);
