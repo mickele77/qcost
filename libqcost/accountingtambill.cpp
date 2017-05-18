@@ -485,7 +485,15 @@ QModelIndex AccountingTAMBill::index(int row, int column, const QModelIndex &par
     return QModelIndex();
 }
 
-QModelIndex AccountingTAMBill::index(AccountingTAMBillItem *item, int column) const {
+QModelIndex AccountingTAMBill::index( AccountingBillItem *item, int column) const {
+    AccountingTAMBillItem * tamItem = dynamic_cast<AccountingTAMBillItem *>(item);
+    if( tamItem ){
+        return index( tamItem, column );
+    }
+    return QModelIndex();
+}
+
+QModelIndex AccountingTAMBill::index( AccountingTAMBillItem *item, int column) const {
     if (item == NULL )
         return QModelIndex();
 

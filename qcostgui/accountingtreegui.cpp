@@ -68,7 +68,7 @@ public:
     QAction * addPaymentAction;
     QAction * addCommentAction;
     QAction * addPPUAction;
-    QAction * addLSAction;pase
+    QAction * addLSAction;
     QAction * addTAMAction;
 
     QAction * addTAMBillAction;
@@ -218,14 +218,30 @@ void AccountingTreeGUI::copyToClipboard(){
                 *data = *clipData;
             }
             QModelIndexList selRows = m_d->ui->treeView->selectionModel()->selectedRows();
-            QList<AccountingBillItem *> copiedAccountingMeasures;
+            QList<AccountingBillItem *> copiedMeasures;
             for( int i=0; i < selRows.size(); ++i ){
-                copiedAccountingMeasures << m_d->accountingBill->item( selRows.at(i)) ;
+                copiedMeasures << m_d->accountingBill->item( selRows.at(i)) ;
             }
-            data->setCopiedAccountingBillItems( copiedAccountingMeasures, m_d->accountingBill, QCostClipboardData::Copy );
+            data->setCopiedAccountingBillItems( copiedMeasures, m_d->accountingBill, QCostClipboardData::Copy );
+            QApplication::clipboard()->setMimeData( data );
+        }
+    } else if( m_d->accountingTAMBill != NULL ){
+        if( m_d->ui->treeView->selectionModel() ){
+            QCostClipboardData *data = new QCostClipboardData();
+            const QCostClipboardData *clipData = qobject_cast<const QCostClipboardData *>(QApplication::clipboard()->mimeData());
+            if( clipData != NULL ){
+                *data = *clipData;
+            }
+            QModelIndexList selRows = m_d->ui->treeView->selectionModel()->selectedRows();
+            QList<AccountingTAMBillItem *> copiedMeasures;
+            for( int i=0; i < selRows.size(); ++i ){
+                copiedMeasures << m_d->accountingTAMBill->item( selRows.at(i)) ;
+            }
+            data->setCopiedAccountingTAMBillItems( copiedMeasures, m_d->accountingTAMBill, QCostClipboardData::Copy );
             QApplication::clipboard()->setMimeData( data );
         }
     }
+
 }
 
 void AccountingTreeGUI::cutToClipboard(){
@@ -237,11 +253,26 @@ void AccountingTreeGUI::cutToClipboard(){
                 *data = *clipData;
             }
             QModelIndexList selRows = m_d->ui->treeView->selectionModel()->selectedRows();
-            QList<AccountingBillItem *> copiedAccountingMeasures;
+            QList<AccountingBillItem *> copiedMeasures;
             for( int i=0; i < selRows.size(); ++i ){
-                copiedAccountingMeasures << m_d->accountingBill->item( selRows.at(i)) ;
+                copiedMeasures << m_d->accountingBill->item( selRows.at(i)) ;
             }
-            data->setCopiedAccountingBillItems( copiedAccountingMeasures, m_d->accountingBill, QCostClipboardData::Cut );
+            data->setCopiedAccountingBillItems( copiedMeasures, m_d->accountingBill, QCostClipboardData::Cut );
+            QApplication::clipboard()->setMimeData( data );
+        }
+    } else if( m_d->accountingTAMBill != NULL ){
+        if( m_d->ui->treeView->selectionModel() ){
+            QCostClipboardData *data = new QCostClipboardData();
+            const QCostClipboardData *clipData = qobject_cast<const QCostClipboardData *>(QApplication::clipboard()->mimeData());
+            if( clipData != NULL ){
+                *data = *clipData;
+            }
+            QModelIndexList selRows = m_d->ui->treeView->selectionModel()->selectedRows();
+            QList<AccountingTAMBillItem *> copiedMeasures;
+            for( int i=0; i < selRows.size(); ++i ){
+                copiedMeasures << m_d->accountingTAMBill->item( selRows.at(i)) ;
+            }
+            data->setCopiedAccountingTAMBillItems( copiedMeasures, m_d->accountingTAMBill, QCostClipboardData::Cut );
             QApplication::clipboard()->setMimeData( data );
         }
     }
@@ -310,6 +341,75 @@ void AccountingTreeGUI::pasteFromClipboard(){
                                 }
                                 if( !containsParent ){
                                     m_d->accountingBill->moveRows( m_d->accountingBill->index((*i)->parent(), 0), (*i)->childNumber(), 1, currParent, currRow+1);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    } else if( m_d->accountingTAMBill != NULL ){
+        if( m_d->ui->treeView->selectionModel() ){
+            QClipboard * clp = QApplication::clipboard();
+            const QMimeData * mimeData = clp->mimeData();
+            const QCostClipboardData *data = qobject_cast<const QCostClipboardData *>( mimeData );
+
+            if( data != NULL ){
+                QModelIndex currIndex = m_d->ui->treeView->currentIndex();
+                int currRow = m_d->accountingTAMBill->rowCount( )-1;
+                QModelIndex currParent = QModelIndex();
+                if( currIndex.isValid() ){
+                    currRow = currIndex.row();
+                    currParent = currIndex.parent();
+                }
+                QList<AccountingTAMBillItem *> itemsToCopy;
+                AccountingTAMBill * itemsToCopyAccounting = NULL;
+                QCostClipboardData::Mode mode;
+                data->getCopiedAccountingTAMBillItems( &itemsToCopy, itemsToCopyAccounting, &mode);
+                if( itemsToCopyAccounting != NULL ){
+                    if( mode == QCostClipboardData::Copy ){
+                        if( itemsToCopyAccounting->priceList() != m_d->accountingTAMBill->priceList() ){
+                            for( QList<AccountingTAMBillItem *>::iterator i=itemsToCopy.begin(); i != itemsToCopy.end(); ++i ){
+                                if( (*i)->itemType() == AccountingBillItem::PPU ){
+                                    PriceItem * pItem = m_d->accountingTAMBill->priceList()->priceItemCode( (*i)->priceItem()->codeFull() );
+                                    if( pItem == NULL ){
+                                        pItem = m_d->accountingTAMBill->priceList()->appendPriceItem();
+                                        *pItem = *((*i)->priceItem());
+                                    }
+                                    (*i)->setPriceItem( pItem );
+                                }
+                            }
+                        }
+                        for( QList<AccountingTAMBillItem *>::iterator i=itemsToCopy.begin(); i != itemsToCopy.end(); ++i ){
+                            bool containsParent = false;
+                            for( QList<AccountingTAMBillItem *>::iterator j=itemsToCopy.begin(); j != itemsToCopy.end(); ++j ){
+                                if( i != j ){
+                                    if( (*i)->isDescending(*j) ){
+                                        containsParent = true;
+                                        break;
+                                    }
+                                }
+                            }
+                            if( !containsParent ){
+                                if( m_d->accountingTAMBill->insertItems( (*i)->itemType(), currRow+1, 1, currParent ) ) {
+                                    *(m_d->accountingTAMBill->item( m_d->accountingTAMBill->index(currRow+1, 0, currParent ) ) ) = *(*i);
+                                }
+                            }
+                        }
+                    } else if( mode == QCostClipboardData::Cut ){
+                        if( itemsToCopyAccounting == m_d->accountingTAMBill ){
+                            for( QList<AccountingTAMBillItem *>::iterator i=itemsToCopy.begin(); i != itemsToCopy.end(); ++i ){
+                                bool containsParent = false;
+                                for( QList<AccountingTAMBillItem *>::iterator j=itemsToCopy.begin(); j != itemsToCopy.end(); ++j ){
+                                    if( i != j ){
+                                        if( (*i)->isDescending(*j) ){
+                                            containsParent = true;
+                                            break;
+                                        }
+                                    }
+                                }
+                                if( !containsParent ){
+                                    m_d->accountingTAMBill->moveRows( m_d->accountingTAMBill->index( (*i)->parent(), 0), (*i)->childNumber(), 1, currParent, currRow+1);
                                 }
                             }
                         }

@@ -123,6 +123,7 @@ public:
     AccountingTAMBillItem *itemId(unsigned int itemId);
     QModelIndex parent(const QModelIndex &index) const;
     QModelIndex index(int row, int column, const QModelIndex &parent) const;
+    QModelIndex index(AccountingBillItem *item, int column) const;
     QModelIndex index(AccountingTAMBillItem *item, int column) const;
 
     bool moveRows(const QModelIndex & sourceParent, int sourceRow, int count, const QModelIndex & destinationParent, int destinationChild);
