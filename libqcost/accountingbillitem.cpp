@@ -1375,17 +1375,17 @@ bool AccountingBillItem::removeChildren(int position, int count) {
     bool hadChildren = m_d->childrenContainer.size() > 0;
 
     for (int row = 0; row < count; ++row){
-        AccountingBillItem * item = m_d->childrenContainer.at( position );
-        disconnect( item, static_cast<void(AccountingBillItem::*)(AccountingBillItem*,int)> (&AccountingBillItem::dataChanged), this, static_cast<void(AccountingBillItem::*)(AccountingBillItem*,int)> (&AccountingBillItem::dataChanged) );
-        disconnect( item, &AccountingBillItem::totalAmountToDiscountChanged, this, &AccountingBillItem::updateTotalAmountToDiscount );
-        disconnect( item, &AccountingBillItem::amountNotToDiscountChanged, this, &AccountingBillItem::updateAmountNotToDiscount );
-        disconnect( this, &AccountingBillItem::currentPriceDataSetChanged, item, &AccountingBillItem::setCurrentPriceDataSet );
-        disconnect( item, &AccountingBillItem::itemChanged, this, &AccountingBillItem::itemChanged );
-        delete item;
-        AccountingBillItem * itemRemoved = m_d->childrenContainer.at(position);
+        AccountingBillItem * itemToRemove = m_d->childrenContainer.at( position );
+        disconnect( itemToRemove, static_cast<void(AccountingBillItem::*)(AccountingBillItem*,int)> (&AccountingBillItem::dataChanged), this, static_cast<void(AccountingBillItem::*)(AccountingBillItem*,int)> (&AccountingBillItem::dataChanged) );
+        disconnect( itemToRemove, &AccountingBillItem::totalAmountToDiscountChanged, this, &AccountingBillItem::updateTotalAmountToDiscount );
+        disconnect( itemToRemove, &AccountingBillItem::amountNotToDiscountChanged, this, &AccountingBillItem::updateAmountNotToDiscount );
+        disconnect( this, &AccountingBillItem::currentPriceDataSetChanged, itemToRemove, &AccountingBillItem::setCurrentPriceDataSet );
+        disconnect( itemToRemove, &AccountingBillItem::itemChanged, this, &AccountingBillItem::itemChanged );
+        AccountingBillItem::ItemType itemType = itemToRemove->itemType();
+        delete itemToRemove;
         m_d->childrenContainer.removeAt( position );
-        if( itemRemoved->itemType() == Payment ){
-            emit paymentRemoved( position, itemRemoved );
+        if( itemType == Payment ){
+            emit paymentRemoved( position, itemToRemove );
         }
     }
     if( hadChildren ){
