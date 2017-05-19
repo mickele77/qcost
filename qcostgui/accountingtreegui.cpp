@@ -640,19 +640,22 @@ void AccountingTreeGUI::clear(){
 
 void AccountingTreeGUI::removeItems(){
     if( m_d->ui->treeView->selectionModel() ){
-        QModelIndexList selRows = m_d->ui->treeView->selectionModel()->selectedRows();
-        for( int i=selRows.size() - 1; i >= 0; --i){
-            // se la lista contiene il genitore dell'oggetto
-            // rimuovo solo il genitore
-            if( selRows.contains( selRows.at(i).parent()) ){
-                selRows.removeAt( i );
+        if( m_d->ui->treeView->selectionModel() ){
+            // se la lista non contiene il genitore dell'oggetto lo rimuovo
+            // altrimenti è sufficiente rimuovere il genitore
+            QModelIndexList selRows = m_d->ui->treeView->selectionModel()->selectedRows();
+            QModelIndexList selRowsEff;
+            for( QModelIndexList::iterator i=selRows.begin(); i != selRows.end(); ++i){
+                if( !(selRows.contains( i->parent() ) ) ){
+                    selRowsEff << (*i);
+                }
             }
-        }
-        for( int i=selRows.size() - 1; i >= 0; --i){
-            if( m_d->accountingBill != NULL ){
-                m_d->accountingBill->removeItems( selRows.at(i).row(), 1, selRows.at(i).parent() );
-            } else if( m_d->accountingTAMBill != NULL ){
-                m_d->accountingTAMBill->removeItems( selRows.at(i).row(), 1, selRows.at(i).parent() );
+            for( int i=selRowsEff.size() - 1; i >= 0; --i){
+                if( m_d->accountingBill != NULL ){
+                    m_d->accountingBill->removeItems( selRowsEff.at(i).row(), 1, selRowsEff.at(i).parent() );
+                } else if( m_d->accountingTAMBill != NULL ){
+                    m_d->accountingTAMBill->removeItems( selRowsEff.at(i).row(), 1, selRowsEff.at(i).parent() );
+                }
             }
         }
     }

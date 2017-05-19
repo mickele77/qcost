@@ -232,12 +232,11 @@ void PriceListTreeGUI::removeItems(){
             // altrimenti è sufficiente rimuovere il genitore
             QModelIndexList selRows = m_d->ui->treeView->selectionModel()->selectedRows();
             QModelIndexList selRowsEff;
-            for( int i=0; i < selRows.size(); ++i){
-                if( !(selRows.contains( selRows.at(i).parent()) ) ){
-                    selRowsEff << selRows.at(i);
+            for( QModelIndexList::iterator i=selRows.begin(); i != selRows.end(); ++i){
+                if( !(selRows.contains( i->parent() ) ) ){
+                    selRowsEff << (*i);
                 }
             }
-
             for( int i=selRowsEff.size() - 1; i >= 0; --i){
                 m_d->priceList->removeRows( selRowsEff.at(i).row(), 1, selRowsEff.at(i).parent() );
             }
