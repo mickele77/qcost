@@ -83,6 +83,7 @@ QStringList MeasurePrivate::splitQString( const QString & str, const QList<QChar
 Measure::Measure(BillItem * bItem , MathParser * p, UnitMeasure * ump) :
     QObject(0),
     m_d( new MeasurePrivate( bItem, p, ump )){
+    connect( m_d->billItem, &BillItem::currentPriceDataSetChanged, this, &Measure::updateQuantity);
 }
 
 Measure::Measure(AccountingBillItem *accBItem, MathParser *p, UnitMeasure *ump):
@@ -164,7 +165,7 @@ QString Measure::formula() const {
                                 bool ok = false;
                                 uint connItemId = intStrSplit.at(0).toUInt(&ok);
                                 if( ok ){
-                                    int connPriceDataSet = intStrSplit.at(1).toInt(&ok) + 1;
+                                    int connPriceDataSet = intStrSplit.at(1).toInt(&ok);
                                     if( ok ){
                                         BillItem * connItem = m_d->billItem->findItemFromId( connItemId );
                                         if( connItem != NULL ){
@@ -197,41 +198,68 @@ QString Measure::formula() const {
             }
         }
     } else if( m_d->accountingBillItem != NULL ){
-        QRegExp rx("(\\[|\\])");
-        QStringList formSplitted = displayedForm.split( rx );
+        QList<QChar> matchStr;
+        matchStr << '[' << ']' << '{' << '}';
+        QStringList formSplitted = MeasurePrivate::splitQString( displayedForm,  matchStr );
         displayedForm.clear();
         for( int i=0; i < formSplitted.size(); i++ ){
-            if( i%2 == 1 ){
-                bool ok = false;
-                int priceFieldConnItem = 0;
-                AccountingBillItem * connItem = NULL;
-                if( formSplitted.at(i).contains(":")){
-                    QStringList formSplittedAmounts = formSplitted.at(i).split(":");
-                    if( formSplittedAmounts.size() > 0 ){
-                        uint connItemId = formSplittedAmounts.at(0).toUInt(&ok);
+            if( formSplitted.at(i) == "[" ){
+                bool signOk = false;
+                if( (i+2) < formSplitted.size() ){
+                    if( formSplitted.at(i+2) == "]"  ){
+                        bool ok = false;
+                        uint connItemId = formSplitted.at(i+1).toUInt(&ok);
                         if( ok ){
-                            connItem = m_d->accountingBillItem->findItemFromId( connItemId );
-                            int purpPriceFieldConnTiem = formSplittedAmounts.at(1).toInt( &ok );
-                            if( ok ){
-                                priceFieldConnItem = purpPriceFieldConnTiem;
+                            AccountingBillItem * connItem = m_d->accountingBillItem->findItemFromId( connItemId );
+                            if( connItem != NULL ){
+                                signOk = true;
+                                displayedForm += "[" + connItem->progCode() + "]";
+                                i = i+2;
                             }
                         }
                     }
-                } else {
-                    uint connItemId = formSplitted.at(i).toUInt(&ok);
-                    if( ok ){
-                        connItem = m_d->accountingBillItem->findItemFromId( connItemId );
+                }
+                if( ! signOk ){
+                    displayedForm += formSplitted.at(i);
+                }
+            } else if( formSplitted.at(i) == "{" ){
+                bool signOk = false;
+                if( (i+2) < formSplitted.size() ){
+                    if( formSplitted.at(i+2) == "}"  ){
+                        QString intStr = formSplitted.at(i+1);
+                        if( intStr.contains(":") ){
+                            QStringList intStrSplit = intStr.split(":");
+                            if( intStrSplit.size() > 1 ){
+                                bool ok = false;
+                                uint connItemId = intStrSplit.at(0).toUInt(&ok);
+                                if( ok ){
+                                    int connPriceDataSet = intStrSplit.at(1).toInt(&ok);
+                                    if( ok ){
+                                        AccountingBillItem * connItem = m_d->accountingBillItem->findItemFromId( connItemId );
+                                        if( connItem != NULL ){
+                                            signOk = true;
+                                            displayedForm += "{" + connItem->progCode() + ":" + QString::number(connPriceDataSet) + "}";
+                                            i = i+2;
+                                        }
+                                    }
+                                }
+                            }
+                        } else {
+                            bool ok = false;
+                            uint connItemId = intStr.toUInt(&ok);
+                            if( ok ){
+                                AccountingBillItem * connItem = m_d->accountingBillItem->findItemFromId( connItemId );
+                                if( connItem != NULL ){
+                                    signOk = true;
+                                    displayedForm += "{" + connItem->progCode() + "}";
+                                    i = i+2;
+                                }
+                            }
+                        }
                     }
                 }
-
-                if( ok && connItem != NULL  ){
-                    if(  priceFieldConnItem > 0 ){
-                        displayedForm += "[" + connItem->fullProgCode() + ":" + QString::number(priceFieldConnItem)+ "]";
-                    } else {
-                        displayedForm += "[" + connItem->fullProgCode() + "]";
-                    }
-                } else {
-                    displayedForm += "[Err]";
+                if( ! signOk ){
+                    displayedForm += formSplitted.at(i);
                 }
             } else {
                 displayedForm += formSplitted.at(i);
@@ -248,7 +276,7 @@ void Measure::setFormula( const QString & newFormulaInput, bool connItemFromId )
     if( m_d->billItem != NULL ){
         // azzera l'elenco dei BillItem connessi
         for( QList< QPair<BillItem *, int> >::iterator it = m_d->connectedBillItems.begin(); it != m_d->connectedBillItems.end(); ++it ){
-            if( it->second > -1 ){
+            if( it->second > -2 ){
                 disconnect( it->first, static_cast<void(BillItem::*)( int, double )>(&BillItem::amountChanged), this, &Measure::updateQuantity );
             } else {
                 disconnect( it->first, &BillItem::quantityChanged, this, &Measure::updateQuantity );
@@ -277,7 +305,7 @@ void Measure::setFormula( const QString & newFormulaInput, bool connItemFromId )
                         }
                         if( connItem != NULL ){
                             setFormulaOk = true;
-                            m_d->connectedBillItems << qMakePair(connItem, -1);
+                            m_d->connectedBillItems << qMakePair(connItem, -2);
                             newFormula += "[" + QString::number(connItem->id()) + "]";
                             connect( connItem, &BillItem::quantityChanged, this, &Measure::updateQuantity );
                             i = i+2;
@@ -354,107 +382,110 @@ void Measure::setFormula( const QString & newFormulaInput, bool connItemFromId )
     } else if( m_d->accountingBillItem != NULL ){
         // azzera l'elenco degli oggetti AccountingBillItem connessi
         for( QList< QPair<AccountingBillItem *, int> >::iterator it = m_d->connectedAccBillItems.begin(); it != m_d->connectedAccBillItems.end(); ++it ){
-            if( it->second > -1 ){
-                disconnect( it->first, &AccountingBillItem::amountsChanged, this, &Measure::updateQuantity );
+            if( it->second > -2 ){
+                disconnect( it->first, &AccountingBillItem::amountToDiscountChanged, this, &Measure::updateQuantity );
+                disconnect( it->first, &AccountingBillItem::amountNotToDiscountChanged, this, &Measure::updateQuantity );
             } else {
                 disconnect( it->first, &AccountingBillItem::quantityChanged, this, &Measure::updateQuantity );
             }
         }
         m_d->connectedBillItems.clear();
 
-        if( connItemFromId ){
-            QRegExp rx("(\\[|\\])");
-            QStringList newFormSplitted = newFormulaInput.split( rx );
-            newFormula.clear();
-            for( int i=0; i < newFormSplitted.size(); i++ ){
-                if( i%2 == 1 ){
-                    if( newFormSplitted.at(i).contains(":")){
-                        QStringList newFormSplittedAmounts = newFormSplitted.at(i).split(":");
-                        if( newFormSplittedAmounts.size() > 0 ){
-                            bool ok = false;
-                            uint connItemId = newFormSplittedAmounts.at(0).toUInt(&ok);
-                            AccountingBillItem * connItem = NULL;
-                            if( ok ){
+        bool setFormulaOk = true;
+        // spezziamo newForm in base ai diversi tipi di parentesi
+        QList<QChar> matchStr;
+        matchStr << '[' << ']' << '{' << '}';
+        QStringList formSplitted = MeasurePrivate::splitQString( newFormulaInput,  matchStr );
+        for( int i=0; i < formSplitted.size(); i++ ){
+            if( formSplitted.at(i) == "[" ){
+                if( (i+2) < formSplitted.size() ){
+                    if( formSplitted.at(i+2) == "]"  ){
+                        AccountingBillItem * connItem = NULL;
+                        if( connItemFromId ){
+                            bool uintOk = false;
+                            uint connItemId = formSplitted.at(i+1).toUInt( &uintOk );
+                            if( uintOk ){
                                 connItem = m_d->accountingBillItem->findItemFromId( connItemId );
                             }
-                            if( connItem != NULL ){
-                                int connItemPriceField = 0;
-                                if( newFormSplittedAmounts.size() > 1 ){
-                                    connItemPriceField = newFormSplittedAmounts.at(1).toInt();
-                                }
-                                if( connItemPriceField > 0 ){
-                                    m_d->connectedAccBillItems << qMakePair( connItem, connItemPriceField );
-                                    newFormula += "[" + QString::number(connItem->id()) + ":" + QString::number(connItemPriceField) + "]";
-                                    connect( connItem, &AccountingBillItem::amountsChanged, this, &Measure::updateQuantity );
-                                } else {
-                                    m_d->connectedAccBillItems << qMakePair( connItem, -1 );
-                                    newFormula += "[" + QString::number(connItem->id()) + "]";
-                                    connect( connItem, &AccountingBillItem::quantityChanged, this, &Measure::updateQuantity );
+                        } else {
+                            connItem = m_d->accountingBillItem->findItemFromProgCode( formSplitted.at(i+1) );
+                        }
+                        if( connItem != NULL ){
+                            setFormulaOk = true;
+                            m_d->connectedAccBillItems << qMakePair(connItem, -2);
+                            newFormula += "[" + QString::number(connItem->id()) + "]";
+                            connect( connItem, &AccountingBillItem::quantityChanged, this, &Measure::updateQuantity );
+                            i = i+2;
+                        } else {
+                            setFormulaOk = false;
+                        }
+                    } else {
+                        setFormulaOk = false;
+                    }
+                } else {
+                    setFormulaOk = false;
+                }
+            } else if( formSplitted.at(i) == "{" ){
+                if( (i+2) < formSplitted.size() ){
+                    if( formSplitted.at(i+2) == "}"  ){
+                        QStringList formSplittedAmounts = formSplitted.at(i+1).split(":");
+                        if( formSplittedAmounts.size() > 1 ){
+                            AccountingBillItem * connItem = NULL;
+                            if( connItemFromId ){
+                                bool uintOk = false;
+                                uint connItemId = formSplittedAmounts.at(0).toUInt( &uintOk );
+                                if( uintOk ){
+                                    connItem = m_d->accountingBillItem->findItemFromId( connItemId );
                                 }
                             } else {
-                                newFormula += "0";
+                                connItem = m_d->accountingBillItem->findItemFromProgCode( formSplittedAmounts.at(0) );
+                            }
+                            bool intOk = false;
+                            int connPriceDataSet = formSplittedAmounts.at(1).toInt( &intOk);
+                            if( connItem != NULL && intOk ){
+                                setFormulaOk = true;
+                                m_d->connectedAccBillItems << qMakePair(connItem, connPriceDataSet);
+                                newFormula += "{" + QString::number(connItem->id()) + ":" + QString::number(connPriceDataSet) + "}";
+                                connect( connItem, &AccountingBillItem::amountToDiscountChanged, this, &Measure::updateQuantity );
+                                connect( connItem, &AccountingBillItem::amountNotToDiscountChanged, this, &Measure::updateQuantity );
+                                i = i+2;
+                            } else {
+                                setFormulaOk = false;
+                            }
+                        } else {
+                            AccountingBillItem * connItem = NULL;
+                            if( connItemFromId ){
+                                bool uintOk = false;
+                                uint connItemId = formSplitted.at(i+1).toUInt( &uintOk );
+                                if( uintOk ){
+                                    connItem = m_d->accountingBillItem->findItemFromId( connItemId );
+                                }
+                            } else {
+                                connItem = m_d->accountingBillItem->findItemFromProgCode( formSplitted.at(i+1) );
+                            }
+                            if( connItem != NULL ){
+                                setFormulaOk = true;
+                                m_d->connectedAccBillItems << qMakePair(connItem, -2);
+                                newFormula += "{" + QString::number(connItem->id()) + "}";
+                                connect( connItem, &AccountingBillItem::amountToDiscountChanged, this, &Measure::updateQuantity );
+                                connect( connItem, &AccountingBillItem::amountNotToDiscountChanged, this, &Measure::updateQuantity );
+                                i = i+2;
+                            } else {
+                                setFormulaOk = false;
                             }
                         }
                     } else {
-                        bool ok = false;
-                        uint connItemId = newFormSplitted.at(0).toUInt(&ok);
-                        AccountingBillItem * connItem = NULL;
-                        if( ok ){
-                            connItem = m_d->accountingBillItem->findItemFromId( connItemId );
-                        }
-                        if( connItem != NULL ){
-                            m_d->connectedAccBillItems << qMakePair(connItem, -1);
-                            newFormula += "[" + QString::number(connItem->id()) + "]";
-                            connect( connItem, &AccountingBillItem::quantityChanged, this, &Measure::updateQuantity );
-                        } else {
-                            newFormula += "0";
-                        }
+                        setFormulaOk = false;
                     }
                 } else {
-                    newFormula += newFormSplitted.at(i);
+                    setFormulaOk = false;
                 }
+            } else {
+                newFormula += formSplitted.at(i);
             }
-        } else {
-            QRegExp rx("(\\[|\\])");
-            QStringList newFormSplitted = newFormulaInput.split( rx );
-            newFormula.clear();
-            for( int i=0; i < newFormSplitted.size(); i++ ){
-                if( i%2 == 1 ){
-                    if( newFormSplitted.at(i).contains(":")){
-                        QStringList newFormSplittedAmounts = newFormSplitted.at(i).split(":");
-                        if( newFormSplittedAmounts.size() > 0 ){
-                            AccountingBillItem * connItem = m_d->accountingBillItem->findItemFromProgCode( newFormSplittedAmounts.at(0) );
-                            if( connItem != NULL ){
-                                int connItemPriceField = 0;
-                                if( newFormSplittedAmounts.size() > 1 ){
-                                    connItemPriceField = newFormSplittedAmounts.at(1).toInt();
-                                }
-                                if( connItemPriceField > 0 ){
-                                    m_d->connectedAccBillItems << qMakePair( connItem, connItemPriceField );
-                                    newFormula += "[" + QString::number(connItem->id()) + ":" + QString::number(connItemPriceField) + "]";
-                                    connect( connItem, &AccountingBillItem::amountsChanged, this, &Measure::updateQuantity );
-                                } else {
-                                    m_d->connectedAccBillItems << qMakePair( connItem, -1 );
-                                    newFormula += "[" + QString::number(connItem->id()) + "]";
-                                    connect( connItem, &AccountingBillItem::quantityChanged, this, &Measure::updateQuantity );
-                                }
-                            } else {
-                                newFormula += "0";
-                            }
-                        }
-                    } else {
-                        AccountingBillItem * connItem = m_d->accountingBillItem->findItemFromProgCode( newFormSplitted.at(i) );
-                        if( connItem != NULL ){
-                            m_d->connectedAccBillItems << qMakePair(connItem, -1);
-                            newFormula += "[" + QString::number(connItem->id()) + "]";
-                            connect( connItem, &AccountingBillItem::quantityChanged, this, &Measure::updateQuantity );
-                        } else {
-                            newFormula += "0";
-                        }
-                    }
-                } else {
-                    newFormula += newFormSplitted.at(i);
-                }
+            if( !setFormulaOk ) {
+                newFormula = newFormulaInput;
+                break;
             }
         }
     } else {
@@ -533,53 +564,73 @@ QString Measure::effectiveFormula() const{
             }
         }
     } else if( m_d->accountingBillItem != NULL ){
-        QRegExp rx("(\\[|\\])");
-        QStringList formSplitted = m_d->formula.split( rx );
-        effFormula.clear();
+        QList<QChar> matchStr;
+        matchStr << '[' << ']' << '{' << '}';
+        QStringList formSplitted = MeasurePrivate::splitQString( m_d->formula,  matchStr );
         for( int i=0; i < formSplitted.size(); i++ ){
-            if( i%2 == 1 ){
-                bool ok = false;
-                uint connItemId = 0;
-                int priceFieldConnItem = -1;
-                if( formSplitted.at(i).contains(":")){
-                    QStringList formSplittedAmounts = formSplitted.at(i).split(":");
-                    if( formSplittedAmounts.size() > 1 ){
-                        connItemId = formSplittedAmounts.at(0).toUInt( &ok );
-                        if( ok ){
-                            priceFieldConnItem = formSplittedAmounts.at(1).toInt( &ok ) - 1;
-                        }
-                    }
-                } else {
-                    connItemId = formSplitted.at(i).toUInt( &ok );
-                }
-                if( ok && connItemId > 0 ){
-                    AccountingBillItem * connItem = m_d->accountingBillItem->findItemFromId( connItemId );
-                    if( connItem != NULL ){
-                        QList<AccountingBillItem *> connItems;
-                        connItem->appendConnectedItems( &connItems );
-                        if( connItems.contains(m_d->accountingBillItem) ){
-                            ok = false;
-                        } else {
-                            if( priceFieldConnItem > -1 ){
-                                effFormula += connItem->amountStr(priceFieldConnItem);
-                            } else {
+            if( formSplitted.at(i) == "[" ){
+                bool effectiveFormulaOk = false;
+                if( (i+2) < formSplitted.size() ){
+                    if( formSplitted.at(i+2) == "]"  ){
+                        bool uintOk = false;
+                        uint connItemId = formSplitted.at(i+1).toUInt(&uintOk );
+                        if( uintOk ){
+                            AccountingBillItem * connItem = m_d->accountingBillItem->findItemFromId( connItemId );
+                            if( connItem != NULL ){
                                 effFormula += connItem->quantityStr();
+                                effectiveFormulaOk = true;
+                                i = i+2;
                             }
                         }
-                    } else {
-                        ok = false;
                     }
                 }
-                if( !ok ){
+                if( ! effectiveFormulaOk ){
+                    effFormula += "0";
+                }
+            } else if( formSplitted.at(i) == "{" ){
+                bool effectiveFormulaOk = false;
+                if( (i+2) < formSplitted.size() ){
+                    if( formSplitted.at(i+2) == "}"  ){
+                        QStringList formSplittedAmounts = formSplitted.at(i+1).split(":");
+                        if( formSplittedAmounts.size() > 1 ){
+                            bool uintOk = false;
+                            uint connItemId = formSplittedAmounts.at(0).toUInt(&uintOk );
+                            if( uintOk ){
+                                AccountingBillItem * connItem = m_d->accountingBillItem->findItemFromId( connItemId );
+                                bool intOk = false;
+                                int connPriceDataSet = formSplittedAmounts.at(1).toInt(&intOk ) - 1;
+                                if( connItem != NULL && intOk ){
+                                    if( connPriceDataSet == 0 ){
+                                        effFormula += connItem->amountToDiscountStr();
+                                    } else if( connPriceDataSet == 1 ){
+                                        effFormula += connItem->amountNotToDiscountStr();
+                                    } else {
+                                        effFormula += "0";
+                                    }
+                                    effectiveFormulaOk = true;
+                                    i = i+2;
+                                }
+                            }
+                        } else {
+                            bool uintOk = false;
+                            uint connItemId = formSplitted.at(i+1).toUInt(&uintOk );
+                            if( uintOk ){
+                                AccountingBillItem * connItem = m_d->accountingBillItem->findItemFromId( connItemId );
+                                if( connItem != NULL ){
+                                    effFormula += connItem->amountToDiscountStr();
+                                    effectiveFormulaOk = true;
+                                    i = i+2;
+                                }
+                            }
+                        }
+                    }
+                }
+                if( ! effectiveFormulaOk ){
                     effFormula += "0";
                 }
             } else {
                 effFormula += formSplitted.at(i);
             }
-        }
-        VarsModel * varsModel = m_d->accountingBillItem->varsModel();
-        if( varsModel != NULL ){
-            effFormula = varsModel->replaceValue( effFormula );
         }
     } else {
         QRegExp rx("(\\[|\\])");
