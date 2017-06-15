@@ -64,11 +64,13 @@ SOURCES += \
     accountinglsbills.cpp \
     accountingtambill.cpp \
     accountingtambillitem.cpp \
+    accountingtammeasure.cpp \
+    accountingtammeasuresmodel.cpp \
     measuresmodel.cpp \
     accountinglsbill.cpp \
     accountinglsbillitem.cpp \
-    accountinglsitemmeasure.cpp \
-    measureslsmodel.cpp \
+    accountinglsmeasure.cpp \
+    accountinglsmeasuresmodel.cpp \
     paymentdata.cpp \
     paymentdatamodel.cpp \
     measure.cpp \
@@ -104,11 +106,13 @@ HEADERS  += \
     accountinglsbills.h \
     accountingtambill.h \
     accountingtambillitem.h \
+    accountingtammeasure.h \
+    accountingtammeasuresmodel.h \
     measuresmodel.h \
     accountinglsbill.h \
     accountinglsbillitem.h \
-    accountinglsitemmeasure.h \
-    measureslsmodel.h \
+    accountinglsmeasure.h \
+    accountinglsmeasuresmodel.h \
     paymentdata.h \
     qcost_export.h \
     paymentdatamodel.h \
