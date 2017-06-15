@@ -8,8 +8,21 @@ set(CMAKE_AUTOMOC ON)
 # Find the required modules
 find_package(Qt5 COMPONENTS Core Gui REQUIRED)
 
+set( SRC
+    zip.cpp
+    odtwriter.cpp
+)
+
+set( HDR
+    zipreader.h
+    zipwriter.h
+    odtwriter.h
+)
+
 # Tell CMake to create the library
-add_library( libodtcreator SHARED zip.cpp odtwriter.cpp )
+add_library( libodtcreator SHARED
+    ${SRC} ${HDR}
+)
 
 # Use required modules from Qt 5
 target_link_libraries(libodtcreator Qt5::Core Qt5::Gui)

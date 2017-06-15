@@ -76,6 +76,74 @@ set( SRC
     accountinglsbillpricedatagui.cpp
 )
 
+set( HDR
+    projectitemsview.h
+    pricelisttreegui.h
+    pricelistdelegate.h
+    generaldatagui.h
+    pricelistgui.h
+    priceitemgui.h
+    billgui.h
+    pricelistdatagui.h
+    billdatagui.h
+    billtreegui.h
+    billitemgui.h
+    billsetpricelistmodegui.h
+    editpriceitemapdialog.h
+    editpriceitemdialog.h
+    pricedatatabledelegate.h
+    billitemtitlegui.h
+    pricelistdbmodel.h
+    pricelistdbwidget.h
+    importpriceitemdbdialog.h
+    qcostgui.h
+    pricelistdbviewer.h
+    billattributeselectmodel.h
+    qcostclipboarddata.h
+    pricefieldtabledelegate.h
+    billprintergui.h
+    pricelistprintergui.h
+    billattributeprintergui.h
+    priceitemdatasetviewmodel.h
+    settingsdialog.h
+    importbillitemmeasurestxt.h
+    accountingtreegui.h
+    accountingsetpricelistmodegui.h
+    accountingitemattributemodel.h
+    accountingattributeprintergui.h
+    qcalendardialog.h
+    accountinggui.h
+    attributechangedialog.h
+    billitemattributemodel.h
+    attributeselectmodel.h
+    accountingtambillgui.h
+    accountingtambilldatagui.h
+    accountingitemcommentgui.h
+    accountingitemppugui.h
+    accountingbillsetpricelistmodegui.h
+    accountingbillgui.h
+    accountingbilldatagui.h
+    accountingitemlsgui.h
+    accountingitemtamgui.h
+    accountinglsbilldatagui.h
+    accountinglsbillgui.h
+    accountinglsbillitemgui.h
+    accountinglstreegui.h
+    accountinglsbillitemtitlegui.h
+    importlsitemmeasurestxt.h
+    accountingitempaymentgui.h
+    accountingbillprintergui.h
+    accountingtambillprintergui.h
+    accountinglsbillprintergui.h
+    attributesgui.h
+    varsgui.h
+    accountingbillpricedatagui.h
+    accountingtambillpricedatagui.h
+    accountinglsbillsgui.h
+    accountinglsbillsdatagui.h
+    accountinglsbillpricedatagui.h
+)
+
 set ( FRMS
     generaldatagui.ui
     projectitemsview.ui
@@ -128,7 +196,7 @@ include_directories(
 
 # Tell CMake to create the library
 add_executable( QCost
-    ${SRC} ${FRMS} ${QRC} )
+    ${SRC} ${HDR} ${FRMS} ${QRC} )
 
 # Use required modules from Qt 5
 target_link_libraries(QCost libqcost Qt5::Widgets Qt5::Sql)
