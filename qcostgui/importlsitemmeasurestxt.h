@@ -2,7 +2,7 @@
 #define IMPORTLSITEMMEASURESTXT_H
 
 class ImportLSItemMeasuresTXTPrivate;
-class MeasuresLSModel;
+class AccountingLSMeasuresModel;
 class MathParser;
 
 #include <QDialog>
@@ -10,7 +10,7 @@ class MathParser;
 class ImportLSItemMeasuresTXT : public QDialog {
     Q_OBJECT
 public:
-    explicit ImportLSItemMeasuresTXT( MeasuresLSModel * mModel, int mPosition,
+    explicit ImportLSItemMeasuresTXT( AccountingLSMeasuresModel * mModel, int mPosition,
                                         MathParser * prs, QWidget *parent = 0);
     ~ImportLSItemMeasuresTXT();
 private slots:

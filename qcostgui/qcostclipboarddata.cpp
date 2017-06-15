@@ -197,7 +197,7 @@ void QCostClipboardData::setCopiedAccountingLSBills(QList<AccountingLSBill *> ca
 
 void QCostClipboardData::getCopiedAccountingLSBillItems( QList<AccountingLSBillItem *> * accountingItems,
                                                          AccountingLSBill * &accounting,
-                                                         QCostClipboardData::Mode * mode ) const{
+                                                         QCostClipboardData::Mode * mode ) const {
     *accountingItems = m_d->copiedAccLSBillItems;
     accounting = m_d->copiedAccLSBillItemsBill;
     *mode = m_d->copiedAccLSBillItemsMode;

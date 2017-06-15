@@ -363,6 +363,12 @@ QString AccountingBillItem::fullProgCode() const {
             ret = QString::number( m_d->parentItem->childNumber()+1 ) + "." + ret;
         }
         return ret;
+    } else if( m_d->itemType == Payment ){
+        QString ret;
+        if( m_d->parentItem != NULL ){
+            ret = QString::number( m_d->parentItem->childNumber()+1 );
+        }
+        return ret;
     }
     return QString();
 }

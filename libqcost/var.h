@@ -34,7 +34,7 @@ public:
     void writeXml( QXmlStreamWriter * writer );
     void loadXml(const QXmlStreamAttributes &attrs);
 
-    void replaceValue(QString *expr);
+    void replaceVar(QString *expr);
 signals:
     void quantityChanged( double );
 

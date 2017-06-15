@@ -26,8 +26,8 @@
 
 #include "project.h"
 #include "accountinglsbill.h"
-#include "measureslsmodel.h"
-#include "accountinglsitemmeasure.h"
+#include "accountinglsmeasuresmodel.h"
+#include "accountinglsmeasure.h"
 #include "accountingitemattributemodel.h"
 #include "accountinglsbillitem.h"
 #include "bill.h"
@@ -335,7 +335,7 @@ void AccountingLSBillItemGUI::removeAttribute(){
 void AccountingLSBillItemGUI::editMeasureDate( const QModelIndex & index ) {
     if( m_d->item != NULL ){
         if( index.column() == m_d->item->measuresModel()->accDateCol() ){
-            AccountingLSItemMeasure * m = m_d->item->measuresModel()->measure(index.row() );
+            AccountingLSMeasure * m = m_d->item->measuresModel()->measure(index.row() );
             QDate d = m->accDate();
             QCalendarDialog dialog( &d, this );
             if( dialog.exec() == QDialog::Accepted ){

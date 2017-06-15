@@ -22,8 +22,8 @@
 #include "accountingpricefieldmodel.h"
 #include "pricelist.h"
 #include "priceitem.h"
-#include "measureslsmodel.h"
-#include "accountinglsitemmeasure.h"
+#include "accountinglsmeasuresmodel.h"
+#include "accountinglsmeasure.h"
 #include "attributesmodel.h"
 #include "attribute.h"
 #include "unitmeasure.h"
@@ -45,7 +45,7 @@ class AccountingLSBillItemPrivate{
 public:
     AccountingLSBillItemPrivate( AccountingLSBillItem * parent, PriceFieldModel * pfm, MathParser * prs = NULL ):
         parentItem(parent),
-        measuresModel( new MeasuresLSModel( prs, NULL ) ),
+        measuresModel( new AccountingLSMeasuresModel( prs, NULL ) ),
         parser( prs ),
         name(QObject::trUtf8("Titolo")),
         priceItem( NULL ),
@@ -173,7 +173,7 @@ public:
     AccountingLSBillItem * parentItem;
     QList<AccountingLSBillItem *> childrenContainer;
     QList<Attribute *> attributes;
-    MeasuresLSModel * measuresModel;
+    AccountingLSMeasuresModel * measuresModel;
     MathParser * parser;
 
     // se l'oggetto ha figli, l'oggetto diventa un titolo: il titolo è contenuto nell'attributo name
@@ -247,9 +247,9 @@ AccountingLSBillItem::AccountingLSBillItem( PriceItem * p, AccountingLSBillItem 
     connect( this, &AccountingLSBillItem::PPUChanged, this, &AccountingLSBillItem::updateProjAmount );
     connect( this, &AccountingLSBillItem::PPUChanged, this, &AccountingLSBillItem::updateAccAmount );
 
-    connect( m_d->measuresModel, &MeasuresLSModel::projQuantityChanged, this, &AccountingLSBillItem::updateProjQuantityPrivate );
-    connect( m_d->measuresModel, &MeasuresLSModel::accQuantityChanged, this, &AccountingLSBillItem::updateAccQuantityPrivate );
-    connect( m_d->measuresModel, &MeasuresLSModel::modelChanged, this, &AccountingLSBillItem::itemChanged );
+    connect( m_d->measuresModel, &AccountingLSMeasuresModel::projQuantityChanged, this, &AccountingLSBillItem::updateProjQuantityPrivate );
+    connect( m_d->measuresModel, &AccountingLSMeasuresModel::accQuantityChanged, this, &AccountingLSBillItem::updateAccQuantityPrivate );
+    connect( m_d->measuresModel, &AccountingLSMeasuresModel::modelChanged, this, &AccountingLSBillItem::itemChanged );
 
     connect( this, &AccountingLSBillItem::projAmountChanged, this, &AccountingLSBillItem::updatePercentageAccounted );
     connect( this, &AccountingLSBillItem::accAmountChanged, this, &AccountingLSBillItem::updatePercentageAccounted );
@@ -995,7 +995,7 @@ int AccountingLSBillItem::childNumber() const {
     return 0;
 }
 
-MeasuresLSModel * AccountingLSBillItem::measuresModel() {
+AccountingLSMeasuresModel * AccountingLSBillItem::measuresModel() {
     return m_d->measuresModel;
 }
 
@@ -2429,7 +2429,7 @@ void AccountingLSBillItem::writeODTBillLine( QTextCursor *cursor,
         }
 
         for( int i=0; i < m_d->measuresModel->measuresCount(); ++i ){
-            AccountingLSItemMeasure * measure = m_d->measuresModel->measure(i);
+            AccountingLSMeasure * measure = m_d->measuresModel->measure(i);
 
             // formula senza spazi bianchi
             QString realFormula;
@@ -2566,7 +2566,7 @@ void AccountingLSBillItem::writeODTBillLine( QTextCursor *cursor,
             }
 
             for( int i=0; i < m_d->measuresModel->measuresCount(); ++i ){
-                AccountingLSItemMeasure * measure = m_d->measuresModel->measure(i);
+                AccountingLSMeasure * measure = m_d->measuresModel->measure(i);
 
                 if( measure != NULL ){
                     if( measure->accDate() >= dateBegin && measure->accDate() <= dateEnd ){
@@ -2716,7 +2716,7 @@ void AccountingLSBillItem::writeODTBillLine( QTextCursor *cursor,
         }
 
         for( int i=0; i < m_d->measuresModel->measuresCount(); ++i ){
-            AccountingLSItemMeasure * measure = m_d->measuresModel->measure(i);
+            AccountingLSMeasure * measure = m_d->measuresModel->measure(i);
 
             if( measure != NULL ){
                 // formula senza spazi bianchi
@@ -2942,7 +2942,7 @@ void AccountingLSBillItem::writeODTBillLine( AccountingPrinter::PrintPPUDescOpti
         }
 
         for( int i=0; i < m_d->measuresModel->measuresCount(); ++i ){
-            AccountingLSItemMeasure * measure = m_d->measuresModel->measure(i);
+            AccountingLSMeasure * measure = m_d->measuresModel->measure(i);
 
             // formula senza spazi bianchi
             QString realFormula;

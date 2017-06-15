@@ -1,8 +1,8 @@
 #include "importlsitemmeasurestxt.h"
 #include "ui_importlsitemmeasurestxt.h"
 
-#include "measureslsmodel.h"
-#include "accountinglsitemmeasure.h"
+#include "accountinglsmeasuresmodel.h"
+#include "accountinglsmeasure.h"
 #include "mathparser.h"
 
 #include <QTextStream>
@@ -10,7 +10,7 @@
 
 class ImportLSItemMeasuresTXTPrivate {
 public:
-    ImportLSItemMeasuresTXTPrivate( MeasuresLSModel * mModel, int mPosition, MathParser * prs ):
+    ImportLSItemMeasuresTXTPrivate( AccountingLSMeasuresModel * mModel, int mPosition, MathParser * prs ):
         ui(new Ui::ImportLSItemMeasuresTXT),
         measuresModel(mModel),
         insertPosition(mPosition),
@@ -33,13 +33,13 @@ public:
     QList<QComboBox *> fieldComboBoxList;
     QList<QString> fieldsNames;
     QList< QPair<QString, QString> > fieldsSeparator;
-    MeasuresLSModel * measuresModel;
+    AccountingLSMeasuresModel * measuresModel;
     int insertPosition;
     MathParser * parser;
     QString fileName;
 };
 
-ImportLSItemMeasuresTXT::ImportLSItemMeasuresTXT( MeasuresLSModel * mModel, int mPosition, MathParser * prs, QWidget *parent) :
+ImportLSItemMeasuresTXT::ImportLSItemMeasuresTXT( AccountingLSMeasuresModel * mModel, int mPosition, MathParser * prs, QWidget *parent) :
     QDialog(parent),
     m_d( new ImportLSItemMeasuresTXTPrivate( mModel, mPosition, prs ) ){
     m_d->ui->setupUi(this);

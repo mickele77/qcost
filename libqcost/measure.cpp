@@ -213,7 +213,7 @@ QString Measure::formula() const {
                             AccountingBillItem * connItem = m_d->accountingBillItem->findItemFromId( connItemId );
                             if( connItem != NULL ){
                                 signOk = true;
-                                displayedForm += "[" + connItem->progCode() + "]";
+                                displayedForm += "[" + connItem->fullProgCode() + "]";
                                 i = i+2;
                             }
                         }
@@ -238,7 +238,7 @@ QString Measure::formula() const {
                                         AccountingBillItem * connItem = m_d->accountingBillItem->findItemFromId( connItemId );
                                         if( connItem != NULL ){
                                             signOk = true;
-                                            displayedForm += "{" + connItem->progCode() + ":" + QString::number(connPriceDataSet) + "}";
+                                            displayedForm += "{" + connItem->fullProgCode() + ":" + QString::number(connPriceDataSet) + "}";
                                             i = i+2;
                                         }
                                     }
@@ -251,7 +251,7 @@ QString Measure::formula() const {
                                 AccountingBillItem * connItem = m_d->accountingBillItem->findItemFromId( connItemId );
                                 if( connItem != NULL ){
                                     signOk = true;
-                                    displayedForm += "{" + connItem->progCode() + "}";
+                                    displayedForm += "{" + connItem->fullProgCode() + "}";
                                     i = i+2;
                                 }
                             }
@@ -383,7 +383,7 @@ void Measure::setFormula( const QString & newFormulaInput, bool connItemFromId )
         // azzera l'elenco degli oggetti AccountingBillItem connessi
         for( QList< QPair<AccountingBillItem *, int> >::iterator it = m_d->connectedAccBillItems.begin(); it != m_d->connectedAccBillItems.end(); ++it ){
             if( it->second > -2 ){
-                disconnect( it->first, &AccountingBillItem::amountToDiscountChanged, this, &Measure::updateQuantity );
+                disconnect( it->first, &AccountingBillItem::totalAmountToDiscountChanged, this, &Measure::updateQuantity );
                 disconnect( it->first, &AccountingBillItem::amountNotToDiscountChanged, this, &Measure::updateQuantity );
             } else {
                 disconnect( it->first, &AccountingBillItem::quantityChanged, this, &Measure::updateQuantity );
@@ -446,7 +446,7 @@ void Measure::setFormula( const QString & newFormulaInput, bool connItemFromId )
                                 setFormulaOk = true;
                                 m_d->connectedAccBillItems << qMakePair(connItem, connPriceDataSet);
                                 newFormula += "{" + QString::number(connItem->id()) + ":" + QString::number(connPriceDataSet) + "}";
-                                connect( connItem, &AccountingBillItem::amountToDiscountChanged, this, &Measure::updateQuantity );
+                                connect( connItem, &AccountingBillItem::totalAmountToDiscountChanged, this, &Measure::updateQuantity );
                                 connect( connItem, &AccountingBillItem::amountNotToDiscountChanged, this, &Measure::updateQuantity );
                                 i = i+2;
                             } else {
@@ -467,7 +467,7 @@ void Measure::setFormula( const QString & newFormulaInput, bool connItemFromId )
                                 setFormulaOk = true;
                                 m_d->connectedAccBillItems << qMakePair(connItem, -2);
                                 newFormula += "{" + QString::number(connItem->id()) + "}";
-                                connect( connItem, &AccountingBillItem::amountToDiscountChanged, this, &Measure::updateQuantity );
+                                connect( connItem, &AccountingBillItem::totalAmountToDiscountChanged, this, &Measure::updateQuantity );
                                 connect( connItem, &AccountingBillItem::amountNotToDiscountChanged, this, &Measure::updateQuantity );
                                 i = i+2;
                             } else {
@@ -563,6 +563,9 @@ QString Measure::effectiveFormula() const{
                 effFormula += formSplitted.at(i);
             }
         }
+        if( m_d->billItem->varsModel() != NULL ){
+            effFormula = m_d->billItem->varsModel()->replaceVars( effFormula );
+        }
     } else if( m_d->accountingBillItem != NULL ){
         QList<QChar> matchStr;
         matchStr << '[' << ']' << '{' << '}';
@@ -601,7 +604,7 @@ QString Measure::effectiveFormula() const{
                                 int connPriceDataSet = formSplittedAmounts.at(1).toInt(&intOk ) - 1;
                                 if( connItem != NULL && intOk ){
                                     if( connPriceDataSet == 0 ){
-                                        effFormula += connItem->amountToDiscountStr();
+                                        effFormula += connItem->totalAmountToDiscountStr();
                                     } else if( connPriceDataSet == 1 ){
                                         effFormula += connItem->amountNotToDiscountStr();
                                     } else {
@@ -617,7 +620,7 @@ QString Measure::effectiveFormula() const{
                             if( uintOk ){
                                 AccountingBillItem * connItem = m_d->accountingBillItem->findItemFromId( connItemId );
                                 if( connItem != NULL ){
-                                    effFormula += connItem->amountToDiscountStr();
+                                    effFormula += connItem->totalAmountToDiscountStr();
                                     effectiveFormulaOk = true;
                                     i = i+2;
                                 }
@@ -632,23 +635,16 @@ QString Measure::effectiveFormula() const{
                 effFormula += formSplitted.at(i);
             }
         }
-    } else {
-        QRegExp rx("(\\[|\\])");
-        QStringList formSplitted = effFormula.split( rx );
-        effFormula.clear();
-        for( int i=0; i < formSplitted.size(); i++ ){
-            if( i%2 == 1 ){
-                effFormula += "0";
-            } else {
-                effFormula += formSplitted.at(i);
-            }
+        if( m_d->accountingBillItem->varsModel() != NULL ){
+            effFormula = m_d->accountingBillItem->varsModel()->replaceVars( effFormula );
         }
     }
     return effFormula;
 }
 
 void Measure::updateQuantity(){
-    double v = m_d->parser->evaluate( effectiveFormula() );
+    QString f = effectiveFormula();
+    double v = m_d->parser->evaluate( f );
     if( m_d->unitMeasure ) {
         v = m_d->unitMeasure->applyPrecision( v );
     }

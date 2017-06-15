@@ -1,6 +1,6 @@
-#include "measureslsmodel.h"
+#include "accountingtammeasuresmodel.h"
 
-#include "accountinglsitemmeasure.h"
+#include "accountingtammeasure.h"
 #include "unitmeasure.h"
 #include "mathparser.h"
 
@@ -10,9 +10,9 @@
 #include <QDate>
 #include <QLocale>
 
-class MeasuresLSModelPrivate{
+class AccountingTAMMeasuresModelPrivate{
 public:
-    MeasuresLSModelPrivate( MathParser * p, UnitMeasure * ump ):
+    AccountingTAMMeasuresModelPrivate( MathParser * p, UnitMeasure * ump ):
         parserWasCreated(false),
         unitMeasure(ump),
         projQuantity( 0.0 ){
@@ -23,7 +23,7 @@ public:
             parser = p;
         }
     }
-    ~MeasuresLSModelPrivate(){
+    ~AccountingTAMMeasuresModelPrivate(){
         if( parserWasCreated ){
             delete parser;
         }
@@ -32,7 +32,7 @@ public:
     MathParser * parser;
     bool parserWasCreated;
     UnitMeasure * unitMeasure;
-    QList<AccountingLSItemMeasure *> linesContainer;
+    QList<AccountingTAMMeasure *> linesContainer;
     double projQuantity;
     double accQuantity;
 
@@ -44,33 +44,33 @@ public:
     static int accQuantityCol;
 };
 
-int MeasuresLSModelPrivate::commentCol = 0;
-int MeasuresLSModelPrivate::projFormulaCol = 1;
-int MeasuresLSModelPrivate::projQuantityCol = 2;
-int MeasuresLSModelPrivate::accDateCol = 3;
-int MeasuresLSModelPrivate::accFormulaCol = 4;
-int MeasuresLSModelPrivate::accQuantityCol = 5;
+int AccountingTAMMeasuresModelPrivate::commentCol = 0;
+int AccountingTAMMeasuresModelPrivate::projFormulaCol = 1;
+int AccountingTAMMeasuresModelPrivate::projQuantityCol = 2;
+int AccountingTAMMeasuresModelPrivate::accDateCol = 3;
+int AccountingTAMMeasuresModelPrivate::accFormulaCol = 4;
+int AccountingTAMMeasuresModelPrivate::accQuantityCol = 5;
 
-int MeasuresLSModel::accDateCol(){
+int AccountingTAMMeasuresModel::accDateCol(){
     return 3;
 }
 
-MeasuresLSModel::MeasuresLSModel(MathParser * p, UnitMeasure * ump, QObject *parent) :
+AccountingTAMMeasuresModel::AccountingTAMMeasuresModel(MathParser * p, UnitMeasure * ump, QObject *parent) :
     QAbstractTableModel(parent),
-    m_d(new MeasuresLSModelPrivate( p, ump )){
+    m_d(new AccountingTAMMeasuresModelPrivate( p, ump )){
     insertRows(0);
 
     if( m_d->unitMeasure != NULL ){
-        connect( m_d->unitMeasure, &UnitMeasure::precisionChanged, this, &MeasuresLSModel::updateAllProjQuantities );
-        connect( m_d->unitMeasure, &UnitMeasure::precisionChanged, this, &MeasuresLSModel::updateAllAccQuantities );
+        connect( m_d->unitMeasure, &UnitMeasure::precisionChanged, this, &AccountingTAMMeasuresModel::updateAllProjQuantities );
+        connect( m_d->unitMeasure, &UnitMeasure::precisionChanged, this, &AccountingTAMMeasuresModel::updateAllAccQuantities );
     }
 }
 
-MeasuresLSModel::~MeasuresLSModel(){
+AccountingTAMMeasuresModel::~AccountingTAMMeasuresModel(){
     delete m_d;
 }
 
-MeasuresLSModel &MeasuresLSModel::operator=(const MeasuresLSModel &cp) {
+AccountingTAMMeasuresModel &AccountingTAMMeasuresModel::operator=(const AccountingTAMMeasuresModel &cp) {
     if( &cp != this ){
         setUnitMeasure( cp.m_d->unitMeasure );
         if( m_d->linesContainer.size() > cp.m_d->linesContainer.size() ){
@@ -86,21 +86,21 @@ MeasuresLSModel &MeasuresLSModel::operator=(const MeasuresLSModel &cp) {
     return *this;
 }
 
-int MeasuresLSModel::rowCount(const QModelIndex &) const {
+int AccountingTAMMeasuresModel::rowCount(const QModelIndex &) const {
     return m_d->linesContainer.size();
 }
 
-int MeasuresLSModel::columnCount(const QModelIndex &) const {
+int AccountingTAMMeasuresModel::columnCount(const QModelIndex &) const {
     return 3+3;
 }
 
-Qt::ItemFlags MeasuresLSModel::flags(const QModelIndex &index) const {
+Qt::ItemFlags AccountingTAMMeasuresModel::flags(const QModelIndex &index) const {
     if( index.isValid() ){
-        if( index.column() == MeasuresLSModelPrivate::commentCol || index.column() == MeasuresLSModelPrivate::projFormulaCol ){
+        if( index.column() == AccountingTAMMeasuresModelPrivate::commentCol || index.column() == AccountingTAMMeasuresModelPrivate::projFormulaCol ){
             return Qt::ItemIsEnabled | Qt::ItemIsEditable | Qt::ItemIsSelectable;
-        } else if( index.column() == MeasuresLSModelPrivate::projQuantityCol || index.column() == MeasuresLSModelPrivate::accQuantityCol || index.column() == MeasuresLSModelPrivate::accDateCol ){
+        } else if( index.column() == AccountingTAMMeasuresModelPrivate::projQuantityCol || index.column() == AccountingTAMMeasuresModelPrivate::accQuantityCol || index.column() == AccountingTAMMeasuresModelPrivate::accDateCol ){
             return Qt::ItemIsEnabled | Qt::ItemIsSelectable;
-        } else if( index.column() == MeasuresLSModelPrivate::accFormulaCol ){
+        } else if( index.column() == AccountingTAMMeasuresModelPrivate::accFormulaCol ){
             if( data(index, Qt::CheckStateRole).toInt() == Qt::Checked ){
                 return Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsUserCheckable;
             } else {
@@ -111,31 +111,31 @@ Qt::ItemFlags MeasuresLSModel::flags(const QModelIndex &index) const {
     return Qt::NoItemFlags;
 }
 
-QVariant MeasuresLSModel::data(const QModelIndex &index, int role) const {
+QVariant AccountingTAMMeasuresModel::data(const QModelIndex &index, int role) const {
     if( index.isValid() ){
         if( index.row() >= 0 && index.row() < m_d->linesContainer.size() ){
             if( role == Qt::EditRole || role == Qt::DisplayRole ){
-                if( index.column() == MeasuresLSModelPrivate::commentCol ){
+                if( index.column() == AccountingTAMMeasuresModelPrivate::commentCol ){
                     return QVariant( m_d->linesContainer.at(index.row())->comment());
                 }
-                if( index.column() == MeasuresLSModelPrivate::projFormulaCol ){
+                if( index.column() == AccountingTAMMeasuresModelPrivate::projFormulaCol ){
                     return QVariant( m_d->linesContainer.at(index.row())->projFormula() );
                 }
-                if( index.column() == MeasuresLSModelPrivate::projQuantityCol ){
+                if( index.column() == AccountingTAMMeasuresModelPrivate::projQuantityCol ){
                     return QVariant( m_d->linesContainer.at(index.row())->projQuantityStr());
                 }
-                if( index.column() == MeasuresLSModelPrivate::accDateCol ){
+                if( index.column() == AccountingTAMMeasuresModelPrivate::accDateCol ){
                     return QVariant( m_d->linesContainer.at(index.row())->accDateStr() );
                 }
-                if( index.column() == MeasuresLSModelPrivate::accFormulaCol ){
+                if( index.column() == AccountingTAMMeasuresModelPrivate::accFormulaCol ){
                     return QVariant( m_d->linesContainer.at(index.row())->accFormula() );
                 }
-                if( index.column() == MeasuresLSModelPrivate::accQuantityCol ){
+                if( index.column() == AccountingTAMMeasuresModelPrivate::accQuantityCol ){
                     return QVariant( m_d->linesContainer.at(index.row())->accQuantityStr() );
                 }
             }
             if( role == Qt::CheckStateRole ){
-                if( index.column() == MeasuresLSModelPrivate::accFormulaCol ){
+                if( index.column() == AccountingTAMMeasuresModelPrivate::accFormulaCol ){
                     if( m_d->linesContainer.at(index.row())->accFormulaFromProj() ){
                         return QVariant( Qt::Checked );
                     } else {
@@ -144,15 +144,15 @@ QVariant MeasuresLSModel::data(const QModelIndex &index, int role) const {
                 }
             }
             if( role == Qt::TextAlignmentRole ){
-                if( index.column() == MeasuresLSModelPrivate::commentCol ){
+                if( index.column() == AccountingTAMMeasuresModelPrivate::commentCol ){
                     return Qt::AlignLeft + Qt::AlignVCenter;
                 }
-                if( (index.column() == MeasuresLSModelPrivate::accFormulaCol) ||
-                        (index.column() == MeasuresLSModelPrivate::projFormulaCol) ){
+                if( (index.column() == AccountingTAMMeasuresModelPrivate::accFormulaCol) ||
+                        (index.column() == AccountingTAMMeasuresModelPrivate::projFormulaCol) ){
                     return Qt::AlignLeft + Qt::AlignVCenter;
                 }
-                if( (index.column() == MeasuresLSModelPrivate::accQuantityCol) ||
-                        (index.column() == MeasuresLSModelPrivate::projQuantityCol) ){
+                if( (index.column() == AccountingTAMMeasuresModelPrivate::accQuantityCol) ||
+                        (index.column() == AccountingTAMMeasuresModelPrivate::projQuantityCol) ){
                     return Qt::AlignRight + Qt::AlignVCenter;
                 }
             }
@@ -161,46 +161,46 @@ QVariant MeasuresLSModel::data(const QModelIndex &index, int role) const {
     return QVariant();
 }
 
-bool MeasuresLSModel::setData(const QModelIndex &index, const QVariant &value, int role) {
+bool AccountingTAMMeasuresModel::setData(const QModelIndex &index, const QVariant &value, int role) {
     if( index.isValid() ){
         if( index.row() >= 0 && index.row() < m_d->linesContainer.size() ){
             if( role == Qt::EditRole  ){
-                if( index.column() == MeasuresLSModelPrivate::commentCol ){
+                if( index.column() == AccountingTAMMeasuresModelPrivate::commentCol ){
                     m_d->linesContainer.at(index.row())->setComment( value.toString() );
                     emit dataChanged( index, index );
                     emit modelChanged();
                     return true;
                 }
-                if( index.column() == MeasuresLSModelPrivate::projFormulaCol ){
+                if( index.column() == AccountingTAMMeasuresModelPrivate::projFormulaCol ){
                     m_d->linesContainer.at(index.row())->setProjFormula( value.toString() );
                     emit dataChanged( index, index );
-                    QModelIndex changedIndex = createIndex( index.row(), MeasuresLSModelPrivate::projQuantityCol );
+                    QModelIndex changedIndex = createIndex( index.row(), AccountingTAMMeasuresModelPrivate::projQuantityCol );
                     emit dataChanged( changedIndex, changedIndex );
                     updateProjQuantity();
                     if( m_d->linesContainer.at(index.row())->accFormulaFromProj() ){
-                        changedIndex = createIndex( index.row(), MeasuresLSModelPrivate::accFormulaCol );
+                        changedIndex = createIndex( index.row(), AccountingTAMMeasuresModelPrivate::accFormulaCol );
                         emit dataChanged( changedIndex, changedIndex );
-                        changedIndex = createIndex( index.row(), MeasuresLSModelPrivate::accQuantityCol );
+                        changedIndex = createIndex( index.row(), AccountingTAMMeasuresModelPrivate::accQuantityCol );
                         emit dataChanged( changedIndex, changedIndex );
                         updateAccQuantity();
                     }
                     emit modelChanged();
                     return true;
                 }
-                if( index.column() == MeasuresLSModelPrivate::accFormulaCol ){
+                if( index.column() == AccountingTAMMeasuresModelPrivate::accFormulaCol ){
                     m_d->linesContainer.at(index.row())->setAccFormula( value.toString() );
                     emit dataChanged( index, index );
-                    QModelIndex quantityIndex = createIndex( index.row(), MeasuresLSModelPrivate::accQuantityCol );
+                    QModelIndex quantityIndex = createIndex( index.row(), AccountingTAMMeasuresModelPrivate::accQuantityCol );
                     emit dataChanged( quantityIndex, quantityIndex );
                     updateAccQuantity();
                     emit modelChanged();
                     return true;
                 }
             } else if( role == Qt::CheckStateRole  ){
-                if( index.column() == MeasuresLSModelPrivate::accFormulaCol ){
+                if( index.column() == AccountingTAMMeasuresModelPrivate::accFormulaCol ){
                     m_d->linesContainer.at(index.row())->setAccFormulaFromProj( value.toInt() == Qt::Checked );
                     emit dataChanged( index, index );
-                    QModelIndex quantityIndex = createIndex( index.row(), MeasuresLSModelPrivate::accQuantityCol );
+                    QModelIndex quantityIndex = createIndex( index.row(), AccountingTAMMeasuresModelPrivate::accQuantityCol );
                     emit dataChanged( quantityIndex, quantityIndex );
                 }
             }
@@ -209,27 +209,27 @@ bool MeasuresLSModel::setData(const QModelIndex &index, const QVariant &value, i
     return false;
 }
 
-QVariant MeasuresLSModel::headerData(int section, Qt::Orientation orientation, int role) const {
+QVariant AccountingTAMMeasuresModel::headerData(int section, Qt::Orientation orientation, int role) const {
     if (role != Qt::DisplayRole)
         return QVariant();
 
     if (orientation == Qt::Horizontal) {
-        if( section == MeasuresLSModelPrivate::commentCol ) {
+        if( section == AccountingTAMMeasuresModelPrivate::commentCol ) {
             return trUtf8("Commento");
         }
-        if( section == MeasuresLSModelPrivate::projFormulaCol ) {
+        if( section == AccountingTAMMeasuresModelPrivate::projFormulaCol ) {
             return trUtf8("Misura prog.");
         }
-        if( section == MeasuresLSModelPrivate::projQuantityCol ) {
+        if( section == AccountingTAMMeasuresModelPrivate::projQuantityCol ) {
             return trUtf8("Quantità prog.");
         }
-        if( section == MeasuresLSModelPrivate::accDateCol ) {
+        if( section == AccountingTAMMeasuresModelPrivate::accDateCol ) {
             return trUtf8("Data Misura");
         }
-        if( section == MeasuresLSModelPrivate::accFormulaCol ) {
+        if( section == AccountingTAMMeasuresModelPrivate::accFormulaCol ) {
             return trUtf8("Misura");
         }
-        if( section == MeasuresLSModelPrivate::accQuantityCol ) {
+        if( section == AccountingTAMMeasuresModelPrivate::accQuantityCol ) {
             return trUtf8("Quantità");
         }
     } else if( orientation == Qt::Vertical ){
@@ -238,7 +238,7 @@ QVariant MeasuresLSModel::headerData(int section, Qt::Orientation orientation, i
     return QVariant();
 }
 
-bool MeasuresLSModel::insertRows(int row, int count, const QModelIndex &parent) {
+bool AccountingTAMMeasuresModel::insertRows(int row, int count, const QModelIndex &parent) {
     Q_UNUSED(parent);
     if( count < 1 ){
         return false;
@@ -251,9 +251,9 @@ bool MeasuresLSModel::insertRows(int row, int count, const QModelIndex &parent) 
     }
     beginInsertRows(QModelIndex(), row, row+count-1 );
     for(int i=0; i < count; ++i){
-        AccountingLSItemMeasure * itemLine = new AccountingLSItemMeasure( m_d->parser, m_d->unitMeasure );
-        connect( itemLine, &AccountingLSItemMeasure::projQuantityChanged, this, &MeasuresLSModel::updateProjQuantity );
-        connect( itemLine, &AccountingLSItemMeasure::accQuantityChanged, this, &MeasuresLSModel::updateAccQuantity );
+        AccountingTAMMeasure * itemLine = new AccountingTAMMeasure( m_d->parser, m_d->unitMeasure );
+        connect( itemLine, &AccountingTAMMeasure::projQuantityChanged, this, &AccountingTAMMeasuresModel::updateProjQuantity );
+        connect( itemLine, &AccountingTAMMeasure::accQuantityChanged, this, &AccountingTAMMeasuresModel::updateAccQuantity );
         m_d->linesContainer.insert( row, itemLine );
     }
     endInsertRows();
@@ -261,7 +261,7 @@ bool MeasuresLSModel::insertRows(int row, int count, const QModelIndex &parent) 
     return true;
 }
 
-bool MeasuresLSModel::removeRows(int row, int count, const QModelIndex &parent) {
+bool AccountingTAMMeasuresModel::removeRows(int row, int count, const QModelIndex &parent) {
     Q_UNUSED(parent);
 
     if( count < 1 || row < 0 || row > m_d->linesContainer.size() ){
@@ -292,13 +292,13 @@ bool MeasuresLSModel::removeRows(int row, int count, const QModelIndex &parent) 
     return true;
 }
 
-bool MeasuresLSModel::append( int count ){
+bool AccountingTAMMeasuresModel::append( int count ){
     return insertRows( m_d->linesContainer.size(), count );
 }
 
-void MeasuresLSModel::updateProjQuantity() {
+void AccountingTAMMeasuresModel::updateProjQuantity() {
     double ret = 0.0;
-    for( QList<AccountingLSItemMeasure *>::iterator i = m_d->linesContainer.begin(); i != m_d->linesContainer.end(); ++i ){
+    for( QList<AccountingTAMMeasure *>::iterator i = m_d->linesContainer.begin(); i != m_d->linesContainer.end(); ++i ){
         ret += (*i)->projQuantity();
     }
     if( ret != m_d->projQuantity ){
@@ -307,20 +307,20 @@ void MeasuresLSModel::updateProjQuantity() {
     }
 }
 
-double MeasuresLSModel::projQuantity(){
+double AccountingTAMMeasuresModel::projQuantity(){
     return m_d->projQuantity;
 }
 
-void MeasuresLSModel::updateAllProjQuantities() {
+void AccountingTAMMeasuresModel::updateAllProjQuantities() {
     updateProjQuantity();
     if( m_d->linesContainer.size() != 0 ){
         emit dataChanged( createIndex(0, 2), createIndex(m_d->linesContainer.size()-1, 2) );
     }
 }
 
-void MeasuresLSModel::updateAccQuantity() {
+void AccountingTAMMeasuresModel::updateAccQuantity() {
     double ret = 0.0;
-    for( QList<AccountingLSItemMeasure *>::iterator i = m_d->linesContainer.begin(); i != m_d->linesContainer.end(); ++i ){
+    for( QList<AccountingTAMMeasure *>::iterator i = m_d->linesContainer.begin(); i != m_d->linesContainer.end(); ++i ){
         ret += (*i)->accQuantity();
     }
     if( ret != m_d->accQuantity ){
@@ -329,13 +329,13 @@ void MeasuresLSModel::updateAccQuantity() {
     }
 }
 
-double MeasuresLSModel::accQuantity() {
+double AccountingTAMMeasuresModel::accQuantity() {
     return m_d->accQuantity;
 }
 
-double MeasuresLSModel::accQuantity(const QDate &dBegin, const QDate &dEnd) {
+double AccountingTAMMeasuresModel::accQuantity(const QDate &dBegin, const QDate &dEnd) {
     double ret = 0.0;
-    for( QList<AccountingLSItemMeasure *>::iterator i = m_d->linesContainer.begin(); i != m_d->linesContainer.end(); ++i ){
+    for( QList<AccountingTAMMeasure *>::iterator i = m_d->linesContainer.begin(); i != m_d->linesContainer.end(); ++i ){
         if( (*i)->accDate() >= dBegin && (*i)->accDate() <= dEnd ){
             ret += (*i)->accQuantity();
         }
@@ -343,21 +343,21 @@ double MeasuresLSModel::accQuantity(const QDate &dBegin, const QDate &dEnd) {
     return ret;
 }
 
-void MeasuresLSModel::updateAllAccQuantities() {
+void AccountingTAMMeasuresModel::updateAllAccQuantities() {
     if( m_d->linesContainer.size() != 0 ){
         emit dataChanged( createIndex(0, 2), createIndex(m_d->linesContainer.size()-1, 2) );
     }
     updateAccQuantity();
 }
 
-void MeasuresLSModel::setUnitMeasure(UnitMeasure *ump) {
+void AccountingTAMMeasuresModel::setUnitMeasure(UnitMeasure *ump) {
     if( m_d->unitMeasure != ump ){
         beginResetModel();
         if( m_d->unitMeasure != NULL ){
-            disconnect( m_d->unitMeasure, &UnitMeasure::precisionChanged, this, &MeasuresLSModel::updateAllProjQuantities );
+            disconnect( m_d->unitMeasure, &UnitMeasure::precisionChanged, this, &AccountingTAMMeasuresModel::updateAllProjQuantities );
         }
         m_d->unitMeasure = ump;
-        for( QList<AccountingLSItemMeasure *>::iterator i = m_d->linesContainer.begin(); i != m_d->linesContainer.end(); ++i ){
+        for( QList<AccountingTAMMeasure *>::iterator i = m_d->linesContainer.begin(); i != m_d->linesContainer.end(); ++i ){
             (*i)->setUnitMeasure( ump );
         }
         if( m_d->linesContainer.size() != 0 ){
@@ -365,22 +365,22 @@ void MeasuresLSModel::setUnitMeasure(UnitMeasure *ump) {
         }
         updateProjQuantity();
         if( m_d->unitMeasure != NULL ){
-            connect( m_d->unitMeasure, &UnitMeasure::precisionChanged, this, &MeasuresLSModel::updateAllProjQuantities );
+            connect( m_d->unitMeasure, &UnitMeasure::precisionChanged, this, &AccountingTAMMeasuresModel::updateAllProjQuantities );
         }
         endResetModel();
         emit modelChanged();
     }
 }
 
-void MeasuresLSModel::writeXml(QXmlStreamWriter *writer) {
+void AccountingTAMMeasuresModel::writeXml(QXmlStreamWriter *writer) {
     writer->writeStartElement( "MeasuresLSModel" );
-    for( QList<AccountingLSItemMeasure *>::iterator i = m_d->linesContainer.begin(); i != m_d->linesContainer.end(); ++i ){
+    for( QList<AccountingTAMMeasure *>::iterator i = m_d->linesContainer.begin(); i != m_d->linesContainer.end(); ++i ){
         (*i)->writeXml( writer );
     }
     writer->writeEndElement();
 }
 
-void MeasuresLSModel::readXml(QXmlStreamReader *reader) {
+void AccountingTAMMeasuresModel::readXml(QXmlStreamReader *reader) {
     bool firstLine = true;
     while( !reader->atEnd() &&
            !reader->hasError() &&
@@ -399,11 +399,11 @@ void MeasuresLSModel::readXml(QXmlStreamReader *reader) {
     }
 }
 
-int MeasuresLSModel::measuresCount() {
+int AccountingTAMMeasuresModel::measuresCount() {
     return m_d->linesContainer.size();
 }
 
-AccountingLSItemMeasure * MeasuresLSModel::measure(int i) {
+AccountingTAMMeasure * AccountingTAMMeasuresModel::measure(int i) {
     if( i >= 0 && i < m_d->linesContainer.size() ){
         return m_d->linesContainer.at(i);
     }

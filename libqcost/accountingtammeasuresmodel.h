@@ -1,29 +1,29 @@
-#ifndef MEASURESLSMODEL_H
-#define MEASURESLSMODEL_H
+#ifndef ACCOUNTINGTAMMEASURESMODEL_H
+#define ACCOUNTINGTAMMEASURESMODEL_H
 
 #include "qcost_export.h"
 
 class QXmlStreamWriter;
 class QXmlStreamReader;
 class MathParser;
-class AccountingLSItemMeasure;
+class AccountingTAMMeasure;
 class UnitMeasure;
 
 #include <QAbstractTableModel>
 
-class MeasuresLSModelPrivate;
+class AccountingTAMMeasuresModelPrivate;
 
-class EXPORT_QCOST_LIB_OPT MeasuresLSModel : public QAbstractTableModel
+class EXPORT_QCOST_LIB_OPT AccountingTAMMeasuresModel : public QAbstractTableModel
 {
     Q_OBJECT
 public:
     static int accDateCol();
 
-    explicit MeasuresLSModel(MathParser *p = NULL, UnitMeasure *ump = NULL, QObject *parent = 0);
+    explicit AccountingTAMMeasuresModel(MathParser *p = NULL, UnitMeasure *ump = NULL, QObject *parent = 0);
 
-    ~MeasuresLSModel();
+    ~AccountingTAMMeasuresModel();
 
-    MeasuresLSModel &operator =(const MeasuresLSModel &cp);
+    AccountingTAMMeasuresModel &operator =(const AccountingTAMMeasuresModel &cp);
 
     int rowCount(const QModelIndex & parent = QModelIndex()) const;
     int columnCount(const QModelIndex & parent = QModelIndex())  const;
@@ -46,7 +46,7 @@ public:
     void readXml(QXmlStreamReader *reader);
 
     int measuresCount();
-    AccountingLSItemMeasure * measure( int i );
+    AccountingTAMMeasure * measure( int i );
 
 signals:
     void projQuantityChanged( double );
@@ -59,7 +59,7 @@ private slots:
     void updateAccQuantity();
     void updateAllAccQuantities();
 private:
-    MeasuresLSModelPrivate * m_d;
+    AccountingTAMMeasuresModelPrivate * m_d;
 };
 
-#endif // MEASURESLSMODEL_H
+#endif // ACCOUNTINGTAMMEASURESMODEL_H

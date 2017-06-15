@@ -198,6 +198,10 @@ public:
         expr.remove(" ");
         expr.remove(thousandSeparator);
 
+        if( expr.size() == 0 ){
+            return 0.0;
+        }
+
         for( int i=0; i < operatorsChar.size(); ++i){
             // cerca l'operatore i-esimo
             QChar oper = operatorsChar.at(i);

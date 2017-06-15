@@ -1,15 +1,13 @@
 cmake_minimum_required(VERSION 2.8.11)
 
-# Find includes in corresponding build directories
-set(CMAKE_INCLUDE_CURRENT_DIR ON)
-# Instruct CMake to run moc automatically when needed.
-set(CMAKE_AUTOMOC ON)
-
 # Find the required modules
-find_package(Qt5 COMPONENTS Core REQUIRED)
+find_package(Qt5 COMPONENTS Core Widgets Sql REQUIRED)
 
-# Tell CMake to create the library
-add_executable( QCost
+set( QRC
+    icons.qrc
+)
+
+set( SRC
     main.cpp
     projectitemsview.cpp
     pricelisttreegui.cpp
@@ -76,7 +74,61 @@ add_executable( QCost
     accountinglsbillsgui.cpp
     accountinglsbillsdatagui.cpp
     accountinglsbillpricedatagui.cpp
- )
+)
+
+set ( FRMS
+    generaldatagui.ui
+    projectitemsview.ui
+    pricelisttreegui.ui
+    priceitemgui.ui
+    billdatagui.ui
+    pricelistdatagui.ui
+    billtreegui.ui
+    billitemgui.ui
+    billitemtitlegui.ui
+    pricelistdbwidget.ui
+    billprintergui.ui
+    pricelistprintergui.ui
+    billattributeprintergui.ui
+    settingsdialog.ui
+    importbillitemmeasurestxt.ui
+    accountingtreegui.ui
+    accountingattributeprintergui.ui
+    setpricelistmodegui.ui
+    attributechangedialog.ui
+    qcalendardialog.ui
+    accountinggui.ui
+    accountingtambilldatagui.ui
+    accountingitemcommentgui.ui
+    accountingitemppugui.ui
+    accountingbilldatagui.ui
+    accountingitemlsgui.ui
+    accountingitemtamgui.ui
+    accountinglsbilldatagui.ui
+    accountinglsbillitemgui.ui
+    accountinglstreegui.ui
+    accountinglsbillitemtitlegui.ui
+    importlsitemmeasurestxt.ui
+    accountingitempaymentgui.ui
+    accountingbillprintergui.ui
+    accountingtambillprintergui.ui
+    accountinglsbillprintergui.ui
+    attributesgui.ui
+    varsgui.ui
+    accountingbillpricedatagui.ui
+    accountingtambillpricedatagui.ui
+    accountinglsbillsdatagui.ui
+    accountinglsbillpricedatagui.ui
+)
+
+include_directories(
+    ../libmathparser
+    ../libqcost
+)
+
+# Tell CMake to create the library
+add_executable( QCost
+    ${SRC} ${FRMS} ${QRC} )
 
 # Use required modules from Qt 5
-target_link_libraries(QCost libqcost)
+target_link_libraries(QCost libqcost Qt5::Widgets Qt5::Sql)

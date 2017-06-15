@@ -1,4 +1,4 @@
-#include "accountinglsitemmeasure.h"
+#include "accountinglsmeasure.h"
 
 #include "unitmeasure.h"
 #include "mathparser.h"
@@ -9,9 +9,9 @@
 #include <QDate>
 #include <QString>
 
-class AccountingLSItemMeasurePrivate{
+class AccountingLSMeasurePrivate{
 public:
-    AccountingLSItemMeasurePrivate(MathParser * p, UnitMeasure * ump):
+    AccountingLSMeasurePrivate(MathParser * p, UnitMeasure * ump):
         parser( p ),
         unitMeasure( ump ),
         comment(""),
@@ -40,16 +40,16 @@ public:
     bool accFormulaFromProj;
 };
 
-AccountingLSItemMeasure::AccountingLSItemMeasure(MathParser * p, UnitMeasure * ump) :
+AccountingLSMeasure::AccountingLSMeasure(MathParser * p, UnitMeasure * ump) :
     QObject(0),
-    m_d( new AccountingLSItemMeasurePrivate(p, ump)){
+    m_d( new AccountingLSMeasurePrivate(p, ump)){
 }
 
-AccountingLSItemMeasure::~AccountingLSItemMeasure(){
+AccountingLSMeasure::~AccountingLSMeasure(){
     delete m_d;
 }
 
-AccountingLSItemMeasure &AccountingLSItemMeasure::operator=(const AccountingLSItemMeasure &cp) {
+AccountingLSMeasure &AccountingLSMeasure::operator=(const AccountingLSMeasure &cp) {
     if( &cp != this ){
         setUnitMeasure( cp.m_d->unitMeasure );
         setComment( cp.m_d->comment );
@@ -62,26 +62,26 @@ AccountingLSItemMeasure &AccountingLSItemMeasure::operator=(const AccountingLSIt
     return *this;
 }
 
-QString AccountingLSItemMeasure::comment() const{
+QString AccountingLSMeasure::comment() const{
     return m_d->comment;
 }
 
-void AccountingLSItemMeasure::setComment( const QString & nc ){
+void AccountingLSMeasure::setComment( const QString & nc ){
     m_d->comment = nc;
 }
 
-void AccountingLSItemMeasure::setUnitMeasure(UnitMeasure *ump) {
+void AccountingLSMeasure::setUnitMeasure(UnitMeasure *ump) {
     if( m_d->unitMeasure != ump ){
         m_d->unitMeasure = ump;
         updateProjQuantity();
     }
 }
 
-QString AccountingLSItemMeasure::projFormula() const{
+QString AccountingLSMeasure::projFormula() const{
     return m_d->projFormula;
 }
 
-void AccountingLSItemMeasure::setProjFormula( const QString & nf ){
+void AccountingLSMeasure::setProjFormula( const QString & nf ){
     if( nf != m_d->projFormula ){
         m_d->projFormula = nf;
         updateProjQuantity();
@@ -91,7 +91,7 @@ void AccountingLSItemMeasure::setProjFormula( const QString & nf ){
     }
 }
 
-void AccountingLSItemMeasure::updateProjQuantity(){
+void AccountingLSMeasure::updateProjQuantity(){
     double v = m_d->parser->evaluate( m_d->projFormula );
     if( m_d->unitMeasure ) {
         v = m_d->unitMeasure->applyPrecision( v );
@@ -102,7 +102,7 @@ void AccountingLSItemMeasure::updateProjQuantity(){
     }
 }
 
-double AccountingLSItemMeasure::projQuantity() const{
+double AccountingLSMeasure::projQuantity() const{
     double ret = 0.0;
     if( m_d->unitMeasure != NULL ){
         ret = m_d->unitMeasure->applyPrecision( m_d->projQuantity );
@@ -112,7 +112,7 @@ double AccountingLSItemMeasure::projQuantity() const{
     return ret;
 }
 
-QString AccountingLSItemMeasure::projQuantityStr() const{
+QString AccountingLSMeasure::projQuantityStr() const{
     QString realFormula = m_d->projFormula;
     realFormula.remove(" ");
     if( realFormula.isEmpty() ){
@@ -125,18 +125,18 @@ QString AccountingLSItemMeasure::projQuantityStr() const{
     }
 }
 
-QString AccountingLSItemMeasure::accFormula() const{
+QString AccountingLSMeasure::accFormula() const{
     return m_d->accFormula;
 }
 
-void AccountingLSItemMeasure::setAccFormula( const QString & nf ){
+void AccountingLSMeasure::setAccFormula( const QString & nf ){
     if( nf != m_d->accFormula ){
         m_d->accFormula = nf;
         updateAccQuantity();
     }
 }
 
-void AccountingLSItemMeasure::updateAccQuantity(){
+void AccountingLSMeasure::updateAccQuantity(){
     double v = m_d->parser->evaluate( m_d->accFormula );
     if( m_d->unitMeasure ) {
         v = m_d->unitMeasure->applyPrecision( v );
@@ -147,7 +147,7 @@ void AccountingLSItemMeasure::updateAccQuantity(){
     }
 }
 
-double AccountingLSItemMeasure::accQuantity() const{
+double AccountingLSMeasure::accQuantity() const{
     double ret = 0.0;
     if( m_d->unitMeasure != NULL ){
         ret = m_d->unitMeasure->applyPrecision( m_d->accQuantity );
@@ -157,7 +157,7 @@ double AccountingLSItemMeasure::accQuantity() const{
     return ret;
 }
 
-QString AccountingLSItemMeasure::accQuantityStr() const{
+QString AccountingLSMeasure::accQuantityStr() const{
     QString realFormula = m_d->accFormula;
     realFormula.remove(" ");
     if( realFormula.isEmpty() ){
@@ -170,11 +170,11 @@ QString AccountingLSItemMeasure::accQuantityStr() const{
     }
 }
 
-bool AccountingLSItemMeasure::accFormulaFromProj() const {
+bool AccountingLSMeasure::accFormulaFromProj() const {
     return m_d->accFormulaFromProj;
 }
 
-void AccountingLSItemMeasure::setAccFormulaFromProj(bool newVal) {
+void AccountingLSMeasure::setAccFormulaFromProj(bool newVal) {
     if( newVal != m_d->accFormulaFromProj ){
         m_d->accFormulaFromProj = newVal;
         if( m_d->accFormulaFromProj ){
@@ -184,29 +184,29 @@ void AccountingLSItemMeasure::setAccFormulaFromProj(bool newVal) {
     }
 }
 
-QDate AccountingLSItemMeasure::accDate() const {
+QDate AccountingLSMeasure::accDate() const {
     return m_d->accDate;
 }
 
-QString AccountingLSItemMeasure::accDateStr() const {
+QString AccountingLSMeasure::accDateStr() const {
     if( m_d->parser != NULL ){
         return m_d->parser->toString( m_d->accDate, QLocale::NarrowFormat );
     }
     return m_d->accDate.toString();
 }
 
-void AccountingLSItemMeasure::setAccDate(const QDate &newDate) {
+void AccountingLSMeasure::setAccDate(const QDate &newDate) {
     if( m_d->accDate != newDate ){
         m_d->accDate = newDate;
         emit accDateChanged( m_d->accDate );
     }
 }
 
-void AccountingLSItemMeasure::setAccDate(const QString &newDate) {
+void AccountingLSMeasure::setAccDate(const QString &newDate) {
     setAccDate( m_d->parser->evaluateDate(newDate) );
 }
 
-void AccountingLSItemMeasure::writeXml( QXmlStreamWriter * writer ){
+void AccountingLSMeasure::writeXml( QXmlStreamWriter * writer ){
     writer->writeStartElement( "MeasureLS" );
 
     writer->writeAttribute( "comment", m_d->comment );
@@ -231,7 +231,7 @@ void AccountingLSItemMeasure::writeXml( QXmlStreamWriter * writer ){
     writer->writeEndElement();
 }
 
-void AccountingLSItemMeasure::loadFromXml(const QXmlStreamAttributes &attrs) {
+void AccountingLSMeasure::loadFromXml(const QXmlStreamAttributes &attrs) {
     if( attrs.hasAttribute( "comment" ) ){
         setComment(  attrs.value( "comment").toString() );
     }

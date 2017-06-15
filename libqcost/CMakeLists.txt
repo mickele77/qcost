@@ -38,16 +38,23 @@ add_library( libqcost SHARED
     accountinglsbills.cpp
     accountingtambill.cpp
     accountingtambillitem.cpp
-    measuresmodel.cpp
+    accountingtammeasure.cpp
+    accountingtammeasuresmodel.cpp
     accountinglsbill.cpp
     accountinglsbillitem.cpp
-    accountinglsitemmeasure.cpp
-    measureslsmodel.cpp
+    accountinglsmeasure.cpp
+    accountinglsmeasuresmodel.cpp
     paymentdata.cpp
     paymentdatamodel.cpp
     measure.cpp
+    measuresmodel.cpp
     attributesmodel.cpp
  )
+
+include_directories(
+    ../libmathparser
+    ../libodtcreator
+)
 
 # Use required modules from Qt 5
 target_link_libraries(libqcost Qt5::Core libodtcreator libmathparser)

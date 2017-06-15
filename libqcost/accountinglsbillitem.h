@@ -24,7 +24,7 @@
 class AccountingPriceFieldModel;
 class PriceList;
 class PriceItem;
-class MeasuresLSModel;
+class AccountingLSMeasuresModel;
 class PriceFieldModel;
 class MathParser;
 class AttributesModel;
@@ -118,7 +118,7 @@ public:
     bool reset();
     int childNumber() const;
 
-    MeasuresLSModel *measuresModel();
+    AccountingLSMeasuresModel *measuresModel();
 
     void writeXml( QXmlStreamWriter * writer );
     void readXml20(QXmlStreamReader *reader, PriceList *priceList, AttributesModel * billAttrModel);

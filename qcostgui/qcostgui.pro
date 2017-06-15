@@ -36,7 +36,7 @@ INCLUDEPATH += \
     ../libqcost
 
 RESOURCES += \
-    ../icons.qrc
+    icons.qrc
 
 TRANSLATIONS = \
     qcostgui_en.ts

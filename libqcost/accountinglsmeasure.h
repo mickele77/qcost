@@ -1,5 +1,5 @@
-#ifndef ACCOUNTINGLSITEMMEASURE_H
-#define ACCOUNTINGLSITEMMEASURE_H
+#ifndef ACCOUNTINGLSMEASURE_H
+#define ACCOUNTINGLSMEASURE_H
 
 #include "qcost_export.h"
 
@@ -11,16 +11,16 @@ class QXmlStreamAttributes;
 
 #include <QObject>
 
-class AccountingLSItemMeasurePrivate;
+class AccountingLSMeasurePrivate;
 
-class EXPORT_QCOST_LIB_OPT AccountingLSItemMeasure : public QObject
+class EXPORT_QCOST_LIB_OPT AccountingLSMeasure : public QObject
 {
     Q_OBJECT
 public:
-    explicit AccountingLSItemMeasure(MathParser *p = NULL, UnitMeasure * ump = NULL);
-    ~AccountingLSItemMeasure();
+    explicit AccountingLSMeasure(MathParser *p = NULL, UnitMeasure * ump = NULL);
+    ~AccountingLSMeasure();
 
-    AccountingLSItemMeasure &operator =(const AccountingLSItemMeasure &cp);
+    AccountingLSMeasure &operator =(const AccountingLSMeasure &cp);
 
     QString comment() const;
     QString projFormula() const;
@@ -51,9 +51,9 @@ signals:
     void accDateChanged( const QDate & );
 
 private:
-    AccountingLSItemMeasurePrivate * m_d;
+    AccountingLSMeasurePrivate * m_d;
     void updateProjQuantity();
     void updateAccQuantity();
 };
 
-#endif // BILLITEMLINE_H
+#endif // ACCOUNTINGLSMEASURE_H

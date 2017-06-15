@@ -42,7 +42,7 @@ public:
     int varsCount();
     Var * var( int i );
 
-    QString replaceValue(const QString &expr);
+    QString replaceVars(const QString &expr);
 signals:
     void modelChanged();
 

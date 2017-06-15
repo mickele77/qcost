@@ -243,9 +243,9 @@ Var * VarsModel::var(int i) {
     return NULL;
 }
 
-QString VarsModel::replaceValue( const QString & expr ) {
+QString VarsModel::replaceVars( const QString & expr ) {
     // ordiniamo le variabili in base alla lunghezza, di modo da evitare
-    // problemi nel caso di variabili lunghe che contengono variabili piuù corte
+    // problemi nel caso di variabili lunghe che contengono variabili più corte
     QList<Var *> linesOrdered = m_d->varsContainer;
     for( int i = 0; i < (linesOrdered.size()-1); ++i ){
         for( int j = i+1; j < linesOrdered.size(); ++j ){
@@ -258,7 +258,7 @@ QString VarsModel::replaceValue( const QString & expr ) {
     // sostituiamo al nome delle variabili il relativo valore
     QString ret = expr;
     for( QList<Var *>::iterator iter = linesOrdered.begin(); iter != linesOrdered.end(); ++iter ){
-        (*iter)->replaceValue( &ret );
+        (*iter)->replaceVar( &ret );
     }
 
     return ret;
