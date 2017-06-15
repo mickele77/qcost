@@ -786,3 +786,19 @@ void AccountingTAMBill::readFromXmlTmp( ProjectPriceListParentItem * priceLists 
 void AccountingTAMBill::insertStandardAttributes(){
     m_d->attributesModel->insertStandardAttributes();
 }
+
+QDate AccountingTAMBill::startDate() const {
+    return m_d->rootItem->startDate();
+}
+
+void AccountingTAMBill::setStartDate(const QDate &newStDate) {
+    m_d->rootItem->setStartDate( newStDate );
+}
+
+QDate AccountingTAMBill::endDate() const {
+    return m_d->rootItem->startDate();
+}
+
+void AccountingTAMBill::setEndDate(const QDate &newEndDate) {
+    m_d->rootItem->setEndDate( newEndDate );
+}

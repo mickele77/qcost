@@ -38,6 +38,14 @@ public:
     bool insertChildren(ItemType iType, int position, int count=1);
 
     void readXml(QXmlStreamReader *reader, PriceList *priceList, AttributesModel *attrModel);
+
+    QDate startDate() const;
+    void setStartDate( const QDate & newStDate );
+    QDate endDate() const;
+    void setEndDate( const QDate & newEndDate );
+
+private:
+    AccountingTAMBillItemPrivate * m_dd;
 };
 
 #endif // ACCOUNTINGTAMBILLITEM_H

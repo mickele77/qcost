@@ -21,14 +21,36 @@
 
 #include "accountingbillitemprivate.h"
 
-#include "measuresmodel.h"
+class AccountingTAMBillItemPrivate {
+public:
+    AccountingTAMBillItemPrivate():
+        startDate( NULL ),
+        endDate(NULL){
+    }
+    ~AccountingTAMBillItemPrivate() {
+        if( startDate != NULL ) {
+            delete startDate;
+        }
+        if( endDate != NULL ){
+            delete endDate;
+        }
+    }
+    QDate * startDate;
+    QDate * endDate;
+};
 
 AccountingTAMBillItem::AccountingTAMBillItem(AccountingTAMBillItem *parentItem, AccountingBillItem::ItemType iType,
                                              PriceFieldModel * pfm, MathParser * parser ):
-    AccountingBillItem( parentItem, iType, pfm, parser ){
+    AccountingBillItem( parentItem, iType, pfm, parser ),
+    m_dd( new AccountingTAMBillItemPrivate() ){
+    if( parentItem == NULL ) {
+        m_dd->startDate = new QDate();
+        m_dd->endDate = new QDate();
+    }
 }
 
 AccountingTAMBillItem::~AccountingTAMBillItem(){
+    delete m_dd;
 }
 
 QString AccountingTAMBillItem::title() const{
@@ -76,4 +98,44 @@ bool AccountingTAMBillItem::insertChildren(AccountingBillItem::ItemType iType, i
         return true;
     }
     return false;
+}
+
+QDate AccountingTAMBillItem::startDate() const {
+    AccountingTAMBillItem * TAMParent = dynamic_cast<AccountingTAMBillItem *>( m_d->parentItem );
+    if( TAMParent != NULL ){
+        return TAMParent->startDate();
+    } else {
+        return *(m_dd->startDate);
+    }
+}
+
+void AccountingTAMBillItem::setStartDate(const QDate &newStDate) {
+    AccountingTAMBillItem * TAMParent = dynamic_cast<AccountingTAMBillItem *>( m_d->parentItem );
+    if( TAMParent != NULL ){
+        TAMParent->setStartDate(newStDate);
+    } else {
+        if( *(m_dd->startDate) != newStDate ){
+            *(m_dd->startDate) = newStDate;
+        }
+    }
+}
+
+QDate AccountingTAMBillItem::endDate() const {
+    AccountingTAMBillItem * TAMParent = dynamic_cast<AccountingTAMBillItem *>( m_d->parentItem );
+    if( TAMParent != NULL ){
+        return TAMParent->endDate();
+    } else {
+        return *(m_dd->endDate);
+    }
+}
+
+void AccountingTAMBillItem::setEndDate(const QDate &newEndDate) {
+    AccountingTAMBillItem * TAMParent = dynamic_cast<AccountingTAMBillItem *>( m_d->parentItem );
+    if( TAMParent != NULL ){
+        TAMParent->setEndDate(newEndDate);
+    } else {
+        if( *(m_dd->endDate) != newEndDate ){
+            *(m_dd->endDate) = newEndDate;
+        }
+    }
 }

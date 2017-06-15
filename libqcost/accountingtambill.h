@@ -172,6 +172,11 @@ public:
                                              const QList<Attribute *> &attrsToPrint ) const;
     void insertStandardAttributes();
 
+    QDate startDate() const;
+    void setStartDate( const QDate & newStDate );
+    QDate endDate() const;
+    void setEndDate( const QDate & newEndDate );
+
 public slots:
     void setName( const QString & n);
     void setPriceDataSet( int );
