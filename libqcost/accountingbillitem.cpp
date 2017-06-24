@@ -51,7 +51,7 @@
 #include <cmath>
 
 AccountingBillItem::AccountingBillItem(AccountingBillItem *parentItem, AccountingBillItem::ItemType iType,
-                                       PriceFieldModel * pfm, MathParser * parser , VarsModel *vModel):
+                                       PriceFieldModel * pfm, MathParser * parser, VarsModel *vModel):
     TreeItem(),
     m_d( new AccountingBillItemPrivate(parentItem, iType, pfm, parser, vModel ) ){
 
@@ -558,7 +558,7 @@ QString AccountingBillItem::dateBeginStr() const {
         }
         return dateBegin().toString();
     } else if( m_d->itemType == TimeAndMaterials && m_d->tamBillItem != NULL ){
-        return m_d->tamBillItem->dateBeginStr();
+        return m_d->tamBillItem->startDateStr();
     }
     return QString();
 }
@@ -571,7 +571,7 @@ void AccountingBillItem::setDateBegin(const QDate &d) {
                 emit dateBeginChanged( dateBeginStr() );
             }
         } else if( m_d->itemType == TimeAndMaterials && m_d->tamBillItem != NULL ){
-            m_d->tamBillItem->setDateBegin(d);
+            m_d->tamBillItem->setStartDate(d);
             emit dateBeginChanged( dateBeginStr() );
         } else if( m_d->itemType == LumpSum ){
             if( m_d->parentItem != NULL ){
@@ -609,7 +609,7 @@ QString AccountingBillItem::dateEndStr() const {
         }
         return dateEnd().toString();
     } else if( m_d->itemType == TimeAndMaterials && m_d->tamBillItem != NULL ){
-        return m_d->tamBillItem->dateEndStr();
+        return m_d->tamBillItem->endDateStr();
     }
     return QString();
 }
@@ -622,7 +622,7 @@ void AccountingBillItem::setDateEnd(const QDate &d) {
                 emit dateEndChanged( dateEndStr() );
             }
         } else if( m_d->itemType == TimeAndMaterials && m_d->tamBillItem != NULL ){
-            m_d->tamBillItem->setDateEnd( d );
+            m_d->tamBillItem->setEndDate( d );
             emit dateEndChanged( dateEndStr() );
         } else if( m_d->itemType == LumpSum ){
             if( m_d->parentItem != NULL ){

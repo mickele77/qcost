@@ -102,7 +102,7 @@ void EditPriceItemDialog::init(PriceList * pl){
             m_d->priceListTreeGUI->setCurrentPriceItem( m_d->accountingItem->priceItem() );
         }
     } else if( m_d->accountingTAMItem != NULL ){
-        if( m_d->accountingTAMItem->itemType() == AccountingBillItem::PPU ){
+        if( m_d->accountingTAMItem->itemType() == AccountingTAMBillItem::PPU ){
             m_d->priceListTreeGUI->setCurrentPriceItem( m_d->accountingTAMItem->priceItem() );
         }
     } else if( m_d->accountingLSItem != NULL ){

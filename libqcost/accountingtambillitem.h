@@ -19,33 +19,465 @@
 #ifndef ACCOUNTINGTAMBILLITEM_H
 #define ACCOUNTINGTAMBILLITEM_H
 
+class AccountingPriceFieldModel;
+class AccountingTAMBill;
+class AccountingTAMMeasuresModel;
+class PriceList;
+class PriceItem;
+class VarsModel;
+class AttributesModel;
+
+class QXmlStreamAttributes;
+class QXmlStreamWriter;
+class QXmlStreamReader;
+class QTextTable;
+
 #include "qcost_export.h"
 
-#include "accountingbillitem.h"
+#include "accountingprinter.h"
+
+#include <QObject>
+#include "treeitem.h"
 
 class AccountingTAMBillItemPrivate;
 
-class EXPORT_QCOST_LIB_OPT AccountingTAMBillItem : public AccountingBillItem {
+class EXPORT_QCOST_LIB_OPT AccountingTAMBillItem : public QObject, public TreeItem {
     Q_OBJECT
 public:
+    enum ItemType{
+        Root,
+        Payment,
+        Comment,
+        PPU,
+    };
+
+
     friend class AccountingTAMBill;
-    AccountingTAMBillItem( AccountingTAMBillItem * parentItem, AccountingBillItem::ItemType iType, PriceFieldModel * pfm, MathParser * parser = NULL );
+    AccountingTAMBillItem( AccountingTAMBillItem * parentItem, AccountingTAMBillItem::ItemType iType, PriceFieldModel * pfm,
+                           MathParser * parser = NULL , VarsModel *vModel = NULL);
     ~AccountingTAMBillItem();
 
+
+    AccountingTAMBillItem &operator =(const AccountingTAMBillItem &cp);
+
+    /** @return resituitsce il progenitore dell'oggetto */
+    const AccountingTAMBillItem * rootItem() const;
+    /** @return resituitsce il genitore dell'oggetto */
+    AccountingTAMBillItem * parent();
+    /** Ricerca tra gli oggetti figlio uno con id pari a itemId
+     * @return restituisce l'oggetto trovato */
+    AccountingTAMBillItem * itemFromId(unsigned int itemFromId);
+    /** Ricerca all'interno del computo un BillItem con id pari a itemId */
+    AccountingTAMBillItem *findItemFromId(unsigned int itemId);
+    /** ricerca tra gli oggetti figlio uno con progCode pari a pCode */
+    AccountingTAMBillItem * itemFromProgCode(const QString &pCode);
+    /** Ricerca all'interno del computo un BillItem con progCode pari a pCode */
+    AccountingTAMBillItem *findItemFromProgCode(const QString & pCode);
+    /** Ricerca tra gli oggetti figlio uno con id pari a itemId
+     * @param number il numero d'ordine dell'oggetto figlio restituito
+     * @return restituisce l'oggetto figlio di numero number */
+    AccountingTAMBillItem * childItem(int number);
+    /** Restituisce vero se l'oggetto e' un genitore dell'oggetto in questione */
+    bool isDescending( AccountingTAMBillItem * ancestor );
+    /** Imposta il genitore dell'oggetto
+     * @param newParent il nuovo genitore
+     * @param position il numero di posizione dell'oggetto nel nuovo genitore*/
+    void setParent(AccountingTAMBillItem *newParent, int position);
+
+    VarsModel *varsModel();
+    unsigned int id();
+    QString accountingProgCode() const;
+    QString progCode() const;
+    QString fullProgCode() const;
+    QString name();
+    int currentPriceDataSet() const;
+    double discount() const;
+    QString discountStr() const;
+    // dice se il prezzo è usato dall'articolo di computo o da un suo sottoarticolo
+    bool isUsingPriceItem( PriceItem * p );
+    /** restituisce l'elenco degli articoli di prezzo contenuti nell'articolo di computo o nei sottoarticoli */
+    QList<PriceItem *> usedPriceItems() const;
+    /** restituisce i sottoarticoli del prezzo associato all'articolo di computo, oltre ad eventuali
+      * altri prezzi connessi tramite analisi prezzi */
+    QList<PriceItem *> connectedPriceItems() const;
+
+    QDate startDate() const;
+    QString startDateStr() const;
+    QDate endDate() const;
+    QString endDateStr() const;
+    int daysCount() const;
+    QDate day( int i = 0 ) const;
+    QString dayStr( int i = 0 ) const;
+
+    double totalAmountToDiscount() const;
+    double totalAmountToDiscount( ItemType iType ) const;
+    double totalAmountToDiscountPayment( int firstPay, int lastPay, ItemType iType ) const;
+    double amountNotToDiscount() const;
+    double amountNotToDiscount( ItemType iType ) const;
+    double amountNotToDiscountPayment( int firstPay, int lastPay, ItemType iType ) const;
+    double amountToDiscount() const;
+    double amountToDiscount( ItemType iType ) const;
+    double amountDiscounted() const;
+    double amountDiscounted( ItemType iType ) const;
+    double totalAmount() const;
+    double totalAmount(ItemType iType ) const;
+    QString totalAmountToDiscountStr() const;
+    QString amountNotToDiscountStr() const;
+    QString amountToDiscountStr() const;
+    QString amountDiscountedStr() const;
+    QString totalAmountStr() const;
+    QString amountStr(int i) const;
+
+    QList<int> totalAmountPriceFields() const;
+    QList<int> noDiscountAmountPriceFields() const;
+
+    int columnCount() const;
+    QList<AccountingTAMBillItem *> allChildren();
+    QList<AccountingTAMBillItem *> allChildrenWithMeasures();
+    QVariant data(int col, int role = Qt::EditRole ) const;
+    bool setData(int column, const QVariant &quantity);
+    Qt::ItemFlags flags(int column) const;
+
+    TreeItem *child(int number);
+    int childrenCount() const;
+    bool hasChildren() const;
+    /** Inserisce elementi sotto (se possibile)
+        Se l'elemento è Root, aggiunge un lista Bill
+        Se l'elemento è Bill, aggiunge una riga PPU */
+    bool insertChildren(int position, int count=1);
+    bool insertChildren(ItemType iType, int position, int count=1);
+    bool appendChildren(ItemType iType, int count = 1);
+    bool endChildren(ItemType iType, int count=1 );
+    bool removeChildren(int position, int count=1);
+    bool clear();
+    int childNumber() const;
+
+    void writeXml20( QXmlStreamWriter * writer );
+    void readXmlTmp20(QXmlStreamReader *reader);
+    virtual void readFromXmlTmp20(PriceList *priceList,
+                                  AttributesModel *billAttrModel );
+    void loadFromXml( const QXmlStreamAttributes &attrs,
+                      PriceList * priceList,
+                      AttributesModel * billAttrModel );
+
+    bool containsAttribute( Attribute * attr ) const ;
+    bool containsAttributeInherited( Attribute * attr ) const ;
+    bool containsAttributeDirect( Attribute * attr ) const;
+
+    void addAttribute( Attribute * attr );
+    void removeAttribute( Attribute * attr );
+    void removeAllAttributes();
+
+    double totalAmountToDiscountAttribute( Attribute * attr ) const;
+    QString totalAmountToDiscountAttributeStr( Attribute * attr ) const;
+    double amountNotToDiscountAttribute( Attribute * attr ) const;
+    QString amountNotToDiscountAttributeStr( Attribute * attr ) const;
+    double totalAmountAttribute( Attribute * attr ) const;
+    QString totalAmountAttributeStr( Attribute * attr ) const;
+
+    /**
+     * @brief Stampa il registro di contabilità
+     * @param cursor
+     * @param payToPrint
+     * @param prPPUDescOption
+     */
+    void writeODTAccountingOnTable( QTextCursor * cursor,
+                                    int payToPrint,
+                                    AccountingPrinter::PrintPPUDescOption prPPUDescOption ) const;
+
+    /**
+     * @brief Stampa il libretto delle misure/brogliaccio
+     * @param cursor
+     * @param payToPrint
+     * @param prAmountsOption
+     * @param prPPUDescOption
+     */
+    void writeODTMeasuresOnTable( QTextCursor * cursor,
+                                  int payToPrint,
+                                  AccountingPrinter::PrintAmountsOption prAmountsOption,
+                                  AccountingPrinter::PrintPPUDescOption prPPUDescOption ) const;
+
+    /**
+     * Stampa il SAL specificato da payPrint.
+     * Se payPrint è negativo, stampa l'ultimo SAL
+     * Questo metodo ha senso solo se eseguito dall'elemento Root
+     * @brief Stampa il S.A.L.
+     * @param cursor
+     * @param payToPrint
+     * @param prPPUDescOption
+     */
+    void writeODTPaymentOnTable( QTextCursor *cursor,
+                                 int payToPrint,
+                                 AccountingPrinter::PrintPPUDescOption prPPUDescOption ) const;
+
+    /**
+     * @brief Stampa il sommario del registro della contabilità
+     * @param cursor
+     * @param payToPrint
+     * @param prAmountsOption
+     * @param prItemsOption
+     * @param writeDetails
+     */
+    void writeODTAccountingSummaryOnTable(QTextCursor *cursor,
+                                          int payToPrint,
+                                          AccountingPrinter::PrintAmountsOption prAmountsOption,
+                                          AccountingPrinter::PrintPPUDescOption prPPUDescOption) const;
+
+    /** Stampa righe libretto per attributo */
+    void writeODTAttributeAccountingOnTable( QTextCursor *cursor,
+                                             AccountingPrinter::AttributePrintOption prOption,
+                                             AccountingPrinter::PrintAmountsOption prAmountsOption,
+                                             AccountingPrinter::PrintPPUDescOption prPPUDescOption,
+                                             const QList<Attribute *> &attrsToPrint ) const;
+    /** Il tipo di elemento */
+    ItemType itemType() const;
     /** Nel caso di lista, il titolo della lista */
     QString title() const;
+    /** Nel caso di un commento, restituisce il testo del commento */
+    QString text() const;
+    /** Nel caso di ppu, restituisce il valore della quantita' */
+    double quantity() const;
+    /** Nel caso di ppu, restituisce il valore della quantita' come stringa */
+    QString quantityStr() const;
+    /** Nel caso di ppu, imposta il valore della quantita' */
+    void setQuantity(double v);
+    /** Nel caso di ppu, il prezzo */
+    PriceItem *priceItem();
+    AccountingTAMMeasuresModel * measuresModel();
+    AccountingTAMMeasuresModel * generateMeasuresModel();
+    void removeMeasuresModel();
+    /** Nel caso di ppu, prezzo complessivo */
+    double PPUTotalToDiscount() const;
+    /** Nel caso di ppu, prezzo non ribassabile */
+    double PPUNotToDiscount() const;
+    /** Nel caso di ppu, prezzo complessivo, stringa */
+    QString PPUTotalToDiscountStr() const;
+    /** Nel caso di ppu, prezzo non ribassabile, stringa */
+    QString PPUNotToDiscountStr() const;
 
-    bool insertChildren(ItemType iType, int position, int count=1);
+    /** Nel caso di Root, il modelli di campi prezzo totali */
+    AccountingPriceFieldModel * totalAmountPriceFieldModel();
+    /** Nel caso di Root, il modelli di campi prezzo non soggetti a ribasso */
+    AccountingPriceFieldModel * noDiscountAmountPriceFieldModel();
+
+    void requestDateBeginChange(const QDate &newDate);
+    void requestDateBeginChange(const QString &newDateStr);
+    void requestDateEndChange(const QString &newDateStr);
+    void requestDateEndChange(const QDate &newDate);
+
+    /** Aggiorna il numero progressivo delle misure nel registro di contabilita */
+    void updateAccountingProgCode();
+    /** Aggiorna il numero progressivo delle misure nel libretto delle misure */
+    void updateProgCode();
+
+public slots:
+    void setCurrentPriceDataSet(int newVal);
+    void setDiscount(double newValPurp );
+    void setDiscount( const QString & newVal );
+    void setName(const QString &newName);
+    void setItemType(ItemType iType);
+
+    void setStartDate( const QDate & newStDate );
+    void setStartDate( const QString & newStDate );
+    void setEndDate( const QDate & newEndDate );
+    void setEndDate( const QString & newEndDate );
+
+    /** Nel caso di un commento, imposta il valore del commento */
+    void setText(const QString &t);
+    /** Nel caso di PPU, imposta il valore della quantita' */
+    void setQuantity(const QString &vstr);
+    void setPriceItem( PriceItem * p );
+    void setTotalAmountPriceFields(const QList<int> &newAmountFields);
+    void setNoDiscountAmountPriceFields(const QList<int> &newAmountFields);
+
+signals:
+    /** Segnale emesso quando l'item cambia */
+    void itemChanged();
+    /** Segnale emesso quando l'item cambia */
+    void itemTypeChanged( ItemType );
+    /** Segnale emesso nel caso cambi il commento */
+    void titleChanged(const QString &t);
+    /** Segnale emesso nel caso cambi il commento */
+    void textChanged(const QString &t);
+    /** Segnale emesso nel caso cambi la quantita' */
+    void quantityChanged( const QString &  );
+    /** Segnale emesso prima che l'oggetto sia cancellato */
+    void aboutToBeDeleted();
+    /** segnale emesso se sono stati aggiunti o tolti figli */
+    void hasChildrenChanged( bool );
+    /** segnale emesso quando alcuni figli dell'oggetto sono cambiati */
+    void hasChildrenChanged( AccountingTAMBillItem *, QList<int> );
+    /** segnale emesso quando viene aggiunto un SAL */
+    void paymentInserted( int payNum, AccountingTAMBillItem * pay );
+    /** segnale emesso quando viene rimosso un SAL */
+    void paymentRemoved( int payNum, AccountingTAMBillItem * pay );
+
+    void dataChanged( AccountingTAMBillItem * );
+    void dataChanged( AccountingTAMBillItem *, int column);
+    void nameChanged( const QString & );
+    void priceItemChanged( PriceItem * oldPriceItem, PriceItem * newPriceItem );
+    void currentPriceDataSetChanged( int newPriceDataSet );
+    void discountChanged( const QString & newVal );
+    void PPUTotalToDiscountChanged( const QString & newVal );
+    void PPUNotToDiscountChanged( const QString & newVal );
+    void amountsChanged();
+    void totalAmountToDiscountChanged( const QString & newVal );
+    void amountNotToDiscountChanged( const QString & newVal );
+    void amountToDiscountChanged( const QString & newVal );
+    void amountDiscountedChanged( const QString & newVal );
+    void totalAmountChanged( const QString & newVal );
+    void startDateChanged( const QString &  );
+    void endDateChanged( const QString & newDateEnd );
+    void attributesChanged();
+
+    void lsBillChanged( AccountingLSBill * newLSBill );
+    void tamBillItemChanged( AccountingTAMBillItem * newTAMBill );
+
+    /** Segnale emesso quando si richiede il cambio della data di inizio */
+    void requestDateBeginChangeSignal( const QDate &newDate, int position );
+    /** Segnale emesso quando si richiede il cambio della data di fine */
+    void requestDateEndChangeSignal( const QDate &newDate, int position );
+
+private:
+    AccountingTAMBillItemPrivate * m_d;
+
+    void setId( unsigned int ii );
+
+    void setHasChildrenChanged(AccountingTAMBillItem * p , QList<int> indexes);
+    TreeItem * parentInternal();
+
+    void addChild(AccountingTAMBillItem *newChild, int position);
+
+    void appendUsedPriceItems( QList<PriceItem *> * usedPriceItems ) const;
+
+    /** restituisce l'elenco degli articoli utilizzati dal SAL firstPay al SAL lastPay */
+    QList<AccountingTAMBillItem *> usedItemsPayment( int firstPay, int lastPay, ItemType iType ) const;
+
+    void writeODTSummaryOnTable( QTextCursor *cursor,
+                                 int payToPrint, AccountingPrinter::PrintAmountsOption prAmountsOption,
+                                 AccountingPrinter::PrintPPUDescOption prPPUDescOption,
+                                 bool writeAccountingProgCode ) const;
+
+    /** Metodo specifico per stampare le linee del sommario del registro di contabilità */
+    void writeODTAccountingSummaryLine(PriceItem *priceItem,
+                                       int * printedItems,
+                                       double *itemTotalQuantity,
+                                       bool printAmounts,
+                                       QTextCursor *cursor,
+                                       QTextTable *table,
+                                       QTextBlockFormat &tagBlockFormat, QTextBlockFormat &txtBlockFormat, QTextBlockFormat &numBlockFormat,
+                                       QTextTableCellFormat &leftFormat, QTextTableCellFormat &centralFormat, QTextTableCellFormat &rightFormat) const;
+
+    /** Metodo generico specifico per stampare le linee di un sommario */
+    void writeODTSummaryLine( PriceItem * priceItem,
+                              QTextCursor *cursor,
+                              double * itemTotalQuantity,
+                              bool printAmounts,
+                              bool writeDetails,
+                              QTextTable *table,
+                              QTextBlockFormat &tagBlockFormat,
+                              QTextBlockFormat & txtBlockFormat,
+                              QTextBlockFormat & numBlockFormat,
+                              QTextTableCellFormat & leftFormat,
+                              QTextTableCellFormat & centralFormat,
+                              QTextTableCellFormat & rightFormat ) const;
+
+    void writeODTAttributeBillLineSimple( AccountingPrinter::PrintAmountsOption prAmountsOption,
+                                          AccountingPrinter::PrintPPUDescOption prPPUDescOption,
+                                          double * totalAmountToDiscountTotal,
+                                          double * amountNotToDiscountTotal,
+                                          Attribute * attrsToPrint,
+                                          QTextCursor *cursor,
+                                          QTextTable *table,
+                                          QTextBlockFormat &tagBlockFormat,
+                                          QTextBlockFormat & txtBlockFormat,
+                                          QTextBlockFormat & numBlockFormat,
+                                          QTextTableCellFormat & leftFormat,
+                                          QTextTableCellFormat & centralFormat,
+                                          QTextTableCellFormat & rightFormat,
+                                          QTextTableCellFormat & centralQuantityTotalFormat,
+                                          QTextTableCellFormat & rightQuantityTotalFormat,
+                                          QTextCharFormat &txtCharFormat,
+                                          QTextCharFormat &txtBoldCharFormat ) const;
+
+    void writeODTAttributeBillLineIntersection( AccountingPrinter::PrintAmountsOption prAmountsOption,
+                                                AccountingPrinter::PrintPPUDescOption prPPUDescOption,
+                                                double * totalAmountToDiscountTotal,
+                                                double * amountNotToDiscountTotal,
+                                                const QList<Attribute *> &attrsToPrint,
+                                                QTextCursor *cursor,
+                                                QTextTable *table,
+                                                QTextBlockFormat &tagBlockFormat,
+                                                QTextBlockFormat & txtBlockFormat,
+                                                QTextBlockFormat & numBlockFormat,
+                                                QTextTableCellFormat & leftFormat,
+                                                QTextTableCellFormat & centralFormat,
+                                                QTextTableCellFormat & rightFormat,
+                                                QTextTableCellFormat & centralQuantityTotalFormat,
+                                                QTextTableCellFormat & rightQuantityTotalFormat,
+                                                QTextCharFormat &txtCharFormat,
+                                                QTextCharFormat &txtBoldCharFormat ) const;
+    void writeODTAttributeBillLineUnion( AccountingPrinter::PrintAmountsOption prAmountsOption,
+                                         AccountingPrinter::PrintPPUDescOption prPPUDescOption,
+                                         double * totalAmountToDiscountTotal,
+                                         double * amountNotToDiscountTotal,
+                                         const QList<Attribute *> &attrsToPrint,
+                                         QTextCursor *cursor,
+                                         QTextTable *table,
+                                         QTextBlockFormat &tagBlockFormat,
+                                         QTextBlockFormat & txtBlockFormat,
+                                         QTextBlockFormat & numBlockFormat,
+                                         QTextTableCellFormat & leftFormat,
+                                         QTextTableCellFormat & centralFormat,
+                                         QTextTableCellFormat & rightFormat,
+                                         QTextTableCellFormat & centralQuantityTotalFormat,
+                                         QTextTableCellFormat & rightQuantityTotalFormat,
+                                         QTextCharFormat &txtCharFormat,
+                                         QTextCharFormat &txtBoldCharFormat) const;
+
+    void writeODTBillLine( AccountingPrinter::PrintAmountsOption prAmountsOption,
+                           AccountingPrinter::PrintPPUDescOption prItemsOption,
+                           bool writeProgCode,
+                           QTextCursor *cursor,
+                           QTextTable *table,
+                           QTextBlockFormat &tagBlockFormat,
+                           QTextBlockFormat & txtBlockFormat,
+                           QTextBlockFormat & numBlockFormat,
+                           QTextTableCellFormat & leftFormat,
+                           QTextTableCellFormat & centralFormat,
+                           QTextTableCellFormat & rightFormat,
+                           QTextTableCellFormat & centralQuantityTotalFormat,
+                           QTextTableCellFormat & rightQuantityTotalFormat,
+                           QTextCharFormat & txtCharFormat,
+                           QTextCharFormat & txtAmNotToDiscCharFormat,
+                           bool writeAccounting = false ) const;
+
+    /** restituisce tutti gli attributi dell'elemento; se la var bool è false,
+        vuol dire che l'attribute è ereditato, se è true vuol dire che è un
+        attributo direttamente imposto */
+    QList< QPair<Attribute *, bool> > attributes();
+    QList<Attribute *> allAttributes();
+    QList<Attribute *> directAttributes() const;
+    QList<Attribute *> inheritedAttributes() const;
+
+    void updateAccountingProgCode(int *startCode);
+    void updateProgCode(int *startCode);
+    void updateDaysCount();
 
     void readXml(QXmlStreamReader *reader, PriceList *priceList, AttributesModel *attrModel);
 
-    QDate startDate() const;
-    void setStartDate( const QDate & newStDate );
-    QDate endDate() const;
-    void setEndDate( const QDate & newEndDate );
+private slots:
+    void setQuantityPrivate(double v);
+    void emitPriceDataUpdated();
+    void emitTitleChanged();
 
-private:
-    AccountingTAMBillItemPrivate * m_dd;
+    void updateTotalAmountToDiscount();
+    void updateAmountNotToDiscount();
+    void updateAmountToDiscount();
+    void updateAmountDiscounted();
+    void updateTotalAmount();
+
+    void updatePPUs();
 };
 
 #endif // ACCOUNTINGTAMBILLITEM_H

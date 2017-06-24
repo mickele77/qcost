@@ -74,10 +74,11 @@ void AccountingLSMeasure::setUnitMeasure(UnitMeasure *ump) {
     if( m_d->unitMeasure != ump ){
         m_d->unitMeasure = ump;
         updateProjQuantity();
+        updateAccQuantity();
     }
 }
 
-QString AccountingLSMeasure::projFormula() const{
+QString AccountingLSMeasure::formula() const{
     return m_d->projFormula;
 }
 
@@ -207,7 +208,7 @@ void AccountingLSMeasure::setAccDate(const QString &newDate) {
 }
 
 void AccountingLSMeasure::writeXml( QXmlStreamWriter * writer ){
-    writer->writeStartElement( "MeasureLS" );
+    writer->writeStartElement( "AccountingLSMeasure" );
 
     writer->writeAttribute( "comment", m_d->comment );
 

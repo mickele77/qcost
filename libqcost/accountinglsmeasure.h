@@ -23,35 +23,38 @@ public:
     AccountingLSMeasure &operator =(const AccountingLSMeasure &cp);
 
     QString comment() const;
-    QString projFormula() const;
-    double projQuantity() const;
-    QString projQuantityStr() const;
-    QString accFormula() const;
-    double accQuantity() const;
-    QString accQuantityStr() const;
-    bool accFormulaFromProj() const;
-    QDate accDate() const;
-    QString accDateStr() const;
+    QString formula() const;
 
     void setComment(const QString &nc);
     void setUnitMeasure( UnitMeasure * ump );
-    void setProjFormula(const QString &nf);
-    void setAccFormula(const QString &nf);
-    void setAccFormulaFromProj( bool newVal = true );
-    void setAccDate( const QDate & newDate );
-    void setAccDate( const QString & newDate );
 
     void writeXml( QXmlStreamWriter * writer );
     void loadFromXml(const QXmlStreamAttributes &attrs);
 
+    double projQuantity() const;
+    QString projQuantityStr() const;
+    QString accFormula() const;
+    void setProjFormula(const QString &nf);
+
+    void setAccFormula(const QString &nf);
+    double accQuantity() const;
+    QString accQuantityStr() const;
+    bool accFormulaFromProj() const;
+    void setAccFormulaFromProj(bool newVal);
+    QDate accDate() const;
+    QString accDateStr() const;
+    void setAccDate(const QDate &newDate);
+    void setAccDate(const QString &newDate);
+
 signals:
-    void projQuantityChanged( double );
     void accQuantityChanged( double );
+    void projQuantityChanged( double );
     void accFormulaFromProjChanged( bool );
-    void accDateChanged( const QDate & );
+    void accDateChanged( const QDate & newDate );
 
 private:
     AccountingLSMeasurePrivate * m_d;
+
     void updateProjQuantity();
     void updateAccQuantity();
 };

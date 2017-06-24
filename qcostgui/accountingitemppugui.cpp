@@ -30,6 +30,7 @@
 #include "accountingtambill.h"
 #include "accountingtambillitem.h"
 
+#include "accountingtammeasuresmodel.h"
 #include "measuresmodel.h"
 
 #include "accountingitemattributemodel.h"
@@ -123,7 +124,7 @@ void AccountingItemPPUGUI::setItem(AccountingTAMBillItem *b) {
             disconnect( m_d->billItem, &AccountingBillItem::aboutToBeDeleted, this, &AccountingItemPPUGUI::setAccountingItemNULL );
         }
         if( m_d->TAMBillItem != NULL ){
-            disconnect( m_d->TAMBillItem, &AccountingTAMBillItem::dateChanged, m_d->ui->dateLineEdit, &QLineEdit::setText );
+            disconnect( m_d->TAMBillItem, &AccountingTAMBillItem::startDateChanged, m_d->ui->dateLineEdit, &QLineEdit::setText );
             disconnect( m_d->ui->dateLineEdit, &QLineEdit::editingFinished, this, &AccountingItemPPUGUI::setDateLE );
             disconnect( m_d->TAMBillItem, &AccountingTAMBillItem::quantityChanged, m_d->ui->quantityLineEdit, &QLineEdit::setText );
             disconnect( m_d->ui->quantityLineEdit, &QLineEdit::editingFinished, this, &AccountingItemPPUGUI::setQuantityLE );
@@ -154,8 +155,8 @@ void AccountingItemPPUGUI::setItem(AccountingTAMBillItem *b) {
         m_d->itemAttributeModel->setItem( b );
 
         if( m_d->TAMBillItem != NULL ){
-            m_d->ui->dateLineEdit->setText( m_d->TAMBillItem->dateStr() );
-            connect( m_d->TAMBillItem, &AccountingTAMBillItem::dateChanged, m_d->ui->dateLineEdit, &QLineEdit::setText );
+            m_d->ui->dateLineEdit->setText( m_d->TAMBillItem->startDateStr() );
+            connect( m_d->TAMBillItem, &AccountingTAMBillItem::startDateChanged, m_d->ui->dateLineEdit, &QLineEdit::setText );
             connect( m_d->ui->dateLineEdit, &QLineEdit::editingFinished, this, &AccountingItemPPUGUI::setDateLE );
             m_d->ui->quantityLineEdit->setText( m_d->TAMBillItem->quantityStr() );
             connect( m_d->TAMBillItem, &AccountingTAMBillItem::quantityChanged, m_d->ui->quantityLineEdit, &QLineEdit::setText );
@@ -227,7 +228,7 @@ void AccountingItemPPUGUI::setItem(AccountingBillItem *b) {
             disconnect( m_d->billItem, &AccountingBillItem::aboutToBeDeleted, this, &AccountingItemPPUGUI::setAccountingItemNULL );
         }
         if( m_d->TAMBillItem != NULL ){
-            disconnect( m_d->TAMBillItem, &AccountingTAMBillItem::dateChanged, m_d->ui->dateLineEdit, &QLineEdit::setText );
+            disconnect( m_d->TAMBillItem, &AccountingTAMBillItem::startDateChanged, m_d->ui->dateLineEdit, &QLineEdit::setText );
             disconnect( m_d->ui->dateLineEdit, &QLineEdit::editingFinished, this, &AccountingItemPPUGUI::setDateLE );
             disconnect( m_d->TAMBillItem, &AccountingTAMBillItem::quantityChanged, m_d->ui->quantityLineEdit, &QLineEdit::setText );
             disconnect( m_d->ui->quantityLineEdit, &QLineEdit::editingFinished, this, &AccountingItemPPUGUI::setQuantityLE );
@@ -332,17 +333,17 @@ void AccountingItemPPUGUI::setAccountingBill(AccountingBill *b) {
 
 void AccountingItemPPUGUI::changeItemDateGUI(){
     if( m_d->TAMBillItem != NULL ){
-        QDate d = m_d->TAMBillItem->date();
+        QDate d = m_d->TAMBillItem->startDate();
         QCalendarDialog dialog( &d, this );
         if( dialog.exec() == QDialog::Accepted ){
-            m_d->TAMBillItem->setDate( d );
+            m_d->TAMBillItem->setStartDate( d );
         }
     }
 }
 
 void AccountingItemPPUGUI::setDateLE(){
     if( m_d->TAMBillItem != NULL ){
-        m_d->TAMBillItem->setDate( m_d->ui->quantityLineEdit->text() );
+        m_d->TAMBillItem->setStartDate( m_d->ui->quantityLineEdit->text() );
     }
 }
 
@@ -526,26 +527,7 @@ void AccountingItemPPUGUI::delMeasureLines() {
 }
 
 void AccountingItemPPUGUI::importAccountingMeasureMeasuresTXT() {
-    if( m_d->TAMBillItem != NULL ){
-        if( m_d->TAMBillItem->measuresModel() ){
-            QModelIndexList rowListSelected = m_d->ui->itemMeasuresTableView->selectionModel()->selectedRows();
-            QList<int> rowList;
-            for( int i=0; i < rowListSelected.size(); i++ ){
-                if( !rowList.contains(rowListSelected.at(i).row()) ){
-                    rowList.append( rowListSelected.at(i).row() );
-                }
-            }
-            qSort( rowList.begin(), rowList.end() );
-
-            int position = m_d->TAMBillItem->measuresModel()->rowCount();
-            if( rowList.size() > 0 ){
-                position = rowList.last()+1;
-            }
-
-            ImportBillItemMeasuresTXT dialog( m_d->TAMBillItem->measuresModel(), position, m_d->parser, this );
-            dialog.exec();
-        }
-    } else if( m_d->billItem != NULL ){
+    if( m_d->billItem != NULL ){
         if( m_d->billItem->measuresModel() ){
             QModelIndexList rowListSelected = m_d->ui->itemMeasuresTableView->selectionModel()->selectedRows();
             QList<int> rowList;
@@ -612,10 +594,10 @@ bool AccountingItemPPUGUI::eventFilter(QObject *object, QEvent *event) {
     if (event->type() == QEvent::MouseButtonDblClick )     {
         if( m_d->TAMBillItem != NULL ){
             if( object == m_d->ui->dateLineEdit ){
-                QDate d = m_d->TAMBillItem->date();
+                QDate d = m_d->TAMBillItem->startDate();
                 QCalendarDialog dialog( &d, this );
                 if( dialog.exec() == QDialog::Accepted ){
-                    m_d->TAMBillItem->setDate( d );
+                    m_d->TAMBillItem->setStartDate( d );
                 }
             }
         }

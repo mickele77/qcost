@@ -11,15 +11,14 @@ class UnitMeasure;
 
 #include <QAbstractTableModel>
 
+class AccountingTAMBillItem;
 class AccountingTAMMeasuresModelPrivate;
 
 class EXPORT_QCOST_LIB_OPT AccountingTAMMeasuresModel : public QAbstractTableModel
 {
     Q_OBJECT
 public:
-    static int accDateCol();
-
-    explicit AccountingTAMMeasuresModel(MathParser *p = NULL, UnitMeasure *ump = NULL, QObject *parent = 0);
+    explicit AccountingTAMMeasuresModel( AccountingTAMBillItem * tamBItem, MathParser *p = NULL, UnitMeasure *ump = NULL, QObject *parent = 0);
 
     ~AccountingTAMMeasuresModel();
 
@@ -36,28 +35,24 @@ public:
     bool append( int count = 1 );
     bool removeRows(int row, int count = 1, const QModelIndex &parent = QModelIndex() );
 
-    double projQuantity();
-    double accQuantity();
-    double accQuantity( const QDate &dBegin, const QDate &dEnd);
-
     void setUnitMeasure( UnitMeasure * ump );
 
-    void writeXml( QXmlStreamWriter * writer );
-    void readXml(QXmlStreamReader *reader);
+    void writeXml20( QXmlStreamWriter * writer );
+    void readXmlTmp20(QXmlStreamReader *reader);
+    void readFromXmlTmp20();
 
     int measuresCount();
     AccountingTAMMeasure * measure( int i );
 
+    double quantity();
+
 signals:
-    void projQuantityChanged( double );
-    void accQuantityChanged( double );
+    void quantityChanged( double );
     void modelChanged();
 
 private slots:
-    void updateProjQuantity();
-    void updateAllProjQuantities();
-    void updateAccQuantity();
-    void updateAllAccQuantities();
+    void updateQuantity();
+
 private:
     AccountingTAMMeasuresModelPrivate * m_d;
 };

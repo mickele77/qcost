@@ -15,40 +15,41 @@ set( SRC
     projectrootitem.cpp
     projectitem.cpp
     projectpricelistparentitem.cpp
-    pricelist.cpp
-    bill.cpp
     project.cpp
     unitmeasure.cpp
     unitmeasuremodel.cpp
     var.cpp
     varsmodel.cpp
-    billitem.cpp
-    priceitem.cpp
+    attribute.cpp
+    attributesmodel.cpp
     pricefieldmodel.cpp
+    priceitem.cpp
+    pricelist.cpp
     pricelistprinter.cpp
+    measure.cpp
+    measuresmodel.cpp
+    billitem.cpp
+    bill.cpp
     billprinter.cpp
     priceitemdatasetmodel.cpp
     projectaccountingparentitem.cpp
     accountingprinter.cpp
-    attribute.cpp
     accountingpricefieldmodel.cpp
-    accountingbill.cpp
     accountingbillitem.cpp
     accountingbillitemprivate.cpp
-    accountinglsbills.cpp
-    accountingtambill.cpp
-    accountingtambillitem.cpp
+    accountingbill.cpp
     accountingtammeasure.cpp
     accountingtammeasuresmodel.cpp
-    accountinglsbill.cpp
-    accountinglsbillitem.cpp
+    accountingtambillitemprivate.cpp
+    accountingtambillitem.cpp
+    accountingtambill.cpp
     accountinglsmeasure.cpp
     accountinglsmeasuresmodel.cpp
+    accountinglsbillitem.cpp
+    accountinglsbill.cpp
+    accountinglsbills.cpp
     paymentdata.cpp
     paymentdatamodel.cpp
-    measure.cpp
-    measuresmodel.cpp
-    attributesmodel.cpp
 )
 
 # header files
@@ -58,40 +59,41 @@ set( HDR
     projectrootitem.h
     projectitem.h
     projectpricelistparentitem.h
-    pricelist.h
-    bill.h
     project.h
     unitmeasure.h
     unitmeasuremodel.h
     var.h
     varsmodel.h
-    billitem.h
-    priceitem.h
+    attribute.h
+    attributesmodel.h
     pricefieldmodel.h
+    priceitem.h
+    pricelist.h
     pricelistprinter.h
+    measure.h
+    measuresmodel.h
+    billitem.h
+    bill.h
     billprinter.h
     priceitemdatasetmodel.h
     projectaccountingparentitem.h
     accountingprinter.h
-    attribute.h
     accountingpricefieldmodel.h
-    accountingbill.h
     accountingbillitem.h
     accountingbillitemprivate.h
-    accountinglsbills.h
-    accountingtambill.h
-    accountingtambillitem.h
+    accountingbill.h
     accountingtammeasure.h
     accountingtammeasuresmodel.h
-    accountinglsbill.h
-    accountinglsbillitem.h
+    accountingtambillitemprivate.h
+    accountingtambillitem.h
+    accountingtambill.h
     accountinglsmeasure.h
     accountinglsmeasuresmodel.h
+    accountinglsbillitem.h
+    accountinglsbill.h
+    accountinglsbills.h
     paymentdata.h
     paymentdatamodel.h
-    measure.h
-    measuresmodel.h
-    attributesmodel.h
 )
 
 # Tell CMake to create the library

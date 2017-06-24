@@ -64,6 +64,7 @@ SOURCES += \
     accountinglsbills.cpp \
     accountingtambill.cpp \
     accountingtambillitem.cpp \
+    accountingtambillitemprivate.cpp \
     accountingtammeasure.cpp \
     accountingtammeasuresmodel.cpp \
     measuresmodel.cpp \
@@ -106,6 +107,7 @@ HEADERS  += \
     accountinglsbills.h \
     accountingtambill.h \
     accountingtambillitem.h \
+    accountingtambillitemprivate.h \
     accountingtammeasure.h \
     accountingtammeasuresmodel.h \
     measuresmodel.h \

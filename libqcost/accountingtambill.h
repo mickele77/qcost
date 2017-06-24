@@ -113,7 +113,7 @@ public:
 
     Qt::ItemFlags flags(const QModelIndex &index) const;
     bool setData(const QModelIndex &index, const QVariant &value, int role = Qt::EditRole);
-    bool insertItems(AccountingBillItem::ItemType mt, int position = -1, int count = 1, const QModelIndex &parent = QModelIndex() );
+    bool insertItems(AccountingTAMBillItem::ItemType mt, int position = -1, int count = 1, const QModelIndex &parent = QModelIndex() );
     bool removeItems(int position = -1, int rows = 1, const QModelIndex &parent = QModelIndex() );
 
     AccountingTAMBillItem *item(const QModelIndex &index ) const;
@@ -123,7 +123,6 @@ public:
     AccountingTAMBillItem *itemId(unsigned int itemId);
     QModelIndex parent(const QModelIndex &index) const;
     QModelIndex index(int row, int column, const QModelIndex &parent) const;
-    QModelIndex index(AccountingBillItem *item, int column) const;
     QModelIndex index(AccountingTAMBillItem *item, int column) const;
 
     bool moveRows(const QModelIndex & sourceParent, int sourceRow, int count, const QModelIndex & destinationParent, int destinationChild);
@@ -198,7 +197,7 @@ signals:
 
 
 private slots:
-    void updateValue(AccountingBillItem *item, int column);
+    void updateValue(AccountingTAMBillItem *item, int column);
 private:
     AccountingTAMBillPrivate * m_d;
 

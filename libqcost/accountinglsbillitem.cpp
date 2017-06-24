@@ -2434,7 +2434,7 @@ void AccountingLSBillItem::writeODTBillLine( QTextCursor *cursor,
             // formula senza spazi bianchi
             QString realFormula;
             if( measure != NULL ){
-                realFormula = measure->projFormula();
+                realFormula = measure->formula();
                 realFormula.remove(" ");
             }
 
@@ -2448,7 +2448,7 @@ void AccountingLSBillItem::writeODTBillLine( QTextCursor *cursor,
             if( !(realFormula.isEmpty()) ){
                 cursor->insertBlock();
                 cursor->setCharFormat( txtFormulaCharFormat );
-                cursor->insertText( measure->projFormula() );
+                cursor->insertText( measure->formula() );
 
                 // unita di misura
                 AccountingLSBillItemPrivate::writeCell( cursor, table, centralFormat, tagBlockFormat, unitMeasureTag );
@@ -2720,7 +2720,7 @@ void AccountingLSBillItem::writeODTBillLine( QTextCursor *cursor,
 
             if( measure != NULL ){
                 // formula senza spazi bianchi
-                QString projFormula = measure->projFormula();
+                QString projFormula = measure->formula();
                 projFormula.remove(" ");
                 QString accFormula = measure->accFormula();
                 accFormula.remove(" ");
@@ -2765,7 +2765,7 @@ void AccountingLSBillItem::writeODTBillLine( QTextCursor *cursor,
                     }
                     cursor->setCharFormat( txtFormulaCharFormat );
                     if( !(projFormula.isEmpty()) ){
-                        cursor->insertText( "(1) " + measure->projFormula() );
+                        cursor->insertText( "(1) " + measure->formula() );
                     }
                     if( (measure->accDate() >= dateBegin) && (measure->accDate() <= dateEnd) && !(accFormula.isEmpty()) ){
                         if( !(projFormula.isEmpty()) ){

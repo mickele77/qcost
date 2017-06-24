@@ -15,7 +15,8 @@ public:
     AccountingLSMeasuresModelPrivate( MathParser * p, UnitMeasure * ump ):
         parserWasCreated(false),
         unitMeasure(ump),
-        projQuantity( 0.0 ){
+        projQuantity( 0.0 ),
+        accQuantity(0.0){
         if( p == NULL ){
             parser = new MathParser( QLocale::system() );
             parserWasCreated = true;
@@ -119,7 +120,7 @@ QVariant AccountingLSMeasuresModel::data(const QModelIndex &index, int role) con
                     return QVariant( m_d->linesContainer.at(index.row())->comment());
                 }
                 if( index.column() == AccountingLSMeasuresModelPrivate::projFormulaCol ){
-                    return QVariant( m_d->linesContainer.at(index.row())->projFormula() );
+                    return QVariant( m_d->linesContainer.at(index.row())->formula() );
                 }
                 if( index.column() == AccountingLSMeasuresModelPrivate::projQuantityCol ){
                     return QVariant( m_d->linesContainer.at(index.row())->projQuantityStr());
@@ -373,7 +374,7 @@ void AccountingLSMeasuresModel::setUnitMeasure(UnitMeasure *ump) {
 }
 
 void AccountingLSMeasuresModel::writeXml(QXmlStreamWriter *writer) {
-    writer->writeStartElement( "MeasuresLSModel" );
+    writer->writeStartElement( "AccountingLSMeasuresModel" );
     for( QList<AccountingLSMeasure *>::iterator i = m_d->linesContainer.begin(); i != m_d->linesContainer.end(); ++i ){
         (*i)->writeXml( writer );
     }
@@ -384,9 +385,9 @@ void AccountingLSMeasuresModel::readXml(QXmlStreamReader *reader) {
     bool firstLine = true;
     while( !reader->atEnd() &&
            !reader->hasError() &&
-           !(reader->isEndElement() && reader->name().toString().toUpper() == "MEASURESLSMODEL") ){
+           !(reader->isEndElement() && reader->name().toString().toUpper() == "ACCOUNTINGLSMEASURESMODEL") ){
         reader->readNext();
-        if( reader->name().toString().toUpper() == "MEASURELS" && reader->isStartElement()) {
+        if( reader->name().toString().toUpper() == "ACCOUNTINGLSMEASURE" && reader->isStartElement()) {
             if( firstLine ){
                 m_d->linesContainer.last()->loadFromXml( reader->attributes() );
                 firstLine = false;

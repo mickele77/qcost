@@ -54,8 +54,8 @@ signals:
     void modelChanged();
 
 private slots:
-    void updateProjQuantity();
     void updateAllProjQuantities();
+    void updateProjQuantity();
     void updateAccQuantity();
     void updateAllAccQuantities();
 private:

@@ -40,7 +40,7 @@ public:
         name(n),
         priceFieldModel(pfm),
         parser(prs),
-        rootItem(new AccountingTAMBillItem( NULL, AccountingBillItem::Root, pfm, parser )),
+        rootItem(new AccountingTAMBillItem( NULL, AccountingTAMBillItem::Root, pfm, parser )),
         priceList( NULL ),
         attributesModel( new AttributesModel( b, parser, pfm )),
         priceListIdTmp(0){
@@ -81,7 +81,7 @@ AccountingTAMBill::AccountingTAMBill( const QString &n, ProjectItem *parent, Pri
     ProjectItem(parent),
     m_d( new AccountingTAMBillPrivate( n, this, pfm, parser ) ) {
 
-    connect( m_d->rootItem, static_cast<void(AccountingBillItem::*)(AccountingBillItem*,int)>(&AccountingBillItem::dataChanged), this, &AccountingTAMBill::updateValue );
+    connect( m_d->rootItem, static_cast<void(AccountingTAMBillItem::*)(AccountingTAMBillItem*,int)>(&AccountingTAMBillItem::dataChanged), this, &AccountingTAMBill::updateValue );
 
     connect( m_d->rootItem, &AccountingTAMBillItem::totalAmountToDiscountChanged, this, &AccountingTAMBill::totalAmountToDiscountChanged );
     connect( m_d->rootItem, &AccountingTAMBillItem::amountNotToDiscountChanged, this, &AccountingTAMBill::amountNotToDiscountChanged );
@@ -102,7 +102,7 @@ AccountingTAMBill::AccountingTAMBill(AccountingTAMBill & b):
 
     *this = b;
 
-    connect( m_d->rootItem, static_cast<void(AccountingBillItem::*)(AccountingBillItem*,int)>(&AccountingBillItem::dataChanged), this, &AccountingTAMBill::updateValue );
+    connect( m_d->rootItem, static_cast<void(AccountingTAMBillItem::*)(AccountingTAMBillItem*,int)>(&AccountingTAMBillItem::dataChanged), this, &AccountingTAMBill::updateValue );
 
     connect( m_d->rootItem, &AccountingTAMBillItem::totalAmountToDiscountChanged, this, &AccountingTAMBill::totalAmountToDiscountChanged );
     connect( m_d->rootItem, &AccountingTAMBillItem::amountNotToDiscountChanged, this, &AccountingTAMBill::amountNotToDiscountChanged );
@@ -116,7 +116,7 @@ AccountingTAMBill::AccountingTAMBill(AccountingTAMBill & b):
 }
 
 AccountingTAMBill::~AccountingTAMBill(){
-    disconnect( m_d->rootItem, static_cast<void(AccountingBillItem::*)(AccountingBillItem*,int)>(&AccountingBillItem::dataChanged), this, &AccountingTAMBill::updateValue );
+    disconnect( m_d->rootItem, static_cast<void(AccountingTAMBillItem::*)(AccountingTAMBillItem*,int)>(&AccountingTAMBillItem::dataChanged), this, &AccountingTAMBill::updateValue );
 
     disconnect( m_d->rootItem, &AccountingTAMBillItem::totalAmountToDiscountChanged, this, &AccountingTAMBill::totalAmountToDiscountChanged );
     disconnect( m_d->rootItem, &AccountingTAMBillItem::amountNotToDiscountChanged, this, &AccountingTAMBill::amountNotToDiscountChanged );
@@ -124,7 +124,7 @@ AccountingTAMBill::~AccountingTAMBill(){
     disconnect( m_d->rootItem, &AccountingTAMBillItem::amountDiscountedChanged, this, &AccountingTAMBill::amountDiscountedChanged );
     disconnect( m_d->rootItem, &AccountingTAMBillItem::totalAmountChanged, this, &AccountingTAMBill::totalAmountChanged );
 
-    disconnect( m_d->rootItem, &AccountingBillItem::itemChanged, this, &AccountingTAMBill::modelChanged );
+    disconnect( m_d->rootItem, &AccountingTAMBillItem::itemChanged, this, &AccountingTAMBill::modelChanged );
 
     disconnect( m_d->attributesModel, &AttributesModel::modelChanged, this, &AccountingTAMBill::modelChanged );
 
@@ -255,8 +255,8 @@ void AccountingTAMBill::setPriceList(PriceList *pl, AccountingTAMBill::SetPriceL
             if( m_d->priceList != NULL ){
                 if( plMode == SearchAndAdd ){
                     // cerca in base al codice e aggiunge se manca
-                    QList<AccountingBillItem *> allItems = m_d->rootItem->allChildren();
-                    for(QList<AccountingBillItem *>::iterator i = allItems.begin(); i != allItems.end(); ++i ){
+                    QList<AccountingTAMBillItem *> allItems = m_d->rootItem->allChildren();
+                    for(QList<AccountingTAMBillItem *>::iterator i = allItems.begin(); i != allItems.end(); ++i ){
                         PriceItem * newPriceItem = NULL;
                         if( (*i)->priceItem()!= NULL ){
                             newPriceItem = pl->priceItemCode( (*i)->priceItem()->code() );
@@ -270,8 +270,8 @@ void AccountingTAMBill::setPriceList(PriceList *pl, AccountingTAMBill::SetPriceL
                     }
                 } else if( plMode == Add ){
                     // aggiunge sempre e comunque
-                    QList<AccountingBillItem *> allItems = m_d->rootItem->allChildren();
-                    for(QList<AccountingBillItem *>::iterator i = allItems.begin(); i != allItems.end(); ++i ){
+                    QList<AccountingTAMBillItem *> allItems = m_d->rootItem->allChildren();
+                    for(QList<AccountingTAMBillItem *>::iterator i = allItems.begin(); i != allItems.end(); ++i ){
                         PriceItem * newPriceItem = NULL;
                         if( (*i)->priceItem()!= NULL ){
                             newPriceItem = pl->appendPriceItem();
@@ -282,14 +282,14 @@ void AccountingTAMBill::setPriceList(PriceList *pl, AccountingTAMBill::SetPriceL
                     }
                 } else if( plMode == Search ){
                     // cerca
-                    QList<AccountingBillItem *> allItems = m_d->rootItem->allChildren();
-                    for(QList<AccountingBillItem *>::iterator i = allItems.begin(); i != allItems.end(); ++i ){
+                    QList<AccountingTAMBillItem *> allItems = m_d->rootItem->allChildren();
+                    for(QList<AccountingTAMBillItem *>::iterator i = allItems.begin(); i != allItems.end(); ++i ){
                         (*i)->setPriceItem( pl->priceItemCode( (*i)->priceItem()->code() ) );
                     }
                 } else if( plMode == NULLPriceItem ){
                     // annulla
-                    QList<AccountingBillItem *> allItems = m_d->rootItem->allChildren();
-                    for(QList<AccountingBillItem *>::iterator i = allItems.begin(); i != allItems.end(); ++i ){
+                    QList<AccountingTAMBillItem *> allItems = m_d->rootItem->allChildren();
+                    for(QList<AccountingTAMBillItem *>::iterator i = allItems.begin(); i != allItems.end(); ++i ){
                         (*i)->setPriceItem( NULL );
                     }
                 } else if( plMode == ResetBill ){
@@ -420,7 +420,7 @@ bool AccountingTAMBill::setData(const QModelIndex &index, const QVariant &value,
     return result;
 }
 
-bool AccountingTAMBill::insertItems(AccountingBillItem::ItemType mt, int inputPos, int count, const QModelIndex &parent) {
+bool AccountingTAMBill::insertItems(AccountingTAMBillItem::ItemType mt, int inputPos, int count, const QModelIndex &parent) {
     AccountingTAMBillItem *parentItem = item(parent);
 
     int position = inputPos;
@@ -485,14 +485,6 @@ QModelIndex AccountingTAMBill::index(int row, int column, const QModelIndex &par
     return QModelIndex();
 }
 
-QModelIndex AccountingTAMBill::index( AccountingBillItem *item, int column) const {
-    AccountingTAMBillItem * tamItem = dynamic_cast<AccountingTAMBillItem *>(item);
-    if( tamItem ){
-        return index( tamItem, column );
-    }
-    return QModelIndex();
-}
-
 QModelIndex AccountingTAMBill::index( AccountingTAMBillItem *item, int column) const {
     if (item == NULL )
         return QModelIndex();
@@ -519,8 +511,8 @@ bool AccountingTAMBill::moveRows(const QModelIndex &sourceParent, int sourceRow,
     return false;
 }
 
-void AccountingTAMBill::updateValue(AccountingBillItem * item, int column) {
-    QModelIndex i = index( dynamic_cast<AccountingTAMBillItem *>(item), column);
+void AccountingTAMBill::updateValue(AccountingTAMBillItem *item, int column) {
+    QModelIndex i = index( item, column);
     emit dataChanged( i, i);
 }
 
@@ -668,11 +660,11 @@ void AccountingTAMBill::readXml20(QXmlStreamReader *reader, ProjectPriceListPare
         if( tag == "ACCOUNTINGATTRIBUTEMODEL" && reader->isStartElement()) {
             m_d->attributesModel->readXml20( reader );
         }
-        if( tag == "ACCOUNTINGBILLITEM" && reader->isStartElement()) {
+        if( tag == "AccountingTAMBillItem" && reader->isStartElement()) {
             m_d->rootItem->readXmlTmp20( reader );
         }
     }
-    m_d->rootItem->readFromXmlTmp20( NULL, NULL, m_d->priceList, m_d->attributesModel );
+    m_d->rootItem->readFromXmlTmp20( m_d->priceList, m_d->attributesModel );
     m_d->rootItem->updateProgCode();
     m_d->rootItem->updateAccountingProgCode();
 }
@@ -692,11 +684,11 @@ void AccountingTAMBill::loadFromXml20(const QXmlStreamAttributes &attrs, Project
         if( nameUp == "PRICEDATASET" ){
             m_d->rootItem->setCurrentPriceDataSet( (*i).value().toInt() );
         }
-        if( nameUp == "DATEBEGIN" ){
-            m_d->rootItem->setDateBegin( (*i).value().toString() );
+        if( nameUp == "STARTDATE" ){
+            m_d->rootItem->setStartDate( (*i).value().toString() );
         }
-        if( nameUp == "DATEEND" ){
-            m_d->rootItem->setDateEnd( (*i).value().toString() );
+        if( nameUp == "ENDDATE" ){
+            m_d->rootItem->setEndDate( (*i).value().toString() );
         }
         if( nameUp == "DISCOUNT" ){
             m_d->rootItem->setDiscount( (*i).value().toDouble() );
@@ -743,11 +735,11 @@ void AccountingTAMBill::loadFromXmlTmp20(const QXmlStreamAttributes &attrs) {
         if( nameUp == "PRICEDATASET" ){
             m_d->rootItem->setCurrentPriceDataSet( (*i).value().toInt() );
         }
-        if( nameUp == "DATEBEGIN" ){
-            m_d->rootItem->setDateBegin( (*i).value().toString() );
+        if( nameUp == "STARTDATE" ){
+            m_d->rootItem->setStartDate( (*i).value().toString() );
         }
-        if( nameUp == "DATEEND" ){
-            m_d->rootItem->setDateEnd( (*i).value().toString() );
+        if( nameUp == "ENDDATE" ){
+            m_d->rootItem->setEndDate( (*i).value().toString() );
         }
     }
 }
@@ -780,7 +772,7 @@ void AccountingTAMBill::writeODTAttributeAccountingOnTable(QTextCursor *cursor,
 
 void AccountingTAMBill::readFromXmlTmp( ProjectPriceListParentItem * priceLists ) {
     m_d->priceList = priceLists->priceListId( m_d->priceListIdTmp );
-    m_d->rootItem->readFromXmlTmp20( NULL, NULL, m_d->priceList, m_d->attributesModel );
+    m_d->rootItem->readFromXmlTmp20( m_d->priceList, m_d->attributesModel );
 }
 
 void AccountingTAMBill::insertStandardAttributes(){

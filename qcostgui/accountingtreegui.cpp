@@ -370,7 +370,7 @@ void AccountingTreeGUI::pasteFromClipboard(){
                     if( mode == QCostClipboardData::Copy ){
                         if( itemsToCopyAccounting->priceList() != m_d->accountingTAMBill->priceList() ){
                             for( QList<AccountingTAMBillItem *>::iterator i=itemsToCopy.begin(); i != itemsToCopy.end(); ++i ){
-                                if( (*i)->itemType() == AccountingBillItem::PPU ){
+                                if( (*i)->itemType() == AccountingTAMBillItem::PPU ){
                                     PriceItem * pItem = m_d->accountingTAMBill->priceList()->priceItemCode( (*i)->priceItem()->codeFull() );
                                     if( pItem == NULL ){
                                         pItem = m_d->accountingTAMBill->priceList()->appendPriceItem();
@@ -465,10 +465,18 @@ void AccountingTreeGUI::editAccountingData( const QModelIndex & index ){
     if( m_d->accountingTAMBill != NULL ){
         if( index.column() == 4 ){
             if( m_d->accountingTAMBill->item(index)->itemType() == AccountingTAMBillItem::PPU ){
-                QDate d = m_d->accountingTAMBill->item( index )->date();
+                QDate d = m_d->accountingTAMBill->item( index )->startDate();
                 QCalendarDialog dialog( &d, this );
                 if( dialog.exec() == QDialog::Accepted ){
-                    m_d->accountingBill->item( index )->setDate( d );
+                    m_d->accountingTAMBill->item( index )->setStartDate( d );
+                }
+            }
+        } else if( index.column() == 5 ){
+            if( m_d->accountingTAMBill->item(index)->itemType() == AccountingTAMBillItem::PPU ){
+                QDate d = m_d->accountingTAMBill->item( index )->endDate();
+                QCalendarDialog dialog( &d, this );
+                if( dialog.exec() == QDialog::Accepted ){
+                    m_d->accountingTAMBill->item( index )->setEndDate( d );
                 }
             }
         } else if( (index.column() == 1) ||
@@ -710,16 +718,16 @@ void AccountingTreeGUI::updateActiveActions() {
         }
     } else if( m_d->accountingTAMBill != NULL ){
         AccountingTAMBillItem * currItem = m_d->accountingTAMBill->item( m_d->ui->treeView->selectionModel()->currentIndex() );
-        if( currItem->itemType() == AccountingBillItem::Root ){
+        if( currItem->itemType() == AccountingTAMBillItem::Root ){
             m_d->addTAMBillAction->setEnabled( true );
             m_d->addTAMPPUAction->setEnabled( false );
             m_d->addTAMCommentAction->setEnabled( false );
-        } else if( currItem->itemType() == AccountingBillItem::Payment ) {
+        } else if( currItem->itemType() == AccountingTAMBillItem::Payment ) {
             m_d->addTAMBillAction->setEnabled( true );
             m_d->addTAMPPUAction->setEnabled( true );
             m_d->addTAMCommentAction->setEnabled( true );
-        } else if( (currItem->itemType() == AccountingBillItem::Comment) ||
-                   (currItem->itemType() == AccountingBillItem::PPU) ) {
+        } else if( (currItem->itemType() == AccountingTAMBillItem::Comment) ||
+                   (currItem->itemType() == AccountingTAMBillItem::PPU) ) {
             m_d->addTAMBillAction->setEnabled( false );
             m_d->addTAMPPUAction->setEnabled( true );
             m_d->addTAMCommentAction->setEnabled( true );
@@ -970,23 +978,23 @@ void AccountingTreeGUI::addItems(){
 
                 if( sender() == m_d->addTAMBillAction ) {
                     if( item->itemType() == AccountingTAMBillItem::Payment ){
-                        ret = m_d->accountingTAMBill->insertItems(  AccountingBillItem::Payment, item->childNumber(), rowList.size(), rowList.last().parent() );
+                        ret = m_d->accountingTAMBill->insertItems(  AccountingTAMBillItem::Payment, item->childNumber(), rowList.size(), rowList.last().parent() );
                     } else {
-                        ret = m_d->accountingTAMBill->insertItems( AccountingBillItem::Payment, rowList.last().parent().row()+1, rowList.size(), rowList.last().parent() );
+                        ret = m_d->accountingTAMBill->insertItems( AccountingTAMBillItem::Payment, rowList.last().parent().row()+1, rowList.size(), rowList.last().parent() );
                     }
                 } else if( sender() == m_d->addTAMCommentAction ) {
-                    if( item->itemType() == AccountingBillItem::Payment ){
-                        ret = m_d->accountingTAMBill->insertItems( AccountingBillItem::Comment, 0, rowList.size(), rowList.last() );
-                    } else if( (item->itemType() == AccountingBillItem::Comment) ||
-                               (item->itemType() == AccountingBillItem::PPU) ){
-                        ret = m_d->accountingTAMBill->insertItems( AccountingBillItem::Comment, rowList.last().row()+1, rowList.size(), rowList.last().parent() );
+                    if( item->itemType() == AccountingTAMBillItem::Payment ){
+                        ret = m_d->accountingTAMBill->insertItems( AccountingTAMBillItem::Comment, 0, rowList.size(), rowList.last() );
+                    } else if( (item->itemType() == AccountingTAMBillItem::Comment) ||
+                               (item->itemType() == AccountingTAMBillItem::PPU) ){
+                        ret = m_d->accountingTAMBill->insertItems( AccountingTAMBillItem::Comment, rowList.last().row()+1, rowList.size(), rowList.last().parent() );
                     }
                 } else if( sender() == m_d->addTAMPPUAction ) {
-                    if( item->itemType() == AccountingBillItem::Payment ){
-                        ret = m_d->accountingTAMBill->insertItems( AccountingBillItem::PPU, 0, rowList.size(), rowList.last() );
-                    } else if( (item->itemType() == AccountingBillItem::Comment) ||
-                               (item->itemType() == AccountingBillItem::PPU) ){
-                        ret = m_d->accountingTAMBill->insertItems( AccountingBillItem::PPU, rowList.last().row()+1, rowList.size(), rowList.last().parent() );
+                    if( item->itemType() == AccountingTAMBillItem::Payment ){
+                        ret = m_d->accountingTAMBill->insertItems( AccountingTAMBillItem::PPU, 0, rowList.size(), rowList.last() );
+                    } else if( (item->itemType() == AccountingTAMBillItem::Comment) ||
+                               (item->itemType() == AccountingTAMBillItem::PPU) ){
+                        ret = m_d->accountingTAMBill->insertItems( AccountingTAMBillItem::PPU, rowList.last().row()+1, rowList.size(), rowList.last().parent() );
                     }
                 } else {
                     return;
@@ -997,7 +1005,7 @@ void AccountingTreeGUI::addItems(){
                         m_d->ui->treeView->selectionModel()->clearSelection();
                         if( ((sender() == m_d->addTAMCommentAction) ||
                              (sender() == m_d->addTAMPPUAction) ) &&
-                                (item->itemType() == AccountingBillItem::Payment ) ) {
+                                (item->itemType() == AccountingTAMBillItem::Payment ) ) {
                             m_d->ui->treeView->selectionModel()->setCurrentIndex( m_d->accountingTAMBill->index( 0, 0, rowList.last() ),
                                                                                   QItemSelectionModel::Rows | QItemSelectionModel::SelectCurrent );
                         } else
@@ -1007,7 +1015,7 @@ void AccountingTreeGUI::addItems(){
                 }
             } else if( sender() == m_d->addTAMBillAction ) {
                 if( sender() == m_d->addTAMBillAction ) {
-                    m_d->accountingTAMBill->insertItems( AccountingBillItem::Payment );
+                    m_d->accountingTAMBill->insertItems( AccountingTAMBillItem::Payment );
                 }
             }
         }

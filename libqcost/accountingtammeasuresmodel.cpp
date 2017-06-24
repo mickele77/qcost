@@ -1,5 +1,6 @@
 #include "accountingtammeasuresmodel.h"
 
+#include "accountingtambillitem.h"
 #include "accountingtammeasure.h"
 #include "unitmeasure.h"
 #include "mathparser.h"
@@ -12,10 +13,11 @@
 
 class AccountingTAMMeasuresModelPrivate{
 public:
-    AccountingTAMMeasuresModelPrivate( MathParser * p, UnitMeasure * ump ):
+    AccountingTAMMeasuresModelPrivate( AccountingTAMBillItem * tamBItem, MathParser * p, UnitMeasure * ump ):
+        tamBillItem( tamBItem ),
         parserWasCreated(false),
         unitMeasure(ump),
-        projQuantity( 0.0 ){
+        quantity( 0.0 ){
         if( p == NULL ){
             parser = new MathParser( QLocale::system() );
             parserWasCreated = true;
@@ -29,40 +31,36 @@ public:
         }
     }
 
+    int quantityCol(){
+        return firstFormulaCol + tamBillItem->daysCount() ;
+    }
+
+    int lastFormulaCol(){
+        return firstFormulaCol + tamBillItem->daysCount() - 1;
+    }
+
+    AccountingTAMBillItem * tamBillItem;
     MathParser * parser;
     bool parserWasCreated;
     UnitMeasure * unitMeasure;
     QList<AccountingTAMMeasure *> linesContainer;
-    double projQuantity;
-    double accQuantity;
+    double quantity;
+
 
     static int commentCol;
-    static int projFormulaCol;
-    static int projQuantityCol;
-    static int accDateCol;
-    static int accFormulaCol;
-    static int accQuantityCol;
+    static int firstFormulaCol;
 };
 
 int AccountingTAMMeasuresModelPrivate::commentCol = 0;
-int AccountingTAMMeasuresModelPrivate::projFormulaCol = 1;
-int AccountingTAMMeasuresModelPrivate::projQuantityCol = 2;
-int AccountingTAMMeasuresModelPrivate::accDateCol = 3;
-int AccountingTAMMeasuresModelPrivate::accFormulaCol = 4;
-int AccountingTAMMeasuresModelPrivate::accQuantityCol = 5;
+int AccountingTAMMeasuresModelPrivate::firstFormulaCol = 1;
 
-int AccountingTAMMeasuresModel::accDateCol(){
-    return 3;
-}
-
-AccountingTAMMeasuresModel::AccountingTAMMeasuresModel(MathParser * p, UnitMeasure * ump, QObject *parent) :
+AccountingTAMMeasuresModel::AccountingTAMMeasuresModel( AccountingTAMBillItem * tamBItem, MathParser * p, UnitMeasure * ump, QObject *parent) :
     QAbstractTableModel(parent),
-    m_d(new AccountingTAMMeasuresModelPrivate( p, ump )){
+    m_d(new AccountingTAMMeasuresModelPrivate( tamBItem, p, ump )){
     insertRows(0);
 
     if( m_d->unitMeasure != NULL ){
-        connect( m_d->unitMeasure, &UnitMeasure::precisionChanged, this, &AccountingTAMMeasuresModel::updateAllProjQuantities );
-        connect( m_d->unitMeasure, &UnitMeasure::precisionChanged, this, &AccountingTAMMeasuresModel::updateAllAccQuantities );
+        connect( m_d->unitMeasure, &UnitMeasure::precisionChanged, this, &AccountingTAMMeasuresModel::updateQuantity );
     }
 }
 
@@ -91,21 +89,16 @@ int AccountingTAMMeasuresModel::rowCount(const QModelIndex &) const {
 }
 
 int AccountingTAMMeasuresModel::columnCount(const QModelIndex &) const {
-    return 3+3;
+    return m_d->tamBillItem->daysCount() + 2;
 }
 
 Qt::ItemFlags AccountingTAMMeasuresModel::flags(const QModelIndex &index) const {
     if( index.isValid() ){
-        if( index.column() == AccountingTAMMeasuresModelPrivate::commentCol || index.column() == AccountingTAMMeasuresModelPrivate::projFormulaCol ){
+        if( index.column() == AccountingTAMMeasuresModelPrivate::commentCol ||
+                (index.column() >= AccountingTAMMeasuresModelPrivate::firstFormulaCol && index.column() >= m_d->lastFormulaCol() ) ){
             return Qt::ItemIsEnabled | Qt::ItemIsEditable | Qt::ItemIsSelectable;
-        } else if( index.column() == AccountingTAMMeasuresModelPrivate::projQuantityCol || index.column() == AccountingTAMMeasuresModelPrivate::accQuantityCol || index.column() == AccountingTAMMeasuresModelPrivate::accDateCol ){
+        } else if( index.column() == m_d->quantityCol() ){
             return Qt::ItemIsEnabled | Qt::ItemIsSelectable;
-        } else if( index.column() == AccountingTAMMeasuresModelPrivate::accFormulaCol ){
-            if( data(index, Qt::CheckStateRole).toInt() == Qt::Checked ){
-                return Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsUserCheckable;
-            } else {
-                return Qt::ItemIsEnabled | Qt::ItemIsEditable | Qt::ItemIsSelectable | Qt::ItemIsUserCheckable;
-            }
         }
     }
     return Qt::NoItemFlags;
@@ -118,42 +111,16 @@ QVariant AccountingTAMMeasuresModel::data(const QModelIndex &index, int role) co
                 if( index.column() == AccountingTAMMeasuresModelPrivate::commentCol ){
                     return QVariant( m_d->linesContainer.at(index.row())->comment());
                 }
-                if( index.column() == AccountingTAMMeasuresModelPrivate::projFormulaCol ){
-                    return QVariant( m_d->linesContainer.at(index.row())->projFormula() );
+                if(index.column() >= AccountingTAMMeasuresModelPrivate::firstFormulaCol && index.column() >= m_d->lastFormulaCol() ){
+                    return QVariant( m_d->linesContainer.at(index.row())->formula( index.column() - AccountingTAMMeasuresModelPrivate::firstFormulaCol ) );
                 }
-                if( index.column() == AccountingTAMMeasuresModelPrivate::projQuantityCol ){
-                    return QVariant( m_d->linesContainer.at(index.row())->projQuantityStr());
-                }
-                if( index.column() == AccountingTAMMeasuresModelPrivate::accDateCol ){
-                    return QVariant( m_d->linesContainer.at(index.row())->accDateStr() );
-                }
-                if( index.column() == AccountingTAMMeasuresModelPrivate::accFormulaCol ){
-                    return QVariant( m_d->linesContainer.at(index.row())->accFormula() );
-                }
-                if( index.column() == AccountingTAMMeasuresModelPrivate::accQuantityCol ){
-                    return QVariant( m_d->linesContainer.at(index.row())->accQuantityStr() );
-                }
-            }
-            if( role == Qt::CheckStateRole ){
-                if( index.column() == AccountingTAMMeasuresModelPrivate::accFormulaCol ){
-                    if( m_d->linesContainer.at(index.row())->accFormulaFromProj() ){
-                        return QVariant( Qt::Checked );
-                    } else {
-                        return QVariant( Qt::Unchecked );
-                    }
+                if( index.column() == m_d->quantityCol() ){
+                    return QVariant( m_d->linesContainer.at(index.row())->quantityStr());
                 }
             }
             if( role == Qt::TextAlignmentRole ){
                 if( index.column() == AccountingTAMMeasuresModelPrivate::commentCol ){
                     return Qt::AlignLeft + Qt::AlignVCenter;
-                }
-                if( (index.column() == AccountingTAMMeasuresModelPrivate::accFormulaCol) ||
-                        (index.column() == AccountingTAMMeasuresModelPrivate::projFormulaCol) ){
-                    return Qt::AlignLeft + Qt::AlignVCenter;
-                }
-                if( (index.column() == AccountingTAMMeasuresModelPrivate::accQuantityCol) ||
-                        (index.column() == AccountingTAMMeasuresModelPrivate::projQuantityCol) ){
-                    return Qt::AlignRight + Qt::AlignVCenter;
                 }
             }
         }
@@ -171,37 +138,14 @@ bool AccountingTAMMeasuresModel::setData(const QModelIndex &index, const QVarian
                     emit modelChanged();
                     return true;
                 }
-                if( index.column() == AccountingTAMMeasuresModelPrivate::projFormulaCol ){
-                    m_d->linesContainer.at(index.row())->setProjFormula( value.toString() );
+                if(index.column() >= AccountingTAMMeasuresModelPrivate::firstFormulaCol && index.column() >= m_d->lastFormulaCol() ){
+                    m_d->linesContainer.at(index.row())->setFormula( index.column() - AccountingTAMMeasuresModelPrivate::firstFormulaCol, value.toString() );
                     emit dataChanged( index, index );
-                    QModelIndex changedIndex = createIndex( index.row(), AccountingTAMMeasuresModelPrivate::projQuantityCol );
+                    QModelIndex changedIndex = createIndex( index.row(), m_d->quantityCol() );
                     emit dataChanged( changedIndex, changedIndex );
-                    updateProjQuantity();
-                    if( m_d->linesContainer.at(index.row())->accFormulaFromProj() ){
-                        changedIndex = createIndex( index.row(), AccountingTAMMeasuresModelPrivate::accFormulaCol );
-                        emit dataChanged( changedIndex, changedIndex );
-                        changedIndex = createIndex( index.row(), AccountingTAMMeasuresModelPrivate::accQuantityCol );
-                        emit dataChanged( changedIndex, changedIndex );
-                        updateAccQuantity();
-                    }
+                    updateQuantity();
                     emit modelChanged();
                     return true;
-                }
-                if( index.column() == AccountingTAMMeasuresModelPrivate::accFormulaCol ){
-                    m_d->linesContainer.at(index.row())->setAccFormula( value.toString() );
-                    emit dataChanged( index, index );
-                    QModelIndex quantityIndex = createIndex( index.row(), AccountingTAMMeasuresModelPrivate::accQuantityCol );
-                    emit dataChanged( quantityIndex, quantityIndex );
-                    updateAccQuantity();
-                    emit modelChanged();
-                    return true;
-                }
-            } else if( role == Qt::CheckStateRole  ){
-                if( index.column() == AccountingTAMMeasuresModelPrivate::accFormulaCol ){
-                    m_d->linesContainer.at(index.row())->setAccFormulaFromProj( value.toInt() == Qt::Checked );
-                    emit dataChanged( index, index );
-                    QModelIndex quantityIndex = createIndex( index.row(), AccountingTAMMeasuresModelPrivate::accQuantityCol );
-                    emit dataChanged( quantityIndex, quantityIndex );
                 }
             }
         }
@@ -217,19 +161,10 @@ QVariant AccountingTAMMeasuresModel::headerData(int section, Qt::Orientation ori
         if( section == AccountingTAMMeasuresModelPrivate::commentCol ) {
             return trUtf8("Commento");
         }
-        if( section == AccountingTAMMeasuresModelPrivate::projFormulaCol ) {
-            return trUtf8("Misura prog.");
+        if( section >= AccountingTAMMeasuresModelPrivate::firstFormulaCol && section >= m_d->lastFormulaCol() ) {
+            return m_d->tamBillItem->dayStr( section - AccountingTAMMeasuresModelPrivate::firstFormulaCol );
         }
-        if( section == AccountingTAMMeasuresModelPrivate::projQuantityCol ) {
-            return trUtf8("Quantità prog.");
-        }
-        if( section == AccountingTAMMeasuresModelPrivate::accDateCol ) {
-            return trUtf8("Data Misura");
-        }
-        if( section == AccountingTAMMeasuresModelPrivate::accFormulaCol ) {
-            return trUtf8("Misura");
-        }
-        if( section == AccountingTAMMeasuresModelPrivate::accQuantityCol ) {
+        if( section == m_d->quantityCol() ) {
             return trUtf8("Quantità");
         }
     } else if( orientation == Qt::Vertical ){
@@ -252,8 +187,7 @@ bool AccountingTAMMeasuresModel::insertRows(int row, int count, const QModelInde
     beginInsertRows(QModelIndex(), row, row+count-1 );
     for(int i=0; i < count; ++i){
         AccountingTAMMeasure * itemLine = new AccountingTAMMeasure( m_d->parser, m_d->unitMeasure );
-        connect( itemLine, &AccountingTAMMeasure::projQuantityChanged, this, &AccountingTAMMeasuresModel::updateProjQuantity );
-        connect( itemLine, &AccountingTAMMeasure::accQuantityChanged, this, &AccountingTAMMeasuresModel::updateAccQuantity );
+        connect( itemLine, &AccountingTAMMeasure::quantityChanged, this, &AccountingTAMMeasuresModel::updateQuantity );
         m_d->linesContainer.insert( row, itemLine );
     }
     endInsertRows();
@@ -287,7 +221,7 @@ bool AccountingTAMMeasuresModel::removeRows(int row, int count, const QModelInde
         m_d->linesContainer.removeAt( row );
     }
     endRemoveRows();
-    updateProjQuantity();
+    updateQuantity();
     emit modelChanged();
     return true;
 }
@@ -296,65 +230,26 @@ bool AccountingTAMMeasuresModel::append( int count ){
     return insertRows( m_d->linesContainer.size(), count );
 }
 
-void AccountingTAMMeasuresModel::updateProjQuantity() {
+double AccountingTAMMeasuresModel::quantity() {
+    return m_d->quantity;
+}
+
+void AccountingTAMMeasuresModel::updateQuantity() {
     double ret = 0.0;
     for( QList<AccountingTAMMeasure *>::iterator i = m_d->linesContainer.begin(); i != m_d->linesContainer.end(); ++i ){
-        ret += (*i)->projQuantity();
+        ret += (*i)->quantity();
     }
-    if( ret != m_d->projQuantity ){
-        m_d->projQuantity = ret;
-        emit projQuantityChanged( ret );
+    if( ret != m_d->quantity ){
+        m_d->quantity = ret;
+        emit quantityChanged( ret );
     }
-}
-
-double AccountingTAMMeasuresModel::projQuantity(){
-    return m_d->projQuantity;
-}
-
-void AccountingTAMMeasuresModel::updateAllProjQuantities() {
-    updateProjQuantity();
-    if( m_d->linesContainer.size() != 0 ){
-        emit dataChanged( createIndex(0, 2), createIndex(m_d->linesContainer.size()-1, 2) );
-    }
-}
-
-void AccountingTAMMeasuresModel::updateAccQuantity() {
-    double ret = 0.0;
-    for( QList<AccountingTAMMeasure *>::iterator i = m_d->linesContainer.begin(); i != m_d->linesContainer.end(); ++i ){
-        ret += (*i)->accQuantity();
-    }
-    if( ret != m_d->accQuantity ){
-        m_d->accQuantity = ret;
-        emit accQuantityChanged( ret );
-    }
-}
-
-double AccountingTAMMeasuresModel::accQuantity() {
-    return m_d->accQuantity;
-}
-
-double AccountingTAMMeasuresModel::accQuantity(const QDate &dBegin, const QDate &dEnd) {
-    double ret = 0.0;
-    for( QList<AccountingTAMMeasure *>::iterator i = m_d->linesContainer.begin(); i != m_d->linesContainer.end(); ++i ){
-        if( (*i)->accDate() >= dBegin && (*i)->accDate() <= dEnd ){
-            ret += (*i)->accQuantity();
-        }
-    }
-    return ret;
-}
-
-void AccountingTAMMeasuresModel::updateAllAccQuantities() {
-    if( m_d->linesContainer.size() != 0 ){
-        emit dataChanged( createIndex(0, 2), createIndex(m_d->linesContainer.size()-1, 2) );
-    }
-    updateAccQuantity();
 }
 
 void AccountingTAMMeasuresModel::setUnitMeasure(UnitMeasure *ump) {
     if( m_d->unitMeasure != ump ){
         beginResetModel();
         if( m_d->unitMeasure != NULL ){
-            disconnect( m_d->unitMeasure, &UnitMeasure::precisionChanged, this, &AccountingTAMMeasuresModel::updateAllProjQuantities );
+            disconnect( m_d->unitMeasure, &UnitMeasure::precisionChanged, this, &AccountingTAMMeasuresModel::updateQuantity );
         }
         m_d->unitMeasure = ump;
         for( QList<AccountingTAMMeasure *>::iterator i = m_d->linesContainer.begin(); i != m_d->linesContainer.end(); ++i ){
@@ -363,39 +258,45 @@ void AccountingTAMMeasuresModel::setUnitMeasure(UnitMeasure *ump) {
         if( m_d->linesContainer.size() != 0 ){
             emit dataChanged( createIndex(0, 2), createIndex(m_d->linesContainer.size()-1, 2) );
         }
-        updateProjQuantity();
+        updateQuantity();
         if( m_d->unitMeasure != NULL ){
-            connect( m_d->unitMeasure, &UnitMeasure::precisionChanged, this, &AccountingTAMMeasuresModel::updateAllProjQuantities );
+            connect( m_d->unitMeasure, &UnitMeasure::precisionChanged, this, &AccountingTAMMeasuresModel::updateQuantity );
         }
         endResetModel();
         emit modelChanged();
     }
 }
 
-void AccountingTAMMeasuresModel::writeXml(QXmlStreamWriter *writer) {
-    writer->writeStartElement( "MeasuresLSModel" );
+void AccountingTAMMeasuresModel::writeXml20(QXmlStreamWriter *writer) {
+    writer->writeStartElement( "AccountingTAMMeasuresModel" );
     for( QList<AccountingTAMMeasure *>::iterator i = m_d->linesContainer.begin(); i != m_d->linesContainer.end(); ++i ){
         (*i)->writeXml( writer );
     }
     writer->writeEndElement();
 }
 
-void AccountingTAMMeasuresModel::readXml(QXmlStreamReader *reader) {
+void AccountingTAMMeasuresModel::readXmlTmp20(QXmlStreamReader *reader) {
     bool firstLine = true;
     while( !reader->atEnd() &&
            !reader->hasError() &&
-           !(reader->isEndElement() && reader->name().toString().toUpper() == "MEASURESLSMODEL") ){
+           !(reader->isEndElement() && reader->name().toString().toUpper() == "MEASURESMODEL") ){
         reader->readNext();
-        if( reader->name().toString().toUpper() == "MEASURELS" && reader->isStartElement()) {
+        if( reader->name().toString().toUpper() == "MEASURE" && reader->isStartElement()) {
             if( firstLine ){
-                m_d->linesContainer.last()->loadFromXml( reader->attributes() );
+                m_d->linesContainer.last()->loadXmlTmp20( reader->attributes() );
                 firstLine = false;
             } else {
                 if(append()){
-                    m_d->linesContainer.last()->loadFromXml( reader->attributes() );
+                    m_d->linesContainer.last()->loadXmlTmp20( reader->attributes() );
                 }
             }
         }
+    }
+}
+
+void AccountingTAMMeasuresModel::readFromXmlTmp20() {
+    for( QList<AccountingTAMMeasure *>::iterator i = m_d->linesContainer.begin(); i != m_d->linesContainer.end(); ++i ){
+        (*i)->loadFromXmlTmp20();
     }
 }
 

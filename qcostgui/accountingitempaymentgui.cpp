@@ -56,8 +56,8 @@ AccountingItemPaymentGUI::~AccountingItemPaymentGUI() {
 void AccountingItemPaymentGUI::setAccountingItem(AccountingTAMBillItem *b) {
     if( m_d->TAMBillItem != b || m_d->billItem != NULL ){
         if( m_d->TAMBillItem != NULL ){
-            disconnect( m_d->TAMBillItem, &AccountingTAMBillItem::dateBeginChanged, this, &AccountingItemPaymentGUI::setDateBegin );
-            disconnect( m_d->TAMBillItem, &AccountingTAMBillItem::dateEndChanged, this, &AccountingItemPaymentGUI::setDateEnd );
+            disconnect( m_d->TAMBillItem, &AccountingTAMBillItem::startDateChanged, this, &AccountingItemPaymentGUI::setDateBegin );
+            disconnect( m_d->TAMBillItem, &AccountingTAMBillItem::endDateChanged, this, &AccountingItemPaymentGUI::setDateEnd );
             disconnect( m_d->TAMBillItem, &AccountingTAMBillItem::aboutToBeDeleted, this, &AccountingItemPaymentGUI::setAccountingItemNULL );
 
             disconnect( m_d->TAMBillItem, &AccountingTAMBillItem::totalAmountToDiscountChanged, m_d->ui->totalAmountToDiscountLineEdit, &QLineEdit::setText );
@@ -84,10 +84,10 @@ void AccountingItemPaymentGUI::setAccountingItem(AccountingTAMBillItem *b) {
         m_d->itemAttributeModel->setItem( b );
 
         if( m_d->TAMBillItem != NULL ){
-            m_d->ui->beginDateLineEdit->setText( m_d->TAMBillItem->dateBeginStr() );
-            m_d->ui->endDateLineEdit->setText( m_d->TAMBillItem->dateEndStr() );
-            connect( m_d->TAMBillItem, &AccountingTAMBillItem::dateBeginChanged, this, &AccountingItemPaymentGUI::setDateBegin );
-            connect( m_d->TAMBillItem, &AccountingTAMBillItem::dateEndChanged, this, &AccountingItemPaymentGUI::setDateEnd );
+            m_d->ui->beginDateLineEdit->setText( m_d->TAMBillItem->startDateStr() );
+            m_d->ui->endDateLineEdit->setText( m_d->TAMBillItem->endDateStr() );
+            connect( m_d->TAMBillItem, &AccountingTAMBillItem::startDateChanged, this, &AccountingItemPaymentGUI::setDateBegin );
+            connect( m_d->TAMBillItem, &AccountingTAMBillItem::endDateChanged, this, &AccountingItemPaymentGUI::setDateEnd );
 
             connect( m_d->TAMBillItem, &AccountingTAMBillItem::aboutToBeDeleted, this, &AccountingItemPaymentGUI::setAccountingItemNULL );
 
@@ -104,8 +104,8 @@ void AccountingItemPaymentGUI::setAccountingItem(AccountingTAMBillItem *b) {
 void AccountingItemPaymentGUI::setAccountingItem(AccountingBillItem *b) {
     if( m_d->billItem != b || m_d->TAMBillItem != NULL ){
         if( m_d->TAMBillItem != NULL ){
-            disconnect( m_d->TAMBillItem, &AccountingTAMBillItem::dateBeginChanged, this, &AccountingItemPaymentGUI::setDateBegin );
-            disconnect( m_d->TAMBillItem, &AccountingTAMBillItem::dateEndChanged, this, &AccountingItemPaymentGUI::setDateEnd );
+            disconnect( m_d->TAMBillItem, &AccountingTAMBillItem::startDateChanged, this, &AccountingItemPaymentGUI::setDateBegin );
+            disconnect( m_d->TAMBillItem, &AccountingTAMBillItem::endDateChanged, this, &AccountingItemPaymentGUI::setDateEnd );
             disconnect( m_d->TAMBillItem, &AccountingTAMBillItem::aboutToBeDeleted, this, &AccountingItemPaymentGUI::setAccountingItemNULL );
 
             disconnect( m_d->TAMBillItem, &AccountingTAMBillItem::totalAmountToDiscountChanged, m_d->ui->totalAmountToDiscountLineEdit, &QLineEdit::setText );
@@ -255,13 +255,13 @@ bool AccountingItemPaymentGUI::eventFilter(QObject *object, QEvent *event) {
     if (event->type() == QEvent::MouseButtonDblClick )     {
         if( m_d->TAMBillItem != NULL ){
             if( object == m_d->ui->beginDateLineEdit ){
-                QDate d = m_d->TAMBillItem->dateBegin();
+                QDate d = m_d->TAMBillItem->startDate();
                 QCalendarDialog dialog( &d, this );
                 if( dialog.exec() == QDialog::Accepted ){
                     m_d->TAMBillItem->requestDateBeginChange( d );
                 }
             } else if( object == m_d->ui->endDateLineEdit ){
-                QDate d = m_d->TAMBillItem->dateEnd();
+                QDate d = m_d->TAMBillItem->endDate();
                 QCalendarDialog dialog( &d, this );
                 if( dialog.exec() == QDialog::Accepted ){
                     m_d->TAMBillItem->requestDateEndChange( d );
