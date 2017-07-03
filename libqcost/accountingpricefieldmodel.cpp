@@ -74,7 +74,7 @@ QVariant AccountingPriceFieldModel::data(const QModelIndex &index, int role) con
         }
     }
 
-    if( (role == Qt::DisplayRole) ){
+    if( role == Qt::DisplayRole ){
         if( index.column() == 0 ){
             return QVariant( m_d->priceFieldModel->priceName(index.row() ) );
         }

@@ -46,7 +46,7 @@ public:
         PPUNotToDiscount(0.0),
         priceFieldModel(pfm),
         attributesModel(attrsModel),
-        varsModel( new VarsModel(parser) ),
+        varsModel( new VarsModel(prs) ),
         parser(prs),
         rootItem(new AccountingLSBillItem( NULL, NULL, pfm, parser )),
         priceList( NULL ),

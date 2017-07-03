@@ -328,7 +328,7 @@ void AccountingTAMBillItem::updateAccountingProgCode() {
 void AccountingTAMBillItem::updateAccountingProgCode( int * startCode ) {
     QList<AccountingTAMBillItem *>::iterator i = m_d->childrenContainer.begin();
     if( i == m_d->childrenContainer.end() ){
-        if( (m_d->itemType == PPU) ){
+        if( m_d->itemType == PPU ){
             m_d->accountingProgCode = *startCode;
             (*startCode)++;
         }
@@ -3843,6 +3843,7 @@ QDate AccountingTAMBillItem::startDate() const {
     } else if( m_d->parentItem != NULL ){
         return m_d->parentItem->startDate();
     }
+    return QDate();
 }
 
 QString AccountingTAMBillItem::startDateStr() const {
@@ -3885,6 +3886,7 @@ QDate AccountingTAMBillItem::endDate() const {
     } else if( m_d->parentItem != NULL ){
         return m_d->parentItem->endDate();
     }
+    return QDate();
 }
 
 QString AccountingTAMBillItem::endDateStr() const {
@@ -3927,6 +3929,7 @@ int AccountingTAMBillItem::daysCount() const {
     } else if( m_d->parentItem != NULL ){
         return m_d->parentItem->daysCount();
     }
+    return 0;
 }
 
 QDate AccountingTAMBillItem::day(int i) const {

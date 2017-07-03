@@ -1,5 +1,5 @@
 #ifndef ACCOUNTINGLSBILLITEMTITLEGUI_H
-#define ACCOUNTINGLSITEMTITLEGUI_H
+#define ACCOUNTINGLSBILLITEMTITLEGUI_H
 
 class PriceFieldModel;
 class AccountingLSBill;
@@ -31,4 +31,4 @@ private:
     AccountingLSBillItemTitleGUIPrivate * m_d;
 };
 
-#endif // ACCOUNTINGLSITEMTITLEGUI_H
+#endif // ACCOUNTINGLSBILLITEMTITLEGUI_H

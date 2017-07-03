@@ -149,7 +149,7 @@ void PriceItemDataSetViewModel::dataHaveChanged( const QModelIndex & topLeft, co
     if( m_d->model != NULL ){
         for( int modelRow = topLeft.row(); modelRow < bottomRight.row(); ++ modelRow ){
             int viewRow = m_d->fromModelToViewModel( modelRow );
-            QModelIndex viewTopLeft = createIndex( viewRow, viewTopLeft.column() );
+            QModelIndex viewTopLeft = createIndex( viewRow, topLeft.column() );
             QModelIndex viewBottomRight;
             if( modelRow <= m_d->model->lastValueRow() ){
                 viewBottomRight = createIndex( viewRow+1, bottomRight.column() );
