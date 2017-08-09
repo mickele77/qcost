@@ -704,7 +704,7 @@ void Measure::loadFromXml10(const QXmlStreamAttributes &attrs) {
 void Measure::writeXml20( QXmlStreamWriter * writer ) const {
     writer->writeStartElement( "Measure" );
     writer->writeAttribute( "comment", comment() );
-    QString f = formula();
+    QString f = m_d->formula;
     if( m_d->parser->decimalSeparator() != "." ){
         f.replace( m_d->parser->decimalSeparator(), ".");
     }
@@ -721,7 +721,7 @@ void Measure::loadFromXmlTmp20() {
         if( m_d->parser->decimalSeparator() != "." ){
             f.replace( ".", m_d->parser->decimalSeparator());
         }
-        setFormula( f );
+        setFormula( f, true );
     }
     m_d->tmpAttrs.clear();
 }
