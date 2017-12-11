@@ -361,9 +361,9 @@ PriceItemDataSetModel::PriceItemDataSetModel(MathParser * prs, PriceFieldModel *
     }
     connect( m_d->priceFieldModel, &PriceFieldModel::endInsertPriceField, this, &PriceItemDataSetModel::insertPriceField );
     connect( m_d->priceFieldModel, &PriceFieldModel::endRemovePriceField, this, &PriceItemDataSetModel::removePriceField );
-    connect( m_d->priceFieldModel, static_cast<void(PriceFieldModel::*)(int)>(&PriceFieldModel::formulaChanged), this, &PriceItemDataSetModel::updateValueFormula );
+    connect( m_d->priceFieldModel, static_cast<void(PriceFieldModel::*)(int, const QString &)>(&PriceFieldModel::formulaChanged), this, &PriceItemDataSetModel::updateValueFormula );
     connect( m_d->priceFieldModel, static_cast<void(PriceFieldModel::*)(int, int)>(&PriceFieldModel::precisionChanged), this, &PriceItemDataSetModel::updateValueFormula );
-    connect( m_d->priceFieldModel, static_cast<void(PriceFieldModel::*)(int, bool)>(&PriceFieldModel::applyFormulaChanged), this, &PriceItemDataSetModel::updateValueFormula );
+    connect( m_d->priceFieldModel, static_cast<void(PriceFieldModel::*)(int, PriceFieldModel::ApplyFormula)>(&PriceFieldModel::applyFormulaChanged), this, &PriceItemDataSetModel::updateValueFormula );
 
     connect( this, &PriceItemDataSetModel::dataChanged, this, &PriceItemDataSetModel::modelChanged );
     connect( this, &PriceItemDataSetModel::rowsInserted, this, &PriceItemDataSetModel::modelChanged );
@@ -763,7 +763,7 @@ bool PriceItemDataSetModel::setValue(int priceField, int priceDataSet, double ne
                 }
 
                 for( int i=0; i < m_d->priceFieldModel->fieldCount(); i++ ){
-                    if( i != priceField && m_d->priceFieldModel->applyFormula(i) ){
+                    if( i != priceField && (m_d->priceFieldModel->applyFormula(i)==PriceFieldModel::ToPriceItems || m_d->priceFieldModel->applyFormula(i)==PriceFieldModel::ToPriceAndBillItems) ){
                         bool ok = false;
                         double v = m_d->priceFieldModel->calcFormula( &ok, i, fieldValues, m_d->priceItem->overheads(priceDataSet), m_d->priceItem->profits(priceDataSet) );
                         if( ok ){
@@ -784,7 +784,7 @@ bool PriceItemDataSetModel::setValue(int priceField, int priceDataSet, const QSt
 }
 
 void PriceItemDataSetModel::updateValueFormula( int priceField ) {
-    if( m_d->priceFieldModel->applyFormula(priceField) ){
+    if( (m_d->priceFieldModel->applyFormula(priceField)==PriceFieldModel::ToPriceItems || m_d->priceFieldModel->applyFormula(priceField)==PriceFieldModel::ToPriceAndBillItems) ){
         for( int priceDataSet = 0; priceDataSet < m_d->dataSetContainer.size(); priceDataSet++) {
             QList<double> fieldValues;
             for( int pf=0; pf < m_d->dataSetContainer.at(priceDataSet)->valueCount(); ++pf ){

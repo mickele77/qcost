@@ -26,9 +26,9 @@
 
 class GeneralDataGUIPrivate{
 public:
-    GeneralDataGUIPrivate():
+    GeneralDataGUIPrivate(PriceFieldModel * pfm):
         ui(new Ui::GeneralDataGUI),
-        fieldTableDelegate( new PriceFieldTableDelegate() ),
+        fieldTableDelegate( new PriceFieldTableDelegate(pfm) ),
         project( NULL ){
     };
     ~GeneralDataGUIPrivate(){
@@ -42,7 +42,7 @@ public:
 
 GeneralDataGUI::GeneralDataGUI(Project *p, QWidget *parent) :
     QWidget(parent),
-    m_d( new GeneralDataGUIPrivate() ){
+    m_d( new GeneralDataGUIPrivate( p->priceFieldModel() ) ){
     m_d->ui->setupUi(this);
 
     setProject(p);

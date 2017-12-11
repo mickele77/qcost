@@ -1,13 +1,15 @@
 #ifndef PRICEFIELDTABLEDELEGATE_H
 #define PRICEFIELDTABLEDELEGATE_H
 
+class PriceFieldModel;
+
 #include <QStyledItemDelegate>
 
 class PriceFieldTableDelegatePrivate;
 
 class PriceFieldTableDelegate : public QStyledItemDelegate {
 public:
-    explicit PriceFieldTableDelegate(QObject *parent = 0);
+    explicit PriceFieldTableDelegate(PriceFieldModel *model, QObject *parent = 0);
     ~PriceFieldTableDelegate();
 
     void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;

@@ -31,15 +31,16 @@ public:
                     const QString &na = QObject::trUtf8( "Importo"),
                     const QString &um = QObject::trUtf8( "€"),
                     int p = 2,
-                    bool af = false,
+                    PriceFieldModel::ApplyFormula af = PriceFieldModel::ToNone,
                     const QString &f = QString(),
-                    PriceFieldModel::FieldType ft = PriceFieldModel::None ):
+                    PriceFieldModel::FieldType ft = PriceFieldModel::PriceNone ):
         priceName(np),
         amountName(na),
         unitMeasure(um),
         precision(p),
         applyFormula(af),
         formula( f ),
+        multiplyBy(-1),
         fieldType(ft) {
     }
 
@@ -51,6 +52,7 @@ public:
             precision = cp.precision;
             applyFormula = cp.applyFormula;
             formula = cp.formula;
+            multiplyBy = cp.multiplyBy;
             fieldType = cp.fieldType;
         }
         return *this;
@@ -143,7 +145,7 @@ public:
         } else if( vUp == "PRICEMATERIAL" ){
             return PriceFieldModel::PriceMaterial;
         }
-        return PriceFieldModel::None;
+        return PriceFieldModel::PriceNone;
     }
 
     void writeXml(QXmlStreamWriter *writer, MathParser * parser ) {
@@ -158,6 +160,7 @@ public:
             formulaToWrite.replace( parser->decimalSeparator(), ".");
         }
         writer->writeAttribute( "formula", formulaToWrite );
+        writer->writeAttribute( "multiplyBy", QString::number(multiplyBy) );
         writer->writeAttribute( "fieldType", fromFieldTypeToQString( fieldType ) );
         writer->writeEndElement();
     }
@@ -167,8 +170,9 @@ public:
     QString unitMeasure;
     int unitMeasureCol;
     int precision;
-    bool applyFormula;
+    PriceFieldModel::ApplyFormula applyFormula;
     QString formula;
+    int multiplyBy;
     PriceFieldModel::FieldType fieldType;
     static QChar fieldLimit;
     QList<int> effectiveConnectedFields;
@@ -238,6 +242,8 @@ public:
     static int unitMeasureCol;
     static int precisionCol;
     static int formulaCol;
+    static int applyFormulaCol;
+    static int multiplyByCol;
     static int fieldTypeCol;
 };
 
@@ -246,11 +252,21 @@ int PriceFieldModelPrivate::amountNameCol = 1;
 int PriceFieldModelPrivate::unitMeasureCol = 2;
 int PriceFieldModelPrivate::precisionCol = 3;
 int PriceFieldModelPrivate::formulaCol = 4;
-int PriceFieldModelPrivate::fieldTypeCol = 5;
+int PriceFieldModelPrivate::applyFormulaCol = 5;
+int PriceFieldModelPrivate::multiplyByCol = 6;
+int PriceFieldModelPrivate::fieldTypeCol = 7;
+
+QList<QPair<PriceFieldModel::ApplyFormula, QString> > PriceFieldModel::applyFormulaNames() {
+    QList< QPair<PriceFieldModel::ApplyFormula, QString> > ret;
+    ret.append(qMakePair( ToNone, QString("")));
+    ret.append(qMakePair( ToPriceItems, trUtf8("A voci prezzo")));
+    ret.append(qMakePair( ToPriceAndBillItems, trUtf8("A voci prezzo e computo")));
+    return ret;
+}
 
 QList<QPair<PriceFieldModel::FieldType, QString> > PriceFieldModel::standardFieldTypeNames() {
     QList< QPair<PriceFieldModel::FieldType, QString> > ret;
-    ret.append(qMakePair( None, QString("")));
+    ret.append(qMakePair( PriceNone, QString("")));
     ret.append(qMakePair( PriceTotal, trUtf8("Costo Unitario")));
     ret.append(qMakePair( PriceHuman, trUtf8("Costo M.O.")));
     ret.append(qMakePair( PriceHumanNet, trUtf8("Costo M.O. netto")));
@@ -258,8 +274,29 @@ QList<QPair<PriceFieldModel::FieldType, QString> > PriceFieldModel::standardFiel
     return ret;
 }
 
-int PriceFieldModel::fieldTypeCol() {
+int PriceFieldModel::applyFormulaCol() {
     return 5;
+}
+
+QList< QPair<int, QString> > PriceFieldModel::multiplyByNames( int currentPF ){
+    QList< QPair<int, QString> > ret;
+    ret << qMakePair( -2, QString("") );
+    ret << qMakePair( -1, trUtf8("Quantità") );
+    for( int i=0; i<m_d->fieldsList.size(); ++i ){
+        if( i != currentPF && m_d->fieldsList.at(i)->multiplyBy != currentPF ){
+            ret << qMakePair( i, QString::number(i+1) + " - " + m_d->fieldsList.at(i)->amountName );
+        }
+    }
+    return ret;
+}
+
+
+int PriceFieldModel::multiplyByCol() {
+    return 6;
+}
+
+int PriceFieldModel::fieldTypeCol() {
+    return 7;
 }
 
 PriceFieldModel::PriceFieldModel(MathParser * prs, QObject *parent):
@@ -361,23 +398,32 @@ bool PriceFieldModel::setPrecision(int pf, int newVal) {
     return false;
 }
 
-bool PriceFieldModel::applyFormula(int pf) {
+PriceFieldModel::ApplyFormula PriceFieldModel::applyFormula(int pf) {
     if( (pf >= 0) && (pf < m_d->fieldsList.size()) ){
         return m_d->fieldsList.at(pf)->applyFormula;
     }
-    return false;
+    return ToPriceItems;
 }
 
-bool PriceFieldModel::setApplyFormula(int pf, bool newVal) {
+bool PriceFieldModel::setApplyFormula(int pf, const QString & newVal) {
+    PriceFieldModel::ApplyFormula effNewVal = ToPriceItems;
+    if( newVal.toUpper() == "TONONE" ) {
+        effNewVal = ToNone;
+    } else if( newVal.toUpper() == "TOPRICEANDBILLITEMS" ) {
+        effNewVal = ToPriceAndBillItems;
+    }
+    return setApplyFormula( pf, effNewVal );
+}
+
+bool PriceFieldModel::setApplyFormula(int pf, PriceFieldModel::ApplyFormula newVal) {
     if( pf < 0 || !(pf < m_d->fieldsList.size() )){
         return false;
     }
     if( m_d->fieldsList.at(pf)->applyFormula != newVal ){
         m_d->fieldsList.at(pf)->applyFormula = newVal;
-        QModelIndex index = createIndex( pf, m_d->formulaCol );
+        QModelIndex index = createIndex( pf, m_d->applyFormulaCol );
         emit dataChanged(index, index);
         emit applyFormulaChanged( pf, newVal );
-        emit formulaChanged( pf );
         return true;
     }
     return false;
@@ -400,7 +446,25 @@ bool PriceFieldModel::setFormula(int pf, const QString &newVal) {
         QModelIndex index = createIndex( pf, m_d->formulaCol );
         emit dataChanged(index, index);
         emit formulaChanged( pf, newVal );
-        emit formulaChanged( pf );
+        return true;
+    }
+    return false;
+}
+
+int PriceFieldModel::multiplyBy(int pf) {
+    return m_d->fieldsList.at(pf)->multiplyBy;
+}
+
+bool PriceFieldModel::setMultiplyBy(int pf, const int newVal) {
+    if( !m_d->isIndexValid(pf) ){
+        return false;
+    }
+    if( m_d->fieldsList.at(pf)->multiplyBy != newVal ){
+        m_d->fieldsList.at(pf)->multiplyBy = newVal;
+        m_d->updateIsFormulaValid(pf);
+        QModelIndex index = createIndex( pf, m_d->multiplyByCol );
+        emit dataChanged(index, index);
+        emit multiplyByChanged( pf, newVal );
         return true;
     }
     return false;
@@ -410,7 +474,7 @@ PriceFieldModel::FieldType PriceFieldModel::fieldType(int pf ) {
     if( (pf >= 0) && (pf < m_d->fieldsList.size()) ){
         return m_d->fieldsList.at(pf)->fieldType;
     }
-    return None;
+    return PriceNone;
 }
 
 bool PriceFieldModel::setFieldType(int pf, PriceFieldModel::FieldType newVal, bool resetField) {
@@ -429,7 +493,7 @@ bool PriceFieldModel::setFieldType(int pf, PriceFieldModel::FieldType newVal, bo
                 setAmountName( pf, trUtf8("Importo") );
                 setUnitMeasure( pf, trUtf8("€"));
                 setPrecision( pf, 2 );
-                setApplyFormula( pf, false );
+                setApplyFormula( pf, PriceFieldModel::ToNone );
                 setFormula( pf, QString() );
             }
             if( newVal == PriceHuman){
@@ -437,7 +501,7 @@ bool PriceFieldModel::setFieldType(int pf, PriceFieldModel::FieldType newVal, bo
                 setAmountName( pf, trUtf8("Importo M.O.") );
                 setUnitMeasure( pf, trUtf8("€"));
                 setPrecision( pf, 2 );
-                setApplyFormula( pf, false );
+                setApplyFormula( pf, PriceFieldModel::ToNone );
                 setFormula( pf, QString() );
             }
             if( newVal == PriceHumanNet ){
@@ -445,7 +509,7 @@ bool PriceFieldModel::setFieldType(int pf, PriceFieldModel::FieldType newVal, bo
                 setAmountName( pf, trUtf8("Importo Netto M.O.") );
                 setUnitMeasure( pf, trUtf8("€"));
                 setPrecision( pf, 2 );
-                setApplyFormula( pf, false );
+                setApplyFormula( pf, PriceFieldModel::ToPriceItems );
                 setFormula( pf, QString() );
             }
             if( newVal == PriceNoHumanNet ){
@@ -453,7 +517,7 @@ bool PriceFieldModel::setFieldType(int pf, PriceFieldModel::FieldType newVal, bo
                 setAmountName( pf, trUtf8("Importo senza M.O.") );
                 setUnitMeasure( pf, trUtf8("€"));
                 setPrecision( pf, 2 );
-                setApplyFormula( pf, false );
+                setApplyFormula( pf, PriceFieldModel::ToPriceItems );
                 setFormula( pf, QString() );
             }
         }
@@ -511,10 +575,10 @@ void PriceFieldModel::createHumanNetPriceFields() {
     setFieldType( 0, PriceTotal );
     setFieldType( 1, PriceHuman );
     setFieldType( 2, PriceHumanNet );
-    setApplyFormula( 2, true );
+    setApplyFormula( 2, PriceFieldModel::ToPriceItems );
     setFormula( 2, QString("$2$ / ((%1 + $SG$) * (%1 + $UI$))").arg( m_d->toString(1.0)) );
     setFieldType( 3, PriceNoHumanNet );
-    setApplyFormula( 3, true );
+    setApplyFormula( 3, PriceFieldModel::ToPriceItems );
     setFormula( 3, "$1$ - $3$" );
 }
 
@@ -526,19 +590,10 @@ QVariant PriceFieldModel::data(const QModelIndex &index, int role) const {
     if( !index.isValid() || !(index.row() < m_d->fieldsList.size()) ){
         return QVariant();
     }
-    if( role == Qt::CheckStateRole ){
-        if( index.column() == 4 ){
-            if( m_d->fieldsList.at(index.row())->applyFormula ){
-                return QVariant( Qt::Checked );
-            } else {
-                return QVariant( Qt::Unchecked );
-            }
-        }
-    }
 
     if( role == Qt::ForegroundRole ){
         if( index.column() == m_d->formulaCol ){
-            if( !m_d->fieldsList.at(index.row())->applyFormula ){
+            if( m_d->fieldsList.at(index.row())->applyFormula == ToNone ){
                 return QColor( Qt::gray );
             } else if( !m_d->fieldsList.at(index.row())->isFormulaValid ){
                 return QColor( Qt::red );
@@ -549,20 +604,19 @@ QVariant PriceFieldModel::data(const QModelIndex &index, int role) const {
     if( (role == Qt::DisplayRole) || (role == Qt::EditRole) ){
         if( index.column() == m_d->priceNameCol ){
             return QVariant( m_d->fieldsList.at(index.row())->priceName );
-        }
-        if( index.column() == m_d->amountNameCol ){
+        } else if( index.column() == m_d->amountNameCol ){
             return QVariant( m_d->fieldsList.at(index.row())->amountName );
-        }
-        if( index.column() == m_d->unitMeasureCol ){
+        } else if( index.column() == m_d->unitMeasureCol ){
             return QVariant( m_d->fieldsList.at(index.row())->unitMeasure );
-        }
-        if( index.column() == m_d->precisionCol ){
+        } else if( index.column() == m_d->precisionCol ){
             return QVariant( m_d->fieldsList.at(index.row())->precision );
-        }
-        if( index.column() == m_d->formulaCol ){
+        } else if( index.column() == m_d->applyFormulaCol ){
+            return QVariant( (int)(m_d->fieldsList.at(index.row())->applyFormula) );
+        } else if( index.column() == m_d->formulaCol ){
             return QVariant( m_d->fieldsList.at(index.row())->formula );
-        }
-        if( index.column() == m_d->fieldTypeCol ){
+        } else if( index.column() == m_d->multiplyByCol ){
+            return QVariant( m_d->fieldsList.at(index.row())->multiplyBy );
+        } else if( index.column() == m_d->fieldTypeCol ){
             return QVariant( m_d->fieldsList.at(index.row())->fieldType );
         }
     }
@@ -575,22 +629,21 @@ QVariant PriceFieldModel::headerData(int section, Qt::Orientation orientation, i
 
     if (orientation == Qt::Horizontal ) {
         if( section == m_d->priceNameCol ) {
-            return trUtf8("Denom. Quant. Unit.");
-        }
-        if( section == m_d->amountNameCol ) {
-            return trUtf8("Denom. Quantità");
-        }
-        if( section == m_d->unitMeasureCol ) {
-            return trUtf8("UdM");
-        }
-        if( section == m_d->precisionCol ) {
+            return trUtf8("Nome Quantità Unitaria");
+        } else if( section == m_d->amountNameCol ) {
+            return trUtf8("Nome Quantità");
+        } else if( section == m_d->unitMeasureCol ) {
+            return trUtf8("Unità Misura");
+        } else if( section == m_d->precisionCol ) {
             return trUtf8("Precisione");
-        }
-        if( section == m_d->formulaCol ) {
+        } else if( section == m_d->formulaCol ) {
             return trUtf8("Formula");
-        }
-        if( section == m_d->fieldTypeCol ) {
-            return trUtf8("Tipo");
+        } else if( section == m_d->applyFormulaCol ) {
+            return trUtf8("Applica Formula");
+        } else if( section == m_d->multiplyByCol ) {
+            return trUtf8("Moltiplica per");
+        } else if( section == m_d->fieldTypeCol ) {
+            return trUtf8("Tipo Standard");
         }
     } else if( orientation == Qt::Vertical ){
         return QVariant( section + 1 );
@@ -603,7 +656,7 @@ int PriceFieldModel::rowCount(const QModelIndex &) const {
 }
 
 int PriceFieldModel::columnCount(const QModelIndex &) const {
-    return 6;
+    return 8;
 }
 
 Qt::ItemFlags PriceFieldModel::flags(const QModelIndex &index) const {
@@ -612,12 +665,13 @@ Qt::ItemFlags PriceFieldModel::flags(const QModelIndex &index) const {
     }
 
     if( index.column() == m_d->formulaCol ){
-        if( m_d->fieldsList.at(index.row())->applyFormula ){
-            return Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsEditable | Qt::ItemIsUserCheckable;
+        if( m_d->fieldsList.at(index.row())->applyFormula == ToNone ){
+            return Qt::ItemIsEnabled | Qt::ItemIsSelectable;
         } else {
-            return Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsUserCheckable;
+            return Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsEditable;
         }
     }
+
     return Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsEditable;
 }
 
@@ -640,18 +694,20 @@ bool PriceFieldModel::setData(const QModelIndex &index, const QVariant &value, i
                 setPrecision( index.row(), value.toInt() );
                 return true;
             }
+            if( index.column() == m_d->applyFormulaCol ){
+                setApplyFormula( index.row(), (PriceFieldModel::ApplyFormula)(value.toInt()) );
+                return true;
+            }
             if( index.column() == m_d->formulaCol ){
                 setFormula( index.row(), value.toString() );
                 return true;
             }
-            if( index.column() == m_d->fieldTypeCol ){
-                setFieldType( index.row(), (FieldType)( value.toInt()) );
+            if( index.column() == m_d->multiplyByCol ){
+                setMultiplyBy( index.row(), value.toInt() );
                 return true;
             }
-        }
-        if( role == Qt::CheckStateRole ){
-            if( index.column() == m_d->formulaCol ){
-                setApplyFormula( index.row(), (value.toInt() == Qt::Checked) );
+            if( index.column() == m_d->fieldTypeCol ){
+                setFieldType( index.row(), (FieldType)( value.toInt()) );
                 return true;
             }
         }
@@ -697,12 +753,12 @@ bool PriceFieldModel::appendRow() {
 }
 
 bool PriceFieldModel::removeRows(int row, int count, const QModelIndex &) {
-    if( row == 0 ){
+    /*if( row == 0 ){
         row = 1;
         count--;
-    }
+    }*/
 
-    if( count < 1 || row < 0 || row > m_d->fieldsList.size() ){
+    if( count < 1 || row < 0 || row > m_d->fieldsList.size() || m_d->fieldsList.size() < 2 ){
         return false;
     }
 
@@ -859,7 +915,11 @@ void PriceFieldModel::loadFromXml10(int pf, const QXmlStreamAttributes &attrs) {
         setPrecision( pf, attrs.value( "precision" ).toInt() );
     }
     if( attrs.hasAttribute( "applyFormula" ) ){
-        setApplyFormula( pf, PriceFieldData::fromQStringToBool( attrs.value( "applyFormula" ).toString() ) );
+        if ( PriceFieldData::fromQStringToBool( attrs.value( "applyFormula" ).toString() ) ){
+            setApplyFormula( pf, PriceFieldModel::ToPriceItems );
+        } else {
+             setApplyFormula( pf, PriceFieldModel::ToNone );
+        }
     }
     if( attrs.hasAttribute( "formula" ) ){
         QString f = attrs.value( "formula" ).toString();
@@ -887,7 +947,12 @@ void PriceFieldModel::loadFromXml20(int pf, const QXmlStreamAttributes &attrs) {
         setPrecision( pf, attrs.value( "precision" ).toInt() );
     }
     if( attrs.hasAttribute( "applyFormula" ) ){
-        setApplyFormula( pf, PriceFieldData::fromQStringToBool( attrs.value( "applyFormula" ).toString() ) );
+        if ( PriceFieldData::fromQStringToBool( attrs.value( "applyFormula" ).toString() ) ){
+            // TO REMOVE
+            setApplyFormula( pf, PriceFieldModel::ToPriceItems );
+        } else {
+             setApplyFormula( pf, attrs.value( "applyFormula" ).toString() );
+        }
     }
     if( attrs.hasAttribute( "formula" ) ){
         QString f = attrs.value( "formula" ).toString();
@@ -895,6 +960,14 @@ void PriceFieldModel::loadFromXml20(int pf, const QXmlStreamAttributes &attrs) {
             f.replace( ".", m_d->parser->decimalSeparator() );
         }
         setFormula( pf, f );
+    }
+    if( attrs.hasAttribute( "multiplyBy" ) ){
+        bool ok = false;
+        int mVal = attrs.value( "multiplyBy" ).toInt( & ok );
+        if( ! ok ){
+            mVal = -1;
+        }
+        setMultiplyBy( pf, mVal );
     }
     if( attrs.hasAttribute( "fieldType" ) ){
         setFieldType( pf, PriceFieldData::fromQStringToFieldType( attrs.value( "fieldType" ).toString() ), false );

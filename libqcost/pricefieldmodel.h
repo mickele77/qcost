@@ -33,8 +33,13 @@ class MathParser;
 class EXPORT_QCOST_LIB_OPT PriceFieldModel: public QAbstractTableModel {
     Q_OBJECT
 public:
+    enum ApplyFormula{
+        ToNone,
+        ToPriceItems,
+        ToPriceAndBillItems
+    };
     enum FieldType{
-        None,
+        PriceNone,
         PriceTotal,
         PriceHuman,
         PriceHumanNet,
@@ -43,6 +48,10 @@ public:
         PriceMaterial
     };
 
+    static QList<QPair<PriceFieldModel::ApplyFormula, QString> > applyFormulaNames();
+    static int applyFormulaCol();
+    QList< QPair<int, QString> > multiplyByNames(int currentPF);
+    static int multiplyByCol();
     static QList< QPair<FieldType, QString> > standardFieldTypeNames();
     static int fieldTypeCol();
 
@@ -64,10 +73,13 @@ public:
     bool setUnitMeasure(int pf, const QString & newVal );
     int precision( int pf );
     bool setPrecision(int pf, int newVal );
-    bool applyFormula( int pf );
-    bool setApplyFormula(int pf, bool newVal );
+    PriceFieldModel::ApplyFormula applyFormula( int pf );
+    bool setApplyFormula(int pf, const QString & newVal );
+    bool setApplyFormula(int pf, PriceFieldModel::ApplyFormula newVal );
     QString formula( int pf );
     bool setFormula(int pf, const QString & newVal );
+    int multiplyBy( int pf );
+    bool setMultiplyBy(int pf, const int newVal );
     FieldType fieldType( int pf );
     bool setFieldType(int pf, FieldType newVal, bool resetField=true );
 
@@ -103,9 +115,9 @@ signals:
     void amountNameChanged( int priceField, const QString & newName );
     void unitMeasureChanged( int pf, const QString & newUnitMeasure );
     void precisionChanged( int pf, int newPrec );
-    void applyFormulaChanged( int pf, bool newApplyFormula );
     void formulaChanged( int pf, const QString & newFormula );
-    void formulaChanged( int pf );
+    void applyFormulaChanged( int pf, ApplyFormula newApplyFormula );
+    void multiplyByChanged( int pf, int newMultiplyBy );
     void fieldTypeChanged( int pf, FieldType newFieldType );
 
 private:
