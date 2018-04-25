@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 2.8.11)
 
-OPTION (BUILD_SHARED_LIBS "Build shared libraries." OFF)
+OPTION (BUILD_SHARED_LIBS "Build shared libraries." ON)
 
 # Find includes in corresponding build directories
 set(CMAKE_INCLUDE_CURRENT_DIR ON)

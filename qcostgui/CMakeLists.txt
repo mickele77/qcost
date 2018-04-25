@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 2.8.11)
 
 # Find the required modules
-find_package(Qt5 COMPONENTS Core Widgets Sql REQUIRED)
+find_package(Qt5 COMPONENTS Widgets Sql REQUIRED)
 
 set( QRC
     icons.qrc
@@ -199,4 +199,4 @@ add_executable( QCost
     ${SRC} ${HDR} ${FRM} ${QRC} )
 
 # Use required libraries
-target_link_libraries(QCost libqcost Qt5::Widgets Qt5::Sql)
+target_link_libraries(QCost qcost Qt5::Widgets Qt5::Sql)

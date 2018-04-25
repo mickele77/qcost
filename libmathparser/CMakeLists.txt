@@ -17,9 +17,9 @@ set( HDR
 )
 
 # Tell CMake to create the library
-add_library( libmathparser
+add_library( mathparser
     ${SRC} ${HDR}
 )
 
 # Use required modules from Qt 5
-target_link_libraries(libmathparser Qt5::Core)
+target_link_libraries( mathparser Qt5::Core )

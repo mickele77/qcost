@@ -97,7 +97,7 @@ set( HDR
 )
 
 # Tell CMake to create the library
-add_library( libqcost
+add_library( qcost
     ${SRC} ${HDR}
 )
 
@@ -107,4 +107,4 @@ include_directories(
 )
 
 # Use required modules from Qt 5
-target_link_libraries(libqcost Qt5::Core libodtcreator libmathparser)
+target_link_libraries(qcost Qt5::Core odtcreator mathparser)
