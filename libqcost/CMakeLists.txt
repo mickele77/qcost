@@ -97,7 +97,7 @@ set( HDR
 )
 
 # Tell CMake to create the library
-add_library( libqcost SHARED
+add_library( libqcost
     ${SRC} ${HDR}
 )
 

@@ -17,7 +17,7 @@ set( HDR
 )
 
 # Tell CMake to create the library
-add_library( libmathparser SHARED
+add_library( libmathparser
     ${SRC} ${HDR}
 )
 

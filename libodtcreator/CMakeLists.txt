@@ -7,6 +7,7 @@ set(CMAKE_AUTOMOC ON)
 
 # Find the required modules
 find_package(Qt5 COMPONENTS Core Gui REQUIRED)
+find_package( ZLIB REQUIRED )
 
 set( SRC
     zip.cpp
@@ -20,9 +21,9 @@ set( HDR
 )
 
 # Tell CMake to create the library
-add_library( libodtcreator SHARED
+add_library( libodtcreator
     ${SRC} ${HDR}
 )
 
 # Use required modules from Qt 5
-target_link_libraries(libodtcreator Qt5::Core Qt5::Gui)
+target_link_libraries(libodtcreator Qt5::Core Qt5::Gui ${ZLIB_LIBRARIES})
