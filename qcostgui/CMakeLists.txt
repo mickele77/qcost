@@ -144,7 +144,7 @@ set( HDR
     accountinglsbillpricedatagui.h
 )
 
-set ( FRMS
+set ( FRM
     generaldatagui.ui
     projectitemsview.ui
     pricelisttreegui.ui
@@ -196,7 +196,7 @@ include_directories(
 
 # Tell CMake to create the library
 add_executable( QCost
-    ${SRC} ${HDR} ${FRMS} ${QRC} )
+    ${SRC} ${HDR} ${FRM} ${QRC} )
 
-# Use required modules from Qt 5
+# Use required libraries
 target_link_libraries(QCost libqcost Qt5::Widgets Qt5::Sql)
