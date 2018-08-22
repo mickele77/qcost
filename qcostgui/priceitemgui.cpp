@@ -369,6 +369,7 @@ void PriceItemGUI::setAssociatedAPToCheckBox(int pCol,bool val ){
     if( m_d->priceItem != NULL ){
         if( m_d->currentPriceDataSet == pCol ){
             m_d->ui->singleDataAssociateAPCheckBox->setChecked( val );
+            m_d->ui->singleDataEditAPPushButton->setEnabled( val );
         }
     }
 }
@@ -629,6 +630,7 @@ void PriceItemGUI::updatePriceDataGUI(){
 
             disconnect( m_d->ui->singleDataAssociateAPCheckBox, &QCheckBox::toggled, this, &PriceItemGUI::setPriceValueAssociateAP );
             m_d->ui->singleDataAssociateAPCheckBox->setChecked( m_d->priceItem->associateAP(m_d->currentPriceDataSet) );
+            m_d->ui->singleDataEditAPPushButton->setEnabled( m_d->priceItem->associateAP(m_d->currentPriceDataSet) );
             connect( m_d->ui->singleDataAssociateAPCheckBox, &QCheckBox::toggled, this, &PriceItemGUI::setPriceValueAssociateAP );
         }
     }

@@ -153,6 +153,9 @@ void PriceItemDataSet::setOverheads( double newVal ) {
     if( !m_d->inheritOverheadsFromRoot ){
         if( newVal != m_d->overheads ){
             m_d->overheads = newVal;
+            if( associatedAP ){
+                associatedAP->setOverheads( newVal );
+            }
         }
     }
 }
@@ -167,6 +170,9 @@ void PriceItemDataSet::setProfits(double newVal) {
     if( !m_d->inheritProfitsFromRoot ){
         if( m_d->profits != newVal ){
             m_d->profits = newVal;
+            if( associatedAP ) {
+                associatedAP->setProfits( newVal );
+            }
         }
     }
 }
@@ -414,6 +420,32 @@ QString PriceItemDataSetModel::valueStr( int priceField, int priceDataSet) const
         prec = m_d->priceFieldModel->precision( priceField );
     }
     return m_d->toString( value(priceField, priceDataSet), 'f', prec );
+}
+
+double PriceItemDataSetModel::valueNet(int field, int dataSet) const {
+    if( dataSet > -1 && dataSet < m_d->dataSetContainer.size() ){
+        if( field > -1 && field < m_d->dataSetContainer.at(dataSet)->valueCount() ){
+            double den = 1.0;
+            if( m_d->priceFieldModel->applyFormula(field) != PriceFieldModel::ToPriceAndBillItems ) {
+                den = (1.0 + m_d->dataSetContainer.at(dataSet)->profits()) * \
+                        (1.0 + m_d->dataSetContainer.at(dataSet)->overheads());
+            }
+            if( den != 0.0 ) {
+                double val = m_d->dataSetContainer.at(dataSet)->value(field) / den;
+                UnitMeasure::applyPrecision( val, m_d->priceFieldModel->precision(field) );
+                return val;
+            }
+        }
+    }
+    return 0.0;
+}
+
+QString PriceItemDataSetModel::valueNetStr( int field, int dataSet) const {
+    int prec = 2;
+    if( field > -1 && field < m_d->priceFieldModel->fieldCount() ){
+        prec = m_d->priceFieldModel->precision( field );
+    }
+    return m_d->toString( valueNet(field, dataSet), 'f', prec );
 }
 
 int PriceItemDataSetModel::priceDataSetCount() const {
@@ -725,7 +757,7 @@ QVariant PriceItemDataSetModel::headerData(int section, Qt::Orientation orientat
             } else if( section == m_d->profitsRow() ){
                 return QVariant( trUtf8("Utili [%]"));
             } else {
-                int pf = (section-m_d->firstValueRow()) / 2;
+                int pf = (section-m_d->firstValueRow());
                 if( (pf < m_d->priceFieldModel->rowCount()) && (pf >= 0)){
                     return QVariant( QString("%1 [%2]").arg(m_d->priceFieldModel->priceName(pf), m_d->priceFieldModel->unitMeasure(pf)) );
                 }

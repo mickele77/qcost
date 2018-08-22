@@ -111,6 +111,36 @@ public:
     double amount( int field ) const ;
     QString amountStr( int field ) const ;
 
+    double amountNet( int field ) const ;
+    QString amountNetStr( int field ) const ;
+
+    double amountOverheads( int field ) const ;
+    QString amountOverheadsStr( int field ) const ;
+
+    double amountProfits( int field ) const ;
+    QString amountProfitsStr( int field ) const ;
+
+    bool recalculateOverheadsProfits() const;
+    void setRecalculateOverheadsProfits( bool newVal = true );
+
+    // spese generali
+    double overheads() const;
+    // spese generali stringa
+    QString overheadsStr() const;
+    // imposta spese generali
+    void setOverheads(double newVal);
+    // imposta spese generali
+    void setOverheads( const QString & newVal );
+
+    // utili di impresa
+    double profits() const;
+    // utili di impresa string
+    QString profitsStr() const;
+    // imposta utili di impresa
+    void setProfits( double newVal);
+    // imposta utili di impresa
+    void setProfits(const QString & newVal );
+
     AttributesModel * attributesModel();
     void activateAttributeModel();
     double amountAttribute( Attribute * attr, int field );
@@ -153,6 +183,7 @@ public:
                                        const QList<Attribute *> &attrsToPrint,
                                        bool groupPrAm = false );
     void insertStandardAttributes();
+
 
 public slots:
     void setName( const QString & n);

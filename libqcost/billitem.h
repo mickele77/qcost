@@ -91,8 +91,45 @@ public:
 
     double quantity() const;
     QString quantityStr() const;
+    /** Importo comprensivo di SGUI */
     double amount( int field ) const;
+    /** Importo comprensivo di SGUI */
     QString amountStr( int field ) const;
+    /** Importo al netto di SGUI */
+    double amountNet( int field ) const;
+    /** Importo al netto di SGUI */
+    QString amountNetStr( int field ) const;
+    /** Importo delle spese generali */
+    double amountOverheads( int field ) const;
+    /** Importo delle spese generali */
+    QString amountOverheadsStr( int field ) const;
+    /** Importo degli utili di impresa */
+    double amountProfits( int field ) const;
+    /** Importo degli utili di impresa */
+    QString amountProfitsStr( int field ) const;
+
+    /** Ricalcola gli importi delle spese generali e dei profitti */
+    bool recalculateOverheadsProfits() const;
+    /** Imposta se ricalcolare gli importi delle spese generali e dei profitti */
+    void setRecalculateOverheadsProfits( bool newVal = true );
+
+    /** Valore delle spese generali (numero puro) */
+    double overheads() const;
+    /** Valore percentuale delle spese generali, come stringa */
+    QString overheadsStr() const;
+    /** Imposta il valore delle spese generali (numero puro) */
+    void setOverheads(double newVal);
+    /** Imposta il valore percentuale delle spese generali, come strings */
+    void setOverheads(const QString & newVal );
+
+    /**  Valore degli utili di impresa (numero puro) */
+    double profits() const;
+    /** Valore percentuale degli utili di impresa, come stringa */
+    QString profitsStr() const;
+    /** Imposta utili di impresa (numero puro) */
+    void setProfits(double newVal);
+    /** Imposta il valore percentuale degli utili di impresa */
+    void setProfits(const QString & newVal );
 
     int columnCount() const;
     QList<BillItem *> allChildren();
@@ -139,7 +176,7 @@ public:
                               BillPrinter::PrintBillItemsOption prItemsOption,
                               const QList<int> fieldsToPrint ,
                               bool groupPrAm = false,
-                             const QString &umTag = QString() );
+                              const QString &umTag = QString() );
     void writeODTSummaryOnTable( QTextCursor *cursor,
                                  BillPrinter::PrintBillItemsOption prItemsOption,
                                  const QList<int> fieldsToPrint,
@@ -176,6 +213,14 @@ signals:
     void quantityChanged( const QString &  );
     void amountChanged( int, const QString & );
     void amountChanged( int, double );
+    void amountNetChanged( int, const QString & );
+    void amountNetChanged( int, double );
+    void amountOverheadsChanged( int, const QString & );
+    void amountOverheadsChanged( int, double );
+    void amountProfitsChanged( int, const QString & );
+    void amountProfitsChanged( int, double );
+    void overheadsChanged( const QString & newVal );
+    void profitsChanged( const QString & newVal );
     void attributesChanged();
 
 private:
@@ -188,8 +233,8 @@ private:
 
     void addChild(BillItem *newChild, int position);
     void removeChild(int position);
-    void insertAmount(int pf);
-    void removeAmount(int pf);
+    void insertField(int pf);
+    void removeField(int pf);
     void updateAmount(int pf);
 
     void appendUsedPriceItems( QList<PriceItem *> * usedPriceItems ) const;
@@ -262,10 +307,61 @@ private:
                                          QTextTableCellFormat & rightQuantityTotalFormat,
                                          QTextCharFormat &txtCharFormat,
                                          QTextCharFormat &txtBoldCharFormat);
+
+    ///
+    /// \brief writeODTBillTotalLine
+    /// \param fieldsToPrint
+    /// \param groupPrAm
+    /// \param cursor
+    /// \param table
+    /// \param tagBlockFormat
+    /// \param txtBlockFormat
+    /// \param numBlockFormat
+    /// \param leftTitleFormat
+    /// \param centralTitleFormat
+    /// \param rightTitleFormat
+    /// \param totalName Nome del totale che si stampa
+    /// \param umTag
+    /// \param total importo totale che si stampa
+    ///
+    void writeODTBillTotalLine(const QList<int> &fieldsToPrint,
+                                bool groupPrAm,
+                                QTextCursor *cursor,
+                                QTextTable *table,
+                                QTextBlockFormat &tagBlockFormat,
+                                QTextBlockFormat &txtBlockFormat,
+                                QTextBlockFormat &numBlockFormat,
+                                QTextTableCellFormat &leftTitleFormat,
+                                QTextTableCellFormat &centralTitleFormat,
+                                QTextTableCellFormat &rightTitleFormat,
+                                const QString &totalName,
+                                const QString &umTag,
+                                const QList<QString> &totals);
+
+    ///
+    /// \brief writeODTBillLine
+    /// \param prItemsOption
+    /// \param writeProgCode
+    /// \param fieldsToPrint
+    /// \param groupPrAm raggruppa prezzi e importi
+    /// \param printValNet stampa prezzi e importi al nett di SGUI
+    /// \param cursor
+    /// \param table
+    /// \param tagBlockFormat
+    /// \param txtBlockFormat
+    /// \param numBlockFormat
+    /// \param leftFormat
+    /// \param centralFormat
+    /// \param rightFormat
+    /// \param centralQuantityTotalFormat
+    /// \param rightQuantityTotalFormat
+    /// \param txtCharFormat
+    /// \param txtBoldCharFormat
+    ///
     void writeODTBillLine( BillPrinter::PrintBillItemsOption prItemsOption,
                            bool writeProgCode,
                            const QList<int> &fieldsToPrint,
-                           bool groupPrAm,
+                           bool groupPrAm, bool printValNet,
                            QTextCursor *cursor,
                            QTextTable *table,
                            QTextBlockFormat &tagBlockFormat,
@@ -279,9 +375,12 @@ private:
                            QTextCharFormat & txtCharFormat,
                            QTextCharFormat & txtBoldCharFormat );
 
-    /** restituisce tutti gli attributi dell'elemento; se la var bool è false,
-        vuol dire che l'attribute è ereditato, se è true vuol dire che è un
-        attributo direttamente imposto */
+    ///
+    /// \brief attributes
+    /// \return restituisce tutti gli attributi dell'elemento; se la var bool è false,
+    ///         vuol dire che l'attribute è ereditato, se è true vuol dire che è un
+    ///         attributo direttamente imposto
+    ///
     QList< QPair<Attribute *, bool> > attributes();
     QList<Attribute *> allAttributes();
     QList<Attribute *> directAttributes();

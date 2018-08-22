@@ -133,6 +133,8 @@ public:
     int firstValueCol();
     double value(int priceField, int priceDataSet ) const;
     QString valueStr( int priceField, int priceDataSet ) const;
+    double valueNet(int priceField, int priceDataSet ) const;
+    QString valueNetStr( int priceField, int priceDataSet ) const;
     bool setValue( int priceField, int priceDataSet, double newValue );
     bool setValue( int priceField, int priceDataSet, const QString & newValue );
     void setValue( PriceFieldModel::FieldType fType, int priceDataSet, double newValue );

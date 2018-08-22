@@ -443,6 +443,14 @@ QString PriceItem::valueStr(int priceField, int priceDataSet ) const {
     return m_d->dataModel->valueStr( priceField, priceDataSet );
 }
 
+double PriceItem::valueNet( int priceField, int priceDataSet ) const{
+    return m_d->dataModel->valueNet( priceField, priceDataSet );
+}
+
+QString PriceItem::valueNetStr(int priceField, int priceDataSet ) const {
+    return m_d->dataModel->valueNetStr( priceField, priceDataSet );
+}
+
 bool PriceItem::setValue( int priceField, int priceDataSet, double newValue ){
     return m_d->dataModel->setValue( priceField, priceDataSet, newValue );
 }

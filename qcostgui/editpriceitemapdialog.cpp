@@ -67,7 +67,7 @@ public:
         currentBillItem(NULL),
         mainLayout( new QGridLayout( parent ) ),
         mainSplitter( new QSplitter(Qt::Horizontal, parent ) ),
-        billTreeGUI( new BillTreeGUI( EPAImpOptions, EPAFileName, NULL, prs, prj, mainSplitter ) ),
+        billTreeGUI( new BillTreeGUI( true, EPAImpOptions, EPAFileName, NULL, prs, prj, mainSplitter ) ),
         billItemGUI( new BillItemGUI( EPAImpOptions, EPAFileName, NULL, prs, prj, mainSplitter ) ),
         billItemTitleGUI( new BillItemTitleGUI( NULL, prj->priceFieldModel(), parent ) ),
         billItemWidget( new BillItemWidget(billItemGUI, billItemTitleGUI, mainSplitter ) ),
@@ -76,7 +76,7 @@ public:
         billItemTitleGUI->hide();
         mainLayout->addWidget( mainSplitter, 0, 0);
         mainLayout->addWidget( buttonBox, 1, 0);
-    };
+    }
 
     PriceItem * priceItem;
     int priceCol;

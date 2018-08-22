@@ -37,7 +37,12 @@ class BillTreeGUI : public QWidget {
     Q_OBJECT
 public:
     friend class BillGUI;
-    explicit BillTreeGUI( QMap<PriceListDBWidget::ImportOptions, bool> *EPAImpOptions, QString *EPAFileName, Bill * b, MathParser *prs, Project *prj, QWidget *parent = 0);
+    explicit BillTreeGUI( bool recalcOverheadsProfitsVisible,
+                          QMap<PriceListDBWidget::ImportOptions, bool> *EPAImpOptions,
+                          QString *EPAFileName,
+                          Bill * b,
+                          MathParser *prs,
+                          Project *prj, QWidget *parent = 0);
     ~BillTreeGUI();
     
     BillItem * currentBillItem();

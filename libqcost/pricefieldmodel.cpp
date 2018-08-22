@@ -100,17 +100,39 @@ public:
     }
 
     static QString fromBoolToQString( bool v ){
-        if( v ){
+        if( v ) {
             return QString("true");
+        } else {
+            return QString("false");
         }
-        return QString("false");
     }
 
     static bool fromQStringToBool( const QString & v ){
-        if( v.toUpper() == "TRUE" ){
+        QString vUp = v.toUpper();
+        if( vUp == "TRUE" ) {
             return true;
+        } else {
+            return false;
         }
-        return false;
+    }
+
+    static QString fromApplyFormulaToQString( PriceFieldModel::ApplyFormula v ){
+        if( v == PriceFieldModel::ToPriceItems ){
+            return QString("ToPriceItems");
+        } else if( v == PriceFieldModel::ToPriceAndBillItems ){
+            return QString("ToPriceAndBillItems");
+        }
+        return QString("ToNone");
+    }
+
+    static PriceFieldModel::ApplyFormula fromQStringToApplyFormula( const QString & v ){
+        QString vUp = v.toUpper();
+        if( vUp == "TOPRICEITEMS" ){
+            return PriceFieldModel::ToPriceItems;
+        } else if( vUp == "TOPRICEANDBILLITEMS" ){
+            return PriceFieldModel::ToPriceAndBillItems;
+        }
+        return PriceFieldModel::ToNone;
     }
 
     static QString fromFieldTypeToQString( PriceFieldModel::FieldType v ){
@@ -127,7 +149,7 @@ public:
         } else if( v == PriceFieldModel::PriceMaterial ){
             return "PriceMaterial";
         }
-        return "None";
+        return "PriceNone";
     }
 
     static PriceFieldModel::FieldType fromQStringToFieldType( const QString & v ){
@@ -148,13 +170,34 @@ public:
         return PriceFieldModel::PriceNone;
     }
 
-    void writeXml(QXmlStreamWriter *writer, MathParser * parser ) {
+    void writeXml10(QXmlStreamWriter *writer, MathParser * parser ) {
         writer->writeStartElement( "PriceFieldData" );
         writer->writeAttribute( "priceName", priceName );
         writer->writeAttribute( "amountName", amountName );
         writer->writeAttribute( "unitMeasure", unitMeasure );
         writer->writeAttribute( "precision", QString::number( precision ) );
-        writer->writeAttribute( "applyFormula", fromBoolToQString( applyFormula ) );
+        if( (applyFormula == PriceFieldModel::ToPriceItems)
+                || (applyFormula == PriceFieldModel::ToPriceAndBillItems) ) {
+            writer->writeAttribute( "applyFormula", "true" );
+        } else {
+            writer->writeAttribute( "applyFormula", "false" );
+        }
+        QString formulaToWrite = formula;
+        if( parser != NULL ){
+            formulaToWrite.replace( parser->decimalSeparator(), ".");
+        }
+        writer->writeAttribute( "formula", formulaToWrite );
+        writer->writeAttribute( "multiplyBy", QString::number(multiplyBy) );
+        writer->writeAttribute( "fieldType", fromFieldTypeToQString( fieldType ) );
+        writer->writeEndElement();
+    }
+    void writeXml20(QXmlStreamWriter *writer, MathParser * parser ) {
+        writer->writeStartElement( "PriceFieldData" );
+        writer->writeAttribute( "priceName", priceName );
+        writer->writeAttribute( "amountName", amountName );
+        writer->writeAttribute( "unitMeasure", unitMeasure );
+        writer->writeAttribute( "precision", QString::number( precision ) );
+        writer->writeAttribute( "applyFormula", fromApplyFormulaToQString( applyFormula ) );
         QString formulaToWrite = formula;
         if( parser != NULL ){
             formulaToWrite.replace( parser->decimalSeparator(), ".");
@@ -844,7 +887,7 @@ void PriceFieldModel::writeXml(QXmlStreamWriter *writer, const QString & vers ) 
 void PriceFieldModel::writeXml10(QXmlStreamWriter *writer ) const {
     writer->writeStartElement( "PriceFieldModel" );
     for( QList<PriceFieldData *>::iterator i = m_d->fieldsList.begin(); i != m_d->fieldsList.end(); ++i ){
-        (*i)->writeXml( writer, m_d->parser );
+        (*i)->writeXml10( writer, m_d->parser );
     }
     writer->writeEndElement();
 }
@@ -852,7 +895,7 @@ void PriceFieldModel::writeXml10(QXmlStreamWriter *writer ) const {
 void PriceFieldModel::writeXml20(QXmlStreamWriter *writer) const {
     writer->writeStartElement( "PriceFieldModel" );
     for( QList<PriceFieldData *>::iterator i = m_d->fieldsList.begin(); i != m_d->fieldsList.end(); ++i ){
-        (*i)->writeXml( writer, m_d->parser );
+        (*i)->writeXml20( writer, m_d->parser );
     }
     writer->writeEndElement();
 }
@@ -918,7 +961,7 @@ void PriceFieldModel::loadFromXml10(int pf, const QXmlStreamAttributes &attrs) {
         if ( PriceFieldData::fromQStringToBool( attrs.value( "applyFormula" ).toString() ) ){
             setApplyFormula( pf, PriceFieldModel::ToPriceItems );
         } else {
-             setApplyFormula( pf, PriceFieldModel::ToNone );
+            setApplyFormula( pf, PriceFieldModel::ToNone );
         }
     }
     if( attrs.hasAttribute( "formula" ) ){
@@ -947,12 +990,7 @@ void PriceFieldModel::loadFromXml20(int pf, const QXmlStreamAttributes &attrs) {
         setPrecision( pf, attrs.value( "precision" ).toInt() );
     }
     if( attrs.hasAttribute( "applyFormula" ) ){
-        if ( PriceFieldData::fromQStringToBool( attrs.value( "applyFormula" ).toString() ) ){
-            // TO REMOVE
-            setApplyFormula( pf, PriceFieldModel::ToPriceItems );
-        } else {
-             setApplyFormula( pf, attrs.value( "applyFormula" ).toString() );
-        }
+        setApplyFormula( pf, PriceFieldData::fromQStringToApplyFormula( attrs.value( "applyFormula" ).toString() ) );
     }
     if( attrs.hasAttribute( "formula" ) ){
         QString f = attrs.value( "formula" ).toString();

@@ -61,10 +61,11 @@ public:
     QString * EPAFileName;
 };
 
-BillTreeGUI::BillTreeGUI( QMap<PriceListDBWidget::ImportOptions, bool> *EPAImpOptions, QString * EPAFileName, Bill * b, MathParser * prs, Project * prj, QWidget *parent) :
+BillTreeGUI::BillTreeGUI( bool recalcOverheadsProfitsVisible, QMap<PriceListDBWidget::ImportOptions, bool> *EPAImpOptions, QString * EPAFileName, Bill * b, MathParser * prs, Project * prj, QWidget *parent) :
     QWidget(parent),
     m_d( new BillTreeGUIPrivate(EPAImpOptions, EPAFileName, prs, prj) ){
     m_d->ui->setupUi(this);
+    m_d->ui->recalcOverheadsProfitsCheckBox->setVisible( recalcOverheadsProfitsVisible );
 
     populatePriceListComboBox();
 
@@ -289,10 +290,12 @@ void BillTreeGUI::setBill(Bill *b ) {
             disconnect( m_d->ui->priceListComboBox, static_cast<void(QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this, &BillTreeGUI::setPriceList );
             disconnect( m_d->ui->currentPriceDataSetSpinBox, static_cast<void(QSpinBox::*)(int)>(&QSpinBox::valueChanged), this, &BillTreeGUI::setPriceDataSet );
             disconnect( m_d->bill, &Bill::aboutToBeDeleted, this, &BillTreeGUI::clear );
+            disconnect( m_d->ui->recalcOverheadsProfitsCheckBox, &QCheckBox::toggled, m_d->bill, &Bill::setRecalculateOverheadsProfits );
         }
         m_d->ui->priceListComboBox->setCurrentIndex( 0 );
         m_d->ui->currentPriceDataSetSpinBox->setMaximum(1);
         m_d->ui->currentPriceDataSetSpinBox->setValue(1);
+        m_d->ui->recalcOverheadsProfitsCheckBox->setChecked( false );
         for( int i=0; i < m_d->amountLEditList.size(); ++i){
             if( i < m_d->priceFieldModel->fieldCount() ){
                 m_d->amountLEditList.at(i)->clear();
@@ -305,7 +308,7 @@ void BillTreeGUI::setBill(Bill *b ) {
         m_d->bill = b;
 
         m_d->ui->treeView->setModel( b );
-        if( m_d->bill ){
+        if( m_d->bill != NULL ){
             for( int i=0; i < m_d->amountLEditList.size(); ++i){
                 if( i < m_d->priceFieldModel->fieldCount() ){
                     m_d->amountLEditList.at(i)->setText( m_d->bill->amountStr(i) );
@@ -317,6 +320,9 @@ void BillTreeGUI::setBill(Bill *b ) {
             connect( m_d->ui->priceListComboBox, static_cast<void(QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this, &BillTreeGUI::setPriceList );
             setPriceDataSetSpinBox();
             connect( m_d->ui->currentPriceDataSetSpinBox, static_cast<void(QSpinBox::*)(int)>(&QSpinBox::valueChanged), this, &BillTreeGUI::setPriceDataSet );
+
+            m_d->ui->recalcOverheadsProfitsCheckBox->setChecked( m_d->bill->recalculateOverheadsProfits() );
+            connect( m_d->ui->recalcOverheadsProfitsCheckBox, &QCheckBox::toggled, m_d->bill, &Bill::setRecalculateOverheadsProfits );
 
             connect( m_d->bill, &Bill::aboutToBeDeleted, this, &BillTreeGUI::clear );
         }

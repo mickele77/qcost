@@ -71,7 +71,7 @@ public:
         billAttributesGUI( new AttributesGUI( prj->priceFieldModel(), prs, wpf, parent ) ),
         billVarsGUI( new VarsGUI( (Bill *) NULL, parent ) ),
         mainSplitter( new QSplitter(Qt::Horizontal, parent ) ),
-        billTreeGUI( new BillTreeGUI( EPAImpOptions, EPAFileName, NULL, prs, prj, mainSplitter ) ),
+        billTreeGUI( new BillTreeGUI( false, EPAImpOptions, EPAFileName, NULL, prs, prj, mainSplitter ) ),
         billItemGUI( new BillItemGUI( EPAImpOptions, EPAFileName, NULL, prs, prj, parent ) ),
         billItemTitleGUI( new BillItemTitleGUI( NULL, prj->priceFieldModel(), parent ) ),
         billItemWidget( new BillItemWidget(billItemGUI, billItemTitleGUI, mainSplitter ) ) {

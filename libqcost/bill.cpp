@@ -474,6 +474,38 @@ QString Bill::amountStr(int field) const {
     return m_d->rootItem->amountStr( field );
 }
 
+double Bill::amountNet(int field) const {
+    return m_d->rootItem->amountNet( field );
+}
+
+QString Bill::amountNetStr(int field) const {
+    return m_d->rootItem->amountNetStr( field );
+}
+
+double Bill::amountOverheads(int field) const {
+    return m_d->rootItem->amountOverheads( field );
+}
+
+QString Bill::amountOverheadsStr(int field) const {
+    return m_d->rootItem->amountOverheadsStr( field );
+}
+
+double Bill::amountProfits(int field) const {
+    return m_d->rootItem->amountProfits( field );
+}
+
+QString Bill::amountProfitsStr(int field) const {
+    return m_d->rootItem->amountProfitsStr( field );
+}
+
+bool Bill::recalculateOverheadsProfits() const {
+    return m_d->rootItem->recalculateOverheadsProfits();
+}
+
+void Bill::setRecalculateOverheadsProfits(bool newVal) {
+    m_d->rootItem->setRecalculateOverheadsProfits(newVal);
+}
+
 AttributesModel *Bill::attributesModel() {
     return m_d->attributesModel;
 }
@@ -507,7 +539,7 @@ unsigned int Bill::id() {
 void Bill::insertPriceField( int firstPFInserted, int lastPFInserted ){
     for( int pf = firstPFInserted; pf <= lastPFInserted; ++pf ){
         beginInsertColumns( QModelIndex(), m_d->rootItem->firstPriceFieldCol() + pf * 2, m_d->rootItem->firstPriceFieldCol() + pf * 2 + 1 );
-        m_d->rootItem->insertAmount(pf);
+        m_d->rootItem->insertField(pf);
         endInsertColumns();
     }
 }
@@ -515,7 +547,7 @@ void Bill::insertPriceField( int firstPFInserted, int lastPFInserted ){
 void Bill::removePriceField( int firstPFRemoved, int lastPFRemoved ){
     for( int pf = firstPFRemoved; pf <= lastPFRemoved; ++pf ){
         beginRemoveColumns( QModelIndex(), m_d->rootItem->firstPriceFieldCol() + pf * 2, m_d->rootItem->firstPriceFieldCol() + pf * 2 + 1 );
-        m_d->rootItem->removeAmount(pf);
+        m_d->rootItem->removeField(pf);
         endRemoveColumns();
     }
 }
@@ -617,6 +649,15 @@ void Bill::writeXml20(QXmlStreamWriter *writer) {
     }
     writer->writeAttribute( "priceDataSet", QString::number( m_d->rootItem->currentPriceDataSet() ) );
 
+    QString recalculateOverheadsProfitsVal = "false";
+    if( recalculateOverheadsProfits() ){
+        recalculateOverheadsProfitsVal = "true";
+    }
+    writer->writeAttribute( "recalculateOverheadsProfits", recalculateOverheadsProfitsVal );
+
+    writer->writeAttribute( "overheads", QString::number(m_d->rootItem->overheads() ) );
+    writer->writeAttribute( "profits", QString::number(m_d->rootItem->profits() ) );
+
     m_d->attributesModel->writeXml20( writer );
     m_d->varsModel->writeXml20( writer );
     m_d->rootItem->writeXml20( writer );
@@ -694,6 +735,19 @@ void Bill::loadXml20(const QXmlStreamAttributes &attrs, ProjectPriceListParentIt
         if( nameUp == "PRICEDATASET" ){
             m_d->rootItem->setCurrentPriceDataSet( (*i).value().toInt() );
         }
+        if( nameUp == "RECALCULATEOVERHEADSPROFITS" ){
+            if( (*i).value().toString().toUpper() == "TRUE" ) {
+                setRecalculateOverheadsProfits( true );
+            } else {
+                setRecalculateOverheadsProfits( false );
+            }
+        }
+        if( nameUp == "OVERHEADS" ){
+            m_d->rootItem->setOverheads( (*i).value().toString().toDouble() );
+        }
+        if( nameUp == "PROFITS" ){
+            m_d->rootItem->setProfits( (*i).value().toString().toDouble() );
+        }
     }
 }
 
@@ -714,6 +768,19 @@ void Bill::loadFromXmlTmp20(const QXmlStreamAttributes &attrs) {
         }
         if( nameUp == "PRICEDATASET" ){
             m_d->rootItem->setCurrentPriceDataSet( (*i).value().toInt() );
+        }
+        if( nameUp == "RECALCULATEOVERHEADSPROFITS" ){
+            if( (*i).value().toString().toUpper() == "TRUE" ) {
+                setRecalculateOverheadsProfits( true );
+            } else {
+                setRecalculateOverheadsProfits( false );
+            }
+        }
+        if( nameUp == "OVERHEADS" ){
+            m_d->rootItem->setOverheads( (*i).value().toString().toDouble() );
+        }
+        if( nameUp == "PROFITS" ){
+            m_d->rootItem->setProfits( (*i).value().toString().toDouble() );
         }
     }
 }
@@ -750,4 +817,36 @@ void Bill::writeODTSummaryOnTable(QTextCursor *cursor,
 
 void Bill::insertStandardAttributes(){
     m_d->attributesModel->insertStandardAttributes();
+}
+
+double Bill::overheads() const {
+    return m_d->rootItem->overheads();
+}
+
+QString Bill::overheadsStr() const {
+    return m_d->rootItem->overheadsStr();
+}
+
+void Bill::setOverheads(double newVal) {
+    m_d->rootItem->setOverheads( newVal );
+}
+
+void Bill::setOverheads(const QString &newVal) {
+    m_d->rootItem->setOverheads( newVal );
+}
+
+double Bill::profits() const {
+    return m_d->rootItem->profits();
+}
+
+QString Bill::profitsStr() const {
+    return m_d->rootItem->profitsStr();
+}
+
+void Bill::setProfits(double newVal) {
+    m_d->rootItem->setProfits( newVal );
+}
+
+void Bill::setProfits(const QString &newVal) {
+    m_d->rootItem->setProfits( newVal );
 }
