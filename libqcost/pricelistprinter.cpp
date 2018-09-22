@@ -18,6 +18,7 @@
 */
 #include "pricelistprinter.h"
 
+#include "pricefieldmodel.h"
 #include "billprinter.h"
 #include "bill.h"
 #include "pricelist.h"
@@ -33,17 +34,19 @@
 
 class PriceListPrinterPrivate{
 public:
-    PriceListPrinterPrivate(PriceList * b):
-        priceList(b) {
+    PriceListPrinterPrivate(PriceList * b, PriceFieldModel * pfm):
+        priceList(b),
+        priceFieldModel(pfm){
     }
     ~PriceListPrinterPrivate(){
     }
 
     PriceList * priceList;
+    PriceFieldModel * priceFieldModel;
 };
 
-PriceListPrinter::PriceListPrinter( PriceList * b ):
-    m_d( new PriceListPrinterPrivate(b) ) {
+PriceListPrinter::PriceListPrinter( PriceList * b, PriceFieldModel * pfm ):
+    m_d( new PriceListPrinterPrivate(b, pfm) ) {
 }
 
 PriceListPrinter::~PriceListPrinter() {
@@ -151,6 +154,15 @@ bool PriceListPrinter::printODT( PriceListPrinter::PrintPriceItemsOption printOp
         }
 
         if( printPriceAP ){
+            int colCount = 5;
+            for( int i=0; i < fieldsToPrint.size(); ++i ) {
+                if( m_d->priceFieldModel->applyFormula(fieldsToPrint.at(i)) == PriceFieldModel::ToBillItems ) {
+                    colCount += 1;
+                } else {
+                    colCount += 2;
+                }
+            }
+
             bool firstAP=true;
 
             QList<PriceItem *> priceItemList = m_d->priceList->priceItemList();
@@ -237,9 +249,13 @@ bool PriceListPrinter::printODT( PriceListPrinter::PrintPriceItemsOption printOp
                                       << QTextLength( QTextLength::FixedLength, 30.0 )
                                       << QTextLength( QTextLength::FixedLength, 70.0 )
                                       << QTextLength( QTextLength::FixedLength, 20.0 );
-                            double usedWidth =  10.0 + 30.0 + 70.0 + 20.0;
-                            double colEqualWidth = (tableWidth - usedWidth ) / (1 + 2*fieldsToPrint.size() );
-                            for( int i=0; i < (1 + 2*fieldsToPrint.size() ); ++i ){
+                            double usedWidth = 0.0;
+                            for( QVector<QTextLength>::iterator iter = colWidths.begin(); iter != colWidths.end(); ++iter ){
+                                usedWidth += iter->rawValue();
+                            }
+                            int colEqualWidthCount = colCount - colWidths.size();
+                            double colEqualWidth = (tableWidth - usedWidth ) / colEqualWidthCount;
+                            for( int i=0; i < colEqualWidthCount; ++i ){
                                 colWidths << QTextLength( QTextLength::FixedLength, colEqualWidth );
                             }
                         } else { // fieldsToPrint.size() == 0
@@ -254,22 +270,24 @@ bool PriceListPrinter::printODT( PriceListPrinter::PrintPriceItemsOption printOp
                         }
                     } else {
                         if( fieldsToPrint.size() > 0 ){
-                            double usedWidth = 0.0;
                             if( fieldsToPrint.size() > 1  ){
                                 colWidths << QTextLength( QTextLength::FixedLength, 10.0 )
                                           << QTextLength( QTextLength::FixedLength, 20.0 )
                                           << QTextLength( QTextLength::FixedLength, 45.0 )
                                           << QTextLength( QTextLength::FixedLength, 15.0 );
-                                usedWidth =  10.0 + 20.0 + 45.0 + 15.0;
                             } else { // fieldsToPrint.size() == 1
                                 colWidths << QTextLength( QTextLength::FixedLength, 10.0 )
                                           << QTextLength( QTextLength::FixedLength, 25.0 )
                                           << QTextLength( QTextLength::FixedLength, 65.0 )
                                           << QTextLength( QTextLength::FixedLength, 15.0 );
-                                usedWidth =  10.0 + 25.0 + 65.0 + 15.0;
                             }
-                            double colEqualWidth = (tableWidth - usedWidth ) / (1 + 2*fieldsToPrint.size() );
-                            for( int i=0; i < (1 + 2*fieldsToPrint.size() ); ++i ){
+                            double usedWidth = 0.0;
+                            for( QVector<QTextLength>::iterator iter = colWidths.begin(); iter != colWidths.end(); ++iter ){
+                                usedWidth += iter->rawValue();
+                            }
+                            int colEqualWidthCount = colCount - colWidths.size();
+                            double colEqualWidth = (tableWidth - usedWidth ) / colEqualWidthCount;
+                            for( int i=0; i < colEqualWidthCount; ++i ){
                                 colWidths << QTextLength( QTextLength::FixedLength, colEqualWidth );
                             }
                         } else { // fieldsToPrint.size() == 0

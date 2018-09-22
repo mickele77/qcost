@@ -60,8 +60,8 @@ public:
     QVariant data() const;
     bool setData( const QVariant &value);
 
-    bool isUsingPriceList( PriceList * pl );
-    bool isUsingPriceItem(PriceItem * p );
+    bool isUsingPriceList( PriceList * pl ) const;
+    bool isUsingPriceItem(PriceItem * p ) const;
 
     void writeXml( QXmlStreamWriter * writer, const QString & vers ) const;
     void readXml(QXmlStreamReader *reader, ProjectPriceListParentItem *priceLists, const QString & vers);

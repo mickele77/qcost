@@ -36,7 +36,7 @@ public:
     enum ApplyFormula{
         ToNone,
         ToPriceItems,
-        ToPriceAndBillItems
+        ToBillItems
     };
     enum FieldType{
         PriceNone,
@@ -72,12 +72,15 @@ public:
     QString unitMeasure( int pf );
     bool setUnitMeasure(int pf, const QString & newVal );
     int precision( int pf );
+    int effectivePrecision( int pf );
     bool setPrecision(int pf, int newVal );
     PriceFieldModel::ApplyFormula applyFormula( int pf );
     bool setApplyFormula(int pf, const QString & newVal );
     bool setApplyFormula(int pf, PriceFieldModel::ApplyFormula newVal );
     QString formula( int pf );
     bool setFormula(int pf, const QString & newVal );
+    bool isPercentage( int pf );
+    bool setIsPercentage(int pf, bool newVal );
     int multiplyBy( int pf );
     bool setMultiplyBy(int pf, const int newVal );
     FieldType fieldType( int pf );
@@ -116,6 +119,7 @@ signals:
     void unitMeasureChanged( int pf, const QString & newUnitMeasure );
     void precisionChanged( int pf, int newPrec );
     void formulaChanged( int pf, const QString & newFormula );
+    void isPercentageChanged( int pf, bool newVal );
     void applyFormulaChanged( int pf, ApplyFormula newApplyFormula );
     void multiplyByChanged( int pf, int newMultiplyBy );
     void fieldTypeChanged( int pf, FieldType newFieldType );

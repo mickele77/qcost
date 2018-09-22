@@ -22,6 +22,7 @@
 #include "qcost_export.h"
 
 class PriceList;
+class PriceItem;
 class UnitMeasureModel;
 class PriceFieldModel;
 class MathParser;
@@ -63,6 +64,9 @@ public:
 
     void writeXml(QXmlStreamWriter * writer , const QString &vers) const;
     void readXml(QXmlStreamReader *reader, UnitMeasureModel *uml, const QString & vers);
+
+    // dice se il prezzo  usato in una qualche AP
+    bool isUsingPriceItem(PriceItem *p) const;
 
 signals:
     void removePriceItemSignal(PriceList * pl, int position, int count, const QModelIndex &parent );

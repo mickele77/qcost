@@ -319,7 +319,7 @@ void PriceListTreeGUI::pasteFromClipboard(){
                             bool containsParent = false;
                             for( QList<PriceItem *>::iterator j=itemsToCopy.begin(); j != itemsToCopy.end(); ++j ){
                                 if( i != j ){
-                                    if( (*i)->isDescending(*j) ){
+                                    if( (*i)->isDescendant(*j) ){
                                         containsParent = true;
                                         break;
                                     }
@@ -338,7 +338,7 @@ void PriceListTreeGUI::pasteFromClipboard(){
                                 bool containsParent = false;
                                 for( QList<PriceItem *>::iterator j=itemsToCopy.begin(); j != itemsToCopy.end(); ++j ){
                                     if( i != j ){
-                                        if( (*i)->isDescending(*j) ){
+                                        if( (*i)->isDescendant(*j) ){
                                             containsParent = true;
                                             break;
                                         }

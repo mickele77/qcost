@@ -22,6 +22,7 @@
 #include "qcost_export.h"
 
 class PriceList;
+class PriceFieldModel;
 class QString;
 template <typename T> class QList;
 
@@ -38,7 +39,7 @@ public:
         PrintShortLongDescOpt
     };
 
-    PriceListPrinter(PriceList *b);
+    PriceListPrinter(PriceList *b, PriceFieldModel *pfm);
     ~PriceListPrinter();
 
     void setPriceList(PriceList * b);

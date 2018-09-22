@@ -59,7 +59,10 @@ public:
 
     PriceItem *parentItem();
     void setParentItem(PriceItem *newParent, int position = -1 );
-    bool isDescending(PriceItem *ancestor);
+    // Dice il prezzo  un discendente di ascendent
+    bool isDescendant(PriceItem *ascendent) const;
+    // Dice se il prezzo è un avo di descendent
+    bool isAscendent(PriceItem *descendent) const;
 
     // spese generali
     double overheads(int priceDataSet);
@@ -129,6 +132,7 @@ public:
     UnitMeasure * unitMeasure();
     void setUnitMeasure( UnitMeasure * ump );
     bool isUsingUnitMeasure( UnitMeasure * ) const ;
+    bool isUsingPriceItem( PriceItem * p ) const ;
 
     int firstValueCol();
     double value(int priceField, int priceDataSet ) const;
@@ -138,7 +142,7 @@ public:
     bool setValue( int priceField, int priceDataSet, double newValue );
     bool setValue( int priceField, int priceDataSet, const QString & newValue );
     void setValue( PriceFieldModel::FieldType fType, int priceDataSet, double newValue );
-    void emitValueChanged( int priceField, int priceDataSet, double newVal );
+    void emitValueChanged( int priceField, int priceDataSet );
 
     bool associateAP(int priceDataSet );
     void setAssociateAP(int priceDataSet, bool newValue );

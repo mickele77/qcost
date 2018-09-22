@@ -239,3 +239,12 @@ void ProjectPriceListParentItem::emitRemovePriceItemSignal(int position, int cou
     PriceList * pl = dynamic_cast<PriceList *>(QObject::sender());
     emit removePriceItemSignal( pl, position, count, parent );
 }
+
+bool ProjectPriceListParentItem::isUsingPriceItem(PriceItem *p) const {
+    for( QList<PriceList*>::iterator i = m_d->priceListContainer.begin(); i != m_d->priceListContainer.end(); ++i ){
+        if( (*i)->isUsingPriceItem( p ) ) {
+            return true;
+        }
+    }
+    return false;
+}

@@ -337,7 +337,7 @@ void PriceList::endChangingColumns() {
     endResetModel();
 }
 
-bool PriceList::isUsingUnitMeasure(UnitMeasure * ump) {
+bool PriceList::isUsingUnitMeasure(UnitMeasure * ump) const {
     return m_d->rootItem->isUsingUnitMeasure( ump );
 }
 
@@ -483,4 +483,8 @@ void PriceList::loadFromXml20(const QXmlStreamAttributes &attrs ) {
 
 void PriceList::readFromXmlTmp20( ProjectPriceListParentItem * priceLists ) {
     m_d->rootItem->readFromXmlTmp20( priceLists );
+}
+
+bool PriceList::isUsingPriceItem(PriceItem *p) const {
+    return m_d->rootItem->isUsingPriceItem( p );
 }

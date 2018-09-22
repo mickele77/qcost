@@ -277,16 +277,30 @@ PriceItem *PriceItem::parentItem() {
     return m_d->parentItem;
 }
 
-bool PriceItem::isDescending(PriceItem *ancestor) {
+bool PriceItem::isDescendant(PriceItem *ascendent) const {
     if( m_d->parentItem == NULL ){
-        return (m_d->parentItem == ancestor);
+        return (m_d->parentItem == ascendent );
     } else {
-        if( m_d->parentItem == ancestor ){
+        if( m_d->parentItem == ascendent ){
             return true;
         } else {
-            return m_d->parentItem->isDescending( ancestor );
+            return m_d->parentItem->isDescendant( ascendent );
         }
     }
+}
+
+bool PriceItem::isAscendent(PriceItem *descendent) const {
+    for( QList<PriceItem *>::iterator i = m_d->childrenContainer.begin(); i != m_d->childrenContainer.end(); ++i){
+        if( descendent == (*i) ){
+            return true;
+        }
+        if( (*i)->hasChildren() ) {
+            if( (*i)->isAscendent(descendent) ){
+                return true;
+            }
+        }
+    }
+    return false;
 }
 
 double PriceItem::overheads( int priceDataSet ) {
@@ -431,6 +445,25 @@ bool PriceItem::isUsingUnitMeasure(UnitMeasure * ump ) const {
     return false;
 }
 
+bool PriceItem::isUsingPriceItem(PriceItem *p) const {
+    if( m_d->childrenContainer.size() > 0 ){
+        for( QList<PriceItem *>::iterator i = m_d->childrenContainer.begin(); i != m_d->childrenContainer.end(); ++i){
+            if( (*i)->isUsingPriceItem( p ) ){
+                return true;
+            }
+        }
+    } else {
+        for( int pds=0; pds < m_d->dataModel->priceDataSetCount(); ++pds ){
+            if( m_d->dataModel->associateAP(pds) ) {
+                if( m_d->dataModel->associatedAP(pds)->isUsingPriceItem(p) ){
+                    return true;
+                }
+            }
+        }
+    }
+    return false;
+}
+
 int PriceItem::firstValueCol() {
     return m_d->firstValueCol;
 }
@@ -459,8 +492,8 @@ bool PriceItem::setValue(int priceField, int priceDataSet, const QString &newVal
     return m_d->dataModel->setValue( priceField, priceDataSet, newValue );
 }
 
-void PriceItem::emitValueChanged(int priceField, int priceDataSet, double newValue ) {
-    emit valueChanged( priceField, priceDataSet, m_d->toString( newValue, 'f', m_d->priceFieldModel->precision(priceField) ) );
+void PriceItem::emitValueChanged(int priceField, int priceDataSet ) {
+    emit valueChanged( priceField, priceDataSet, valueStr(priceField, priceDataSet) );
     if( priceField == 0 ){
         emit dataChanged( this, priceDataSet+m_d->firstValueCol );
     }
@@ -1035,7 +1068,7 @@ void PriceItem::readXml10(QXmlStreamReader *reader, UnitMeasureModel * uml ) {
         }
         if( readingPriceDataSet &&
                 (reader->name().toString().toUpper() == "BILL" && reader->isStartElement())) {
-            m_d->dataModel->setAssociateAP( currentPriceDataSet );
+            m_d->dataModel->setAssociateAP( currentPriceDataSet, true );
             m_d->dataModel->associatedAP( currentPriceDataSet )->readXmlTmp10( reader );
         }
         if( reader->name().toString().toUpper() == "PRICEITEM" && reader->isStartElement()) {
@@ -1112,6 +1145,8 @@ void PriceItem::readXml20(QXmlStreamReader *reader, UnitMeasureModel * uml ) {
                 (reader->name().toString().toUpper() == "BILL" && reader->isStartElement())) {
             m_d->dataModel->setAssociateAP( currentPriceDataSet );
             m_d->dataModel->associatedAP( currentPriceDataSet )->readXmlTmp20( reader );
+            m_d->dataModel->associatedAP( currentPriceDataSet )->setProfits( profits(currentPriceDataSet) );
+            m_d->dataModel->associatedAP( currentPriceDataSet )->setOverheads( overheads(currentPriceDataSet) );
         }
         if( reader->name().toString().toUpper() == "PRICEITEM" && reader->isStartElement()) {
             appendChildren();

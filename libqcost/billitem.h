@@ -43,6 +43,7 @@ class QXmlStreamReader;
 
 #include "billprinter.h"
 #include "treeitem.h"
+
 #include <QObject>
 
 class BillItemPrivate;
@@ -82,7 +83,7 @@ public:
     int currentPriceDataSet() const;
     PriceItem * priceItem();
     // dice se il prezzo è usato dall'articolo di computo o da un suo sottoarticolo
-    bool isUsingPriceItem( PriceItem * p );
+    bool isUsingPriceItem( PriceItem * p ) const;
     // restituisce l'elenco degli articoli di prezzo contenuti nell'articolo di computo o nei sottoarticoli
     QList<PriceItem *> usedPriceItems() const;
     // restituisce i sottoarticoli del prezzo associato all'articolo di computo, oltre ad eventuali

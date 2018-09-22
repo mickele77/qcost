@@ -130,12 +130,12 @@ void PriceItemGUI::updateFieldList(){
         m_d->singlePriceDataFieldLabels.append( label );
 
         QLineEdit * lEdit = new QLineEdit( m_d->ui->singleDataGroupBox );
-        bool ro = m_d->priceFieldModel->applyFormula(i)==PriceFieldModel::ToPriceItems || m_d->priceFieldModel->applyFormula(i)==PriceFieldModel::ToPriceAndBillItems;
+        bool ro = m_d->priceFieldModel->applyFormula(i)==PriceFieldModel::ToPriceItems || m_d->priceFieldModel->applyFormula(i)==PriceFieldModel::ToBillItems;
         lEdit->setReadOnly( ro );
         lEdit->setAlignment( Qt::AlignRight );
         if( m_d->priceItem != NULL ){
             if( m_d->parser != NULL ){
-                lEdit->setText( m_d->parser->toString( m_d->priceItem->value(i, m_d->currentPriceDataSet ), 'f', m_d->priceFieldModel->precision(i) ) );
+                lEdit->setText( m_d->priceItem->valueStr(i, m_d->currentPriceDataSet ) );
             } else {
                 lEdit->setText( QString::number( m_d->priceItem->value(i, m_d->currentPriceDataSet ), 'f', m_d->priceFieldModel->precision(i) ) );
             }

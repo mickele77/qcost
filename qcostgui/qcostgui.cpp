@@ -564,7 +564,7 @@ bool QCostGUI::printODT() {
                 if( suf != "odt"){
                     fileName.append( ".odt" );
                 }
-                PriceListPrinter writer( pl );
+                PriceListPrinter writer( pl, m_d->project->priceFieldModel() );
                 bool ret = writer.printODT( printItemsOption, fieldsToPrint, priceDataSetToPrint, printNumLetters,
                                             printPriceList, printAP, APgroupPrAm, fileName, paperWidth, paperHeight, paperOrientation );
                 if( !m_d->sWordProcessorFile.isEmpty() ){

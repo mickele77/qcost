@@ -467,7 +467,11 @@ double BillItem::amount( int field ) const{
 }
 
 QString BillItem::amountStr(int field) const {
-    return m_d->toString( amount(field), 'f', m_d->priceFieldModel->precision(field) );
+    if( m_d->priceFieldModel->isPercentage(field) ) {
+        return m_d->toString( amount(field) * 100.0, 'f', m_d->priceFieldModel->precision(field) ) + " %";
+    } else {
+        return m_d->toString( amount(field), 'f', m_d->priceFieldModel->precision(field) );
+    }
 }
 
 double BillItem::amountNet( int field ) const{
@@ -478,7 +482,11 @@ double BillItem::amountNet( int field ) const{
 }
 
 QString BillItem::amountNetStr(int field) const {
-    return m_d->toString( amountNet(field), 'f', m_d->priceFieldModel->precision(field) );
+    if( m_d->priceFieldModel->isPercentage(field) ) {
+        return m_d->toString( amountNet(field) * 100.0, 'f', m_d->priceFieldModel->precision(field) ) + " %";
+    } else {
+        return m_d->toString( amountNet(field), 'f', m_d->priceFieldModel->precision(field) );
+    }
 }
 
 double BillItem::amountOverheads( int field ) const{
@@ -489,7 +497,11 @@ double BillItem::amountOverheads( int field ) const{
 }
 
 QString BillItem::amountOverheadsStr(int field) const {
-    return m_d->toString( amountOverheads(field), 'f', m_d->priceFieldModel->precision(field) );
+    if( m_d->priceFieldModel->isPercentage(field) ) {
+        return m_d->toString( amountOverheads(field) * 100.0, 'f', m_d->priceFieldModel->precision(field) ) + " %";
+    } else {
+        return m_d->toString( amountOverheads(field), 'f', m_d->priceFieldModel->precision(field) );
+    }
 }
 
 double BillItem::amountProfits( int field ) const{
@@ -500,17 +512,28 @@ double BillItem::amountProfits( int field ) const{
 }
 
 QString BillItem::amountProfitsStr(int field) const {
-    return m_d->toString( amountProfits(field), 'f', m_d->priceFieldModel->precision(field) );
+    if( m_d->priceFieldModel->isPercentage(field) ) {
+        return m_d->toString( amountProfits(field) * 100.0, 'f', m_d->priceFieldModel->precision(field) ) + " %";
+    } else {
+        return m_d->toString( amountProfits(field), 'f', m_d->priceFieldModel->precision(field) );
+    }
 }
 
 bool BillItem::recalculateOverheadsProfits() const {
+    if( m_d->parentItem != NULL ) {
+        return m_d->parentItem->recalculateOverheadsProfits();
+    }
     return m_d->recaculateOverheadsProfits;
 }
 
 void BillItem::setRecalculateOverheadsProfits(bool newVal) {
-    if( m_d->recaculateOverheadsProfits != newVal ) {
-        m_d->recaculateOverheadsProfits = newVal;
-        updateAmounts();
+    if( m_d->parentItem != NULL ) {
+        m_d->parentItem->setRecalculateOverheadsProfits(newVal);
+    } else {
+        if( m_d->recaculateOverheadsProfits != newVal ) {
+            m_d->recaculateOverheadsProfits = newVal;
+            updateAmounts();
+        }
     }
 }
 
@@ -531,6 +554,9 @@ void BillItem::setOverheads( double newVal) {
         if (m_d->overheads != newVal) {
             m_d->overheads = newVal;
             emit overheadsChanged( overheadsStr() );
+            if( recalculateOverheadsProfits() ) {
+                updateAmounts();
+            }
         }
     } else {
         m_d->parentItem->setOverheads( newVal );
@@ -560,6 +586,9 @@ void BillItem::setProfits(double newVal) {
         if (m_d->profits != newVal) {
             m_d->profits = newVal;
             emit profitsChanged( profitsStr() );
+            if( recalculateOverheadsProfits() ) {
+                updateAmounts();
+            }
         }
     } else {
         m_d->parentItem->setProfits( newVal );
@@ -732,19 +761,7 @@ QVariant BillItem::data(int col, int role) const {
                     }
                 } else {
                     if( hasChildren() ){
-                        QVariant priceToShow;
-                        if( m_d->priceFieldModel->applyFormula( pf ) == PriceFieldModel::ToPriceAndBillItems ) {
-                            bool ok = false;
-                            QList<double> fieldValues;
-                            for( int i=0; i < m_d->priceFieldModel->fieldCount(); ++i ){
-                                fieldValues << amount( i );
-                            }
-                            double val = m_d->priceFieldModel->calcFormula( &ok, pf, fieldValues, 0.0, 0.0 );
-                            if( ok ) {
-                                priceToShow = QVariant( m_d->toString( val, 'f', m_d->priceFieldModel->precision(pf) ) );
-                            }
-                        }
-                        return priceToShow;
+                        return QVariant();
                     } else if( pf < m_d->priceFieldModel->fieldCount() ){
                         if( m_d->priceItem != NULL ){
                             return QVariant( m_d->priceItem->valueStr(pf, m_d->currentPriceDataSet ) );
@@ -831,79 +848,94 @@ void BillItem::setUnitMeasure(UnitMeasure *ump) {
 
 void BillItem::updateAmount( int pf ) {
     if( (pf < m_d->amount.size()) && (pf > -1) ){
+        int prec = m_d->priceFieldModel->effectivePrecision(pf);
+
         double vNet = 0.0; // totale netto (no SGUI)
         double vOvh = 0.0; // spese generali )
         double vPr = 0.0;  // utili di impresa
         double v = 0.0;    // totale
+
         if( hasChildren() ){
             // voce di computo titolo (comprende voci semplici)
             for( QList<BillItem*>::iterator iter = m_d->childrenContainer.begin(); iter != m_d->childrenContainer.end(); ++iter ){
                 (*iter)->updateAmount(pf);
-                if( m_d->priceFieldModel->applyFormula(pf) == PriceFieldModel::ToPriceAndBillItems ) {
-                    bool ok = false;
-                    QList<double> fieldValues;
-                    for( int i=0; i < m_d->priceFieldModel->fieldCount(); ++i ){
-                        fieldValues << amountNet( i );
-                    }
-                    if( ok ) {
-                        vNet = m_d->priceFieldModel->calcFormula( &ok, pf, fieldValues, 0.0, 0.0 );
-                    } else {
-                        vNet = 0.0;
-                    }
+            }
+        }
 
-                    ok = false;
-                    fieldValues.clear();
-                    for( int i=0; i < m_d->priceFieldModel->fieldCount(); ++i ){
-                        fieldValues << amountOverheads( i );
-                    }
-                    if( ok ) {
-                        vOvh = m_d->priceFieldModel->calcFormula( &ok, pf, fieldValues, 0.0, 0.0 );
-                    } else {
-                        vOvh = 0.0;
-                    }
+        if( m_d->priceFieldModel->applyFormula(pf) == PriceFieldModel::ToBillItems ) {
+            bool ok = false;
+            QList<double> fieldValues;
+            for( int i=0; i < m_d->priceFieldModel->fieldCount(); ++i ){
+                fieldValues << amountNet( i );
+            }
+            vNet = m_d->priceFieldModel->calcFormula( &ok, pf, fieldValues, 0.0, 0.0 );
+            if( ok ) {
+                vNet = UnitMeasure::applyPrecision( vNet, prec );
+            } else {
+                vNet = 0.0;
+            }
 
-                    ok = false;
-                    fieldValues.clear();
-                    for( int i=0; i < m_d->priceFieldModel->fieldCount(); ++i ){
-                        fieldValues << amountProfits( i );
-                    }
-                    if( ok ) {
-                        vPr = m_d->priceFieldModel->calcFormula( &ok, pf, fieldValues, 0.0, 0.0 );
-                    } else {
-                        vPr = 0.0;
-                    }
+            ok = false;
+            fieldValues.clear();
+            for( int i=0; i < m_d->priceFieldModel->fieldCount(); ++i ){
+                fieldValues << amountOverheads( i );
+            }
+            vOvh = m_d->priceFieldModel->calcFormula( &ok, pf, fieldValues, 0.0, 0.0 );
+            if( ok ) {
+                vOvh = UnitMeasure::applyPrecision( vOvh, prec );
+            } else {
+                vOvh = 0.0;
+            }
 
-                    ok = false;
-                    fieldValues.clear();
-                    for( int i=0; i < m_d->priceFieldModel->fieldCount(); ++i ){
-                        fieldValues << amount( i );
-                    }
-                    if( ok ) {
-                        v = m_d->priceFieldModel->calcFormula( &ok, pf, fieldValues, 0.0, 0.0 );
-                    } else {
-                        v = 0.0;
-                    }
+            ok = false;
+            fieldValues.clear();
+            for( int i=0; i < m_d->priceFieldModel->fieldCount(); ++i ){
+                fieldValues << amountProfits( i );
+            }
+            vPr = m_d->priceFieldModel->calcFormula( &ok, pf, fieldValues, 0.0, 0.0 );
+            if( ok ) {
+                vPr = UnitMeasure::applyPrecision( vPr, prec );
+            } else {
+                vPr = 0.0;
+            }
 
+            ok = false;
+            fieldValues.clear();
+            for( int i=0; i < m_d->priceFieldModel->fieldCount(); ++i ){
+                fieldValues << amount( i );
+            }
+            v = m_d->priceFieldModel->calcFormula( &ok, pf, fieldValues, 0.0, 0.0 );
+            if( ok ) {
+                v = UnitMeasure::applyPrecision( v, prec );
+            } else {
+                v = 0.0;
+            }
+        } else if( hasChildren() ){ // && m_d->priceFieldModel->applyFormula(pf) != PriceFieldModel::ToPriceAndBillItems
+            // voce di computo titolo (comprende voci semplici)
+            for( QList<BillItem*>::iterator iter = m_d->childrenContainer.begin(); iter != m_d->childrenContainer.end(); ++iter ){
+                vNet += (*iter)->amountNet(pf);
+                vOvh = UnitMeasure::applyPrecision( vNet * overheads(), prec );
+                vPr = UnitMeasure::applyPrecision( (vNet+vOvh) * profits(), prec );
+                if( recalculateOverheadsProfits() ) {
+                    v = UnitMeasure::applyPrecision( vNet + vOvh + vPr, prec );
                 } else {
-                    vNet += (*iter)->amountNet(pf);
-                    vOvh = UnitMeasure::applyPrecision( vNet * overheads(), m_d->priceFieldModel->precision(pf) );
-                    vPr = UnitMeasure::applyPrecision( (vNet+vOvh) * profits(), m_d->priceFieldModel->precision(pf) );
-                    if( recalculateOverheadsProfits() ) {
-                        v = UnitMeasure::applyPrecision( vNet + vOvh + vPr, m_d->priceFieldModel->precision(pf) );
-                    } else {
-                        v += (*iter)->amount(pf);
-                    }
+                    v += (*iter)->amount(pf);
                 }
             }
-        } else if( m_d->priceItem != NULL ){ // !hasChildren()
+        } else if( m_d->priceItem != NULL ){ // !hasChildren() && m_d->priceFieldModel->applyFormula(pf) != PriceFieldModel::ToPriceAndBillItems
+            double effQuantity = m_d->quantity;
+            if( m_d->priceFieldModel->multiplyBy(pf) > -1 ) {
+                effQuantity = amount(pf);
+            }
+
             // voce di computo semplice
-            vNet = UnitMeasure::applyPrecision( m_d->quantity * m_d->priceItem->valueNet( pf, m_d->currentPriceDataSet ), m_d->priceFieldModel->precision(pf) );
-            vOvh = UnitMeasure::applyPrecision( vNet * overheads(), m_d->priceFieldModel->precision(pf) );
-            vPr = UnitMeasure::applyPrecision( (vNet+vOvh) * profits(), m_d->priceFieldModel->precision(pf) );
+            vNet = UnitMeasure::applyPrecision( effQuantity * m_d->priceItem->valueNet( pf, m_d->currentPriceDataSet ), prec );
+            vOvh = UnitMeasure::applyPrecision( vNet * overheads(), prec );
+            vPr = UnitMeasure::applyPrecision( (vNet+vOvh) * profits(), prec );
             if( recalculateOverheadsProfits() ) {
-                v = UnitMeasure::applyPrecision( vNet + vOvh + vPr, m_d->priceFieldModel->precision(pf) );
+                v = UnitMeasure::applyPrecision( vNet + vOvh + vPr, prec );
             } else {
-                v = UnitMeasure::applyPrecision( m_d->quantity * m_d->priceItem->value( pf, m_d->currentPriceDataSet ), m_d->priceFieldModel->precision(pf) );
+                v = UnitMeasure::applyPrecision( m_d->quantity * m_d->priceItem->value( pf, m_d->currentPriceDataSet ), prec );
             }
         }
 
@@ -939,7 +971,7 @@ void BillItem::updateAmounts() {
     }
 }
 
-bool BillItem::isUsingPriceItem(PriceItem *p) {
+bool BillItem::isUsingPriceItem(PriceItem *p) const {
     if( hasChildren() ){
         for( QList<BillItem *>::iterator i = m_d->childrenContainer.begin(); i != m_d->childrenContainer.end(); ++i){
             if( (*i)->isUsingPriceItem(p) ){
@@ -952,6 +984,11 @@ bool BillItem::isUsingPriceItem(PriceItem *p) {
     } else {
         if( m_d->priceItem == p ){
             return true;
+        }
+        if( m_d->priceItem != NULL ) {
+            if( m_d->priceItem->isDescendant(p) ) {
+                return true;
+            }
         }
     }
     return false;
@@ -1558,13 +1595,13 @@ void BillItem::insertField(int pf){
     double amountOverheadsVal = 0.0;
     double amountProfitsVal = 0.0;
     if( m_d->priceItem != NULL ){
-        amountNetVal = UnitMeasure::applyPrecision( m_d->quantity * m_d->priceItem->valueNet( pf, m_d->currentPriceDataSet ), m_d->priceFieldModel->precision(pf) );
-        amountOverheadsVal = UnitMeasure::applyPrecision( overheads() * amountNetVal, m_d->priceFieldModel->precision(pf) );
-        amountProfitsVal = UnitMeasure::applyPrecision( profits() * (amountNetVal+amountOverheadsVal), m_d->priceFieldModel->precision(pf) );
+        amountNetVal = UnitMeasure::applyPrecision( m_d->quantity * m_d->priceItem->valueNet( pf, m_d->currentPriceDataSet ), m_d->priceFieldModel->effectivePrecision(pf) );
+        amountOverheadsVal = UnitMeasure::applyPrecision( overheads() * amountNetVal, m_d->priceFieldModel->effectivePrecision(pf) );
+        amountProfitsVal = UnitMeasure::applyPrecision( profits() * (amountNetVal+amountOverheadsVal), m_d->priceFieldModel->effectivePrecision(pf) );
         if( m_d->recaculateOverheadsProfits ){
-            amountVal = UnitMeasure::applyPrecision( amountNetVal + amountOverheadsVal + amountProfitsVal, m_d->priceFieldModel->precision(pf) );
+            amountVal = UnitMeasure::applyPrecision( amountNetVal + amountOverheadsVal + amountProfitsVal, m_d->priceFieldModel->effectivePrecision(pf) );
         } else {
-            amountVal = UnitMeasure::applyPrecision( m_d->quantity * m_d->priceItem->value( pf, m_d->currentPriceDataSet ), m_d->priceFieldModel->precision(pf) );
+            amountVal = UnitMeasure::applyPrecision( m_d->quantity * m_d->priceItem->value( pf, m_d->currentPriceDataSet ), m_d->priceFieldModel->effectivePrecision(pf) );
         }
     }
     m_d->amount.insert(pf, amountVal);
@@ -1698,7 +1735,14 @@ void BillItem::writeODTBillOnTable(QTextCursor *cursor,
     rightBottomFormat.setProperty( QTextFormatUserDefined::TableCellBorderRightWidth, QVariant(borderWidth) );
 
     // numero complessivo colonne
-    int cellCount = 5 + 2 * fieldsToPrint.size();
+    int colCount = 5;
+    for( int i=0; i < fieldsToPrint.size(); ++i ) {
+        if( m_d->priceFieldModel->applyFormula(fieldsToPrint.at(i)) == PriceFieldModel::ToBillItems ) {
+            colCount += 1;
+        } else {
+            colCount += 2;
+        }
+    }
 
     // puntatore alla tabella (comodita')
     QTextTable *table = cursor->currentTable();
@@ -1717,7 +1761,9 @@ void BillItem::writeODTBillOnTable(QTextCursor *cursor,
 
         if( groupPrAm  ){
             for( int i=0; i < fieldsToPrint.size(); ++i ){
-                BillItemPrivate::writeCell( cursor, table, centralHeaderFormat, headerBlockFormat, m_d->priceFieldModel->priceName( fieldsToPrint.at(i)) );
+                if( m_d->priceFieldModel->applyFormula(fieldsToPrint.at(i)) != PriceFieldModel::ToBillItems ) {
+                    BillItemPrivate::writeCell( cursor, table, centralHeaderFormat, headerBlockFormat, m_d->priceFieldModel->priceName( fieldsToPrint.at(i)) );
+                }
             }
             for( int i=0; i < fieldsToPrint.size(); ++i ){
                 if( i == fieldsToPrint.size() - 1 ){
@@ -1728,18 +1774,19 @@ void BillItem::writeODTBillOnTable(QTextCursor *cursor,
             }
         } else {
             for( int i=0; i < fieldsToPrint.size(); ++i ){
-                if( i == fieldsToPrint.size() - 1 ){
+                if( m_d->priceFieldModel->applyFormula(fieldsToPrint.at(i)) != PriceFieldModel::ToBillItems ) {
                     BillItemPrivate::writeCell( cursor, table, centralHeaderFormat, headerBlockFormat, m_d->priceFieldModel->priceName( fieldsToPrint.at(i)) );
+                }
+                if( i == fieldsToPrint.size() - 1 ){
                     BillItemPrivate::writeCell( cursor, table, rightHeaderFormat, headerBlockFormat, m_d->priceFieldModel->amountName( fieldsToPrint.at(i)) );
                 } else {
-                    BillItemPrivate::writeCell( cursor, table, centralHeaderFormat, headerBlockFormat, m_d->priceFieldModel->priceName( fieldsToPrint.at(i)) );
                     BillItemPrivate::writeCell( cursor, table, centralHeaderFormat, headerBlockFormat, m_d->priceFieldModel->amountName( fieldsToPrint.at(i)) );
                 }
             }
         }
 
         // *** Riga vuota ***
-        BillItemPrivate::insertEmptyRow( cellCount, cursor, leftFormat, centralFormat, rightFormat );
+        BillItemPrivate::insertEmptyRow( colCount, cursor, leftFormat, centralFormat, rightFormat );
 
         // *** Scrive il computo dei sottoarticoli ***
         for( QList<BillItem *>::iterator i = m_d->childrenContainer.begin(); i != m_d->childrenContainer.end(); ++i){
@@ -1750,7 +1797,7 @@ void BillItem::writeODTBillOnTable(QTextCursor *cursor,
             // *** riga dei totali complessivi
             if( fieldsToPrint.size() > 0 ){
                 // riga vuota
-                BillItemPrivate::insertEmptyRow( cellCount, cursor, leftFormat, centralFormat, rightFormat );
+                BillItemPrivate::insertEmptyRow( colCount, cursor, leftFormat, centralFormat, rightFormat );
 
                 QList<QString> amountsToPrint;
                 for( int i=0; i < fieldsToPrint.size(); i++ ){
@@ -1777,7 +1824,7 @@ void BillItem::writeODTBillOnTable(QTextCursor *cursor,
                                        leftSubTitleFormat, centralSubTitleFormat, rightSubTitleFormat,
                                        trUtf8("Utili di impresa"), umTag, amountsToPrint );
                 // riga vuota
-                BillItemPrivate::insertEmptyRow( cellCount, cursor, leftFormat, centralFormat, rightFormat );
+                BillItemPrivate::insertEmptyRow( colCount, cursor, leftFormat, centralFormat, rightFormat );
 
                 amountsToPrint.clear();
                 for( int i=0; i < fieldsToPrint.size(); i++ ){
@@ -1793,7 +1840,7 @@ void BillItem::writeODTBillOnTable(QTextCursor *cursor,
             // *** riga dei totali complessivi
             if( fieldsToPrint.size() > 0 ){
                 // riga vuota
-                BillItemPrivate::insertEmptyRow( cellCount, cursor, leftFormat, centralFormat, rightFormat );
+                BillItemPrivate::insertEmptyRow( colCount, cursor, leftFormat, centralFormat, rightFormat );
 
                 QList<QString> amountsToPrint;
                 for( int i=0; i < fieldsToPrint.size(); i++ ){
@@ -1807,7 +1854,7 @@ void BillItem::writeODTBillOnTable(QTextCursor *cursor,
         }
 
         // *** Riga di chiusura ***
-        BillItemPrivate::insertEmptyRow( cellCount, cursor, leftBottomFormat, centralBottomFormat, rightBottomFormat );
+        BillItemPrivate::insertEmptyRow( colCount, cursor, leftBottomFormat, centralBottomFormat, rightBottomFormat );
 
     } else {
         if( hasChildren() ){
@@ -1866,20 +1913,21 @@ void BillItem::writeODTBillOnTable(QTextCursor *cursor,
                 }
                 if( groupPrAm ){
                     for( int pf=0; pf < fieldsToPrint.size(); ++pf ){
-                        QString priceStrToPrint;
-                        if( m_d->priceFieldModel->applyFormula( pf ) == PriceFieldModel::ToPriceAndBillItems){
-                            bool ok = false;
-                            QList<double> fieldValues;
-                            for( int i=0; i < m_d->priceFieldModel->fieldCount(); ++i ){
-                                fieldValues << amount( i );
+                        if( m_d->priceFieldModel->applyFormula(fieldsToPrint.at(pf)) != PriceFieldModel::ToBillItems ) {
+                            QString priceStrToPrint;
+                            if( m_d->priceFieldModel->applyFormula( pf ) == PriceFieldModel::ToBillItems){
+                                bool ok = false;
+                                QList<double> fieldValues;
+                                for( int i=0; i < m_d->priceFieldModel->fieldCount(); ++i ){
+                                    fieldValues << amount( i );
+                                }
+                                double val = m_d->priceFieldModel->calcFormula( &ok, pf, fieldValues, 0.0, 0.0 );
+                                if( ok ) {
+                                    priceStrToPrint = m_d->toString( val, 'f', m_d->priceFieldModel->precision(pf) );
+                                }
                             }
-                            double val = m_d->priceFieldModel->calcFormula( &ok, pf, fieldValues, 0.0, 0.0 );
-                            if( ok ) {
-                                priceStrToPrint = m_d->toString( val, 'f', m_d->priceFieldModel->precision(pf) );
-                            }
+                            BillItemPrivate::writeCell( cursor, table, centralSubTitleFormat, numBlockFormat, priceStrToPrint );
                         }
-                        BillItemPrivate::writeCell( cursor, table, centralSubTitleFormat, numBlockFormat, priceStrToPrint );
-
                     }
                     for( int i=0; i < fieldsToPrint.size(); ++i ){
                         if( i == fieldsToPrint.size() - 1 ){
@@ -1888,25 +1936,26 @@ void BillItem::writeODTBillOnTable(QTextCursor *cursor,
                             BillItemPrivate::writeCell( cursor, table, centralSubTitleFormat, numBlockFormat, amountStr(fieldsToPrint.at(i)) );
                         }
                     }
-                } else {
+                } else { // !groupArm
                     for( int pf=0; pf < fieldsToPrint.size(); ++pf ){
-                        QString priceStrToPrint;
-                        if( m_d->priceFieldModel->applyFormula( pf ) == PriceFieldModel::ToPriceAndBillItems){
-                            bool ok = false;
-                            QList<double> fieldValues;
-                            for( int i=0; i < m_d->priceFieldModel->fieldCount(); ++i ){
-                                fieldValues << amount( i );
+                        if( m_d->priceFieldModel->applyFormula(fieldsToPrint.at(pf)) != PriceFieldModel::ToBillItems ) {
+                            QString priceStrToPrint;
+                            if( m_d->priceFieldModel->applyFormula( pf ) == PriceFieldModel::ToBillItems){
+                                bool ok = false;
+                                QList<double> fieldValues;
+                                for( int i=0; i < m_d->priceFieldModel->fieldCount(); ++i ){
+                                    fieldValues << amount( i );
+                                }
+                                double val = m_d->priceFieldModel->calcFormula( &ok, pf, fieldValues, 0.0, 0.0 );
+                                if( ok ) {
+                                    priceStrToPrint = m_d->toString( val, 'f', m_d->priceFieldModel->precision(pf) );
+                                }
                             }
-                            double val = m_d->priceFieldModel->calcFormula( &ok, pf, fieldValues, 0.0, 0.0 );
-                            if( ok ) {
-                                priceStrToPrint = m_d->toString( val, 'f', m_d->priceFieldModel->precision(pf) );
-                            }
+                            BillItemPrivate::writeCell( cursor, table, centralSubTitleFormat, numBlockFormat, priceStrToPrint );
                         }
                         if( pf == fieldsToPrint.size() - 1 ){
-                            BillItemPrivate::writeCell( cursor, table, centralSubTitleFormat, numBlockFormat, priceStrToPrint );
                             BillItemPrivate::writeCell( cursor, table, rightSubTitleFormat, numBlockFormat, amountStr(fieldsToPrint.at(pf)) );
                         } else {
-                            BillItemPrivate::writeCell( cursor, table, centralSubTitleFormat, numBlockFormat, priceStrToPrint );
                             BillItemPrivate::writeCell( cursor, table, centralSubTitleFormat, numBlockFormat, amountStr(fieldsToPrint.at(pf)) );
                         }
                     }
@@ -2782,7 +2831,9 @@ void BillItem::writeODTBillTotalLine ( const QList<int> &fieldsToPrint,
 
     if( groupPrAm ){
         for( int i=0; i < totals.size(); ++i ){
-            BillItemPrivate::writeCell( cursor, table, centralTitleFormat, numBlockFormat );
+            if( m_d->priceFieldModel->applyFormula(fieldsToPrint.at(i)) != PriceFieldModel::ToBillItems ) {
+                BillItemPrivate::writeCell( cursor, table, centralTitleFormat, numBlockFormat );
+            }
         }
         for( int i=0; i < totals.size(); ++i ){
             if( i == totals.size() - 1 ){
@@ -2793,11 +2844,12 @@ void BillItem::writeODTBillTotalLine ( const QList<int> &fieldsToPrint,
         }
     } else {
         for( int i=0; i < totals.size(); ++i ){
-            if( i == totals.size() - 1 ){
+            if( m_d->priceFieldModel->applyFormula(fieldsToPrint.at(i)) != PriceFieldModel::ToBillItems ) {
                 BillItemPrivate::writeCell( cursor, table, centralTitleFormat, numBlockFormat );
+            }
+            if( i == totals.size() - 1 ){
                 BillItemPrivate::writeCell( cursor, table, rightTitleFormat, numBlockFormat, totals.at(i) );
             } else {
-                BillItemPrivate::writeCell( cursor, table, centralTitleFormat, numBlockFormat );
                 BillItemPrivate::writeCell( cursor, table, centralTitleFormat, numBlockFormat, totals.at(i) );
             }
         }
@@ -2823,11 +2875,13 @@ void BillItem::writeODTBillLine(BillPrinter::PrintBillItemsOption prItemsOption,
                                 QTextCharFormat & txtBoldCharFormat) {
 
     // Numero di colonne contenute
-    int colCount = 0;
-    if( writeProgCode ){
-        colCount = 5 + 2 * fieldsToPrint.size();
-    } else {
-        colCount = 4 + 2 * fieldsToPrint.size();
+    int colCount = writeProgCode? 5: 4;
+    for( int i=0; i < fieldsToPrint.size(); i++ ){
+        if( m_d->priceFieldModel->applyFormula(fieldsToPrint.at(i)) == PriceFieldModel::ToBillItems ) {
+            colCount += 1;
+        } else {
+            colCount += 2;
+        }
     }
 
     // non ci sono sottoarticoli
@@ -2865,10 +2919,14 @@ void BillItem::writeODTBillLine(BillPrinter::PrintBillItemsOption prItemsOption,
             // campi
             for( int i=0; i < fieldsToPrint.size(); ++i ){
                 if( i == fieldsToPrint.size() - 1 ){
-                    BillItemPrivate::writeCell( cursor, table, centralFormat, numBlockFormat );
+                    if( m_d->priceFieldModel->applyFormula(fieldsToPrint.at(i) ) != PriceFieldModel::ToBillItems ) {
+                        BillItemPrivate::writeCell( cursor, table, centralFormat, numBlockFormat );
+                    }
                     BillItemPrivate::writeCell( cursor, table, rightFormat, numBlockFormat  );
                 } else {
-                    BillItemPrivate::writeCell( cursor, table, centralFormat, numBlockFormat );
+                    if( m_d->priceFieldModel->applyFormula(fieldsToPrint.at(i)) != PriceFieldModel::ToBillItems ) {
+                        BillItemPrivate::writeCell( cursor, table, centralFormat, numBlockFormat );
+                    }
                     BillItemPrivate::writeCell( cursor, table, centralFormat, numBlockFormat );
                 }
             }
@@ -2943,11 +3001,12 @@ void BillItem::writeODTBillLine(BillPrinter::PrintBillItemsOption prItemsOption,
 
             // celle vuote
             for( int i=0; i < fieldsToPrint.size(); ++i ){
-                if( i == fieldsToPrint.size() - 1 ){
+                if( m_d->priceFieldModel->applyFormula( fieldsToPrint.at(i)) != PriceFieldModel::ToBillItems ) {
                     BillItemPrivate::writeCell( cursor, table, centralFormat, numBlockFormat );
+                }
+                if( i == fieldsToPrint.size() - 1 ){
                     BillItemPrivate::writeCell( cursor, table, rightFormat, numBlockFormat  );
                 } else {
-                    BillItemPrivate::writeCell( cursor, table, centralFormat, numBlockFormat );
                     BillItemPrivate::writeCell( cursor, table, centralFormat, numBlockFormat );
                 }
             }
@@ -2981,13 +3040,15 @@ void BillItem::writeODTBillLine(BillPrinter::PrintBillItemsOption prItemsOption,
 
         if( groupPrAm ){
             for( int i=0; i < fieldsToPrint.size(); ++i ){
-                QString priceValueStr;
-                if( printValNet ) {
-                    priceValueStr = m_d->priceItem == NULL ? "" : m_d->priceItem->valueNetStr( fieldsToPrint.at(i), currentPriceDataSet() );
-                } else {
-                    priceValueStr = m_d->priceItem == NULL ? "" : m_d->priceItem->valueStr( fieldsToPrint.at(i), currentPriceDataSet() );
+                if( m_d->priceFieldModel->applyFormula(fieldsToPrint.at(i)) != PriceFieldModel::ToBillItems ) {
+                    QString priceValueStr;
+                    if( printValNet ) {
+                        priceValueStr = m_d->priceItem == NULL ? "" : m_d->priceItem->valueNetStr( fieldsToPrint.at(i), currentPriceDataSet() );
+                    } else {
+                        priceValueStr = m_d->priceItem == NULL ? "" : m_d->priceItem->valueStr( fieldsToPrint.at(i), currentPriceDataSet() );
+                    }
+                    BillItemPrivate::writeCell( cursor, table, centralFormat, numBlockFormat, priceValueStr );
                 }
-                BillItemPrivate::writeCell( cursor, table, centralFormat, numBlockFormat, priceValueStr );
             }
             for( int i=0; i < fieldsToPrint.size(); ++i ){
                 QString amountValueStr;
@@ -3012,11 +3073,12 @@ void BillItem::writeODTBillLine(BillPrinter::PrintBillItemsOption prItemsOption,
                     priceValueStr = m_d->priceItem == NULL ? "" : m_d->priceItem->valueStr( fieldsToPrint.at(i), currentPriceDataSet() );
                     amountValueStr = amountStr(fieldsToPrint.at(i));
                 }
-                if( i == fieldsToPrint.size() - 1 ){
+                if( m_d->priceFieldModel->applyFormula(fieldsToPrint.at(i)) != PriceFieldModel::ToBillItems ) {
                     BillItemPrivate::writeCell( cursor, table, centralFormat, numBlockFormat, priceValueStr );
+                }
+                if( i == fieldsToPrint.size() - 1 ){
                     BillItemPrivate::writeCell( cursor, table, rightFormat, numBlockFormat, amountValueStr );
                 } else {
-                    BillItemPrivate::writeCell( cursor, table, centralFormat, numBlockFormat, priceValueStr );
                     BillItemPrivate::writeCell( cursor, table, centralFormat, numBlockFormat, amountValueStr );
                 }
             }
@@ -3038,13 +3100,15 @@ void BillItem::writeODTBillLine(BillPrinter::PrintBillItemsOption prItemsOption,
 
         if( groupPrAm ){
             for( int i=0; i < fieldsToPrint.size(); ++i ){
-                QString priceValueStr;
-                if( printValNet ) {
-                    priceValueStr = m_d->priceItem == NULL ? "" : m_d->priceItem->valueNetStr( fieldsToPrint.at(i), currentPriceDataSet() );
-                } else {
-                    priceValueStr = m_d->priceItem == NULL ? "" : m_d->priceItem->valueStr( fieldsToPrint.at(i), currentPriceDataSet() );
+                if( m_d->priceFieldModel->applyFormula(fieldsToPrint.at(i)) != PriceFieldModel::ToBillItems ) {
+                    QString priceValueStr;
+                    if( printValNet ) {
+                        priceValueStr = m_d->priceItem == NULL ? "" : m_d->priceItem->valueNetStr( fieldsToPrint.at(i), currentPriceDataSet() );
+                    } else {
+                        priceValueStr = m_d->priceItem == NULL ? "" : m_d->priceItem->valueStr( fieldsToPrint.at(i), currentPriceDataSet() );
+                    }
+                    BillItemPrivate::writeCell( cursor, table, centralFormat, numBlockFormat, priceValueStr );
                 }
-                BillItemPrivate::writeCell( cursor, table, centralFormat, numBlockFormat, priceValueStr );
             }
             for( int i=0; i < fieldsToPrint.size(); ++i ){
                 QString amountValueStr;
@@ -3069,11 +3133,12 @@ void BillItem::writeODTBillLine(BillPrinter::PrintBillItemsOption prItemsOption,
                     priceValueStr = m_d->priceItem == NULL ? "" : m_d->priceItem->valueStr( fieldsToPrint.at(i), currentPriceDataSet() );
                     amountValueStr = amountStr(fieldsToPrint.at(i));
                 }
-                if( i == fieldsToPrint.size() - 1 ){
+                if( m_d->priceFieldModel->applyFormula(fieldsToPrint.at(i)) != PriceFieldModel::ToBillItems ) {
                     BillItemPrivate::writeCell( cursor, table, centralFormat, numBlockFormat, priceValueStr );
+                }
+                if( i == fieldsToPrint.size() - 1 ){
                     BillItemPrivate::writeCell( cursor, table, rightFormat, numBlockFormat, amountValueStr );
                 } else {
-                    BillItemPrivate::writeCell( cursor, table, centralFormat, numBlockFormat, priceValueStr );
                     BillItemPrivate::writeCell( cursor, table, centralFormat, numBlockFormat, amountValueStr );
                 }
             }

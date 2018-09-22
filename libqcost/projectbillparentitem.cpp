@@ -143,7 +143,7 @@ bool ProjectBillParentItem::setData(const QVariant &value) {
     return false;
 }
 
-bool ProjectBillParentItem::isUsingPriceList(PriceList *pl) {
+bool ProjectBillParentItem::isUsingPriceList(PriceList *pl) const {
     for( QList<Bill *>::iterator i = m_d->billContainer.begin(); i != m_d->billContainer.end(); ++i ){
         if( (*i)->priceList() == pl ){
             return true;
@@ -152,7 +152,7 @@ bool ProjectBillParentItem::isUsingPriceList(PriceList *pl) {
     return false;
 }
 
-bool ProjectBillParentItem::isUsingPriceItem(PriceItem *p) {
+bool ProjectBillParentItem::isUsingPriceItem(PriceItem *p) const {
     for( QList<Bill *>::iterator i = m_d->billContainer.begin(); i != m_d->billContainer.end(); ++i ){
         if( (*i)->isUsingPriceItem( p ) ){
             return true;

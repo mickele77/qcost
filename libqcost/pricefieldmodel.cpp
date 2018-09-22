@@ -40,6 +40,7 @@ public:
         precision(p),
         applyFormula(af),
         formula( f ),
+        isPercentage(false),
         multiplyBy(-1),
         fieldType(ft) {
     }
@@ -119,7 +120,7 @@ public:
     static QString fromApplyFormulaToQString( PriceFieldModel::ApplyFormula v ){
         if( v == PriceFieldModel::ToPriceItems ){
             return QString("ToPriceItems");
-        } else if( v == PriceFieldModel::ToPriceAndBillItems ){
+        } else if( v == PriceFieldModel::ToBillItems ){
             return QString("ToPriceAndBillItems");
         }
         return QString("ToNone");
@@ -130,7 +131,7 @@ public:
         if( vUp == "TOPRICEITEMS" ){
             return PriceFieldModel::ToPriceItems;
         } else if( vUp == "TOPRICEANDBILLITEMS" ){
-            return PriceFieldModel::ToPriceAndBillItems;
+            return PriceFieldModel::ToBillItems;
         }
         return PriceFieldModel::ToNone;
     }
@@ -177,7 +178,7 @@ public:
         writer->writeAttribute( "unitMeasure", unitMeasure );
         writer->writeAttribute( "precision", QString::number( precision ) );
         if( (applyFormula == PriceFieldModel::ToPriceItems)
-                || (applyFormula == PriceFieldModel::ToPriceAndBillItems) ) {
+                || (applyFormula == PriceFieldModel::ToBillItems) ) {
             writer->writeAttribute( "applyFormula", "true" );
         } else {
             writer->writeAttribute( "applyFormula", "false" );
@@ -191,6 +192,7 @@ public:
         writer->writeAttribute( "fieldType", fromFieldTypeToQString( fieldType ) );
         writer->writeEndElement();
     }
+
     void writeXml20(QXmlStreamWriter *writer, MathParser * parser ) {
         writer->writeStartElement( "PriceFieldData" );
         writer->writeAttribute( "priceName", priceName );
@@ -203,6 +205,7 @@ public:
             formulaToWrite.replace( parser->decimalSeparator(), ".");
         }
         writer->writeAttribute( "formula", formulaToWrite );
+        writer->writeAttribute( "isPercentage", fromBoolToQString(isPercentage) );
         writer->writeAttribute( "multiplyBy", QString::number(multiplyBy) );
         writer->writeAttribute( "fieldType", fromFieldTypeToQString( fieldType ) );
         writer->writeEndElement();
@@ -215,6 +218,7 @@ public:
     int precision;
     PriceFieldModel::ApplyFormula applyFormula;
     QString formula;
+    bool isPercentage;
     int multiplyBy;
     PriceFieldModel::FieldType fieldType;
     static QChar fieldLimit;
@@ -285,6 +289,7 @@ public:
     static int unitMeasureCol;
     static int precisionCol;
     static int formulaCol;
+    static int isPercentageCol;
     static int applyFormulaCol;
     static int multiplyByCol;
     static int fieldTypeCol;
@@ -297,13 +302,14 @@ int PriceFieldModelPrivate::precisionCol = 3;
 int PriceFieldModelPrivate::formulaCol = 4;
 int PriceFieldModelPrivate::applyFormulaCol = 5;
 int PriceFieldModelPrivate::multiplyByCol = 6;
-int PriceFieldModelPrivate::fieldTypeCol = 7;
+int PriceFieldModelPrivate::isPercentageCol = 7;
+int PriceFieldModelPrivate::fieldTypeCol = 8;
 
 QList<QPair<PriceFieldModel::ApplyFormula, QString> > PriceFieldModel::applyFormulaNames() {
     QList< QPair<PriceFieldModel::ApplyFormula, QString> > ret;
     ret.append(qMakePair( ToNone, QString("")));
     ret.append(qMakePair( ToPriceItems, trUtf8("A voci prezzo")));
-    ret.append(qMakePair( ToPriceAndBillItems, trUtf8("A voci prezzo e computo")));
+    ret.append(qMakePair( ToBillItems, trUtf8("A voci computo")));
     return ret;
 }
 
@@ -318,7 +324,7 @@ QList<QPair<PriceFieldModel::FieldType, QString> > PriceFieldModel::standardFiel
 }
 
 int PriceFieldModel::applyFormulaCol() {
-    return 5;
+    return PriceFieldModelPrivate::applyFormulaCol;
 }
 
 QList< QPair<int, QString> > PriceFieldModel::multiplyByNames( int currentPF ){
@@ -335,11 +341,11 @@ QList< QPair<int, QString> > PriceFieldModel::multiplyByNames( int currentPF ){
 
 
 int PriceFieldModel::multiplyByCol() {
-    return 6;
+    return PriceFieldModelPrivate::multiplyByCol;
 }
 
 int PriceFieldModel::fieldTypeCol() {
-    return 7;
+    return PriceFieldModelPrivate::fieldTypeCol;
 }
 
 PriceFieldModel::PriceFieldModel(MathParser * prs, QObject *parent):
@@ -427,6 +433,17 @@ int PriceFieldModel::precision(int pf ) {
     return 2;
 }
 
+int PriceFieldModel::effectivePrecision(int pf) {
+    int prec = 2;
+    if( (pf >= 0) && (pf < m_d->fieldsList.size()) ) {
+        prec = m_d->fieldsList.at(pf)->precision;
+        if( m_d->fieldsList.at(pf)->isPercentage ) {
+            prec += 2;
+        }
+    }
+    return prec;
+}
+
 bool PriceFieldModel::setPrecision(int pf, int newVal) {
     if( pf < 0 || !(pf < m_d->fieldsList.size() )){
         return false;
@@ -453,7 +470,7 @@ bool PriceFieldModel::setApplyFormula(int pf, const QString & newVal) {
     if( newVal.toUpper() == "TONONE" ) {
         effNewVal = ToNone;
     } else if( newVal.toUpper() == "TOPRICEANDBILLITEMS" ) {
-        effNewVal = ToPriceAndBillItems;
+        effNewVal = ToBillItems;
     }
     return setApplyFormula( pf, effNewVal );
 }
@@ -489,6 +506,27 @@ bool PriceFieldModel::setFormula(int pf, const QString &newVal) {
         QModelIndex index = createIndex( pf, m_d->formulaCol );
         emit dataChanged(index, index);
         emit formulaChanged( pf, newVal );
+        return true;
+    }
+    return false;
+}
+
+bool PriceFieldModel::isPercentage(int pf) {
+    if( !m_d->isIndexValid(pf) ){
+        return false;
+    }
+    return m_d->fieldsList.at(pf)->isPercentage;
+}
+
+bool PriceFieldModel::setIsPercentage(int pf, bool newVal) {
+    if( !m_d->isIndexValid(pf) ){
+        return false;
+    }
+    if( m_d->fieldsList.at(pf)->isPercentage != newVal ){
+        m_d->fieldsList.at(pf)->isPercentage = newVal;
+        QModelIndex index = createIndex( pf, m_d->isPercentageCol );
+        emit dataChanged(index, index);
+        emit isPercentageChanged( pf, newVal );
         return true;
     }
     return false;
@@ -663,6 +701,17 @@ QVariant PriceFieldModel::data(const QModelIndex &index, int role) const {
             return QVariant( m_d->fieldsList.at(index.row())->fieldType );
         }
     }
+
+    if( role == Qt::CheckStateRole ){
+        if( index.column() == m_d->isPercentageCol ){
+            if( m_d->fieldsList.at(index.row())->isPercentage ){
+                return QVariant( Qt::Checked );
+            } else {
+                return QVariant( Qt::Unchecked );
+            }
+        }
+    }
+
     return QVariant();
 }
 
@@ -681,6 +730,8 @@ QVariant PriceFieldModel::headerData(int section, Qt::Orientation orientation, i
             return trUtf8("Precisione");
         } else if( section == m_d->formulaCol ) {
             return trUtf8("Formula");
+        } else if( section == m_d->isPercentageCol ) {
+            return trUtf8("Percentuale");
         } else if( section == m_d->applyFormulaCol ) {
             return trUtf8("Applica Formula");
         } else if( section == m_d->multiplyByCol ) {
@@ -713,6 +764,10 @@ Qt::ItemFlags PriceFieldModel::flags(const QModelIndex &index) const {
         } else {
             return Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsEditable;
         }
+    }
+
+    if( index.column() == m_d->isPercentageCol ){
+        return Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsUserCheckable;
     }
 
     return Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsEditable;
@@ -751,6 +806,12 @@ bool PriceFieldModel::setData(const QModelIndex &index, const QVariant &value, i
             }
             if( index.column() == m_d->fieldTypeCol ){
                 setFieldType( index.row(), (FieldType)( value.toInt()) );
+                return true;
+            }
+        }
+        if( role == Qt::CheckStateRole ){
+            if( index.column() == m_d->isPercentageCol ){
+                setIsPercentage( index.row(), value.toInt() == Qt::Checked );
                 return true;
             }
         }
@@ -992,6 +1053,9 @@ void PriceFieldModel::loadFromXml20(int pf, const QXmlStreamAttributes &attrs) {
     if( attrs.hasAttribute( "applyFormula" ) ){
         setApplyFormula( pf, PriceFieldData::fromQStringToApplyFormula( attrs.value( "applyFormula" ).toString() ) );
     }
+    if( attrs.hasAttribute( "isPercentage" ) ){
+        setIsPercentage( pf, PriceFieldData::fromQStringToBool( attrs.value( "isPercentage" ).toString() ) );
+    }
     if( attrs.hasAttribute( "formula" ) ){
         QString f = attrs.value( "formula" ).toString();
         if( m_d->parser != NULL ){
@@ -1020,12 +1084,12 @@ double PriceFieldModel::calcFormula( bool * ok, int field, QList<double> fieldVa
             valStr.replace( QString("$UI$"), m_d->toString( profits, 'g' ) );
             for(int i=0; i < fieldValues.size(); ++i ){
                 if( i < m_d->fieldsList.size() ){
-                    valStr.replace( QString("$%1$").arg(i+1), m_d->toString(fieldValues.at(i), 'f', m_d->fieldsList.at(i)->precision ) );
+                    valStr.replace( QString("$%1$").arg(i+1), m_d->toString(fieldValues.at(i), 'f', effectivePrecision(i) ) );
                 }
             }
             *ok = true;
             double val = m_d->parser->evaluate( valStr );
-            val = UnitMeasure::applyPrecision( val, m_d->fieldsList.at(field)->precision );
+            val = UnitMeasure::applyPrecision( val, effectivePrecision(field) );
             return val;
         }
     }

@@ -209,6 +209,13 @@ void PriceItemDataSet::writeXml10(QXmlStreamWriter *writer, bool isRootItem ) co
 void PriceItemDataSet::writeXml20(QXmlStreamWriter *writer, bool isRootItem ) const {
     writer->writeStartElement( "PriceItemDataSet" );
 
+    if( !(m_d->inheritOverheadsFromRoot) ){
+        writer->writeAttribute( QString("overheads"), QString::number(m_d->overheads) );
+    }
+    if( !(m_d->inheritProfitsFromRoot) ){
+        writer->writeAttribute( QString("profits"), QString::number(m_d->profits) );
+    }
+
     if( !isRootItem ){
         if( associateAP ){
             associatedAP->writeXml20( writer );
@@ -217,13 +224,6 @@ void PriceItemDataSet::writeXml20(QXmlStreamWriter *writer, bool isRootItem ) co
                 writer->writeAttribute( QString("value%1").arg(i), QString::number( m_d->value.at(i) ) );
             }
         }
-    }
-
-    if( !(m_d->inheritOverheadsFromRoot) ){
-        writer->writeAttribute( QString("overheads"), QString::number(m_d->overheads) );
-    }
-    if( !(m_d->inheritProfitsFromRoot) ){
-        writer->writeAttribute( QString("profits"), QString::number(m_d->profits) );
     }
 
     writer->writeEndElement();
@@ -377,6 +377,12 @@ PriceItemDataSetModel::PriceItemDataSetModel(MathParser * prs, PriceFieldModel *
     connect( this, &PriceItemDataSetModel::rowsMoved, this, &PriceItemDataSetModel::modelChanged );
     connect( this, &PriceItemDataSetModel::columnsInserted, this, &PriceItemDataSetModel::modelChanged );
     connect( this, &PriceItemDataSetModel::columnsMoved, this, &PriceItemDataSetModel::modelChanged );
+
+    connect( this, &PriceItemDataSetModel::valueChanged, this, &PriceItemDataSetModel::modelChanged );
+    connect( this, &PriceItemDataSetModel::overheadsChanged, this, &PriceItemDataSetModel::modelChanged );
+    connect( this, &PriceItemDataSetModel::inheritOverheadsFromRootChanged, this, &PriceItemDataSetModel::modelChanged );
+    connect( this, &PriceItemDataSetModel::profitsChanged, this, &PriceItemDataSetModel::modelChanged );
+    connect( this, &PriceItemDataSetModel::inheritProfitsFromRootChanged, this, &PriceItemDataSetModel::modelChanged );
 }
 
 PriceItemDataSetModel::~PriceItemDataSetModel(){
@@ -419,33 +425,50 @@ QString PriceItemDataSetModel::valueStr( int priceField, int priceDataSet) const
     if( priceField > -1 && priceField < m_d->priceFieldModel->fieldCount() ){
         prec = m_d->priceFieldModel->precision( priceField );
     }
-    return m_d->toString( value(priceField, priceDataSet), 'f', prec );
+    QString vStr;
+    double v = value(priceField, priceDataSet);
+    if( m_d->priceFieldModel->isPercentage(priceField) ) {
+        v *= 100.0;
+        vStr = m_d->toString( v, 'f', prec ) + " %";
+    } else {
+        vStr = m_d->toString( value(priceField, priceDataSet), 'f', prec );
+    }
+    return vStr;
 }
 
 double PriceItemDataSetModel::valueNet(int field, int dataSet) const {
     if( dataSet > -1 && dataSet < m_d->dataSetContainer.size() ){
         if( field > -1 && field < m_d->dataSetContainer.at(dataSet)->valueCount() ){
             double den = 1.0;
-            if( m_d->priceFieldModel->applyFormula(field) != PriceFieldModel::ToPriceAndBillItems ) {
+            if( m_d->priceFieldModel->applyFormula(field) != PriceFieldModel::ToBillItems ) {
                 den = (1.0 + m_d->dataSetContainer.at(dataSet)->profits()) * \
                         (1.0 + m_d->dataSetContainer.at(dataSet)->overheads());
             }
+            double val = m_d->dataSetContainer.at(dataSet)->value(field);
             if( den != 0.0 ) {
-                double val = m_d->dataSetContainer.at(dataSet)->value(field) / den;
-                UnitMeasure::applyPrecision( val, m_d->priceFieldModel->precision(field) );
-                return val;
+                val = val / den;
             }
+            val = UnitMeasure::applyPrecision( val, m_d->priceFieldModel->effectivePrecision(field) );
+            return val;
         }
     }
     return 0.0;
 }
 
-QString PriceItemDataSetModel::valueNetStr( int field, int dataSet) const {
+QString PriceItemDataSetModel::valueNetStr( int priceField, int priceDataSet) const {
     int prec = 2;
-    if( field > -1 && field < m_d->priceFieldModel->fieldCount() ){
-        prec = m_d->priceFieldModel->precision( field );
+    if( priceField > -1 && priceField < m_d->priceFieldModel->fieldCount() ){
+        prec = m_d->priceFieldModel->precision( priceField );
     }
-    return m_d->toString( valueNet(field, dataSet), 'f', prec );
+    QString vStr;
+    double v = valueNet(priceField, priceDataSet);
+    if( m_d->priceFieldModel->isPercentage(priceField) ) {
+        v *= 100.0;
+        vStr = m_d->toString( v, 'f', prec ) + " %";
+    } else {
+        vStr = m_d->toString( v, 'f', prec );
+    }
+    return vStr;
 }
 
 int PriceItemDataSetModel::priceDataSetCount() const {
@@ -670,7 +693,7 @@ QVariant PriceItemDataSetModel::data(const QModelIndex &index, int role) const {
             int pDataSet = index.column();
 
             if( (pField > -1) && (pField < m_d->dataSetContainer.at(pDataSet)->valueCount()) ){
-                return QVariant( m_d->toString( m_d->dataSetContainer.at(pDataSet)->value(pField), 'f', m_d->priceFieldModel->precision(pField) ) );
+                return QVariant( valueStr( pField, pDataSet)  );
             }
         }
     }
@@ -774,7 +797,8 @@ int PriceItemDataSetModel::associatedAPRow() {
 bool PriceItemDataSetModel::setValue(int priceField, int priceDataSet, double newValInput ) {
     if( (priceDataSet > -1) && (priceDataSet < m_d->dataSetContainer.size()) ){
         if( (priceField > -1) && (priceField < m_d->priceFieldModel->fieldCount()) ){
-            double newVal = UnitMeasure::applyPrecision( newValInput, m_d->priceFieldModel->precision(priceField) );
+            double newVal = 0.0;
+            newVal = UnitMeasure::applyPrecision( newValInput, m_d->priceFieldModel->effectivePrecision(priceField) );
             if( m_d->dataSetContainer.at(priceDataSet)->value( priceField ) != newVal ){
                 m_d->dataSetContainer.at(priceDataSet)->setValue( priceField, newVal );
                 emit valueChanged(priceField, priceDataSet, newVal);
@@ -786,7 +810,7 @@ bool PriceItemDataSetModel::setValue(int priceField, int priceDataSet, double ne
                     bottomRight = createIndex( 2 * priceField + 1, m_d->dataSetContainer.size() );
                 }
                 emit dataChanged(topLeft, bottomRight );
-                m_d->priceItem->emitValueChanged( priceField, priceDataSet, newVal );
+                m_d->priceItem->emitValueChanged( priceField, priceDataSet );
 
                 // copia in filedValues i valori dei campi
                 QList<double> fieldValues;
@@ -795,7 +819,8 @@ bool PriceItemDataSetModel::setValue(int priceField, int priceDataSet, double ne
                 }
 
                 for( int i=0; i < m_d->priceFieldModel->fieldCount(); i++ ){
-                    if( i != priceField && (m_d->priceFieldModel->applyFormula(i)==PriceFieldModel::ToPriceItems || m_d->priceFieldModel->applyFormula(i)==PriceFieldModel::ToPriceAndBillItems) ){
+                    if( i != priceField && (m_d->priceFieldModel->applyFormula(i)==PriceFieldModel::ToPriceItems
+                                            || m_d->priceFieldModel->applyFormula(i)==PriceFieldModel::ToBillItems) ){
                         bool ok = false;
                         double v = m_d->priceFieldModel->calcFormula( &ok, i, fieldValues, m_d->priceItem->overheads(priceDataSet), m_d->priceItem->profits(priceDataSet) );
                         if( ok ){
@@ -812,11 +837,19 @@ bool PriceItemDataSetModel::setValue(int priceField, int priceDataSet, double ne
 }
 
 bool PriceItemDataSetModel::setValue(int priceField, int priceDataSet, const QString & newVal) {
-    return setValue( priceField, priceDataSet, m_d->toDouble( newVal ) );
+    double val = 0.0;
+    if( m_d->priceFieldModel->isPercentage(priceField) ) {
+        QString newValNoS = newVal;
+        newValNoS.replace("%", "");
+        val = m_d->toDouble( newValNoS ) / 100.0;
+    } else {
+        val = m_d->toDouble( newVal );
+    }
+    return setValue( priceField, priceDataSet, val );
 }
 
 void PriceItemDataSetModel::updateValueFormula( int priceField ) {
-    if( (m_d->priceFieldModel->applyFormula(priceField)==PriceFieldModel::ToPriceItems || m_d->priceFieldModel->applyFormula(priceField)==PriceFieldModel::ToPriceAndBillItems) ){
+    if( (m_d->priceFieldModel->applyFormula(priceField)==PriceFieldModel::ToPriceItems || m_d->priceFieldModel->applyFormula(priceField)==PriceFieldModel::ToBillItems) ){
         for( int priceDataSet = 0; priceDataSet < m_d->dataSetContainer.size(); priceDataSet++) {
             QList<double> fieldValues;
             for( int pf=0; pf < m_d->dataSetContainer.at(priceDataSet)->valueCount(); ++pf ){
@@ -847,6 +880,8 @@ void PriceItemDataSetModel::setAssociateAP(int priceDataSet, bool newVal ) {
                     setValue( field, priceDataSet,  m_d->dataSetContainer.at(priceDataSet)->associatedAP->amount(field) );
                 }
                 connect( m_d->dataSetContainer.at(priceDataSet)->associatedAP, static_cast<void(Bill::*)(int,double)> (&Bill::amountChanged), this, &PriceItemDataSetModel::setValueFromAP );
+                m_d->dataSetContainer.at(priceDataSet)->associatedAP->setProfits( profits(priceDataSet));
+                m_d->dataSetContainer.at(priceDataSet)->associatedAP->setProfits( overheads(priceDataSet) );
             } else {
                 disconnect( m_d->dataSetContainer.at(priceDataSet)->associatedAP, static_cast<void(Bill::*)(int,double)> (&Bill::amountChanged), this, &PriceItemDataSetModel::setValueFromAP );
             }
@@ -894,11 +929,13 @@ void PriceItemDataSetModel::setOverheads(int priceDataSet, double newVal) {
             setOverheadsToRoot( priceDataSet, newVal, m_d->priceItem );
         } else {
             m_d->dataSetContainer.at(priceDataSet)->setOverheads( newVal );
+            if( m_d->dataSetContainer.at(priceDataSet)->associateAP ) {
+                m_d->dataSetContainer.at(priceDataSet)->associatedAP->setOverheads( newVal );
+            }
             emit overheadsChanged( priceDataSet, overheadsStr( priceDataSet ) );
         }
     }
 }
-
 void PriceItemDataSetModel::setOverheadsToRoot(int priceDataSet, double newVal, PriceItem * pItem ) {
     if( pItem->parentItem() == NULL ){
         pItem->dataModel()->m_d->dataSetContainer.at( priceDataSet )->setOverheads(newVal );
@@ -934,11 +971,19 @@ bool PriceItemDataSetModel::inheritOverheadsFromRoot(int priceDataSet) {
 }
 
 void PriceItemDataSetModel::setInheritOverheadsFromRoot(int priceDataSet, bool newVal) {
+    double oldVal = overheads(priceDataSet);
     if( priceDataSet > -1 && priceDataSet < m_d->dataSetContainer.size() ){
         if( m_d->dataSetContainer.at(priceDataSet)->inheritOverheadsFromRoot() != newVal ){
             m_d->dataSetContainer.at(priceDataSet)->setInheritOverheadsFromRoot( newVal );
             emit inheritOverheadsFromRootChanged( priceDataSet, newVal );
-            emit overheadsChanged( priceDataSet, overheadsStr(priceDataSet) );
+
+            // Controlliamo se il valore delle SG è cambiato
+            double newVal = overheads(priceDataSet);
+            if( oldVal != newVal ){
+                // se è cambiato emettiamo segnale e cambiamo SG nell'AP associata
+                emit overheadsChanged( priceDataSet, overheadsStr(priceDataSet) );
+                m_d->dataSetContainer.at(priceDataSet)->associatedAP->setOverheads(newVal );
+            }
         }
     }
 }
@@ -1012,11 +1057,21 @@ bool PriceItemDataSetModel::inheritProfitsFromRoot(int priceDataSet) {
 }
 
 void PriceItemDataSetModel::setInheritProfitsFromRoot(int priceDataSet, bool newVal) {
+    double oldVal = profits(priceDataSet);
+
     if( priceDataSet > -1 && priceDataSet < m_d->dataSetContainer.size() ){
+        // controlliamo sel il valore è effettivamente cambiato
         if( m_d->dataSetContainer.at(priceDataSet)->inheritProfitsFromRoot() != newVal ){
             m_d->dataSetContainer.at(priceDataSet)->setInheritProfitsFromRoot( newVal );
             emit inheritProfitsFromRootChanged( priceDataSet, newVal );
-            emit profitsChanged( priceDataSet, profitsStr(priceDataSet) );
+
+            // controlliamo se il valore dell'utile di impresa  cambiato
+            double newVal = profits(priceDataSet);
+            if( oldVal != newVal ) {
+                // se è cambiato emettiamo segnale e lo cambiamo nell'AP associata
+                m_d->dataSetContainer.at(priceDataSet)->associatedAP->setProfits(newVal);
+                emit profitsChanged( priceDataSet, profitsStr(priceDataSet) );
+            }
         }
     }
 }

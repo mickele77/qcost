@@ -334,9 +334,13 @@ void Project::removePriceItem(PriceList *pl, int position, int count, const QMod
     if( parentItem ){
         for( int i=position+count-1; i >= position; --i ){
             PriceItem *childItem = dynamic_cast<PriceItem *>(parentItem->child(i));
-            if ( ! m_d->billParentItem->isUsingPriceItem(childItem) ){
-                pl->removePriceItems( i, 1, parent );
+            if ( m_d->billParentItem->isUsingPriceItem(childItem) ){
+                return;
             }
+            if ( m_d->priceListParentItem->isUsingPriceItem(childItem) ){
+                return;
+            }
+            pl->removePriceItems( i, 1, parent );
         }
     }
 }

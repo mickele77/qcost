@@ -90,7 +90,9 @@ public:
     int firstValueCol();
     int priceDataSetCount();
 
-    bool isUsingUnitMeasure( UnitMeasure * );
+    bool isUsingUnitMeasure( UnitMeasure * ) const;
+    bool isUsingPriceItem(PriceItem *p) const;
+
 
     QList<PriceItem *> priceItemList();
 
