@@ -16,11 +16,11 @@ class AccountingItemPaymentGUIPrivate{
 public:
     AccountingItemPaymentGUIPrivate( PriceFieldModel * pfm ):
         ui(new Ui::AccountingItemPaymentGUI),
-        TAMBill(NULL),
-        TAMBillItem(NULL),
-        bill(NULL),
-        billItem(NULL),
-        itemAttributeModel( new AccountingItemAttributeModel(NULL, NULL) ),
+        TAMBill(nullptr),
+        TAMBillItem(nullptr),
+        bill(nullptr),
+        billItem(nullptr),
+        itemAttributeModel( new AccountingItemAttributeModel(nullptr, nullptr) ),
         priceFieldModel(pfm){
     }
     ~AccountingItemPaymentGUIPrivate(){
@@ -54,23 +54,35 @@ AccountingItemPaymentGUI::~AccountingItemPaymentGUI() {
 }
 
 void AccountingItemPaymentGUI::setAccountingItem(AccountingTAMBillItem *b) {
-    if( m_d->TAMBillItem != b || m_d->billItem != NULL ){
-        if( m_d->TAMBillItem != NULL ){
-            disconnect( m_d->TAMBillItem, &AccountingTAMBillItem::startDateChanged, this, &AccountingItemPaymentGUI::setDateBegin );
-            disconnect( m_d->TAMBillItem, &AccountingTAMBillItem::endDateChanged, this, &AccountingItemPaymentGUI::setDateEnd );
+    if( m_d->TAMBillItem != b || m_d->billItem != nullptr ){
+        if( m_d->TAMBillItem != nullptr ){
             disconnect( m_d->TAMBillItem, &AccountingTAMBillItem::aboutToBeDeleted, this, &AccountingItemPaymentGUI::setAccountingItemNULL );
 
+            m_d->ui->beginDateLineEdit->clear();
+            disconnect( m_d->TAMBillItem, &AccountingTAMBillItem::startDateChanged, this, &AccountingItemPaymentGUI::setDateBegin );
+            m_d->ui->endDateLineEdit->clear();
+            disconnect( m_d->TAMBillItem, &AccountingTAMBillItem::endDateChanged, this, &AccountingItemPaymentGUI::setDateEnd );
+
+            m_d->ui->totalAmountToDiscountLineEdit->clear();
             disconnect( m_d->TAMBillItem, &AccountingTAMBillItem::totalAmountToDiscountChanged, m_d->ui->totalAmountToDiscountLineEdit, &QLineEdit::setText );
+            m_d->ui->amountNotToDiscountLineEdit->clear();
             disconnect( m_d->TAMBillItem, &AccountingTAMBillItem::amountNotToDiscountChanged, m_d->ui->amountNotToDiscountLineEdit, &QLineEdit::setText );
+            m_d->ui->totalAmountLineEdit->clear();
             disconnect( m_d->TAMBillItem, &AccountingTAMBillItem::totalAmountChanged, m_d->ui->totalAmountLineEdit, &QLineEdit::setText );
         }
-        if( m_d->billItem != NULL ){
-            disconnect( m_d->billItem, &AccountingBillItem::dateBeginChanged, this, &AccountingItemPaymentGUI::setDateBegin );
-            disconnect( m_d->billItem, &AccountingBillItem::dateEndChanged, this, &AccountingItemPaymentGUI::setDateEnd );
+        if( m_d->billItem != nullptr ){
             disconnect( m_d->billItem, &AccountingBillItem::aboutToBeDeleted, this, &AccountingItemPaymentGUI::setAccountingItemNULL );
 
+            m_d->ui->beginDateLineEdit->clear();
+            disconnect( m_d->billItem, &AccountingBillItem::dateBeginChanged, this, &AccountingItemPaymentGUI::setDateBegin );
+            m_d->ui->endDateLineEdit->clear();
+            disconnect( m_d->billItem, &AccountingBillItem::dateEndChanged, this, &AccountingItemPaymentGUI::setDateEnd );
+
+            m_d->ui->totalAmountToDiscountLineEdit->clear();
             disconnect( m_d->billItem, &AccountingBillItem::totalAmountToDiscountChanged, m_d->ui->totalAmountToDiscountLineEdit, &QLineEdit::setText );
+            m_d->ui->amountNotToDiscountLineEdit->clear();
             disconnect( m_d->billItem, &AccountingBillItem::amountNotToDiscountChanged, m_d->ui->amountNotToDiscountLineEdit, &QLineEdit::setText );
+            m_d->ui->totalAmountLineEdit->clear();
             disconnect( m_d->billItem, &AccountingBillItem::totalAmountChanged, m_d->ui->totalAmountLineEdit, &QLineEdit::setText );
         }
 
@@ -79,17 +91,17 @@ void AccountingItemPaymentGUI::setAccountingItem(AccountingTAMBillItem *b) {
         m_d->ui->totalAmountLineEdit->clear();
         m_d->ui->beginDateLineEdit->clear();
         m_d->ui->endDateLineEdit->clear();
-        m_d->billItem = NULL;
+        m_d->billItem = nullptr;
         m_d->TAMBillItem = b;
         m_d->itemAttributeModel->setItem( b );
 
-        if( m_d->TAMBillItem != NULL ){
-            m_d->ui->beginDateLineEdit->setText( m_d->TAMBillItem->startDateStr() );
-            m_d->ui->endDateLineEdit->setText( m_d->TAMBillItem->endDateStr() );
-            connect( m_d->TAMBillItem, &AccountingTAMBillItem::startDateChanged, this, &AccountingItemPaymentGUI::setDateBegin );
-            connect( m_d->TAMBillItem, &AccountingTAMBillItem::endDateChanged, this, &AccountingItemPaymentGUI::setDateEnd );
-
+        if( m_d->TAMBillItem != nullptr ){
             connect( m_d->TAMBillItem, &AccountingTAMBillItem::aboutToBeDeleted, this, &AccountingItemPaymentGUI::setAccountingItemNULL );
+
+            m_d->ui->beginDateLineEdit->setText( m_d->TAMBillItem->startDateStr() );
+            connect( m_d->TAMBillItem, &AccountingTAMBillItem::startDateChanged, this, &AccountingItemPaymentGUI::setDateBegin );
+            m_d->ui->endDateLineEdit->setText( m_d->TAMBillItem->endDateStr() );
+            connect( m_d->TAMBillItem, &AccountingTAMBillItem::endDateChanged, this, &AccountingItemPaymentGUI::setDateEnd );
 
             m_d->ui->totalAmountToDiscountLineEdit->setText( m_d->TAMBillItem->totalAmountToDiscountStr() );
             connect( m_d->TAMBillItem, &AccountingTAMBillItem::totalAmountToDiscountChanged, m_d->ui->totalAmountToDiscountLineEdit, &QLineEdit::setText );
@@ -102,23 +114,35 @@ void AccountingItemPaymentGUI::setAccountingItem(AccountingTAMBillItem *b) {
 }
 
 void AccountingItemPaymentGUI::setAccountingItem(AccountingBillItem *b) {
-    if( m_d->billItem != b || m_d->TAMBillItem != NULL ){
-        if( m_d->TAMBillItem != NULL ){
-            disconnect( m_d->TAMBillItem, &AccountingTAMBillItem::startDateChanged, this, &AccountingItemPaymentGUI::setDateBegin );
-            disconnect( m_d->TAMBillItem, &AccountingTAMBillItem::endDateChanged, this, &AccountingItemPaymentGUI::setDateEnd );
+    if( m_d->billItem != b || m_d->TAMBillItem != nullptr ){
+        if( m_d->TAMBillItem != nullptr ){
             disconnect( m_d->TAMBillItem, &AccountingTAMBillItem::aboutToBeDeleted, this, &AccountingItemPaymentGUI::setAccountingItemNULL );
 
+            m_d->ui->beginDateLineEdit->clear();
+            disconnect( m_d->TAMBillItem, &AccountingTAMBillItem::startDateChanged, this, &AccountingItemPaymentGUI::setDateBegin );
+            m_d->ui->endDateLineEdit->clear();
+            disconnect( m_d->TAMBillItem, &AccountingTAMBillItem::endDateChanged, this, &AccountingItemPaymentGUI::setDateEnd );
+
+            m_d->ui->totalAmountToDiscountLineEdit->clear();
             disconnect( m_d->TAMBillItem, &AccountingTAMBillItem::totalAmountToDiscountChanged, m_d->ui->totalAmountToDiscountLineEdit, &QLineEdit::setText );
+            m_d->ui->amountNotToDiscountLineEdit->clear();
             disconnect( m_d->TAMBillItem, &AccountingTAMBillItem::amountNotToDiscountChanged, m_d->ui->amountNotToDiscountLineEdit, &QLineEdit::setText );
+            m_d->ui->totalAmountLineEdit->clear();
             disconnect( m_d->TAMBillItem, &AccountingTAMBillItem::totalAmountChanged, m_d->ui->totalAmountLineEdit, &QLineEdit::setText );
         }
-        if( m_d->billItem != NULL ){
-            disconnect( m_d->billItem, &AccountingBillItem::dateBeginChanged, this, &AccountingItemPaymentGUI::setDateBegin );
-            disconnect( m_d->billItem, &AccountingBillItem::dateEndChanged, this, &AccountingItemPaymentGUI::setDateEnd );
+        if( m_d->billItem != nullptr ){
             disconnect( m_d->billItem, &AccountingBillItem::aboutToBeDeleted, this, &AccountingItemPaymentGUI::setAccountingItemNULL );
 
+            m_d->ui->beginDateLineEdit->clear();
+            disconnect( m_d->billItem, &AccountingBillItem::dateBeginChanged, this, &AccountingItemPaymentGUI::setDateBegin );
+            m_d->ui->endDateLineEdit->clear();
+            disconnect( m_d->billItem, &AccountingBillItem::dateEndChanged, this, &AccountingItemPaymentGUI::setDateEnd );
+
+            m_d->ui->totalAmountToDiscountLineEdit->clear();
             disconnect( m_d->billItem, &AccountingBillItem::totalAmountToDiscountChanged, m_d->ui->totalAmountToDiscountLineEdit, &QLineEdit::setText );
+            m_d->ui->amountNotToDiscountLineEdit->clear();
             disconnect( m_d->billItem, &AccountingBillItem::amountNotToDiscountChanged, m_d->ui->amountNotToDiscountLineEdit, &QLineEdit::setText );
+            m_d->ui->totalAmountLineEdit->clear();
             disconnect( m_d->billItem, &AccountingBillItem::totalAmountChanged, m_d->ui->totalAmountLineEdit, &QLineEdit::setText );
         }
 
@@ -128,16 +152,16 @@ void AccountingItemPaymentGUI::setAccountingItem(AccountingBillItem *b) {
         m_d->ui->beginDateLineEdit->clear();
         m_d->ui->endDateLineEdit->clear();
         m_d->billItem = b;
-        m_d->TAMBillItem = NULL;
+        m_d->TAMBillItem = nullptr;
         m_d->itemAttributeModel->setItem( b );
 
-        if( m_d->billItem != NULL ){
-            m_d->ui->beginDateLineEdit->setText( m_d->billItem->dateBeginStr() );
-            m_d->ui->endDateLineEdit->setText( m_d->billItem->dateEndStr() );
-            connect( m_d->billItem, &AccountingBillItem::dateBeginChanged, this, &AccountingItemPaymentGUI::setDateBegin );
-            connect( m_d->billItem, &AccountingBillItem::dateEndChanged, this, &AccountingItemPaymentGUI::setDateEnd );
-
+        if( m_d->billItem != nullptr ){
             connect( m_d->billItem, &AccountingBillItem::aboutToBeDeleted, this, &AccountingItemPaymentGUI::setAccountingItemNULL );
+
+            m_d->ui->beginDateLineEdit->setText( m_d->billItem->dateBeginStr() );
+            connect( m_d->billItem, &AccountingBillItem::dateBeginChanged, this, &AccountingItemPaymentGUI::setDateBegin );
+            m_d->ui->endDateLineEdit->setText( m_d->billItem->dateEndStr() );
+            connect( m_d->billItem, &AccountingBillItem::dateEndChanged, this, &AccountingItemPaymentGUI::setDateEnd );
 
             m_d->ui->totalAmountToDiscountLineEdit->setText( m_d->billItem->totalAmountToDiscountStr() );
             connect( m_d->billItem, &AccountingBillItem::totalAmountToDiscountChanged, m_d->ui->totalAmountToDiscountLineEdit, &QLineEdit::setText );
@@ -150,12 +174,12 @@ void AccountingItemPaymentGUI::setAccountingItem(AccountingBillItem *b) {
 }
 
 void AccountingItemPaymentGUI::setAccountingItemNULL() {
-    setAccountingItem( (AccountingBillItem *) (NULL) );
-    setAccountingItem( (AccountingTAMBillItem *) (NULL) );
+    setAccountingItem( static_cast<AccountingBillItem *> ( nullptr ) );
+    setAccountingItem( static_cast<AccountingBillItem *> ( nullptr ) );
 }
 
 void AccountingItemPaymentGUI::addAttribute(){
-    if( m_d->itemAttributeModel != NULL ){
+    if( m_d->itemAttributeModel != nullptr ){
         if( m_d->ui->attributeTableView->selectionModel() ){
             int count = 1;
             QModelIndexList selectedRows = m_d->ui->attributeTableView->selectionModel()->selectedRows();
@@ -173,7 +197,7 @@ void AccountingItemPaymentGUI::addAttribute(){
 }
 
 void AccountingItemPaymentGUI::removeAttribute(){
-    if( m_d->itemAttributeModel != NULL ){
+    if( m_d->itemAttributeModel != nullptr ){
         if( m_d->ui->attributeTableView->selectionModel() ){
             QModelIndexList selectedRows = m_d->ui->attributeTableView->selectionModel()->selectedRows();
             int count = selectedRows.size();
@@ -192,19 +216,19 @@ void AccountingItemPaymentGUI::removeAttribute(){
 
 void AccountingItemPaymentGUI::setAccountingTAMBill(AccountingTAMBill *b) {
     if( m_d->TAMBill != b ){
-        if( m_d->TAMBill != NULL ){
-            m_d->itemAttributeModel->setAttributeModel( NULL );
+        if( m_d->TAMBill != nullptr ){
+            m_d->itemAttributeModel->setAttributeModel( nullptr );
             disconnect( m_d->TAMBill, &AccountingTAMBill::aboutToBeDeleted, this, &AccountingItemPaymentGUI::setAccountingNULL );
         }
-        if( m_d->bill != NULL ){
-            m_d->itemAttributeModel->setAttributeModel( NULL );
+        if( m_d->bill != nullptr ){
+            m_d->itemAttributeModel->setAttributeModel( nullptr );
             disconnect( m_d->bill, &AccountingBill::aboutToBeDeleted, this, &AccountingItemPaymentGUI::setAccountingNULL );
         }
 
-        m_d->bill = NULL;
+        m_d->bill = nullptr;
         m_d->TAMBill = b;
 
-        if( m_d->TAMBill != NULL ){
+        if( m_d->TAMBill != nullptr ){
             m_d->itemAttributeModel->setAttributeModel( m_d->TAMBill->attributesModel() );
             connect( m_d->TAMBill, &AccountingTAMBill::aboutToBeDeleted, this, &AccountingItemPaymentGUI::setAccountingNULL );
         }
@@ -216,19 +240,19 @@ void AccountingItemPaymentGUI::setAccountingTAMBill(AccountingTAMBill *b) {
 
 void AccountingItemPaymentGUI::setAccountingBill(AccountingBill *b) {
     if( m_d->bill != b ){
-        if( m_d->TAMBill != NULL ){
-            m_d->itemAttributeModel->setAttributeModel( NULL );
+        if( m_d->TAMBill != nullptr ){
+            m_d->itemAttributeModel->setAttributeModel( nullptr );
             disconnect( m_d->TAMBill, &AccountingTAMBill::aboutToBeDeleted, this, &AccountingItemPaymentGUI::setAccountingNULL );
         }
-        if( m_d->bill != NULL ){
-            m_d->itemAttributeModel->setAttributeModel( NULL );
+        if( m_d->bill != nullptr ){
+            m_d->itemAttributeModel->setAttributeModel( nullptr );
             disconnect( m_d->bill, &AccountingBill::aboutToBeDeleted, this, &AccountingItemPaymentGUI::setAccountingNULL );
         }
 
         m_d->bill = b;
-        m_d->TAMBill = NULL;
+        m_d->TAMBill = nullptr;
 
-        if( m_d->bill != NULL ){
+        if( m_d->bill != nullptr ){
             m_d->itemAttributeModel->setAttributeModel( m_d->bill->attributesModel() );
             connect( m_d->bill, &AccountingBill::aboutToBeDeleted, this, &AccountingItemPaymentGUI::setAccountingNULL );
         }
@@ -239,8 +263,8 @@ void AccountingItemPaymentGUI::setAccountingBill(AccountingBill *b) {
 }
 
 void AccountingItemPaymentGUI::setAccountingNULL() {
-    setAccountingTAMBill(NULL);
-    setAccountingBill(NULL);
+    setAccountingTAMBill(nullptr);
+    setAccountingBill(nullptr);
 }
 
 void AccountingItemPaymentGUI::setDateBegin( const QString &newVal ) {
@@ -253,22 +277,22 @@ void AccountingItemPaymentGUI::setDateEnd( const QString &newVal ) {
 
 bool AccountingItemPaymentGUI::eventFilter(QObject *object, QEvent *event) {
     if (event->type() == QEvent::MouseButtonDblClick )     {
-        if( m_d->TAMBillItem != NULL ){
+        if( m_d->TAMBillItem != nullptr ){
             if( object == m_d->ui->beginDateLineEdit ){
                 QDate d = m_d->TAMBillItem->startDate();
                 QCalendarDialog dialog( &d, this );
                 if( dialog.exec() == QDialog::Accepted ){
-                    m_d->TAMBillItem->requestDateBeginChange( d );
+                    m_d->TAMBillItem->setStartDate( d );
                 }
             } else if( object == m_d->ui->endDateLineEdit ){
                 QDate d = m_d->TAMBillItem->endDate();
                 QCalendarDialog dialog( &d, this );
                 if( dialog.exec() == QDialog::Accepted ){
-                    m_d->TAMBillItem->requestDateEndChange( d );
+                    m_d->TAMBillItem->setEndDate( d );
                 }
             }
         }
-        if( m_d->billItem != NULL ){
+        if( m_d->billItem != nullptr ){
             if( object == m_d->ui->beginDateLineEdit ){
                 QDate d = m_d->billItem->dateBegin();
                 QCalendarDialog dialog( &d, this );

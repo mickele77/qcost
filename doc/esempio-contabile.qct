@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <QCostProject version="2.0">
     <PriceFieldModel>
-        <PriceFieldData priceName="Costo Unitario" amountName="Importo" unitMeasure="€" precision="2" applyFormula="false" formula="" fieldType="PriceTotal"/>
-        <PriceFieldData priceName="Costo Unitario M.O." amountName="Importo M.O." unitMeasure="€" precision="2" applyFormula="false" formula="" fieldType="PriceHuman"/>
-        <PriceFieldData priceName="Costo Unitario Netto M.O." amountName="Importo Netto M.O." unitMeasure="€" precision="2" applyFormula="true" formula="$2$ / ((1 + $SG$) * (1 + $UI$))" fieldType="PriceHumanNet"/>
-        <PriceFieldData priceName="Costo Unitario sog. rib." amountName="Importo sogg. ribasso" unitMeasure="€" precision="2" applyFormula="true" formula="$1$ - $3$" fieldType="PriceNoHumanNet"/>
+        <PriceFieldData priceName="Costo Unitario" amountName="Importo" unitMeasure="€" precision="2" applyFormula="ToNone" formula="" isPercentage="false" multiplyBy="-1" fieldType="PriceTotal"/>
+        <PriceFieldData priceName="Costo Unitario M.O." amountName="Importo M.O." unitMeasure="€" precision="2" applyFormula="ToNone" formula="" isPercentage="false" multiplyBy="-1" fieldType="PriceHuman"/>
+        <PriceFieldData priceName="Costo Unitario Netto M.O." amountName="Importo Netto M.O." unitMeasure="€" precision="2" applyFormula="ToNone" formula="$2$ / ((1 + $SG$) * (1 + $UI$))" isPercentage="false" multiplyBy="-1" fieldType="PriceHumanNet"/>
+        <PriceFieldData priceName="Costo Unitario sog. rib." amountName="Importo sogg. ribasso" unitMeasure="€" precision="2" applyFormula="ToNone" formula="$1$ - $3$" isPercentage="false" multiplyBy="-1" fieldType="PriceNoHumanNet"/>
     </PriceFieldModel>
     <UnitMeasureModel>
         <UnitMeasure id="3" tag="cad" description="Cadauno" precision="2"/>
@@ -15,13 +15,7 @@
     </UnitMeasureModel>
     <PriceLists>
         <PriceList id="0" name="Prezzario Misura" description="">
-            <PriceItemDataSet/>
-            <PriceItem id="1" code="A001" inheritCodeFromParent="true" shortDescription="Denominazione 1" inheritShortDescFromParent="false" longDescription="Descrizione 1" inheritLongDescFromParent="false" unitMeasure="2">
-                <PriceItemDataSet value0="20" value1="3" value2="2.41" value3="17.59"/>
-            </PriceItem>
-            <PriceItem id="2" code="A002" inheritCodeFromParent="true" shortDescription="Denominazione 2" inheritShortDescFromParent="false" longDescription="Descrizione 2" inheritLongDescFromParent="false" unitMeasure="1">
-                <PriceItemDataSet value0="30" value1="2" value2="1.61" value3="28.39"/>
-            </PriceItem>
+            <PriceItemDataSet overheads="0.13" profits="0.1"/>
             <PriceItem id="3" code="01.P01.A10" inheritCodeFromParent="false" shortDescription="Operaio specializzato " inheritShortDescFromParent="false" longDescription="Operaio specializzato " inheritLongDescFromParent="false">
                 <PriceItem id="4" code="01.P01.A10.005" inheritCodeFromParent="false" shortDescription="Ore normali" inheritShortDescFromParent="true" longDescription="Ore normali" inheritLongDescFromParent="true" unitMeasure="4">
                     <PriceItemDataSet value0="27.58" value1="27.58" value2="22.19" value3="5.39"/>
@@ -47,9 +41,15 @@
                     <PriceItemDataSet value0="98.26" value1="90.01" value2="72.41" value3="25.85"/>
                 </PriceItem>
             </PriceItem>
+            <PriceItem id="1" code="A001" inheritCodeFromParent="true" shortDescription="Denominazione 1" inheritShortDescFromParent="false" longDescription="Descrizione 1" inheritLongDescFromParent="false" unitMeasure="2">
+                <PriceItemDataSet value0="20" value1="3" value2="2.41" value3="17.59"/>
+            </PriceItem>
+            <PriceItem id="2" code="A002" inheritCodeFromParent="true" shortDescription="Denominazione 2" inheritShortDescFromParent="false" longDescription="Descrizione 2" inheritLongDescFromParent="false" unitMeasure="1">
+                <PriceItemDataSet value0="30" value1="2" value2="1.61" value3="28.39"/>
+            </PriceItem>
         </PriceList>
         <PriceList id="1" name="Prezzario Corpo" description="">
-            <PriceItemDataSet/>
+            <PriceItemDataSet overheads="0.13" profits="0.1"/>
             <PriceItem id="1" code="01.A02.A05" inheritCodeFromParent="false" shortDescription="Demolizione completa di fabbricati sino al piano di spiccato, valut..." inheritShortDescFromParent="false" longDescription="Demolizione completa di fabbricati sino al piano di spiccato, valutata a metro cubo vuoto per pieno compreso l'accatastamento entro l'area di cantiere del materiale di spoglio ed il carico ed il trasporto delle macerie alle discariche, esclusi eventuali corrispettivi per diritti di discarica" inheritLongDescFromParent="false">
                 <PriceItem id="2" code="01.A02.A05.020" inheritCodeFromParent="false" shortDescription="Con struttura portante in muratura e solai in legno, ferro, voltini..." inheritShortDescFromParent="true" longDescription="Con struttura portante in muratura e solai in legno, ferro, voltini o a volta" inheritLongDescFromParent="true" unitMeasure="0">
                     <PriceItemDataSet value0="11.14" value1="4.32" value2="3.48" value3="7.66"/>
@@ -58,7 +58,7 @@
         </PriceList>
     </PriceLists>
     <Bills>
-        <Bill id="0" name="Computo 1" description="" priceList="0" priceDataSet="0">
+        <Bill id="0" name="Computo 1" description="" priceList="0" priceDataSet="0" recalculateOverheadsProfits="false" overheads="0.13" profits="0.1">
             <AttributesModel/>
             <VarsModel>
                 <Var comment="" name="" value=""/>
@@ -69,57 +69,28 @@
         <AccountingLSBills>
             <AccountingLSBill id="0" name="Categoria 1" description="" PPUTotalToDiscount="0" PPUNotToDiscount="0" totalAmountPriceFields="0, 1" priceList="1" priceDataSet="0">
                 <AttributesModel/>
-                <AccountingLSBillItem id="1" priceItem="2" quantity="35.8" priceDataSet="0">
-                    <MeasuresLSModel>
-                        <MeasureLS comment="" projFormula="25.6" accDate="2457520" accFormulaFromProj="true"/>
-                        <MeasureLS comment="" projFormula="10.2" accDate="2457520" accFormula=""/>
-                    </MeasuresLSModel>
+                <AccountingLSBillItem id="1" priceItem="2" quantity="0" priceDataSet="0">
+                    <AccountingLSMeasuresModel>
+                        <AccountingLSMeasure comment="" projFormula="" accDate="2458512" accFormula=""/>
+                    </AccountingLSMeasuresModel>
                 </AccountingLSBillItem>
             </AccountingLSBill>
         </AccountingLSBills>
-        <AccountingTAMBill id="0" name="Opere in economia" priceDataSet="0" discount="0" totalAmountPriceFields="" noDiscountAmountPriceFields="">
+        <AccountingTAMBill id="0" name="Opere in economia" priceList="0" priceDataSet="0" discount="0" totalAmountPriceFields="1" noDiscountAmountPriceFields="2">
             <AttributesModel/>
+            <AccountingTAMBillItem itemType="Payment" startDate="-9223372036854775808" endDate="-9223372036854775808">
+                <AccountingTAMBillItem itemType="PPU" id="2" priceItem="4">
+                    <AccountingTAMMeasuresModel>
+                        <AccountingTAMMeasure comment="" formula ="10"/>
+                    </AccountingTAMMeasuresModel>
+                </AccountingTAMBillItem>
+            </AccountingTAMBillItem>
         </AccountingTAMBill>
-        <AccountingBill discount="0.25" totalAmountPriceFields="0" noDiscountAmountPriceFields="2" priceList="0" priceDataSet="0">
-            <AttributesModel>
-                <Attribute id="0" name="Corpo A"/>
-            </AttributesModel>
+        <AccountingBill discount="0" totalAmountPriceFields="" noDiscountAmountPriceFields="" priceDataSet="0">
+            <AttributesModel/>
             <VarsModel>
                 <Var comment="" name="" value=""/>
             </VarsModel>
-            <AccountingBillItem itemType="Payment">
-                <AccountingBillItem itemType="Comment" id="5" text="Demolizione muro esistente"/>
-                <AccountingBillItem itemType="PPU" id="6" date="2457325" priceItem="10" attributes="0">
-                    <MeasuresModel>
-                        <Measure comment="" formula="23"/>
-                    </MeasuresModel>
-                </AccountingBillItem>
-                <AccountingBillItem itemType="PPU" id="7" date="2457325" priceItem="12">
-                    <MeasuresModel>
-                        <Measure comment="" formula="25"/>
-                    </MeasuresModel>
-                </AccountingBillItem>
-                <AccountingBillItem itemType="PPU" id="1" date="2457288" priceItem="1">
-                    <MeasuresModel>
-                        <Measure comment="" formula="25"/>
-                    </MeasuresModel>
-                </AccountingBillItem>
-                <AccountingBillItem itemType="Comment" id="2" text="Iniziamo"/>
-                <AccountingBillItem itemType="PPU" id="3" date="2457288" priceItem="2" attributes="0">
-                    <MeasuresModel>
-                        <Measure comment="" formula="12"/>
-                        <Measure comment="" formula="24"/>
-                    </MeasuresModel>
-                </AccountingBillItem>
-                <AccountingBillItem itemType="TimeAndMaterials" id="4" date="2457296"/>
-            </AccountingBillItem>
-            <AccountingBillItem itemType="Payment">
-                <AccountingBillItem itemType="PPU" id="8" date="2457343" priceItem="1">
-                    <MeasuresModel>
-                        <Measure comment="" formula=""/>
-                    </MeasuresModel>
-                </AccountingBillItem>
-            </AccountingBillItem>
         </AccountingBill>
     </Accounting>
 </QCostProject>

@@ -6,7 +6,7 @@ TARGET = QCostDB
 TEMPLATE = app
 
 RESOURCES += \
-    ../icons.qrc
+    ../qcostgui/icons.qrc
 
 SOURCES += main.cpp\
     loadfromtxtdialog.cpp \

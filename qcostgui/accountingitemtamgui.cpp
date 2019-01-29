@@ -17,9 +17,9 @@ public:
     AccountingItemTAMGUIPrivate( AccountingTAMBill * tb, PriceFieldModel * pfm ):
         ui(new Ui::AccountingItemTAMGUI),
         tamBill(tb),
-        bill(NULL),
-        item(NULL),
-        itemAttributeModel( new AccountingItemAttributeModel(NULL, NULL) ),
+        bill(nullptr),
+        item(nullptr),
+        itemAttributeModel( new AccountingItemAttributeModel(nullptr, nullptr) ),
         priceFieldModel(pfm){
     }
     ~AccountingItemTAMGUIPrivate(){
@@ -56,7 +56,7 @@ AccountingItemTAMGUI::~AccountingItemTAMGUI() {
 
 void AccountingItemTAMGUI::setAccountingItem(AccountingBillItem *b) {
     if( m_d->item != b ){
-        if( m_d->item != NULL ){
+        if( m_d->item != nullptr ){
             disconnect( m_d->item, &AccountingBillItem::dateChanged, m_d->ui->dateLineEdit, &QLineEdit::setText );
             disconnect( m_d->item, &AccountingBillItem::dateBeginChanged, m_d->ui->beginDateLineEdit, &QLineEdit::setText );
             disconnect( m_d->item, &AccountingBillItem::dateEndChanged, m_d->ui->endDateLineEdit, &QLineEdit::setText );
@@ -82,7 +82,7 @@ void AccountingItemTAMGUI::setAccountingItem(AccountingBillItem *b) {
 
         updateTAMBillComboBox();
 
-        if( m_d->item != NULL ){
+        if( m_d->item != nullptr ){
             m_d->ui->dateLineEdit->setText( m_d->item->dateStr() );
             m_d->ui->beginDateLineEdit->setText( m_d->item->dateBeginStr() );
             m_d->ui->endDateLineEdit->setText( m_d->item->dateEndStr() );
@@ -105,11 +105,11 @@ void AccountingItemTAMGUI::setAccountingItem(AccountingBillItem *b) {
 }
 
 void AccountingItemTAMGUI::setAccountingItemNULL() {
-    setAccountingItem( NULL );
+    setAccountingItem( nullptr );
 }
 
 void AccountingItemTAMGUI::addAttribute(){
-    if( m_d->itemAttributeModel != NULL ){
+    if( m_d->itemAttributeModel != nullptr ){
         if( m_d->ui->attributeTableView->selectionModel() ){
             int count = 1;
             QModelIndexList selectedRows = m_d->ui->attributeTableView->selectionModel()->selectedRows();
@@ -127,7 +127,7 @@ void AccountingItemTAMGUI::addAttribute(){
 }
 
 void AccountingItemTAMGUI::removeAttribute(){
-    if( m_d->itemAttributeModel != NULL ){
+    if( m_d->itemAttributeModel != nullptr ){
         if( m_d->ui->attributeTableView->selectionModel() ){
             QModelIndexList selectedRows = m_d->ui->attributeTableView->selectionModel()->selectedRows();
             int count = selectedRows.size();
@@ -145,14 +145,14 @@ void AccountingItemTAMGUI::removeAttribute(){
 }
 
 void AccountingItemTAMGUI::setAccountingBill(AccountingBill *b) {
-    if( m_d->bill != NULL ){
-        m_d->itemAttributeModel->setAttributeModel( NULL );
+    if( m_d->bill != nullptr ){
+        m_d->itemAttributeModel->setAttributeModel( nullptr );
         disconnect( m_d->bill, &AccountingBill::aboutToBeDeleted, this, &AccountingItemTAMGUI::setAccountingNULL );
     }
 
     m_d->bill = b;
 
-    if( m_d->bill != NULL ){
+    if( m_d->bill != nullptr ){
         m_d->itemAttributeModel->setAttributeModel( m_d->bill->attributesModel() );
         connect( m_d->bill, &AccountingBill::aboutToBeDeleted, this, &AccountingItemTAMGUI::setAccountingNULL );
     }
@@ -177,7 +177,7 @@ void AccountingItemTAMGUI::updateTAMBillComboBox() {
         AccountingTAMBillItem * b = bills.at(i);
         v = qVariantFromValue((void *) b );
         m_d->ui->tamBillComboBox->insertItem( (i+1), b->title(), v );
-        if( m_d->item != NULL ){
+        if( m_d->item != nullptr ){
             if( m_d->item->tamBillItem() == b ){
                 currIndex = i+1;
             }
@@ -189,7 +189,7 @@ void AccountingItemTAMGUI::updateTAMBillComboBox() {
 }
 
 void AccountingItemTAMGUI::setTAMBill() {
-    if( m_d->item != NULL ){
+    if( m_d->item != nullptr ){
         QVariant v = m_d->ui->tamBillComboBox->currentData();
         AccountingTAMBillItem * newTAMBillItem = NULL;
         if( v.isValid() ){
@@ -201,7 +201,7 @@ void AccountingItemTAMGUI::setTAMBill() {
 
 bool AccountingItemTAMGUI::eventFilter(QObject *object, QEvent *event) {
     if (event->type() == QEvent::MouseButtonDblClick )     {
-        if( m_d->item != NULL ){
+        if( m_d->item != nullptr ){
             if( object == m_d->ui->dateLineEdit ){
                 QDate d = m_d->item->date();
                 QCalendarDialog dialog( &d, this );
