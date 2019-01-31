@@ -89,16 +89,16 @@ AccountingTAMBillItemPrivate::~AccountingTAMBillItemPrivate(){
     for( QList<AccountingTAMBillItem *>::iterator i = childrenContainer.begin(); i != childrenContainer.end(); ++i ){
         delete *i;
     }
-    if( startDate != NULL ) {
+    if( startDate != nullptr ) {
         delete startDate;
     }
-    if( endDate != NULL ){
+    if( endDate != nullptr ){
         delete endDate;
     }
 }
 
 QString	AccountingTAMBillItemPrivate::toString(double i, char f, int prec ) const{
-    if( parser != NULL ){
+    if( parser != nullptr ){
         return parser->toString( i, f, prec );
     } else {
         return QString::number( i, f, prec );
@@ -112,7 +112,7 @@ QString AccountingTAMBillItemPrivate::percentageToString(double v) const {
 void AccountingTAMBillItemPrivate::writeDescriptionCell(PriceItem * priceItemToPrint, QTextCursor *cursor, QTextTable * table, const QTextTableCellFormat &centralFormat,
                                                       const QTextBlockFormat & txtBlockFormat, const QTextCharFormat & txtCharFormat, const QTextCharFormat & txtBoldCharFormat,
                                                       AccountingPrinter::PrintPPUDescOption prPPUDescOption ){
-    if( priceItemToPrint != NULL ){
+    if( priceItemToPrint != nullptr ){
         if( prPPUDescOption == AccountingPrinter::PrintShortDesc ){
             writeCell( cursor, table, centralFormat, txtBlockFormat, priceItemToPrint->shortDescriptionFull() );
         } else if( prPPUDescOption == AccountingPrinter::PrintLongDesc ){

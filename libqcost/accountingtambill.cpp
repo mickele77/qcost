@@ -33,15 +33,15 @@
 #include <QDate>
 #include <QString>
 
-class AccountingTAMBillPrivate{
+class AccountingTAMBillPrivate {
 public:
-    AccountingTAMBillPrivate( const QString &n, AccountingTAMBill * b, PriceFieldModel * pfm, MathParser * prs = NULL ):
+    AccountingTAMBillPrivate( const QString &n, AccountingTAMBill * b, PriceFieldModel * pfm, MathParser * prs = nullptr ):
         id(0),
         name(n),
         priceFieldModel(pfm),
         parser(prs),
-        rootItem(new AccountingTAMBillItem( NULL, AccountingTAMBillItem::Root, pfm, parser )),
-        priceList( NULL ),
+        rootItem(new AccountingTAMBillItem( nullptr, AccountingTAMBillItem::Root, pfm, parser )),
+        priceList( nullptr ),
         attributesModel( new AttributesModel( b, parser, pfm )),
         priceListIdTmp(0){
     }
@@ -51,10 +51,10 @@ public:
     }
 
     static void setPriceItemParents( PriceList *pl, PriceItem * basePriceItem, PriceItem * newPriceItem ){
-        if( basePriceItem->parentItem() != NULL ){
-            if( basePriceItem->parentItem()->parentItem() != NULL ){
+        if( basePriceItem->parentItem() != nullptr ){
+            if( basePriceItem->parentItem()->parentItem() != nullptr ){
                 PriceItem * newPriceItemParent = pl->priceItemCode( basePriceItem->parentItem()->code() );
-                if( newPriceItemParent == NULL ){
+                if( newPriceItemParent == nullptr ){
                     newPriceItemParent = pl->appendPriceItem();
                     *newPriceItemParent = *(basePriceItem->parentItem());
                 }
@@ -160,7 +160,7 @@ void AccountingTAMBill::setName(const QString &value) {
 
 void AccountingTAMBill::setPriceDataSet(int v) {
     int effV = 0;
-    if( m_d->priceList != NULL ){
+    if( m_d->priceList != nullptr ){
         if( v > -1 && v < m_d->priceList->priceDataSetCount() &&
                 m_d->rootItem->currentPriceDataSet() != v ){
             effV = v;
@@ -205,7 +205,7 @@ bool AccountingTAMBill::clear() {
     beginResetModel();
     bool ret = m_d->rootItem->clear();
     setPriceDataSet( 0 );
-    setPriceList( NULL );
+    setPriceList( nullptr );
     endResetModel();
     return ret;
 }
@@ -252,15 +252,15 @@ AccountingPriceFieldModel *AccountingTAMBill::noDiscountAmountPriceFieldModel() 
 void AccountingTAMBill::setPriceList(PriceList *pl, AccountingTAMBill::SetPriceListMode plMode) {
     if( pl != m_d->priceList ){
         if( plMode != None ){
-            if( m_d->priceList != NULL ){
+            if( m_d->priceList != nullptr ){
                 if( plMode == SearchAndAdd ){
                     // cerca in base al codice e aggiunge se manca
                     QList<AccountingTAMBillItem *> allItems = m_d->rootItem->allChildren();
                     for(QList<AccountingTAMBillItem *>::iterator i = allItems.begin(); i != allItems.end(); ++i ){
                         PriceItem * newPriceItem = NULL;
-                        if( (*i)->priceItem()!= NULL ){
+                        if( (*i)->priceItem()!= nullptr ){
                             newPriceItem = pl->priceItemCode( (*i)->priceItem()->code() );
-                            if( newPriceItem == NULL ){
+                            if( newPriceItem == nullptr ){
                                 newPriceItem = pl->appendPriceItem();
                                 AccountingTAMBillPrivate::setPriceItemParents( pl, (*i)->priceItem(), newPriceItem );
                                 *newPriceItem = *((*i)->priceItem());
@@ -273,7 +273,7 @@ void AccountingTAMBill::setPriceList(PriceList *pl, AccountingTAMBill::SetPriceL
                     QList<AccountingTAMBillItem *> allItems = m_d->rootItem->allChildren();
                     for(QList<AccountingTAMBillItem *>::iterator i = allItems.begin(); i != allItems.end(); ++i ){
                         PriceItem * newPriceItem = NULL;
-                        if( (*i)->priceItem()!= NULL ){
+                        if( (*i)->priceItem()!= nullptr ){
                             newPriceItem = pl->appendPriceItem();
                             AccountingTAMBillPrivate::setPriceItemParents( pl, (*i)->priceItem(), newPriceItem );
                             *newPriceItem = *((*i)->priceItem());
@@ -290,13 +290,13 @@ void AccountingTAMBill::setPriceList(PriceList *pl, AccountingTAMBill::SetPriceL
                     // annulla
                     QList<AccountingTAMBillItem *> allItems = m_d->rootItem->allChildren();
                     for(QList<AccountingTAMBillItem *>::iterator i = allItems.begin(); i != allItems.end(); ++i ){
-                        (*i)->setPriceItem( NULL );
+                        (*i)->setPriceItem( nullptr );
                     }
                 } else if( plMode == ResetBill ){
                     // resetta il computo
                     removeItems( 0, m_d->rootItem->childrenCount() );
                 }
-                if( pl == NULL ){
+                if( pl == nullptr ){
                     m_d->rootItem->setCurrentPriceDataSet( 0 );
                 } else {
                     if( m_d->rootItem->currentPriceDataSet() > pl->priceDataSetCount() ){
@@ -486,10 +486,10 @@ QModelIndex AccountingTAMBill::index(int row, int column, const QModelIndex &par
 }
 
 QModelIndex AccountingTAMBill::index( AccountingTAMBillItem *item, int column) const {
-    if (item == NULL )
+    if (item == nullptr )
         return QModelIndex();
 
-    if( item->parent() == NULL ){
+    if( item->parent() == nullptr ){
         return QModelIndex();
     } else {
         return createIndex(item->childNumber(), column, item);
@@ -569,7 +569,7 @@ AttributesModel *AccountingTAMBill::attributesModel() {
 }
 
 void AccountingTAMBill::activateAttributeModel() {
-    if( m_d->attributesModel != NULL ){
+    if( m_d->attributesModel != nullptr ){
         m_d->attributesModel->setBill( this );
     }
 }
@@ -756,7 +756,7 @@ void AccountingTAMBill::writeODTAccountingOnTable(QTextCursor *cursor,
         m_d->rootItem->writeODTMeasuresOnTable(cursor, billToPrint, prAmountsOption, prItemsOption );
     } else {
         AccountingTAMBillItem * childItem = dynamic_cast<AccountingTAMBillItem *>(m_d->rootItem->childItem( billToPrint ));
-        if( childItem != NULL ){
+        if( childItem != nullptr ){
             childItem->writeODTMeasuresOnTable(cursor, billToPrint, prAmountsOption, prItemsOption );
         }
     }
