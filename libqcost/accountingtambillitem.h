@@ -54,7 +54,7 @@ public:
 
     friend class AccountingTAMBill;
     AccountingTAMBillItem( AccountingTAMBillItem * parentItem, AccountingTAMBillItem::ItemType iType, PriceFieldModel * pfm,
-                           MathParser * parser = NULL , VarsModel *vModel = NULL);
+                           MathParser * parser = nullptr , VarsModel *vModel = nullptr);
     ~AccountingTAMBillItem();
 
 
