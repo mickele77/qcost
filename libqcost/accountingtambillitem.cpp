@@ -109,6 +109,8 @@ AccountingTAMBillItem::AccountingTAMBillItem(AccountingTAMBillItem *parentItem, 
         connect( m_d->noDiscountAmountPriceFieldModel, &AccountingPriceFieldModel::modelChanged, this, &AccountingTAMBillItem::updatePPUs );
         connect( m_d->totalAmountPriceFieldModel, &AccountingPriceFieldModel::modelChanged, this, &AccountingTAMBillItem::updatePPUs );
     }
+
+    updateDaysCount();
 }
 
 AccountingTAMBillItem::~AccountingTAMBillItem(){
@@ -383,9 +385,11 @@ void AccountingTAMBillItem::updateProgCode( int * startCode ) {
 }
 
 void AccountingTAMBillItem::updateDaysCount() {
-    m_d->daysCount = static_cast<int>(m_d->startDate->daysTo( *(m_d->endDate) )) + 1;
-    if ( m_d->daysCount < 1 ){
-        m_d->daysCount = 1;
+    if( m_d->itemType == AccountingTAMBillItem::Payment ) {
+        m_d->daysCount = static_cast<int>(m_d->startDate->daysTo( *(m_d->endDate) )) + 1;
+        if ( m_d->daysCount < 1 ){
+            m_d->daysCount = 1;
+        }
     }
 }
 
@@ -530,7 +534,7 @@ QVariant AccountingTAMBillItem::data(int col, int role) const {
             }
         } else if( col == m_d->startDateCol) {
             if( role == Qt::TextAlignmentRole ){
-                return Qt::AlignHCenter + Qt::AlignVCenter;;
+                return Qt::AlignHCenter + Qt::AlignVCenter;
             } else if(role == Qt::DisplayRole || role == Qt::EditRole) {
                 return QVariant( startDateStr() );
             }
@@ -3856,11 +3860,11 @@ void AccountingTAMBillItem::setStartDate(const QDate &newStDate) {
             if( *(m_d->startDate) != newStDate ){
                 *(m_d->startDate) = newStDate;
                 emit startDateChanged( startDateStr() );
-                updateDaysCount();
             }
         } else if( m_d->parentItem != nullptr ){
             m_d->parentItem->setStartDate(newStDate);
         }
+        updateDaysCount();
     }
 }
 
@@ -3899,11 +3903,11 @@ void AccountingTAMBillItem::setEndDate(const QDate &newEndDate) {
             if( *(m_d->endDate) != newEndDate ){
                 *(m_d->endDate) = newEndDate;
                 emit endDateChanged( endDateStr() );
-                updateDaysCount();
             }
         } else if( m_d->parentItem != nullptr ){
             m_d->parentItem->setEndDate(newEndDate);
         }
+        updateDaysCount();
     }
 }
 

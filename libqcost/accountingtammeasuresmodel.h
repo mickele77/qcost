@@ -18,7 +18,7 @@ class EXPORT_QCOST_LIB_OPT AccountingTAMMeasuresModel : public QAbstractTableMod
 {
     Q_OBJECT
 public:
-    explicit AccountingTAMMeasuresModel( AccountingTAMBillItem * tamBItem, MathParser *p = NULL, UnitMeasure *ump = NULL, QObject *parent = 0);
+    explicit AccountingTAMMeasuresModel( AccountingTAMBillItem * tamBItem, MathParser *p = NULL, UnitMeasure *ump = NULL, QObject *parent = nullptr);
 
     ~AccountingTAMMeasuresModel();
 

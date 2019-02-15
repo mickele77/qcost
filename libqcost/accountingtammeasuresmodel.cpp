@@ -18,7 +18,7 @@ public:
         parserWasCreated(false),
         unitMeasure(ump),
         quantity( 0.0 ){
-        if( p == NULL ){
+        if( p == nullptr ){
             parser = new MathParser( QLocale::system() );
             parserWasCreated = true;
         } else {
@@ -40,10 +40,10 @@ public:
     }
 
     AccountingTAMBillItem * tamBillItem;
-    MathParser * parser;
     bool parserWasCreated;
     UnitMeasure * unitMeasure;
     QList<AccountingTAMMeasure *> linesContainer;
+    MathParser * parser;
     double quantity;
 
 
@@ -59,7 +59,7 @@ AccountingTAMMeasuresModel::AccountingTAMMeasuresModel( AccountingTAMBillItem * 
     m_d(new AccountingTAMMeasuresModelPrivate( tamBItem, p, ump )){
     insertRows(0);
 
-    if( m_d->unitMeasure != NULL ){
+    if( m_d->unitMeasure != nullptr ){
         connect( m_d->unitMeasure, &UnitMeasure::precisionChanged, this, &AccountingTAMMeasuresModel::updateQuantity );
     }
 }
@@ -248,7 +248,7 @@ void AccountingTAMMeasuresModel::updateQuantity() {
 void AccountingTAMMeasuresModel::setUnitMeasure(UnitMeasure *ump) {
     if( m_d->unitMeasure != ump ){
         beginResetModel();
-        if( m_d->unitMeasure != NULL ){
+        if( m_d->unitMeasure != nullptr ){
             disconnect( m_d->unitMeasure, &UnitMeasure::precisionChanged, this, &AccountingTAMMeasuresModel::updateQuantity );
         }
         m_d->unitMeasure = ump;
@@ -259,7 +259,7 @@ void AccountingTAMMeasuresModel::setUnitMeasure(UnitMeasure *ump) {
             emit dataChanged( createIndex(0, 2), createIndex(m_d->linesContainer.size()-1, 2) );
         }
         updateQuantity();
-        if( m_d->unitMeasure != NULL ){
+        if( m_d->unitMeasure != nullptr ){
             connect( m_d->unitMeasure, &UnitMeasure::precisionChanged, this, &AccountingTAMMeasuresModel::updateQuantity );
         }
         endResetModel();
@@ -308,5 +308,5 @@ AccountingTAMMeasure * AccountingTAMMeasuresModel::measure(int i) {
     if( i >= 0 && i < m_d->linesContainer.size() ){
         return m_d->linesContainer.at(i);
     }
-    return NULL;
+    return nullptr;
 }
