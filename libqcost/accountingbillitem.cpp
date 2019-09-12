@@ -273,7 +273,6 @@ AccountingBillItem *AccountingBillItem::findItemFromId( unsigned int searchitemI
     } else {
         return m_d->parentItem->findItemFromId(searchitemId);
     }
-    return nullptr;
 }
 
 AccountingBillItem *AccountingBillItem::itemFromProgCode( const QString & pCode) {
@@ -287,7 +286,7 @@ AccountingBillItem *AccountingBillItem::itemFromProgCode( const QString & pCode)
             }
         }
     }
-    return NULL;
+    return nullptr;
 }
 
 AccountingBillItem *AccountingBillItem::findItemFromProgCode( const QString & pCode ) {
@@ -296,7 +295,7 @@ AccountingBillItem *AccountingBillItem::findItemFromProgCode( const QString & pC
     } else {
         return m_d->parentItem->findItemFromProgCode(pCode);
     }
-    return NULL;
+    return nullptr;
 }
 
 AccountingBillItem *AccountingBillItem::childItem(int number) {
@@ -1447,8 +1446,8 @@ void AccountingBillItem::writeXml20(QXmlStreamWriter *writer) {
     } else if( m_d->itemType == Payment ){
         writer->writeStartElement( "AccountingBillItem" );
         writer->writeAttribute( "itemType", QString("Payment") );
-        writer->writeAttribute( "dateBegin", QString::number( dateBeginStr() ) );
-        writer->writeAttribute( "dateEnd", QString::number( dateEndStr() ) );
+        writer->writeAttribute( "dateBegin", QString::number( dateBegin().toJulianDay() ) );
+        writer->writeAttribute( "dateEnd", QString::number( dateEnd().toJulianDay() ) );
         QString attrs = m_d->attributesString();
         if( !attrs.isEmpty() ){
             writer->writeAttribute( "attributes", attrs );
@@ -1591,7 +1590,7 @@ void AccountingBillItem::loadFromXml( const QXmlStreamAttributes &attrs,
         m_d->date = QDate::fromJulianDay( attrs.value( "dateBegin").toString().toLongLong() );
     }
     if( attrs.hasAttribute( "dateEnd" ) ){
-        m_d->date = QDate::fromJulianDay( attrs.value( "dateEnd").toString().toLongLong() );
+        m_d->dateEnd = QDate::fromJulianDay( attrs.value( "dateEnd").toString().toLongLong() );
     }
     if( attrs.hasAttribute( "name" ) ){
         m_d->name = attrs.value( "name").toString();
