@@ -45,6 +45,7 @@
 #include <QTextCursor>
 #include <QVariant>
 #include <QStringList>
+#include <QString>
 #include <QList>
 #include <QDate>
 
@@ -55,7 +56,7 @@ AccountingBillItem::AccountingBillItem(AccountingBillItem *parentItem, Accountin
     TreeItem(),
     m_d( new AccountingBillItemPrivate(parentItem, iType, pfm, parser, vModel ) ){
 
-    if( parentItem != NULL ){
+    if( parentItem != nullptr ){
         connect( parentItem, &AccountingBillItem::attributesChanged, this, &AccountingBillItem::attributesChanged );
         connect( parentItem, &AccountingBillItem::discountChanged, this, &AccountingBillItem::discountChanged );
     }
@@ -70,15 +71,6 @@ AccountingBillItem::AccountingBillItem(AccountingBillItem *parentItem, Accountin
     connect( this, &AccountingBillItem::priceItemChanged, this, &AccountingBillItem::itemChanged );
     connect( this, &AccountingBillItem::currentPriceDataSetChanged, this, &AccountingBillItem::itemChanged );
     connect( this, &AccountingBillItem::discountChanged, this, &AccountingBillItem::itemChanged );
-
-    if( m_d->itemType == LumpSum ){
-        if( m_d->parentItem != NULL ){
-            if( m_d->parentItem->m_d->itemType == Payment ){
-                connect( m_d->parentItem, &AccountingBillItem::dateBeginChanged, this, &AccountingBillItem::dateBeginChanged );
-                connect( m_d->parentItem, &AccountingBillItem::dateEndChanged, this, &AccountingBillItem::dateEndChanged );
-            }
-        }
-    }
 
     if( m_d->itemType == PPU || m_d->itemType == LumpSum ){
         connect( this, &AccountingBillItem::quantityChanged, this, &AccountingBillItem::updateTotalAmountToDiscount );
@@ -105,18 +97,18 @@ AccountingBillItem::AccountingBillItem(AccountingBillItem *parentItem, Accountin
     connect( this, &AccountingBillItem::amountDiscountedChanged, this, &AccountingBillItem::itemChanged );
     connect( this, &AccountingBillItem::totalAmountChanged, this, &AccountingBillItem::itemChanged );
 
-    if( m_d->totalAmountPriceFieldModel != NULL ){
+    if( m_d->totalAmountPriceFieldModel != nullptr ){
         connect( m_d->totalAmountPriceFieldModel, &AccountingPriceFieldModel::modelChanged, this, &AccountingBillItem::itemChanged );
         connect( m_d->totalAmountPriceFieldModel, &AccountingPriceFieldModel::modelChanged, this, &AccountingBillItem::updateTotalAmountToDiscount );
     }
-    if( m_d->noDiscountAmountPriceFieldModel != NULL ){
+    if( m_d->noDiscountAmountPriceFieldModel != nullptr ){
         connect( m_d->noDiscountAmountPriceFieldModel, &AccountingPriceFieldModel::modelChanged, this, &AccountingBillItem::itemChanged );
         connect( m_d->noDiscountAmountPriceFieldModel, &AccountingPriceFieldModel::modelChanged, this, &AccountingBillItem::updateAmountNotToDiscount );
     }
 
     connect( this, &AccountingBillItem::attributesChanged, this, &AccountingBillItem::itemChanged );
 
-    if( m_d->parentItem == NULL ) {
+    if( m_d->parentItem == nullptr ) {
         connect( m_d->noDiscountAmountPriceFieldModel, &AccountingPriceFieldModel::modelChanged, this, &AccountingBillItem::updatePPUs );
         connect( m_d->totalAmountPriceFieldModel, &AccountingPriceFieldModel::modelChanged, this, &AccountingBillItem::updatePPUs );
     }
@@ -159,7 +151,7 @@ AccountingBillItem &AccountingBillItem::operator=(const AccountingBillItem &cp) 
         if( m_d->itemType == PPU ){
             setPriceItem( cp.m_d->priceItem );
             setQuantity( cp.m_d->quantity );
-            if( cp.m_d->measuresModel != NULL ){
+            if( cp.m_d->measuresModel != nullptr ){
                 generateMeasuresModel();
                 *(m_d->measuresModel) = *(cp.m_d->measuresModel);
             }
@@ -182,7 +174,7 @@ AccountingBillItem &AccountingBillItem::operator=(const AccountingBillItem &cp) 
 }
 
 const AccountingBillItem * AccountingBillItem::rootItem() const {
-    if( m_d->parentItem == NULL ){
+    if( m_d->parentItem == nullptr ){
         return this;
     } else {
         return m_d->parentItem->rootItem();
@@ -205,9 +197,9 @@ void AccountingBillItem::setItemType(AccountingBillItem::ItemType iType) {
     if( m_d->itemType != iType ){
         if( m_d->itemType == Root ){
             delete m_d->totalAmountPriceFieldModel;
-            m_d->totalAmountPriceFieldModel = NULL;
+            m_d->totalAmountPriceFieldModel = nullptr;
             delete m_d->noDiscountAmountPriceFieldModel;
-            m_d->noDiscountAmountPriceFieldModel = NULL;
+            m_d->noDiscountAmountPriceFieldModel = nullptr;
         }
 
         m_d->itemType = iType;
@@ -229,12 +221,12 @@ AccountingBillItem *AccountingBillItem::parent() {
 
 void AccountingBillItem::setParent(AccountingBillItem * newParent, int position ) {
     if( m_d->parentItem != newParent ){
-        if( m_d->parentItem != NULL ){
+        if( m_d->parentItem != nullptr ){
             m_d->parentItem->removeChildren( childNumber() );
             disconnect( m_d->parentItem, &AccountingBillItem::attributesChanged, this, &AccountingBillItem::attributesChanged );
         }
         m_d->parentItem = newParent;
-        if( newParent != NULL ){
+        if( newParent != nullptr ){
             newParent->addChild( this, position);
             connect( m_d->parentItem, &AccountingBillItem::attributesChanged, this, &AccountingBillItem::attributesChanged );
         }
@@ -267,21 +259,21 @@ AccountingBillItem *AccountingBillItem::itemFromId( unsigned int itemId ) {
     } else {
         for( QList<AccountingBillItem *>::iterator i = m_d->childrenContainer.begin(); i != m_d->childrenContainer.end(); ++i ){
             AccountingBillItem * childItems = (*i)->itemFromId(itemId);
-            if( childItems != NULL ) {
+            if( childItems != nullptr ) {
                 return childItems;
             }
         }
     }
-    return NULL;
+    return nullptr;
 }
 
 AccountingBillItem *AccountingBillItem::findItemFromId( unsigned int searchitemId ) {
-    if( m_d->parentItem == NULL ){
+    if( m_d->parentItem == nullptr ){
         return itemFromId(searchitemId );
     } else {
         return m_d->parentItem->findItemFromId(searchitemId);
     }
-    return NULL;
+    return nullptr;
 }
 
 AccountingBillItem *AccountingBillItem::itemFromProgCode( const QString & pCode) {
@@ -290,7 +282,7 @@ AccountingBillItem *AccountingBillItem::itemFromProgCode( const QString & pCode)
     } else {
         for( QList<AccountingBillItem *>::iterator i = m_d->childrenContainer.begin(); i != m_d->childrenContainer.end(); ++i ){
             AccountingBillItem * childItems = (*i)->itemFromProgCode(pCode);
-            if( childItems != NULL ) {
+            if( childItems != nullptr ) {
                 return childItems;
             }
         }
@@ -299,7 +291,7 @@ AccountingBillItem *AccountingBillItem::itemFromProgCode( const QString & pCode)
 }
 
 AccountingBillItem *AccountingBillItem::findItemFromProgCode( const QString & pCode ) {
-    if( m_d->parentItem == NULL ){
+    if( m_d->parentItem == nullptr ){
         return itemFromProgCode(pCode);
     } else {
         return m_d->parentItem->findItemFromProgCode(pCode);
@@ -359,13 +351,13 @@ void AccountingBillItem::updateAccountingProgCode( int * startCode ) {
 QString AccountingBillItem::fullProgCode() const {
     if( (m_d->itemType == PPU) || (m_d->itemType == TimeAndMaterials) || (m_d->itemType == LumpSum)){
         QString ret = progCode();
-        if( m_d->parentItem != NULL ){
+        if( m_d->parentItem != nullptr ){
             ret = QString::number( m_d->parentItem->childNumber()+1 ) + "." + ret;
         }
         return ret;
     } else if( m_d->itemType == Payment ){
         QString ret;
-        if( m_d->parentItem != NULL ){
+        if( m_d->parentItem != nullptr ){
             ret = QString::number( m_d->parentItem->childNumber()+1 );
         }
         return ret;
@@ -407,7 +399,7 @@ void AccountingBillItem::updateProgCode( int * startCode ) {
 QList<int> AccountingBillItem::totalAmountPriceFields() const {
     if( m_d->itemType == Root ){
         return *(m_d->totalAmountPriceFieldsList);
-    } else if( m_d->parentItem != NULL ){
+    } else if( m_d->parentItem != nullptr ){
         return m_d->parentItem->totalAmountPriceFields();
     }
     return QList<int>();
@@ -428,7 +420,7 @@ AccountingPriceFieldModel *AccountingBillItem::totalAmountPriceFieldModel() {
 QList<int> AccountingBillItem::noDiscountAmountPriceFields() const {
     if( m_d->itemType == Root ){
         return *(m_d->noDiscountAmountPriceFieldsList);
-    } else if( m_d->parentItem != NULL ){
+    } else if( m_d->parentItem != nullptr ){
         return m_d->parentItem->noDiscountAmountPriceFields();
     }
     return QList<int>();
@@ -449,7 +441,7 @@ void AccountingBillItem::updatePPUs() {
         if( m_d->itemType == PPU ){
             double newPPUTotalToDiscount = 0.0;
             double newPPUNotToDiscount = 0.0;
-            if( m_d->priceItem != NULL ){
+            if( m_d->priceItem != nullptr ){
                 QList<int> totAmPriceFields = totalAmountPriceFields();
                 for( QList<int>::iterator i = totAmPriceFields.begin(); i != totAmPriceFields.end(); ++i){
                     newPPUTotalToDiscount += m_d->priceItem->value( (*i), currentPriceDataSet() );
@@ -472,7 +464,7 @@ void AccountingBillItem::updatePPUs() {
         } else if( m_d->itemType == LumpSum ){
             double newPPUTotalToDiscount = 0.0;
             double newPPUNotToDiscount = 0.0;
-            if( m_d->lsBill != NULL ){
+            if( m_d->lsBill != nullptr ){
                 newPPUTotalToDiscount = m_d->lsBill->PPUTotalToDiscount();
                 newPPUNotToDiscount = m_d->lsBill->PPUNotToDiscount();
             }
@@ -492,9 +484,9 @@ AccountingPriceFieldModel *AccountingBillItem::noDiscountAmountPriceFieldModel()
     return m_d->noDiscountAmountPriceFieldModel;
 }
 
-void AccountingBillItem::requestDateBeginChange(const QString &newDateStr) {
+/* void AccountingBillItem::requestDateBeginChange(const QString &newDateStr) {
     QDate newDate;
-    if( m_d->parser != NULL ){
+    if( m_d->parser != nullptr ){
         newDate = m_d->parser->evaluateDate(newDateStr, QLocale::NarrowFormat);
     } else {
         newDate = QDate::fromString(newDateStr, Qt::DefaultLocaleShortDate);
@@ -509,7 +501,7 @@ void AccountingBillItem::requestDateBeginChange(const QDate &newDate) {
 
 void AccountingBillItem::requestDateEndChange(const QString &newDateStr) {
     QDate newDate;
-    if( m_d->parser != NULL ){
+    if( m_d->parser != nullptr ){
         newDate = m_d->parser->evaluateDate(newDateStr, QLocale::NarrowFormat);
     } else {
         newDate = QDate::fromString(newDateStr, Qt::DefaultLocaleShortDate);
@@ -520,7 +512,7 @@ void AccountingBillItem::requestDateEndChange(const QString &newDateStr) {
 
 void AccountingBillItem::requestDateEndChange(const QDate &newDate) {
     emit requestDateEndChangeSignal( newDate, childNumber() );
-}
+} */
 
 void AccountingBillItem::setDate(const QDate &d) {
     if( d.isValid() ){
@@ -533,7 +525,7 @@ void AccountingBillItem::setDate(const QDate &d) {
 }
 
 void AccountingBillItem::setDate(const QString &d) {
-    if( m_d->parser != NULL ){
+    if( m_d->parser != nullptr ){
         setDate( m_d->parser->evaluateDate(d, QLocale::NarrowFormat) );
     } else {
         setDate( QDate::fromString(d, Qt::DefaultLocaleShortDate) );
@@ -542,7 +534,7 @@ void AccountingBillItem::setDate(const QString &d) {
 
 QDate AccountingBillItem::dateBegin() const {
     if( m_d->itemType == LumpSum ){
-        if( m_d->parentItem != NULL ){
+        if( m_d->parentItem != nullptr ){
             if( m_d->parentItem->m_d->itemType == Payment ){
                 return m_d->parentItem->m_d->date;
             }
@@ -553,11 +545,11 @@ QDate AccountingBillItem::dateBegin() const {
 
 QString AccountingBillItem::dateBeginStr() const {
     if( (m_d->itemType == Payment) || (m_d->itemType == LumpSum) ){
-        if( m_d->parser != NULL ){
+        if( m_d->parser != nullptr ){
             return m_d->parser->toString( dateBegin(), QLocale::NarrowFormat );
         }
         return dateBegin().toString();
-    } else if( m_d->itemType == TimeAndMaterials && m_d->tamBillItem != NULL ){
+    } else if( m_d->itemType == TimeAndMaterials && m_d->tamBillItem != nullptr ){
         return m_d->tamBillItem->startDateStr();
     }
     return QString();
@@ -570,11 +562,11 @@ void AccountingBillItem::setDateBegin(const QDate &d) {
                 m_d->date = d;
                 emit dateBeginChanged( dateBeginStr() );
             }
-        } else if( m_d->itemType == TimeAndMaterials && m_d->tamBillItem != NULL ){
+        } else if( m_d->itemType == TimeAndMaterials && m_d->tamBillItem != nullptr ){
             m_d->tamBillItem->setStartDate(d);
             emit dateBeginChanged( dateBeginStr() );
         } else if( m_d->itemType == LumpSum ){
-            if( m_d->parentItem != NULL ){
+            if( m_d->parentItem != nullptr ){
                 if( m_d->parentItem->m_d->itemType == Payment ){
                     m_d->parentItem->setDateBegin( d );
                 }
@@ -584,7 +576,7 @@ void AccountingBillItem::setDateBegin(const QDate &d) {
 }
 
 void AccountingBillItem::setDateBegin(const QString &d) {
-    if( m_d->parser != NULL ){
+    if( m_d->parser != nullptr ){
         setDateBegin( m_d->parser->evaluateDate(d, QLocale::NarrowFormat) );
     } else {
         setDateBegin( QDate::fromString(d, Qt::DefaultLocaleShortDate) );
@@ -593,7 +585,7 @@ void AccountingBillItem::setDateBegin(const QString &d) {
 
 QDate AccountingBillItem::dateEnd() const {
     if( m_d->itemType == LumpSum ){
-        if( m_d->parentItem != NULL ){
+        if( m_d->parentItem != nullptr ){
             if( m_d->parentItem->m_d->itemType == Payment ){
                 return m_d->parentItem->m_d->dateEnd;
             }
@@ -604,11 +596,11 @@ QDate AccountingBillItem::dateEnd() const {
 
 QString AccountingBillItem::dateEndStr() const {
     if( (m_d->itemType == Payment) || (m_d->itemType == LumpSum) ){
-        if( m_d->parser != NULL ){
+        if( m_d->parser != nullptr ){
             return m_d->parser->toString( dateEnd(), QLocale::NarrowFormat );
         }
         return dateEnd().toString();
-    } else if( m_d->itemType == TimeAndMaterials && m_d->tamBillItem != NULL ){
+    } else if( m_d->itemType == TimeAndMaterials && m_d->tamBillItem != nullptr ){
         return m_d->tamBillItem->endDateStr();
     }
     return QString();
@@ -621,11 +613,11 @@ void AccountingBillItem::setDateEnd(const QDate &d) {
                 m_d->dateEnd = d;
                 emit dateEndChanged( dateEndStr() );
             }
-        } else if( m_d->itemType == TimeAndMaterials && m_d->tamBillItem != NULL ){
+        } else if( m_d->itemType == TimeAndMaterials && m_d->tamBillItem != nullptr ){
             m_d->tamBillItem->setEndDate( d );
             emit dateEndChanged( dateEndStr() );
         } else if( m_d->itemType == LumpSum ){
-            if( m_d->parentItem != NULL ){
+            if( m_d->parentItem != nullptr ){
                 if( m_d->parentItem->m_d->itemType == Payment ){
                     m_d->parentItem->setDateEnd( d );
                 }
@@ -635,7 +627,7 @@ void AccountingBillItem::setDateEnd(const QDate &d) {
 }
 
 void AccountingBillItem::setDateEnd(const QString &d) {
-    if( m_d->parser != NULL ){
+    if( m_d->parser != nullptr ){
         setDateEnd( m_d->parser->evaluateDate(d, QLocale::NarrowFormat) );
     } else {
         setDateEnd( QDate::fromString(d, Qt::DefaultLocaleShortDate) );
@@ -688,7 +680,7 @@ QVariant AccountingBillItem::data(int col, int role) const {
             if( role == Qt::TextAlignmentRole ){
                 return Qt::AlignLeft + Qt::AlignVCenter;;
             } else if(role == Qt::DisplayRole || role == Qt::EditRole) {
-                if( m_d->priceItem != NULL ){
+                if( m_d->priceItem != nullptr ){
                     return QVariant( m_d->priceItem->codeFull() );
                 } else {
                     return QVariant("---");
@@ -698,7 +690,7 @@ QVariant AccountingBillItem::data(int col, int role) const {
             if( role == Qt::TextAlignmentRole ){
                 return Qt::AlignLeft + Qt::AlignVCenter;
             } else if(role == Qt::DisplayRole || role == Qt::EditRole) {
-                if( m_d->priceItem != NULL ){
+                if( m_d->priceItem != nullptr ){
                     return QVariant(m_d->priceItem->shortDescriptionFull());
                 } else {
                     return QVariant("---");
@@ -708,8 +700,8 @@ QVariant AccountingBillItem::data(int col, int role) const {
             if( role == Qt::TextAlignmentRole ){
                 return Qt::AlignHCenter + Qt::AlignVCenter;
             } else if(role == Qt::DisplayRole || role == Qt::EditRole) {
-                if( m_d->priceItem != NULL ){
-                    if( m_d->priceItem->unitMeasure() != NULL ){
+                if( m_d->priceItem != nullptr ){
+                    if( m_d->priceItem->unitMeasure() != nullptr ){
                         return QVariant(m_d->priceItem->unitMeasure()->tag() );
                     } else {
                         return QVariant( "---" );
@@ -776,7 +768,7 @@ QVariant AccountingBillItem::data(int col, int role) const {
             if( role == Qt::TextAlignmentRole ){
                 return Qt::AlignLeft + Qt::AlignVCenter;;
             } else if(role == Qt::DisplayRole || role == Qt::EditRole) {
-                if( m_d->lsBill != NULL ){
+                if( m_d->lsBill != nullptr ){
                     return QVariant( m_d->lsBill->code() );
                 } else {
                     return QVariant("---");
@@ -786,7 +778,7 @@ QVariant AccountingBillItem::data(int col, int role) const {
             if( role == Qt::TextAlignmentRole ){
                 return Qt::AlignLeft + Qt::AlignVCenter;
             } else if(role == Qt::DisplayRole || role == Qt::EditRole) {
-                if( m_d->lsBill != NULL ){
+                if( m_d->lsBill != nullptr ){
                     return QVariant(m_d->lsBill->name());
                 } else {
                     return QVariant("---");
@@ -864,7 +856,7 @@ QVariant AccountingBillItem::data(int col, int role) const {
             if( role == Qt::TextAlignmentRole ){
                 return Qt::AlignLeft + Qt::AlignVCenter;
             } else if(role == Qt::DisplayRole || role == Qt::EditRole) {
-                if( m_d->tamBillItem != NULL ){
+                if( m_d->tamBillItem != nullptr ){
                     return QVariant(m_d->tamBillItem->title() );
                 } else {
                     return QVariant("---");
@@ -1041,7 +1033,7 @@ bool AccountingBillItem::setData(int column, const QVariant &value) {
             return true;
         }
     } else if( m_d->itemType == AccountingBillItem::PPU ){
-        if( column == m_d->quantityCol && m_d->measuresModel == NULL ){
+        if( column == m_d->quantityCol && m_d->measuresModel == nullptr ){
             setQuantity( value.toString() );
             emit dataChanged( this, m_d->PPUTotalToDiscountCol);
             emit dataChanged( this, m_d->totalAmountToDiscountCol);
@@ -1108,7 +1100,7 @@ void AccountingBillItem::setDiscount(double newValPurp ) {
 void AccountingBillItem::setDiscount(const QString &newVal) {
     QString v = newVal;
     v.remove("%");
-    if( m_d->parser != NULL ){
+    if( m_d->parser != nullptr ){
         setDiscount( m_d->parser->evaluate( v ) / 100.0 );
     } else {
         setDiscount( v.toDouble() / 100.0 );
@@ -1125,7 +1117,7 @@ void AccountingBillItem::updateTotalAmountToDiscount() {
     } else if( (m_d->itemType == PPU) || (m_d->itemType == LumpSum) ) {
         v = UnitMeasure::applyPrecision( m_d->PPUTotalToDiscount * m_d->quantity, m_d->amountPrecision );
     } else if( m_d->itemType == TimeAndMaterials ) {
-        if( m_d->tamBillItem != NULL ){
+        if( m_d->tamBillItem != nullptr ){
             v = m_d->tamBillItem->totalAmountToDiscount();
         }
     } else if(m_d->itemType == Comment) {
@@ -1147,7 +1139,7 @@ void AccountingBillItem::updateAmountNotToDiscount() {
     } else if( (m_d->itemType == PPU) || (m_d->itemType == LumpSum) ) {
         v = UnitMeasure::applyPrecision( m_d->PPUNotToDiscount * m_d->quantity, m_d->amountPrecision );
     } else if( m_d->itemType == TimeAndMaterials ) {
-        if( m_d->tamBillItem != NULL ){
+        if( m_d->tamBillItem != nullptr ){
             v = m_d->tamBillItem->amountNotToDiscount();
         }
     } else if(m_d->itemType == Comment) {
@@ -1330,7 +1322,7 @@ bool AccountingBillItem::insertChildren(AccountingBillItem::ItemType iType, int 
         for (int row = 0; row < count; ++row) {
             AccountingBillItem * item = new AccountingBillItem( this, iType,  m_d->priceFieldModel, m_d->parser );
             if( iType != Payment && iType != Root ){
-                while( findItemFromId( item->id() ) != NULL ){
+                while( findItemFromId( item->id() ) != nullptr ){
                     item->setId( item->id() + 1 );
                 }
             }
@@ -1435,7 +1427,7 @@ Qt::ItemFlags AccountingBillItem::flags(int column) const {
         if( column == m_d->progNumberCol ){
             return Qt::ItemIsSelectable | Qt::ItemIsEnabled;
         } else if( column == m_d->quantityCol ){
-            if( m_d->measuresModel == NULL ){
+            if( m_d->measuresModel == nullptr ){
                 return Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemIsEditable;
             } else {
                 return Qt::ItemIsSelectable | Qt::ItemIsEnabled;
@@ -1455,6 +1447,8 @@ void AccountingBillItem::writeXml20(QXmlStreamWriter *writer) {
     } else if( m_d->itemType == Payment ){
         writer->writeStartElement( "AccountingBillItem" );
         writer->writeAttribute( "itemType", QString("Payment") );
+        writer->writeAttribute( "dateBegin", QString::number( dateBeginStr() ) );
+        writer->writeAttribute( "dateEnd", QString::number( dateEndStr() ) );
         QString attrs = m_d->attributesString();
         if( !attrs.isEmpty() ){
             writer->writeAttribute( "attributes", attrs );
@@ -1468,7 +1462,7 @@ void AccountingBillItem::writeXml20(QXmlStreamWriter *writer) {
         writer->writeAttribute( "itemType", QString("PPU") );
         writer->writeAttribute( "id", QString::number(m_d->id) );
         writer->writeAttribute( "date", QString::number( m_d->date.toJulianDay() ) );
-        if( m_d->priceItem != NULL ){
+        if( m_d->priceItem != nullptr ){
             writer->writeAttribute( "priceItem", QString::number( m_d->priceItem->id() ) );
         }
         QString attrs = m_d->attributesString();
@@ -1476,7 +1470,7 @@ void AccountingBillItem::writeXml20(QXmlStreamWriter *writer) {
             writer->writeAttribute( "attributes", attrs );
         }
 
-        if( m_d->measuresModel != NULL ){
+        if( m_d->measuresModel != nullptr ){
             m_d->measuresModel->writeXml20( writer );
         } else {
             writer->writeAttribute( "quantity", QString::number( m_d->quantity ) );
@@ -1488,7 +1482,7 @@ void AccountingBillItem::writeXml20(QXmlStreamWriter *writer) {
         writer->writeAttribute( "itemType", QString("LumpSum") );
         writer->writeAttribute( "id", QString::number(m_d->id) );
         writer->writeAttribute( "date", QString::number( m_d->date.toJulianDay() ) );
-        if( m_d->lsBill != NULL ){
+        if( m_d->lsBill != nullptr ){
             writer->writeAttribute( "lumpSumBill", QString::number(m_d->lsBill->id()) );
         }
         QString attrs = m_d->attributesString();
@@ -1501,7 +1495,7 @@ void AccountingBillItem::writeXml20(QXmlStreamWriter *writer) {
         writer->writeAttribute( "itemType", QString("TimeAndMaterials") );
         writer->writeAttribute( "id", QString::number(m_d->id) );
         writer->writeAttribute( "date", QString::number( m_d->date.toJulianDay() ) );
-        if( m_d->tamBillItem != NULL ){
+        if( m_d->tamBillItem != nullptr ){
             writer->writeAttribute( "timeAndMaterials", QString::number(m_d->tamBillItem->id()) );
         }
         QString attrs = m_d->attributesString();
@@ -1573,7 +1567,7 @@ void AccountingBillItem::readFromXmlTmp20( AccountingLSBills * lsBills, Accounti
     if( !m_d->tmpAttributes.isEmpty() ){
         loadFromXml( m_d->tmpAttributes, lsBills, tamBill, priceList, billAttrModel );
         m_d->tmpAttributes.clear();
-        if( m_d->measuresModel != NULL ){
+        if( m_d->measuresModel != nullptr ){
             m_d->measuresModel->readFromXmlTmp20();
         }
     }
@@ -1609,7 +1603,7 @@ void AccountingBillItem::loadFromXml( const QXmlStreamAttributes &attrs,
             unsigned int attrId = (*i).toUInt(&ok);
             if( ok ){
                 Attribute * attr = attrModel->attributeId( attrId );
-                if( attr != NULL ) {
+                if( attr != nullptr ) {
                     addAttribute( attr );
                 }
             }
@@ -1717,7 +1711,7 @@ QString AccountingBillItem::totalAmountToDiscountAttributeStr(Attribute *attr ) 
     int prec = m_d->amountPrecision;
     QString ret;
     double v = totalAmountToDiscountAttribute( attr );
-    if( m_d->parser == NULL ){
+    if( m_d->parser == nullptr ){
         ret = QString::number(v, 'f', prec );
     } else {
         ret = m_d->parser->toString( v, 'f', prec );
@@ -1750,7 +1744,7 @@ QString AccountingBillItem::amountNotToDiscountAttributeStr(Attribute *attr ) co
     int prec = m_d->amountPrecision;
     QString ret;
     double v = amountNotToDiscountAttribute( attr );
-    if( m_d->parser == NULL ){
+    if( m_d->parser == nullptr ){
         ret = QString::number(v, 'f', prec );
     } else {
         ret = m_d->parser->toString( v, 'f', prec );
@@ -1783,7 +1777,7 @@ QString AccountingBillItem::totalAmountAttributeStr(Attribute *attr ) const {
     int prec = m_d->amountPrecision;
     QString ret;
     double v = totalAmountAttribute( attr );
-    if( m_d->parser == NULL ){
+    if( m_d->parser == nullptr ){
         ret = QString::number(v, 'f', prec );
     } else {
         ret = m_d->parser->toString( v, 'f', prec );
@@ -1793,7 +1787,7 @@ QString AccountingBillItem::totalAmountAttributeStr(Attribute *attr ) const {
 
 QList<Attribute *> AccountingBillItem::inheritedAttributes() const {
     QList<Attribute *> ret;
-    if( m_d->parentItem != NULL ){
+    if( m_d->parentItem != nullptr ){
         ret.append( m_d->parentItem->inheritedAttributes() );
     }
     for( QList<Attribute *>::iterator i = m_d->attributes.begin(); i != m_d->attributes.end(); ++i ){
@@ -1812,7 +1806,7 @@ bool AccountingBillItem::containsAttribute(Attribute *attr) const {
 }
 
 bool AccountingBillItem::containsAttributeInherited(Attribute *attr) const {
-    if( m_d->parentItem != NULL ){
+    if( m_d->parentItem != nullptr ){
         if( m_d->parentItem->containsAttributeDirect( attr ) ){
             return true;
         } else {
@@ -1827,7 +1821,7 @@ bool AccountingBillItem::containsAttributeDirect(Attribute *attr) const {
 }
 
 bool AccountingBillItem::isDescending(AccountingBillItem *ancestor) {
-    if( m_d->parentItem == NULL ){
+    if( m_d->parentItem == nullptr ){
         return (m_d->parentItem == ancestor);
     } else {
         if( m_d->parentItem == ancestor ){
@@ -1879,7 +1873,7 @@ void AccountingBillItem::appendConnectedItems(QList<AccountingBillItem *> *items
 
 void AccountingBillItem::setLSBill(AccountingLSBill *newLSBill) {
     if( m_d->lsBill != newLSBill ){
-        if( m_d->lsBill != NULL ){
+        if( m_d->lsBill != nullptr ){
             disconnect( m_d->lsBill, &AccountingLSBill::modelChanged, this, &AccountingBillItem::updateLSQuantity );
             disconnect( m_d->lsBill, &AccountingLSBill::PPUTotalToDiscountChanged, this, &AccountingBillItem::updatePPUs );
             disconnect( m_d->lsBill, &AccountingLSBill::PPUNotToDiscountChanged, this, &AccountingBillItem::updatePPUs );
@@ -1888,7 +1882,7 @@ void AccountingBillItem::setLSBill(AccountingLSBill *newLSBill) {
         m_d->lsBill = newLSBill;
         updateLSQuantity();
         updatePPUs();
-        if( m_d->lsBill != NULL ){
+        if( m_d->lsBill != nullptr ){
             connect( m_d->lsBill, &AccountingLSBill::modelChanged, this, &AccountingBillItem::updateLSQuantity );
             connect( m_d->lsBill, &AccountingLSBill::PPUTotalToDiscountChanged, this, &AccountingBillItem::updatePPUs );
             connect( m_d->lsBill, &AccountingLSBill::PPUNotToDiscountChanged, this, &AccountingBillItem::updatePPUs );
@@ -1902,7 +1896,7 @@ void AccountingBillItem::updateLSQuantity() {
     if( m_d->itemType == AccountingBillItem::LumpSum ) {
         double newQuantity = 0.0;
         if(m_d->lsBill != NULL){
-            if( m_d->parentItem != NULL ){
+            if( m_d->parentItem != nullptr ){
                 if( m_d->parentItem->itemType() == AccountingBillItem::Payment ){
                     newQuantity = m_d->lsBill->percentageAccounted( m_d->parentItem->dateBegin(), m_d->parentItem->dateEnd() );
                 }
@@ -1916,7 +1910,7 @@ void AccountingBillItem::updateLSQuantity() {
 }
 
 void AccountingBillItem::setLSBillNULL() {
-    setLSBill( NULL );
+    setLSBill( nullptr );
 }
 
 AccountingLSBill *AccountingBillItem::lsBill() {
@@ -1925,13 +1919,13 @@ AccountingLSBill *AccountingBillItem::lsBill() {
 
 void AccountingBillItem::setTAMBillItem(AccountingTAMBillItem *newTAMBillItem) {
     if( m_d->tamBillItem != newTAMBillItem ){
-        if( m_d->tamBillItem != NULL ){
+        if( m_d->tamBillItem != nullptr ){
             disconnect( m_d->tamBillItem, &AccountingTAMBillItem::totalAmountToDiscountChanged, this, &AccountingBillItem::updateTotalAmountToDiscount );
             disconnect( m_d->tamBillItem, &AccountingTAMBillItem::amountNotToDiscountChanged, this, &AccountingBillItem::updateAmountNotToDiscount );
             disconnect( m_d->tamBillItem, &AccountingTAMBillItem::aboutToBeDeleted, this, &AccountingBillItem::setTAMBillItemNULL );
         }
         m_d->tamBillItem = newTAMBillItem;
-        if( m_d->tamBillItem != NULL ){
+        if( m_d->tamBillItem != nullptr ){
             connect( m_d->tamBillItem, &AccountingTAMBillItem::totalAmountToDiscountChanged, this, &AccountingBillItem::updateTotalAmountToDiscount );
             connect( m_d->tamBillItem, &AccountingTAMBillItem::amountNotToDiscountChanged, this, &AccountingBillItem::updateAmountNotToDiscount );
             connect( m_d->tamBillItem, &AccountingTAMBillItem::aboutToBeDeleted, this, &AccountingBillItem::setTAMBillItemNULL );
@@ -1945,7 +1939,7 @@ void AccountingBillItem::setTAMBillItem(AccountingTAMBillItem *newTAMBillItem) {
 }
 
 void AccountingBillItem::setTAMBillItemNULL() {
-    setTAMBillItem( NULL );
+    setTAMBillItem( nullptr );
 }
 
 AccountingTAMBillItem *AccountingBillItem::tamBillItem() {
@@ -1962,7 +1956,7 @@ QString AccountingBillItem::dateStr() const {
             (m_d->itemType == Payment) ){
         return QString();
     }
-    if( m_d->parser != NULL ){
+    if( m_d->parser != nullptr ){
         return m_d->parser->toString( m_d->date, QLocale::NarrowFormat );
     }
     return m_d->date.toString();
@@ -2177,7 +2171,7 @@ QString AccountingBillItem::title() const{
     if( m_d->itemType == Payment ){
         return trUtf8("S.A.L. N.%1").arg( QString::number(childNumber()+1) );
     } else if( m_d->itemType == TimeAndMaterials ){
-        if( m_d->tamBillItem != NULL ){
+        if( m_d->tamBillItem != nullptr ){
             return m_d->tamBillItem->title();
         }
     }
@@ -2203,7 +2197,7 @@ PriceItem *AccountingBillItem::priceItem() {
 
 void AccountingBillItem::setPriceItem(PriceItem * p) {
     if( m_d->priceItem != p ){
-        if( m_d->priceItem != NULL ) {
+        if( m_d->priceItem != nullptr ) {
             disconnect( m_d->priceItem, &PriceItem::codeFullChanged, this, &AccountingBillItem::emitPriceDataUpdated );
             disconnect( m_d->priceItem, &PriceItem::shortDescriptionFullChanged, this, &AccountingBillItem::emitPriceDataUpdated );
             disconnect( m_d->priceItem, &PriceItem::unitMeasureChanged, this, &AccountingBillItem::emitPriceDataUpdated );
@@ -2215,7 +2209,7 @@ void AccountingBillItem::setPriceItem(PriceItem * p) {
 
         emit priceItemChanged( oldPriceItem, p );
 
-        if( m_d->priceItem != NULL ){
+        if( m_d->priceItem != nullptr ){
             connect( m_d->priceItem, &PriceItem::codeFullChanged, this, &AccountingBillItem::emitPriceDataUpdated );
             connect( m_d->priceItem, &PriceItem::shortDescriptionFullChanged, this, &AccountingBillItem::emitPriceDataUpdated );
             connect( m_d->priceItem, &PriceItem::unitMeasureChanged, this, &AccountingBillItem::emitPriceDataUpdated );
@@ -2231,7 +2225,7 @@ void AccountingBillItem::setPriceItem(PriceItem * p) {
         emit dataChanged( this, m_d->amountNotToDiscountCol );
         emit dataChanged( this, m_d->totalAmountCol );
 
-        if( m_d->measuresModel != NULL ){
+        if( m_d->measuresModel != nullptr ){
             m_d->measuresModel->setUnitMeasure( m_d->priceItem->unitMeasure() );
         }
 
@@ -2250,8 +2244,8 @@ double AccountingBillItem::quantity() const {
 QString AccountingBillItem::quantityStr() const {
     if( m_d->itemType == PPU ){
         int prec = 2;
-        if( m_d->priceItem != NULL ){
-            if( m_d->priceItem->unitMeasure() != NULL ){
+        if( m_d->priceItem != nullptr ){
+            if( m_d->priceItem->unitMeasure() != nullptr ){
                 prec = m_d->priceItem->unitMeasure()->precision();
             }
         }
@@ -2275,13 +2269,13 @@ void AccountingBillItem::setQuantityPrivate(double v) {
 }
 
 void AccountingBillItem::setQuantity(double v) {
-    if( m_d->measuresModel == NULL ){
+    if( m_d->measuresModel == nullptr ){
         setQuantityPrivate( v );
     }
 }
 
 void AccountingBillItem::setQuantity(const QString &vstr ) {
-    if( m_d->parser != NULL ){
+    if( m_d->parser != nullptr ){
         setQuantity( m_d->parser->evaluate( vstr ) );
     } else {
         setQuantity( vstr.toDouble() );
@@ -2290,7 +2284,7 @@ void AccountingBillItem::setQuantity(const QString &vstr ) {
 
 double AccountingBillItem::PPUTotalToDiscount() const {
     if( m_d->itemType == LumpSum ){
-        if( m_d->lsBill != NULL ){
+        if( m_d->lsBill != nullptr ){
             return m_d->lsBill->PPUTotalToDiscount();
         }
     }
@@ -2299,7 +2293,7 @@ double AccountingBillItem::PPUTotalToDiscount() const {
 
 double AccountingBillItem::PPUNotToDiscount() const {
     if( m_d->itemType == LumpSum ){
-        if( m_d->lsBill != NULL ){
+        if( m_d->lsBill != nullptr ){
             return m_d->lsBill->PPUNotToDiscount();
         }
     }
@@ -2336,9 +2330,9 @@ MeasuresModel *AccountingBillItem::measuresModel() {
 }
 
 MeasuresModel *AccountingBillItem::generateMeasuresModel() {
-    if( m_d->measuresModel == NULL ){
+    if( m_d->measuresModel == nullptr ){
         UnitMeasure * ump = NULL;
-        if( m_d->priceItem != NULL ){
+        if( m_d->priceItem != nullptr ){
             ump = m_d->priceItem->unitMeasure();
         }
         m_d->measuresModel = new MeasuresModel( this, m_d->parser, ump );
@@ -2351,7 +2345,7 @@ MeasuresModel *AccountingBillItem::generateMeasuresModel() {
 }
 
 void AccountingBillItem::removeMeasuresModel() {
-    if( m_d->measuresModel != NULL ){
+    if( m_d->measuresModel != nullptr ){
         disconnect( m_d->measuresModel, &MeasuresModel::quantityChanged, this, &AccountingBillItem::setQuantityPrivate );
         disconnect( m_d->measuresModel, &MeasuresModel::modelChanged, this, &AccountingBillItem::itemChanged );
         delete m_d->measuresModel;
@@ -3436,7 +3430,7 @@ void AccountingBillItem::writeODTSummaryOnTable( QTextCursor *cursor,
             cursor->movePosition(QTextCursor::PreviousRow );
 
             AccountingBillItemPrivate::writeCell( cursor, table, leftFormat, txtBlockFormat, QString::number(nProg++) );
-            if( (*pItem) != NULL ){
+            if( (*pItem) != nullptr ){
                 AccountingBillItemPrivate::writeCell( cursor, table, centralFormat, txtBlockFormat, (*pItem)->codeFull() );
                 m_d->writeDescriptionCell( (*pItem), cursor, table, centralFormat, txtBlockFormat, txtCharFormat, txtBoldCharFormat, prPPUDescOption );
             } else {
@@ -3446,8 +3440,8 @@ void AccountingBillItem::writeODTSummaryOnTable( QTextCursor *cursor,
 
             QString unitMeasureTag;
             int unitMeasurePrec = 3;
-            if( (*pItem) != NULL ){
-                if( (*pItem)->unitMeasure() != NULL ){
+            if( (*pItem) != nullptr ){
+                if( (*pItem)->unitMeasure() != nullptr ){
                     unitMeasureTag = (*pItem)->unitMeasure()->tag();
                     unitMeasurePrec = (*pItem)->unitMeasure()->precision();
                 }
@@ -3789,8 +3783,8 @@ void AccountingBillItem::writeODTAccountingSummaryLine( PriceItem * priceItem,
             AccountingBillItemPrivate::writeCell( cursor, table, centralFormat, tagBlockFormat, accountingProgCode() );
 
             QString unitMeasureTag;
-            if( m_d->priceItem != NULL ){
-                if( m_d->priceItem->unitMeasure() != NULL ){
+            if( m_d->priceItem != nullptr ){
+                if( m_d->priceItem->unitMeasure() != nullptr ){
                     unitMeasureTag = m_d->priceItem->unitMeasure()->tag();
                 }
             }
@@ -3851,8 +3845,8 @@ void AccountingBillItem::writeODTSummaryLine( PriceItem * priceItem,
                 AccountingBillItemPrivate::writeCell( cursor, table, centralFormat, txtBlockFormat, progCode() );
 
                 QString unitMeasureTag;
-                if( m_d->priceItem != NULL ){
-                    if( m_d->priceItem->unitMeasure() != NULL ){
+                if( m_d->priceItem != nullptr ){
+                    if( m_d->priceItem->unitMeasure() != nullptr ){
                         unitMeasureTag = m_d->priceItem->unitMeasure()->tag();
                     }
                 }
@@ -4441,7 +4435,7 @@ void AccountingBillItem::writeODTBillLine(AccountingPrinter::PrintAmountsOption 
             AccountingBillItemPrivate::writeCell( cursor, table, centralFormat, txtBlockFormat );
         }
 
-        if( m_d->measuresModel != NULL && !writeAccounting ){
+        if( m_d->measuresModel != nullptr && !writeAccounting ){
             // celle vuote
             // tag unita misura
             AccountingBillItemPrivate::writeCell( cursor, table, centralFormat, tagBlockFormat );
@@ -4487,13 +4481,13 @@ void AccountingBillItem::writeODTBillLine(AccountingPrinter::PrintAmountsOption 
 
                 // formula senza spazi bianchi
                 QString realFormula;
-                if( measure != NULL ){
+                if( measure != nullptr ){
                     realFormula = measure->formula();
                     realFormula.remove(" ");
                 }
 
                 // misure
-                if( measure != NULL ){
+                if( measure != nullptr ){
                     if( realFormula.isEmpty() ){
                         AccountingBillItemPrivate::writeCell( cursor, table, centralFormat, txtBlockFormat, measure->comment() );
                     } else {
@@ -4503,7 +4497,7 @@ void AccountingBillItem::writeODTBillLine(AccountingPrinter::PrintAmountsOption 
                     AccountingBillItemPrivate::writeCell( cursor, table, centralFormat, txtBlockFormat);
                 }
 
-                if( realFormula.isEmpty() || measure == NULL ){
+                if( realFormula.isEmpty() || measure == nullptr ){
                     // unita di misura
                     AccountingBillItemPrivate::writeCell( cursor, table, centralFormat, tagBlockFormat );
 
@@ -4601,7 +4595,7 @@ void AccountingBillItem::writeODTBillLine(AccountingPrinter::PrintAmountsOption 
         } else { // m_d->linesModel == NULL
             if( writeAccounting ){
                 QString nLibr;
-                if( m_d->parentItem != NULL ){
+                if( m_d->parentItem != nullptr ){
                     nLibr = QString::number( m_d->parentItem->childNumber() + 1 );
                 }
                 AccountingBillItemPrivate::writeCell( cursor, table, centralFormat, tagBlockFormat, nLibr );
@@ -4707,7 +4701,7 @@ void AccountingBillItem::writeODTBillLine(AccountingPrinter::PrintAmountsOption 
 
         if( writeAccounting ){
             QString nLibr;
-            if( m_d->parentItem != NULL ){
+            if( m_d->parentItem != nullptr ){
                 nLibr = QString::number( m_d->parentItem->childNumber() + 1 );
             }
             AccountingBillItemPrivate::writeCell( cursor, table, centralFormat, tagBlockFormat, nLibr );
@@ -4776,7 +4770,7 @@ void AccountingBillItem::writeODTBillLine(AccountingPrinter::PrintAmountsOption 
 
         if( writeAccounting ){
             QString nLibr;
-            if( m_d->parentItem != NULL ){
+            if( m_d->parentItem != nullptr ){
                 nLibr = QString::number( m_d->parentItem->childNumber() + 1 );
             }
             AccountingBillItemPrivate::writeCell( cursor, table, centralFormat, tagBlockFormat, nLibr );

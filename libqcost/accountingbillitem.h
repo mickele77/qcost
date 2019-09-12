@@ -76,7 +76,7 @@ public:
     friend class AccountingBill;
     friend class AccountingTAMBillItem;
 
-    AccountingBillItem( AccountingBillItem * parentItem, AccountingBillItem::ItemType iType, PriceFieldModel * pfm, MathParser * parser = NULL, VarsModel * vModel = NULL );
+    AccountingBillItem( AccountingBillItem * parentItem, AccountingBillItem::ItemType iType, PriceFieldModel * pfm, MathParser * parser = nullptr, VarsModel * vModel = nullptr );
     ~AccountingBillItem();
 
     AccountingBillItem &operator =(const AccountingBillItem &cp);
@@ -295,12 +295,12 @@ public:
     /** Nel caso di Root, il modelli di campi prezzo non soggetti a ribasso */
     AccountingPriceFieldModel * noDiscountAmountPriceFieldModel();
 
-    void requestDateBeginChange(const QDate &newDate);
-    void requestDateBeginChange(const QString &newDateStr);
+    /*void requestDateBeginChange(const QDate &newDate);
+    void requestDateBeginChange(const QString &newDateStr);*/
     void setDateBegin( const QDate & d );
     void setDateBegin( const QString & d );
-    void requestDateEndChange(const QString &newDateStr);
-    void requestDateEndChange(const QDate &newDate);
+    /*void requestDateEndChange(const QString &newDateStr);
+    void requestDateEndChange(const QDate &newDate);*/
     void setDateEnd( const QDate & d );
     void setDateEnd( const QString & d );
 

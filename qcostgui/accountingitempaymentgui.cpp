@@ -297,13 +297,13 @@ bool AccountingItemPaymentGUI::eventFilter(QObject *object, QEvent *event) {
                 QDate d = m_d->billItem->dateBegin();
                 QCalendarDialog dialog( &d, this );
                 if( dialog.exec() == QDialog::Accepted ){
-                    m_d->billItem->requestDateBeginChange( d );
+                    m_d->billItem->setDateBegin( d );
                 }
             } else if( object == m_d->ui->endDateLineEdit ){
                 QDate d = m_d->billItem->dateEnd();
                 QCalendarDialog dialog( &d, this );
                 if( dialog.exec() == QDialog::Accepted ){
-                    m_d->billItem->requestDateEndChange( d );
+                    m_d->billItem->setDateEnd( d );
                 }
             }
         }
