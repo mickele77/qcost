@@ -53,7 +53,7 @@ public:
 
         createUMTableQuery = "unitMeasureId INTEGER PRIMARY KEY, unitMeasureOrderNum FLOAT, unitMeasureTag TEXT";
         db.exec( QString("CREATE TABLE unitMeasureTable (%1)").arg(createUMTableQuery) );
-        createPLTableQuery = "id INTEGER PRIMARY KEY, parentId INTEGER, orderNum FLOAT, code TEXT, shortDesc TEXT, longDesc TEXT, unitMeasure INT DEFAULT 0, priceTotal FLOAT DEFAULT 0.0, priceSafety FLOAT DEFAULT 0.0, priceHuman FLOAT DEFAULT 0.0, priceEquipment FLOAT DEFAULT 0.0, priceMaterial FLOAT DEFAULT 0.0, overheads FLOAT DEFAULT 0.13, profits FLOAT DEFAULT 0.10";
+        createPLTableQuery = "id INTEGER PRIMARY KEY, parentId INTEGER, orderNum FLOAT, code TEXT, shortDesc TEXT, longDesc TEXT, unitMeasure INT DEFAULT 0, priceTotal FLOAT DEFAULT 0.0, priceSafety FLOAT DEFAULT 0.0, priceHuman FLOAT DEFAULT 0.0, priceEquipment FLOAT DEFAULT 0.0, priceMaterial FLOAT DEFAULT 0.0, overheads FLOAT DEFAULT 0.15, profits FLOAT DEFAULT 0.10";
         db.exec( QString("CREATE TABLE priceListTable (%1)" ).arg(createPLTableQuery) );
         db.exec( "CREATE INDEX index_id on priceListTable (id)" );
         db.exec( "CREATE INDEX index_parentId on priceListTable (parentId)" );
@@ -248,7 +248,7 @@ int PriceListDBModel::rowCount(const QModelIndex &parent) const {
 
 int PriceListDBModel::columnCount(const QModelIndex &parent) const
 {
-    Q_UNUSED(parent);
+    Q_UNUSED(parent)
 
     return m_d->visibleColsList.size();
 }
@@ -851,11 +851,41 @@ void PriceListDBModel::importFromTXT(const QString & decimalSeparator,
     input->seek(0);
     int p=1;
     while( !input->atEnd() ){
-        QStringList line = input->readLine().split("\t");
+        QStringList line = readLineFromTXT( pCols->size(), input );
         loadFromTXTChildren( &p, line, 0, "", decimalSeparator, thousandSeparator, ovh, prf, setShortDescFromLong, pCols, input );
     }
 
     endResetModel();
+}
+
+QStringList PriceListDBModel::readLineFromTXT ( int nCol, QTextStream * input ) {
+    QStringList line;
+    bool hasTxt = true;
+    bool lineStarted = false;
+    while( line.size() < nCol && hasTxt ) {
+        QString txt = input->readLine();
+        if( txt.isNull() ) {
+            hasTxt = false;
+        } else {
+            QStringList newLine = txt.split("\t");
+            if( ! lineStarted ) {
+                line = newLine;
+                lineStarted = true;
+            } else {
+                for( int i=0; i < newLine.size(); i++ ) {
+                    if( i == 0 ) {
+                        line[line.size()-1] = line[line.size()-1] + QString("\n") + newLine.at(i);
+                    } else {
+                        line.append( newLine.at(i) );
+                    }
+                }
+            }
+        }
+    }
+    for( int i=0; i < line.size(); ++i ) {
+        line[i] = line[i].simplified();
+    }
+    return line;
 }
 
 QStringList PriceListDBModel::loadFromTXTChildren(int * progNumber,
@@ -916,13 +946,7 @@ QStringList PriceListDBModel::loadFromTXTChildren(int * progNumber,
                 QString beforeApp = m_d->sqlName( pCols->at(i) );
                 QString afterApp;
                 if( pCols->at(i) == unitMeasureCol ){
-                    QString umTag = line.at(i);
-                    while( umTag.startsWith(" ")){
-                        umTag.remove(0, 0);
-                    }
-                    while( umTag.endsWith(" ")){
-                        umTag.chop( 1 );
-                    }
+                    QString umTag = line.at(i).simplified();
                     if( !umTag.isEmpty() ){
                         QString queryStr = QString("SELECT unitMeasureId, unitMeasureTag FROM unitMeasureTable WHERE unitMeasureTag='%1'").arg( umTag ) ;
                         QSqlQuery query = m_d->db.exec( queryStr );
@@ -1091,7 +1115,7 @@ QStringList PriceListDBModel::loadFromTXTChildren(int * progNumber,
 
             int currentId = (*progNumber)++;
 
-            line = input->readLine().split("\t");
+            line = readLineFromTXT(pCols->size(), input );
             line = loadFromTXTChildren( progNumber, line, currentId, currentCode, decimalSeparator, thousandSeparator, ovh, prf, setShortDescFromLong, pCols, input );
         } else {
             return line;

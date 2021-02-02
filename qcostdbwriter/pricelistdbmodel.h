@@ -115,6 +115,7 @@ private:
     QSqlQuery execTransaction( const QString & queryStr );
     bool loadFromDBChildren(int fileParentId, int parentId, const QString &importFileDBName);
     QStringList loadFromTXTChildren(int *progNumber, QStringList line, int parentId, QString parentCode, const QString &decimalSeparator, const QString &thousandSeparator, double ovh, double prf, bool setShortDescFromLong, QList<PriceColType> *pCols, QTextStream *input);
+    QStringList readLineFromTXT(int nCol, QTextStream *input);
 };
 
 #endif // PRICELISTDBMODEL_H

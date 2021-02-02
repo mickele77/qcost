@@ -210,16 +210,18 @@ void PriceListTreeGUI::addItems(){
 }
 
 void PriceListTreeGUI::addChildItems(){
-    if( m_d->priceList != NULL ){
+    if( m_d->priceList != nullptr ){
         if( m_d->ui->treeView->selectionModel() ){
-            QModelIndexList rowListSel = m_d->ui->treeView->selectionModel()->selectedRows();
-            for( int i=0; i < rowListSel.size(); ++i){
-                m_d->priceList->insertPriceItems( 0, 1, rowListSel.at(i) );
-            }
-            if( m_d->ui->treeView->selectionModel() ){
-                m_d->ui->treeView->selectionModel()->clearSelection();
-                m_d->ui->treeView->selectionModel()->setCurrentIndex( m_d->priceList->index( 0, 0, rowListSel.last() ),
-                                                                      QItemSelectionModel::Rows | QItemSelectionModel::SelectCurrent );
+            if( m_d->ui->treeView->selectionModel()->hasSelection() ){
+                QModelIndexList rowListSel = m_d->ui->treeView->selectionModel()->selectedRows();
+                for( int i=0; i < rowListSel.size(); ++i){
+                    m_d->priceList->insertPriceItems( 0, 1, rowListSel.at(i) );
+                }
+                if( m_d->ui->treeView->selectionModel() ){
+                    m_d->ui->treeView->selectionModel()->clearSelection();
+                    m_d->ui->treeView->selectionModel()->setCurrentIndex( m_d->priceList->index( 0, 0, rowListSel.last() ),
+                                                                          QItemSelectionModel::Rows | QItemSelectionModel::SelectCurrent );
+                }
             }
         }
     }

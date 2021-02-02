@@ -375,16 +375,18 @@ void BillTreeGUI::addItems(){
 }
 
 void BillTreeGUI::addChildItems(){
-    if( m_d->bill != NULL ){
+    if( m_d->bill != nullptr ){
         if( m_d->ui->treeView->selectionModel() ){
-            QModelIndexList rowListSel = m_d->ui->treeView->selectionModel()->selectedRows();
-            for( int i=0; i < rowListSel.size(); ++i){
-                m_d->bill->insertItems( NULL, 0, 1, rowListSel.at(i) );
-            }
-            if( m_d->ui->treeView->selectionModel() ){
-                m_d->ui->treeView->selectionModel()->clearSelection();
-                m_d->ui->treeView->selectionModel()->setCurrentIndex( m_d->bill->index( 0, 0, rowListSel.last() ),
-                                                                      QItemSelectionModel::Rows | QItemSelectionModel::SelectCurrent );
+            if( m_d->ui->treeView->selectionModel()->hasSelection() ) {
+                QModelIndexList rowListSel = m_d->ui->treeView->selectionModel()->selectedRows();
+                for( int i=0; i < rowListSel.size(); ++i){
+                    m_d->bill->insertItems( nullptr, 0, 1, rowListSel.at(i) );
+                }
+                if( m_d->ui->treeView->selectionModel() ){
+                    m_d->ui->treeView->selectionModel()->clearSelection();
+                    m_d->ui->treeView->selectionModel()->setCurrentIndex( m_d->bill->index( 0, 0, rowListSel.last() ),
+                                                                          QItemSelectionModel::Rows | QItemSelectionModel::SelectCurrent );
+                }
             }
         }
     }
@@ -403,7 +405,7 @@ void BillTreeGUI::removeItems(){
                 }
             }
             for( int i=selRowsEff.size() - 1; i >= 0; --i){
-                    m_d->bill->removeItems( selRowsEff.at(i).row(), 1, selRowsEff.at(i).parent() );
+                m_d->bill->removeItems( selRowsEff.at(i).row(), 1, selRowsEff.at(i).parent() );
             }
         }
     }

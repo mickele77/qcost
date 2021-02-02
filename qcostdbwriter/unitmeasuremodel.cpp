@@ -63,23 +63,23 @@ UnitMeasureModel::UnitMeasureModel(QSqlDatabase * db, QObject *parent) :
 }
 
 QModelIndex UnitMeasureModel::index(int row, int column, const QModelIndex &parent) const {
-    Q_UNUSED(parent);
+    Q_UNUSED(parent)
     QString queryStr = QString("SELECT unitMeasureId, unitMeasureOrderNum FROM unitMeasureTable ORDER BY unitMeasureOrderNum");
     QSqlQuery query = m_d->db->exec( queryStr );
     if (query.seek(row))
-        return createIndex(row, column, query.value("unitMeasureId").toInt());
+        return createIndex(row, column, query.value("unitMeasureId").toUInt());
     return QModelIndex();
 }
 
 int UnitMeasureModel::rowCount(const QModelIndex &parent) const {
-    Q_UNUSED(parent);
+    Q_UNUSED(parent)
     QString queryStr = QString( "SELECT unitMeasureId FROM unitMeasureTable");
     QSqlQuery query = m_d->db->exec( queryStr );
     return m_d->querySize( &query );
 }
 
 int UnitMeasureModel::columnCount(const QModelIndex &parent) const {
-    Q_UNUSED(parent);
+    Q_UNUSED(parent)
     return 1;
 }
 
@@ -119,7 +119,7 @@ bool UnitMeasureModel::setData(const QModelIndex &index, const QVariant &value, 
 QVariant UnitMeasureModel::headerData(int section, Qt::Orientation orientation, int role) const {
     if(role == Qt::DisplayRole){
         if (orientation == Qt::Horizontal ){
-            return QVariant( trUtf8("Unità di misura") );
+            return QVariant( tr("Unità di misura") );
         }
         if (orientation == Qt::Vertical ){
             return QVariant( section+1 );
@@ -129,7 +129,7 @@ QVariant UnitMeasureModel::headerData(int section, Qt::Orientation orientation, 
 }
 
 bool UnitMeasureModel::insertRows(int row, int count, const QModelIndex &parent) {
-    Q_UNUSED( parent );
+    Q_UNUSED( parent )
     if( row < 0 || count < 1 ){
         return false;
     }
@@ -197,7 +197,9 @@ bool UnitMeasureModel::appendRow(int *newId, const QString &newTag) {
         *newId = nextId();
         queryStr = QString("INSERT INTO unitMeasureTable (unitMeasureId, unitMeasureOrderNum, unitMeasureTag) VALUES (%1, %2, '%3')").arg(
                     QString::number(*newId), QString::number( orderNum ), newTag );
+        beginResetModel();
         execTransaction( queryStr );
+        endResetModel();
         return true;
     }
 

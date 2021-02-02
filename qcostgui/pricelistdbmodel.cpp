@@ -37,7 +37,7 @@ public:
         QString createUMTableQuery = "unitMeasureId INTEGER PRIMARY KEY, unitMeasureOrderNum FLOAT, unitMeasureTag TEXT";
         db.exec( QString("CREATE TABLE unitMeasureTable (%1)").arg(createUMTableQuery) );
 
-        QString createPLTableQuery = "id INTEGER PRIMARY KEY, parentId INTEGER, orderNum FLOAT, code TEXT, shortDesc TEXT, longDesc TEXT, unitMeasure INT DEFAULT 0, priceTotal FLOAT DEFAULT 0.0, priceHuman FLOAT DEFAULT 0.0, priceEquipment FLOAT DEFAULT 0.0, priceMaterial FLOAT DEFAULT 0.0, overheads FLOAT DEFAULT 0.13, profits FLOAT DEFAULT 0.10";
+        QString createPLTableQuery = "id INTEGER PRIMARY KEY, parentId INTEGER, orderNum FLOAT, code TEXT, shortDesc TEXT, longDesc TEXT, unitMeasure INT DEFAULT 0, priceTotal FLOAT DEFAULT 0.0, priceSafety FLOAT DEFAULT 0.0, priceHuman FLOAT DEFAULT 0.0, priceEquipment FLOAT DEFAULT 0.0, priceMaterial FLOAT DEFAULT 0.0, overheads FLOAT DEFAULT 0.15, profits FLOAT DEFAULT 0.10";
         db.exec( QString("CREATE TABLE priceListTable (%1)" ).arg(createPLTableQuery) );
         db.exec( "CREATE INDEX index_id on priceListTable (id)" );
         db.exec( "CREATE INDEX index_parentId on priceListTable (parentId)" );
@@ -110,7 +110,7 @@ PriceListDBModel::~PriceListDBModel(){
 
 QModelIndex PriceListDBModel::index(int row, int column, const QModelIndex &parent) const {
     if( m_d->db.isOpen() ){
-        qint32 parentId;
+        quintptr parentId;
         if (parent.isValid())
             parentId = parent.internalId();
         else
@@ -119,7 +119,7 @@ QModelIndex PriceListDBModel::index(int row, int column, const QModelIndex &pare
         QString queryStr = QString("SELECT id, orderNum FROM priceListTable WHERE parentId=%1 ORDER BY orderNum").arg( parentId );
         QSqlQuery query = m_d->db.exec( queryStr );
         if (query.seek(row))
-            return createIndex(row, column, query.value("id").toInt());
+            return createIndex(row, column, query.value("id").toUInt());
     }
     return QModelIndex();
 }
@@ -132,20 +132,20 @@ QModelIndex PriceListDBModel::parent(const QModelIndex &child) const {
         QString queryStr = QString("SELECT parentId FROM priceListTable WHERE id=%1").arg( child.internalId() );
         QSqlQuery query = m_d->db.exec( queryStr );
         if( query.next() ){
-            qint32 parent = query.value(0).toInt();
+            quintptr parent = query.value(0).toUInt();
             if (parent == 0)
                 return QModelIndex();
 
             queryStr = QString("SELECT parentId FROM priceListTable WHERE id=%1").arg( parent );
             query = m_d->db.exec( queryStr);
             if( query.next() ){
-                qint32 parentOfParent = query.value(0).toInt();
+                quintptr parentOfParent = query.value(0).toUInt();
 
                 int row = 0;
                 queryStr = QString("SELECT id FROM priceListTable WHERE parentId=%1").arg( parentOfParent );
                 query = m_d->db.exec( queryStr );
                 for (int i=0; query.next(); i++) {
-                    if (query.value(0).toInt() == parent) {
+                    if (query.value(0).toUInt() == parent) {
                         row = i;
                         break;
                     }
@@ -160,7 +160,7 @@ QModelIndex PriceListDBModel::parent(const QModelIndex &child) const {
 
 int PriceListDBModel::rowCount(const QModelIndex &parent) const {
     if( m_d->db.isOpen() ){
-        qint32 parentId;
+        quintptr parentId;
         if (parent.isValid())
             parentId = parent.internalId();
         else
@@ -174,7 +174,7 @@ int PriceListDBModel::rowCount(const QModelIndex &parent) const {
 }
 
 int PriceListDBModel::columnCount(const QModelIndex &parent) const {
-    Q_UNUSED(parent);
+    Q_UNUSED(parent)
     return m_d->visibleColsList.size();
 }
 
@@ -435,6 +435,7 @@ bool PriceListDBModel::setCurrentFile(const QString & newFile ) {
         m_d->db.exec( "INSERT INTO unitMeasureTable SELECT * FROM fileDB.unitMeasureTable" );
         createPriceListTable();
         endResetModel();
+        qWarning( m_d->db.lastError().text().toLatin1() );
         return true;
     }
     return false;

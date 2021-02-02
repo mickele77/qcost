@@ -272,7 +272,7 @@ void QCostDBWriterGUI::importFromTXT(){
             QList<PriceListDBModel::PriceColType> pCols;
             QString decSep = ",";
             QString thousandSep = ".";
-            double overheads = 0.13;
+            double overheads = 0.15;
             double profits = 0.10;
             bool setShortDescFromLong = true;
             LoadFromTXTDialog dlg( m_d->model, &pCols, &in, &decSep, &thousandSep, &setShortDescFromLong, &overheads, &profits, m_d->locale, this );
