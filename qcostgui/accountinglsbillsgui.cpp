@@ -23,8 +23,8 @@ AccountingLSBillsGUI::AccountingLSBillsGUI( AccountingLSBills *myBills, PriceFie
                                             QWidget *parent):
     QTabWidget(parent),
     m_d( new AccountingLSBillsGUIPrivate(myBills, pfm, prs, wpf) ){
-    addTab( m_d->dataGUI, trUtf8("Importi complessivi") );
-    addTab( m_d->attributesGUI, trUtf8("Etichette") );
+    addTab( m_d->dataGUI, tr("Importi complessivi") );
+    addTab( m_d->attributesGUI, tr("Etichette") );
 }
 
 void AccountingLSBillsGUI::showEvent(QShowEvent * event ) {

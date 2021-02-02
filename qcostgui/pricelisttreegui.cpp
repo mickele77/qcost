@@ -37,7 +37,7 @@ public:
     PriceListTreeGUIPrivate( QMap<PriceListDBWidget::ImportOptions, bool> * impOptions,
                              QString *fileName,
                              MathParser * prs, PriceFieldModel * pfm, UnitMeasureModel * uml ):
-        priceList(NULL),
+        priceList(nullptr),
         parser(prs),
         priceFieldModel(pfm),
         unitMeasureModel(uml),
@@ -94,24 +94,24 @@ PriceListTreeGUI::~PriceListTreeGUI() {
 
 void PriceListTreeGUI::setPriceList(PriceList * pl, int priceDataSet) {
     if( pl != m_d->priceList || priceDataSet != m_d->currentPriceDataSet ){
-        if( m_d->priceList != NULL ){
+        if( m_d->priceList != nullptr ){
             m_d->ui->currentPriceDataSetSpinBox->setMaximum( 1 );
             disconnect( m_d->priceList, &PriceList::priceDataSetCountChanged, this, &PriceListTreeGUI::setCurrentPriceDataSetSpinBoxMaximum );
-            disconnect( m_d->priceList, &PriceList::aboutToBeDeleted, this, &PriceListTreeGUI::setPriceListNULL );
+            disconnect( m_d->priceList, &PriceList::aboutToBeDeleted, this, &PriceListTreeGUI::setPriceListnullptr );
             disconnect( m_d->priceList, &PriceList::priceDataSetCountChanged, this, &PriceListTreeGUI::updateCurrentPriceDataSet );
         }
         m_d->ui->treeView->setModel( pl );
         m_d->priceList = pl;
-        if( m_d->priceList != NULL ){
+        if( m_d->priceList != nullptr ){
             m_d->ui->currentPriceDataSetSpinBox->setMaximum( m_d->priceList->priceDataSetCount() );
             m_d->ui->currentPriceDataSetSpinBox->setValue( priceDataSet+1 );
             connect( m_d->priceList, &PriceList::priceDataSetCountChanged, this, &PriceListTreeGUI::setCurrentPriceDataSetSpinBoxMaximum );
-            connect( m_d->priceList, &PriceList::aboutToBeDeleted, this, &PriceListTreeGUI::setPriceListNULL );
+            connect( m_d->priceList, &PriceList::aboutToBeDeleted, this, &PriceListTreeGUI::setPriceListnullptr );
             connect( m_d->priceList, &PriceList::priceDataSetCountChanged, this, &PriceListTreeGUI::updateCurrentPriceDataSet );
 
             connect( m_d->ui->treeView->selectionModel(), &QItemSelectionModel::currentChanged, this, &PriceListTreeGUI::changeCurrentItem );
         }
-        if( m_d->priceList != NULL ){
+        if( m_d->priceList != nullptr ){
             setCurrentPriceDataSet( priceDataSet );
         } else {
             setCurrentPriceDataSet( 0 );
@@ -119,12 +119,12 @@ void PriceListTreeGUI::setPriceList(PriceList * pl, int priceDataSet) {
     }
 }
 
-void PriceListTreeGUI::setPriceListNULL(){
-    setPriceList( NULL );
+void PriceListTreeGUI::setPriceListnullptr(){
+    setPriceList( nullptr );
 }
 
 void PriceListTreeGUI::setCurrentPriceDataSet( int newCurrPriceDataSet ){
-    if( m_d->priceList != NULL ){
+    if( m_d->priceList != nullptr ){
         if( (newCurrPriceDataSet != m_d->currentPriceDataSet) &&
                 newCurrPriceDataSet < m_d->priceList->priceDataSetCount() ){
             m_d->currentPriceDataSet = newCurrPriceDataSet;
@@ -138,7 +138,7 @@ void PriceListTreeGUI::setCurrentPriceDataSet( int newCurrPriceDataSet ){
 }
 
 void PriceListTreeGUI::updateCurrentPriceDataSet(){
-    if( m_d->priceList != NULL ){
+    if( m_d->priceList != nullptr ){
         if( m_d->currentPriceDataSet >= m_d->priceList->priceDataSetCount() ){
             m_d->currentPriceDataSet = m_d->priceList->priceDataSetCount() - 1;
         }
@@ -162,17 +162,17 @@ void PriceListTreeGUI::setCurrentPriceDataSetFromSpinBox(int newPriceDataSet ){
 
 PriceItem *PriceListTreeGUI::currentPriceItem() {
     if( m_d->ui->treeView->selectionModel() ){
-        if(  m_d->priceList != NULL ){
+        if(  m_d->priceList != nullptr ){
             if( m_d->ui->treeView->selectionModel()->currentIndex().isValid() ){
                 return m_d->priceList->priceItem( m_d->ui->treeView->selectionModel()->currentIndex() );
             }
         }
     }
-    return NULL;
+    return nullptr;
 }
 
 void PriceListTreeGUI::addItems(){
-    if( m_d->priceList != NULL ){
+    if( m_d->priceList != nullptr ){
         if( m_d->ui->treeView->selectionModel() ){
             QModelIndexList rowListSel = m_d->ui->treeView->selectionModel()->selectedRows();
             if( rowListSel.size() > 0 ){
@@ -228,7 +228,7 @@ void PriceListTreeGUI::addChildItems(){
 }
 
 void PriceListTreeGUI::removeItems(){
-    if( m_d->priceList != NULL ){
+    if( m_d->priceList != nullptr ){
         if( m_d->ui->treeView->selectionModel() ){
             // se la lista non contiene il genitore dell'oggetto lo rimuovo
             // altrimenti è sufficiente rimuovere il genitore
@@ -247,23 +247,23 @@ void PriceListTreeGUI::removeItems(){
 }
 
 void PriceListTreeGUI::sortByCode() {
-    if( m_d->priceList != NULL ){
+    if( m_d->priceList != nullptr ){
         m_d->priceList->sortByCode();
     }
 }
 
 void PriceListTreeGUI::sortByCodeInv() {
-    if( m_d->priceList != NULL ){
+    if( m_d->priceList != nullptr ){
         m_d->priceList->sortByCodeInv();
     }
 }
 
 void PriceListTreeGUI::copyToClipboard(){
-    if( m_d->priceList != NULL ){
+    if( m_d->priceList != nullptr ){
         if( m_d->ui->treeView->selectionModel() ){
             QCostClipboardData *data = new QCostClipboardData();
             const QCostClipboardData *clipData = qobject_cast<const QCostClipboardData *>(QApplication::clipboard()->mimeData());
-            if( clipData != NULL ){
+            if( clipData != nullptr ){
                 *data = *clipData;
             }
             QModelIndexList selRows = m_d->ui->treeView->selectionModel()->selectedRows();
@@ -278,11 +278,11 @@ void PriceListTreeGUI::copyToClipboard(){
 }
 
 void PriceListTreeGUI::cutToClipboard(){
-    if( m_d->priceList != NULL ){
+    if( m_d->priceList != nullptr ){
         if( m_d->ui->treeView->selectionModel() ){
             QCostClipboardData *data = new QCostClipboardData();
             const QCostClipboardData *clipData = qobject_cast<const QCostClipboardData *>(QApplication::clipboard()->mimeData());
-            if( clipData != NULL ){
+            if( clipData != nullptr ){
                 *data = *clipData;
             }
             QModelIndexList selRows = m_d->ui->treeView->selectionModel()->selectedRows();
@@ -297,13 +297,13 @@ void PriceListTreeGUI::cutToClipboard(){
 }
 
 void PriceListTreeGUI::pasteFromClipboard(){
-    if( m_d->priceList != NULL ){
+    if( m_d->priceList != nullptr ){
         if( m_d->ui->treeView->selectionModel() ){
             QClipboard * clp = QApplication::clipboard();
             const QMimeData * mimeData = clp->mimeData();
             const QCostClipboardData *data = qobject_cast<const QCostClipboardData *>( mimeData );
 
-            if( data != NULL ){
+            if( data != nullptr ){
                 QModelIndex currIndex = m_d->ui->treeView->currentIndex();
                 int currRow = m_d->priceList->rowCount( )-1;
                 QModelIndex currParent = QModelIndex();
@@ -312,10 +312,10 @@ void PriceListTreeGUI::pasteFromClipboard(){
                     currParent = currIndex.parent();
                 }
                 QList<PriceItem *> itemsToCopy;
-                PriceList * itemsToCopyPriceList = NULL;
+                PriceList * itemsToCopyPriceList = nullptr;
                 QCostClipboardData::Mode mode;
                 data->getCopiedPriceItems( &itemsToCopy, itemsToCopyPriceList, &mode);
-                if( itemsToCopyPriceList != NULL ){
+                if( itemsToCopyPriceList != nullptr ){
                     if( mode == QCostClipboardData::Copy ){
                         for( QList<PriceItem *>::iterator i=itemsToCopy.begin(); i != itemsToCopy.end(); ++i ){
                             bool containsParent = false;
@@ -361,12 +361,12 @@ void PriceListTreeGUI::pasteFromClipboard(){
 
 void PriceListTreeGUI::changeCurrentItem( QModelIndex currentIndex  ) {
     if( currentIndex.isValid() ){
-        if( m_d->priceList != NULL ){
+        if( m_d->priceList != nullptr ){
             emit currentItemChanged( m_d->priceList->priceItem( currentIndex ), m_d->currentPriceDataSet );
             return;
         }
     }
-    emit currentItemChanged( NULL, m_d->currentPriceDataSet );
+    emit currentItemChanged( nullptr, m_d->currentPriceDataSet );
 }
 
 void PriceListTreeGUI::setCurrentPriceItem(PriceItem *pItem ) {
@@ -375,37 +375,37 @@ void PriceListTreeGUI::setCurrentPriceItem(PriceItem *pItem ) {
 
 void PriceListTreeGUI::treeViewCustomMenuRequested(QPoint pos){
     QMenu *menu=new QMenu(this);
-    QAction * addAction = new QAction( trUtf8("Aggiungi"), this);
+    QAction * addAction = new QAction( tr("Aggiungi"), this);
     connect( addAction, &QAction::triggered, this, &PriceListTreeGUI::addItems );
     menu->addAction( addAction );
-    QAction * addChildAction = new QAction( trUtf8("Aggiungi ▼"), this);
+    QAction * addChildAction = new QAction( tr("Aggiungi ▼"), this);
     connect( addChildAction, &QAction::triggered, this, &PriceListTreeGUI::addChildItems );
     menu->addAction( addChildAction );
-    QAction * delAction = new QAction( trUtf8("Elimina"), this);
+    QAction * delAction = new QAction( tr("Elimina"), this);
     connect( delAction, &QAction::triggered, this, &PriceListTreeGUI::removeItems );
     menu->addAction( delAction );
 
     menu->addSeparator();
-    QAction * cutAction = new QAction( trUtf8("Taglia"), this);
+    QAction * cutAction = new QAction( tr("Taglia"), this);
     connect( cutAction, &QAction::triggered, this, &PriceListTreeGUI::cutToClipboard );
     menu->addAction( cutAction );
-    QAction * copyAction = new QAction( trUtf8("Copia"), this);
+    QAction * copyAction = new QAction( tr("Copia"), this);
     connect( copyAction, &QAction::triggered, this, &PriceListTreeGUI::copyToClipboard );
     menu->addAction( copyAction );
-    QAction * pasteAction = new QAction( trUtf8("Incolla"), this);
+    QAction * pasteAction = new QAction( tr("Incolla"), this);
     connect( pasteAction, &QAction::triggered, this, &PriceListTreeGUI::pasteFromClipboard );
     menu->addAction( pasteAction );
 
     menu->addSeparator();
-    QAction * resizeColToContent = new QAction( trUtf8("Ottimizza colonne"), this);
+    QAction * resizeColToContent = new QAction( tr("Ottimizza colonne"), this);
     connect( resizeColToContent, &QAction::triggered, this, &PriceListTreeGUI::resizeColumnsToContents );
     menu->addAction( resizeColToContent );
 
     menu->addSeparator();
-    QAction * sortByCodeAction = new QAction( trUtf8("Ordina per codice crescente"), this);
+    QAction * sortByCodeAction = new QAction( tr("Ordina per codice crescente"), this);
     connect( sortByCodeAction, &QAction::triggered, this, &PriceListTreeGUI::sortByCode );
     menu->addAction( sortByCodeAction );
-    QAction * sortByCodeInvAction = new QAction( trUtf8("Ordina per codice decrescente"), this);
+    QAction * sortByCodeInvAction = new QAction( tr("Ordina per codice decrescente"), this);
     connect( sortByCodeInvAction, &QAction::triggered, this, &PriceListTreeGUI::sortByCodeInv );
     menu->addAction( sortByCodeInvAction );
 
@@ -429,7 +429,7 @@ void PriceListTreeGUI::importMultiPriceItemDB() {
 
 void PriceListTreeGUI::importMultiPriceItemDB(const QList<QList<QPair<QString, QVariant> > > & itemDataList, const QList<int> & hierarchy ) {
     if( m_d->ui->treeView->selectionModel() ){
-        if( m_d->priceList != NULL ){
+        if( m_d->priceList != nullptr ){
             QModelIndexList selRows = m_d->ui->treeView->selectionModel()->selectedRows();
             if( selRows.size() > 0 ){
                 QModelIndex currIndex = selRows.last();
@@ -467,7 +467,7 @@ void PriceListTreeGUI::loadMultiPriceItemDB( const QList<QList<QPair<QString, QV
                     currItem->setLongDescription( data.at(j).second.toString());
                 } else if( data.at(j).first.toUpper() == "UNITMEASURE" ){
                     if( data.at(j).second.toString() == "---"){
-                        currItem->setUnitMeasure( NULL );
+                        currItem->setUnitMeasure( nullptr );
                     } else {
                         int umRow = m_d->unitMeasureModel->findTag( data.at(j).second.toString() );
                         if( umRow < 0 ){

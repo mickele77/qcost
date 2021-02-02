@@ -52,7 +52,7 @@ class EXPORT_QCOST_LIB_OPT PriceItem : public QObject, public TreeItem {
     Q_OBJECT
 public:
     friend class PriceItemDataSetModel;
-    PriceItem( PriceItem * parentItem, PriceFieldModel * pfm, MathParser * prs = NULL  );
+    PriceItem( PriceItem * parentItem, PriceFieldModel * pfm, MathParser * prs = nullptr  );
     ~PriceItem();
 
     PriceItem & operator=(const PriceItem &cp);

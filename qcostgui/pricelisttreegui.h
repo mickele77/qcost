@@ -80,7 +80,7 @@ private slots:
     void setCurrentPriceDataSetSpinBoxMaximum(int newPriceDataSetCount);
     void setCurrentPriceDataSetFromSpinBox(int newPriceDataSet);
 
-    void setPriceListNULL();
+    void setPriceListnullptr();
 
     void updateCurrentPriceDataSet();
 private:

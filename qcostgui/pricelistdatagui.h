@@ -36,7 +36,7 @@ public:
 private slots:
     void setDescription();
 
-    void setPriceListNULL();
+    void setPriceListnullptr();
 private:
     PriceListDataGUIPrivate * m_d;
 };

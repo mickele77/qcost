@@ -46,7 +46,7 @@ public:
 private slots:
     void setPriceItemAP();
     void setBillItem(BillItem *newItem);
-    void setBillItemNULL();
+    void setBillItemnullptr();
     void updateBillItemGUI();
 private:
     EditPriceItemAPDialogPrivate * m_d;

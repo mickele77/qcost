@@ -226,7 +226,7 @@ QVariant Project::headerData(int section, Qt::Orientation orientation,
                              int role) const {
     Q_UNUSED(section);
     if (orientation == Qt::Horizontal && role == Qt::DisplayRole)
-        return QVariant(trUtf8("Progetto") );
+        return QVariant(tr("Progetto") );
 
     return QVariant();
 }

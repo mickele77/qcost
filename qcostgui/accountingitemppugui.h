@@ -49,7 +49,7 @@ public:
 public slots:
     void setItem(AccountingTAMBillItem *b );
     void setItem(AccountingBillItem *b );
-    void setAccountingItemNULL();
+    void setAccountingItemnullptr();
 
 private slots:
     void connectPriceItem(PriceItem *oldPriceItem, PriceItem *newPriceItem);

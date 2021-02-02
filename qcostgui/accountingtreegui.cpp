@@ -48,8 +48,8 @@ public:
         ui(new Ui::AccountingTreeGUI),
         parser(prs),
         priceFieldModel( p->priceFieldModel() ),
-        accountingBill(NULL),
-        accountingTAMBill(NULL),
+        accountingBill(nullptr),
+        accountingTAMBill(nullptr),
         project( p ),
         EPAImportOptions(EPAImpOptions),
         EPAFileName(fileName){
@@ -86,15 +86,15 @@ AccountingTreeGUI::AccountingTreeGUI( QMap<PriceListDBWidget::ImportOptions, boo
 
     setAccountingBill( b );
 
-    m_d->addPaymentAction = new QAction(trUtf8("S.A.L."), this);
+    m_d->addPaymentAction = new QAction(tr("S.A.L."), this);
     connect( m_d->addPaymentAction, &QAction::triggered, this, &AccountingTreeGUI::addItems );
-    m_d->addCommentAction = new QAction(trUtf8("Riga di commento"), this);
+    m_d->addCommentAction = new QAction(tr("Riga di commento"), this);
     connect( m_d->addCommentAction, &QAction::triggered, this, &AccountingTreeGUI::addItems );
-    m_d->addPPUAction = new QAction(trUtf8("Opera a misura"), this);
+    m_d->addPPUAction = new QAction(tr("Opera a misura"), this);
     connect( m_d->addPPUAction, &QAction::triggered, this, &AccountingTreeGUI::addItems );
-    m_d->addLSAction = new QAction(trUtf8("Opera a corpo"), this);
+    m_d->addLSAction = new QAction(tr("Opera a corpo"), this);
     connect( m_d->addLSAction, &QAction::triggered, this, &AccountingTreeGUI::addItems );
-    m_d->addTAMAction = new QAction(trUtf8("Lista economie"), this);
+    m_d->addTAMAction = new QAction(tr("Lista economie"), this);
     connect( m_d->addTAMAction, &QAction::triggered, this, &AccountingTreeGUI::addItems );
     QMenu * addPushButtonMenu = new QMenu( m_d->ui->addPushButton );
     addPushButtonMenu->addAction(m_d->addPaymentAction);
@@ -119,11 +119,11 @@ AccountingTreeGUI::AccountingTreeGUI( QMap<PriceListDBWidget::ImportOptions, boo
 
     setAccountingTAMBill( b );
 
-    m_d->addTAMBillAction = new QAction(trUtf8("Lista"), this);
+    m_d->addTAMBillAction = new QAction(tr("Lista"), this);
     connect( m_d->addTAMBillAction, &QAction::triggered, this, &AccountingTreeGUI::addItems );
-    m_d->addTAMCommentAction = new QAction(trUtf8("Riga di commento"), this);
+    m_d->addTAMCommentAction = new QAction(tr("Riga di commento"), this);
     connect( m_d->addTAMCommentAction, &QAction::triggered, this, &AccountingTreeGUI::addItems );
-    m_d->addTAMPPUAction = new QAction(trUtf8("Misura"), this);
+    m_d->addTAMPPUAction = new QAction(tr("Misura"), this);
     connect( m_d->addTAMPPUAction, &QAction::triggered, this, &AccountingTreeGUI::addItems );
 
     QMenu * addPushButtonMenu = new QMenu( m_d->ui->addPushButton );
@@ -144,64 +144,64 @@ AccountingTreeGUI::~AccountingTreeGUI() {
 
 void AccountingTreeGUI::accountingTreeViewCustomMenuRequested(QPoint pos){
     QMenu *menu=new QMenu(this);
-    if( m_d->accountingBill != NULL ){
+    if( m_d->accountingBill != nullptr ){
         QMenu *addSubMenu=new QMenu(this);
-        addSubMenu->setTitle( trUtf8("Aggiungi"));
+        addSubMenu->setTitle( tr("Aggiungi"));
         addSubMenu->addAction( m_d->addPaymentAction );
         addSubMenu->addAction( m_d->addPPUAction );
         addSubMenu->addAction( m_d->addCommentAction );
         addSubMenu->addAction( m_d->addLSAction );
         addSubMenu->addAction( m_d->addTAMAction );
         menu->addMenu( addSubMenu );
-        QAction * delAction = new QAction( trUtf8("Elimina"), this);
+        QAction * delAction = new QAction( tr("Elimina"), this);
         connect( delAction, SIGNAL(triggered()), this, SLOT(removeItems()) );
         menu->addAction( delAction );
         menu->addSeparator();
-        QAction * attributesAction = new QAction( trUtf8("Etichette"), this);
+        QAction * attributesAction = new QAction( tr("Etichette"), this);
         connect( attributesAction, SIGNAL(triggered()), this, SLOT(editAttributes()) );
         menu->addAction( attributesAction );
         menu->addSeparator();
-        QAction * cutAction = new QAction( trUtf8("Taglia"), this);
+        QAction * cutAction = new QAction( tr("Taglia"), this);
         connect( cutAction, SIGNAL(triggered()), this, SLOT(cutToClipboard()) );
         menu->addAction( cutAction );
-        QAction * copyAction = new QAction( trUtf8("Copia"), this);
+        QAction * copyAction = new QAction( tr("Copia"), this);
         connect( copyAction, SIGNAL(triggered()), this, SLOT(copyToClipboard()) );
         menu->addAction( copyAction );
-        QAction * pasteAction = new QAction( trUtf8("Incolla"), this);
+        QAction * pasteAction = new QAction( tr("Incolla"), this);
         connect( pasteAction, SIGNAL(triggered()), this, SLOT(pasteFromClipboard()) );
         menu->addAction( pasteAction );
 
         menu->addSeparator();
-        QAction * resizeColToContent = new QAction( trUtf8("Ottimizza colonne"), this);
+        QAction * resizeColToContent = new QAction( tr("Ottimizza colonne"), this);
         connect( resizeColToContent, SIGNAL(triggered()), SLOT(resizeColumnsToContents()) );
         menu->addAction( resizeColToContent );
-    } else if( m_d->accountingTAMBill != NULL ){
+    } else if( m_d->accountingTAMBill != nullptr ){
         QMenu *addSubMenu=new QMenu(this);
-        addSubMenu->setTitle( trUtf8("Aggiungi"));
+        addSubMenu->setTitle( tr("Aggiungi"));
         addSubMenu->addAction( m_d->addTAMBillAction );
         addSubMenu->addAction( m_d->addTAMPPUAction );
         addSubMenu->addAction( m_d->addTAMCommentAction );
         menu->addMenu( addSubMenu );
-        QAction * delAction = new QAction( trUtf8("Elimina"), this);
+        QAction * delAction = new QAction( tr("Elimina"), this);
         connect( delAction, &QAction::triggered, this, &AccountingTreeGUI::removeItems );
         menu->addAction( delAction );
         menu->addSeparator();
-        QAction * attributesAction = new QAction( trUtf8("Etichette"), this);
+        QAction * attributesAction = new QAction( tr("Etichette"), this);
         connect( attributesAction, &QAction::triggered, this, &AccountingTreeGUI::editAttributes );
         menu->addAction( attributesAction );
         menu->addSeparator();
-        QAction * cutAction = new QAction( trUtf8("Taglia"), this);
+        QAction * cutAction = new QAction( tr("Taglia"), this);
         connect( cutAction, &QAction::triggered, this, &AccountingTreeGUI::cutToClipboard );
         menu->addAction( cutAction );
-        QAction * copyAction = new QAction( trUtf8("Copia"), this);
+        QAction * copyAction = new QAction( tr("Copia"), this);
         connect( copyAction, &QAction::triggered, this, &AccountingTreeGUI::copyToClipboard );
         menu->addAction( copyAction );
-        QAction * pasteAction = new QAction( trUtf8("Incolla"), this);
+        QAction * pasteAction = new QAction( tr("Incolla"), this);
         connect( pasteAction, &QAction::triggered, this, &AccountingTreeGUI::pasteFromClipboard );
         menu->addAction( pasteAction );
 
         menu->addSeparator();
-        QAction * resizeColToContent = new QAction( trUtf8("Ottimizza colonne"), this);
+        QAction * resizeColToContent = new QAction( tr("Ottimizza colonne"), this);
         connect( resizeColToContent, &QAction::triggered, this, &AccountingTreeGUI::resizeColumnsToContents );
         menu->addAction( resizeColToContent );
     }
@@ -210,11 +210,11 @@ void AccountingTreeGUI::accountingTreeViewCustomMenuRequested(QPoint pos){
 }
 
 void AccountingTreeGUI::copyToClipboard(){
-    if( m_d->accountingBill != NULL ){
+    if( m_d->accountingBill != nullptr ){
         if( m_d->ui->treeView->selectionModel() ){
             QCostClipboardData *data = new QCostClipboardData();
             const QCostClipboardData *clipData = qobject_cast<const QCostClipboardData *>(QApplication::clipboard()->mimeData());
-            if( clipData != NULL ){
+            if( clipData != nullptr ){
                 *data = *clipData;
             }
             QModelIndexList selRows = m_d->ui->treeView->selectionModel()->selectedRows();
@@ -225,11 +225,11 @@ void AccountingTreeGUI::copyToClipboard(){
             data->setCopiedAccountingBillItems( copiedMeasures, m_d->accountingBill, QCostClipboardData::Copy );
             QApplication::clipboard()->setMimeData( data );
         }
-    } else if( m_d->accountingTAMBill != NULL ){
+    } else if( m_d->accountingTAMBill != nullptr ){
         if( m_d->ui->treeView->selectionModel() ){
             QCostClipboardData *data = new QCostClipboardData();
             const QCostClipboardData *clipData = qobject_cast<const QCostClipboardData *>(QApplication::clipboard()->mimeData());
-            if( clipData != NULL ){
+            if( clipData != nullptr ){
                 *data = *clipData;
             }
             QModelIndexList selRows = m_d->ui->treeView->selectionModel()->selectedRows();
@@ -245,11 +245,11 @@ void AccountingTreeGUI::copyToClipboard(){
 }
 
 void AccountingTreeGUI::cutToClipboard(){
-    if( m_d->accountingBill != NULL ){
+    if( m_d->accountingBill != nullptr ){
         if( m_d->ui->treeView->selectionModel() ){
             QCostClipboardData *data = new QCostClipboardData();
             const QCostClipboardData *clipData = qobject_cast<const QCostClipboardData *>(QApplication::clipboard()->mimeData());
-            if( clipData != NULL ){
+            if( clipData != nullptr ){
                 *data = *clipData;
             }
             QModelIndexList selRows = m_d->ui->treeView->selectionModel()->selectedRows();
@@ -260,11 +260,11 @@ void AccountingTreeGUI::cutToClipboard(){
             data->setCopiedAccountingBillItems( copiedMeasures, m_d->accountingBill, QCostClipboardData::Cut );
             QApplication::clipboard()->setMimeData( data );
         }
-    } else if( m_d->accountingTAMBill != NULL ){
+    } else if( m_d->accountingTAMBill != nullptr ){
         if( m_d->ui->treeView->selectionModel() ){
             QCostClipboardData *data = new QCostClipboardData();
             const QCostClipboardData *clipData = qobject_cast<const QCostClipboardData *>(QApplication::clipboard()->mimeData());
-            if( clipData != NULL ){
+            if( clipData != nullptr ){
                 *data = *clipData;
             }
             QModelIndexList selRows = m_d->ui->treeView->selectionModel()->selectedRows();
@@ -279,13 +279,13 @@ void AccountingTreeGUI::cutToClipboard(){
 }
 
 void AccountingTreeGUI::pasteFromClipboard(){
-    if( m_d->accountingBill != NULL ){
+    if( m_d->accountingBill != nullptr ){
         if( m_d->ui->treeView->selectionModel() ){
             QClipboard * clp = QApplication::clipboard();
             const QMimeData * mimeData = clp->mimeData();
             const QCostClipboardData *data = qobject_cast<const QCostClipboardData *>( mimeData );
 
-            if( data != NULL ){
+            if( data != nullptr ){
                 QModelIndex currIndex = m_d->ui->treeView->currentIndex();
                 int currRow = m_d->accountingBill->rowCount( )-1;
                 QModelIndex currParent = QModelIndex();
@@ -294,16 +294,16 @@ void AccountingTreeGUI::pasteFromClipboard(){
                     currParent = currIndex.parent();
                 }
                 QList<AccountingBillItem *> itemsToCopy;
-                AccountingBill * itemsToCopyAccounting = NULL;
+                AccountingBill * itemsToCopyAccounting = nullptr;
                 QCostClipboardData::Mode mode;
                 data->getCopiedAccountingBillItems( &itemsToCopy, itemsToCopyAccounting, &mode);
-                if( itemsToCopyAccounting != NULL ){
+                if( itemsToCopyAccounting != nullptr ){
                     if( mode == QCostClipboardData::Copy ){
                         if( itemsToCopyAccounting->priceList() != m_d->accountingBill->priceList() ){
                             for( QList<AccountingBillItem *>::iterator i=itemsToCopy.begin(); i != itemsToCopy.end(); ++i ){
                                 if( (*i)->itemType() == AccountingBillItem::PPU ){
                                     PriceItem * pItem = m_d->accountingBill->priceList()->priceItemCode( (*i)->priceItem()->codeFull() );
-                                    if( pItem == NULL ){
+                                    if( pItem == nullptr ){
                                         pItem = m_d->accountingBill->priceList()->appendPriceItem();
                                         *pItem = *((*i)->priceItem());
                                     }
@@ -348,13 +348,13 @@ void AccountingTreeGUI::pasteFromClipboard(){
                 }
             }
         }
-    } else if( m_d->accountingTAMBill != NULL ){
+    } else if( m_d->accountingTAMBill != nullptr ){
         if( m_d->ui->treeView->selectionModel() ){
             QClipboard * clp = QApplication::clipboard();
             const QMimeData * mimeData = clp->mimeData();
             const QCostClipboardData *data = qobject_cast<const QCostClipboardData *>( mimeData );
 
-            if( data != NULL ){
+            if( data != nullptr ){
                 QModelIndex currIndex = m_d->ui->treeView->currentIndex();
                 int currRow = m_d->accountingTAMBill->rowCount( )-1;
                 QModelIndex currParent = QModelIndex();
@@ -363,16 +363,16 @@ void AccountingTreeGUI::pasteFromClipboard(){
                     currParent = currIndex.parent();
                 }
                 QList<AccountingTAMBillItem *> itemsToCopy;
-                AccountingTAMBill * itemsToCopyAccounting = NULL;
+                AccountingTAMBill * itemsToCopyAccounting = nullptr;
                 QCostClipboardData::Mode mode;
                 data->getCopiedAccountingTAMBillItems( &itemsToCopy, itemsToCopyAccounting, &mode);
-                if( itemsToCopyAccounting != NULL ){
+                if( itemsToCopyAccounting != nullptr ){
                     if( mode == QCostClipboardData::Copy ){
                         if( itemsToCopyAccounting->priceList() != m_d->accountingTAMBill->priceList() ){
                             for( QList<AccountingTAMBillItem *>::iterator i=itemsToCopy.begin(); i != itemsToCopy.end(); ++i ){
                                 if( (*i)->itemType() == AccountingTAMBillItem::PPU ){
                                     PriceItem * pItem = m_d->accountingTAMBill->priceList()->priceItemCode( (*i)->priceItem()->codeFull() );
-                                    if( pItem == NULL ){
+                                    if( pItem == nullptr ){
                                         pItem = m_d->accountingTAMBill->priceList()->appendPriceItem();
                                         *pItem = *((*i)->priceItem());
                                     }
@@ -437,7 +437,7 @@ void AccountingTreeGUI::editAttributes(){
 #include "editpriceitemdialog.h"
 
 void AccountingTreeGUI::editAccountingData( const QModelIndex & index ){
-    if( m_d->accountingBill != NULL ){
+    if( m_d->accountingBill != nullptr ){
         if( m_d->accountingBill->item( index )->itemType() == AccountingBillItem::PPU ){
             if( index.column() == 4 ){
                 QDate d = m_d->accountingBill->item( index )->date();
@@ -446,10 +446,10 @@ void AccountingTreeGUI::editAccountingData( const QModelIndex & index ){
                     m_d->accountingBill->item( index )->setDate( d );
                 }
             } else if( index.column() >= 1 || index.column() <= 3 ){
-                if( m_d->accountingBill->priceList() == NULL ){
+                if( m_d->accountingBill->priceList() == nullptr ){
                     QMessageBox msgBox;
-                    msgBox.setText( trUtf8("Al libretto non è associato alcun elenco prezzi") );
-                    msgBox.setInformativeText(trUtf8("Prima di associare un prezzo ad una riga è necessario aver impostato l'elenco prezzi del computo.") );
+                    msgBox.setText( tr("Al libretto non è associato alcun elenco prezzi") );
+                    msgBox.setInformativeText(tr("Prima di associare un prezzo ad una riga è necessario aver impostato l'elenco prezzi del computo.") );
                     msgBox.setStandardButtons(QMessageBox::Ok );
                     msgBox.exec();
                 } else {
@@ -462,7 +462,7 @@ void AccountingTreeGUI::editAccountingData( const QModelIndex & index ){
         }
     }
 
-    if( m_d->accountingTAMBill != NULL ){
+    if( m_d->accountingTAMBill != nullptr ){
         if( index.column() == 4 ){
             if( m_d->accountingTAMBill->item(index)->itemType() == AccountingTAMBillItem::PPU ){
                 QDate d = m_d->accountingTAMBill->item( index )->startDate();
@@ -483,10 +483,10 @@ void AccountingTreeGUI::editAccountingData( const QModelIndex & index ){
                    (index.column() == 2) ||
                    (index.column() == 3) ){
             if( m_d->accountingTAMBill->item(index)->itemType() == AccountingTAMBillItem::PPU ){
-                if( m_d->accountingTAMBill->priceList() == NULL ){
+                if( m_d->accountingTAMBill->priceList() == nullptr ){
                     QMessageBox msgBox;
-                    msgBox.setText( trUtf8("Al computo non è associato alcun elenco prezzi") );
-                    msgBox.setInformativeText(trUtf8("Prima di associare un prezzo ad una riga è necessario aver impostato l'elenco prezzi del computo.") );
+                    msgBox.setText( tr("Al computo non è associato alcun elenco prezzi") );
+                    msgBox.setInformativeText(tr("Prima di associare un prezzo ad una riga è necessario aver impostato l'elenco prezzi del computo.") );
                     msgBox.setStandardButtons(QMessageBox::Ok );
                     msgBox.exec();
                 } else {
@@ -505,29 +505,29 @@ void AccountingTreeGUI::editAccountingData( const QModelIndex & index ){
 
 AccountingBillItem *AccountingTreeGUI::currentAccountingBill() {
     if( m_d->ui->treeView->selectionModel() ){
-        if( m_d->accountingBill != NULL ){
+        if( m_d->accountingBill != nullptr ){
             if( m_d->ui->treeView->selectionModel()->currentIndex().isValid() ){
                 return m_d->accountingBill->item( m_d->ui->treeView->selectionModel()->currentIndex() );
             }
         }
     }
-    return NULL;
+    return nullptr;
 }
 
 AccountingTAMBillItem *AccountingTreeGUI::currentAccountingTAMBill() {
     if( m_d->ui->treeView->selectionModel() ){
-        if( m_d->accountingBill != NULL ){
+        if( m_d->accountingBill != nullptr ){
             if( m_d->ui->treeView->selectionModel()->currentIndex().isValid() ){
                 return m_d->accountingTAMBill->item( m_d->ui->treeView->selectionModel()->currentIndex() );
             }
         }
     }
-    return NULL;
+    return nullptr;
 }
 
 void AccountingTreeGUI::setAccountingBill(AccountingBill *b ) {
     if( m_d->accountingBill != b ){
-        if( m_d->accountingTAMBill != NULL ){
+        if( m_d->accountingTAMBill != nullptr ){
             disconnect( m_d->accountingTAMBill, &AccountingTAMBill::totalAmountToDiscountChanged, m_d->ui->totalAmountToDiscountLineEdit, &QLineEdit::setText );
             disconnect( m_d->accountingTAMBill, &AccountingTAMBill::amountNotToDiscountChanged, m_d->ui->amountNotToDiscountLineEdit, &QLineEdit::setText );
             disconnect( m_d->accountingTAMBill, &AccountingTAMBill::totalAmountChanged, m_d->ui->totalAmountLineEdit, &QLineEdit::setText );
@@ -535,7 +535,7 @@ void AccountingTreeGUI::setAccountingBill(AccountingBill *b ) {
             disconnect( m_d->ui->priceListComboBox, static_cast<void(QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this, &AccountingTreeGUI::setPriceList );
             disconnect( m_d->ui->currentPriceDataSetSpinBox, static_cast<void(QSpinBox::*)(int)>(&QSpinBox::valueChanged), this, &AccountingTreeGUI::setPriceDatSet );
         }
-        if( m_d->accountingBill != NULL ){
+        if( m_d->accountingBill != nullptr ){
             disconnect( m_d->accountingBill, &AccountingBill::totalAmountToDiscountChanged, m_d->ui->totalAmountToDiscountLineEdit, &QLineEdit::setText );
             disconnect( m_d->accountingBill, &AccountingBill::amountNotToDiscountChanged, m_d->ui->amountNotToDiscountLineEdit, &QLineEdit::setText );
             disconnect( m_d->accountingBill, &AccountingBill::totalAmountChanged, m_d->ui->totalAmountLineEdit, &QLineEdit::setText );
@@ -555,10 +555,10 @@ void AccountingTreeGUI::setAccountingBill(AccountingBill *b ) {
         }
 
         m_d->accountingBill = b;
-        m_d->accountingTAMBill = NULL;
+        m_d->accountingTAMBill = nullptr;
 
         m_d->ui->treeView->setModel( b );
-        if( m_d->accountingBill != NULL ){
+        if( m_d->accountingBill != nullptr ){
             m_d->ui->totalAmountLineEdit->setText( m_d->accountingBill->totalAmountStr() );
             m_d->ui->totalAmountToDiscountLineEdit->setText( m_d->accountingBill->totalAmountToDiscountStr() );
             m_d->ui->amountNotToDiscountLineEdit->setText( m_d->accountingBill->amountNotToDiscountStr() );
@@ -584,7 +584,7 @@ void AccountingTreeGUI::setAccountingBill(AccountingBill *b ) {
 
 void AccountingTreeGUI::setAccountingTAMBill(AccountingTAMBill *b ) {
     if( m_d->accountingTAMBill != b ){
-        if( m_d->accountingTAMBill != NULL ){
+        if( m_d->accountingTAMBill != nullptr ){
             disconnect( m_d->accountingTAMBill, &AccountingTAMBill::totalAmountToDiscountChanged, m_d->ui->totalAmountToDiscountLineEdit, &QLineEdit::setText );
             disconnect( m_d->accountingTAMBill, &AccountingTAMBill::amountNotToDiscountChanged, m_d->ui->amountNotToDiscountLineEdit, &QLineEdit::setText );
             disconnect( m_d->accountingTAMBill, &AccountingTAMBill::totalAmountChanged, m_d->ui->totalAmountLineEdit, &QLineEdit::setText );
@@ -592,7 +592,7 @@ void AccountingTreeGUI::setAccountingTAMBill(AccountingTAMBill *b ) {
             disconnect( m_d->ui->priceListComboBox, static_cast<void(QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this, &AccountingTreeGUI::setPriceList );
             disconnect( m_d->ui->currentPriceDataSetSpinBox, static_cast<void(QSpinBox::*)(int)>(&QSpinBox::valueChanged), this, &AccountingTreeGUI::setPriceDatSet );
         }
-        if( m_d->accountingBill != NULL ){
+        if( m_d->accountingBill != nullptr ){
             disconnect( m_d->accountingBill, &AccountingBill::totalAmountToDiscountChanged, m_d->ui->totalAmountToDiscountLineEdit, &QLineEdit::setText );
             disconnect( m_d->accountingBill, &AccountingBill::amountNotToDiscountChanged, m_d->ui->amountNotToDiscountLineEdit, &QLineEdit::setText );
             disconnect( m_d->accountingBill, &AccountingBill::totalAmountChanged, m_d->ui->totalAmountLineEdit, &QLineEdit::setText );
@@ -614,10 +614,10 @@ void AccountingTreeGUI::setAccountingTAMBill(AccountingTAMBill *b ) {
         }
 
         m_d->accountingTAMBill = b;
-        m_d->accountingBill = NULL;
+        m_d->accountingBill = nullptr;
         m_d->ui->treeView->setModel( b );
 
-        if( m_d->accountingTAMBill != NULL ){
+        if( m_d->accountingTAMBill != nullptr ){
             m_d->ui->totalAmountLineEdit->setText( m_d->accountingTAMBill->totalAmountStr() );
             m_d->ui->amountNotToDiscountLineEdit->setText( m_d->accountingTAMBill->amountNotToDiscountStr() );
             m_d->ui->totalAmountToDiscountLineEdit->setText( m_d->accountingTAMBill->totalAmountToDiscountStr() );
@@ -642,8 +642,8 @@ void AccountingTreeGUI::setAccountingTAMBill(AccountingTAMBill *b ) {
 }
 
 void AccountingTreeGUI::clear(){
-    setAccountingBill(NULL);
-    setAccountingTAMBill(NULL);
+    setAccountingBill(nullptr);
+    setAccountingTAMBill(nullptr);
 }
 
 void AccountingTreeGUI::removeItems(){
@@ -659,9 +659,9 @@ void AccountingTreeGUI::removeItems(){
                 }
             }
             for( int i=selRowsEff.size() - 1; i >= 0; --i){
-                if( m_d->accountingBill != NULL ){
+                if( m_d->accountingBill != nullptr ){
                     m_d->accountingBill->removeItems( selRowsEff.at(i).row(), 1, selRowsEff.at(i).parent() );
-                } else if( m_d->accountingTAMBill != NULL ){
+                } else if( m_d->accountingTAMBill != nullptr ){
                     m_d->accountingTAMBill->removeItems( selRowsEff.at(i).row(), 1, selRowsEff.at(i).parent() );
                 }
             }
@@ -671,20 +671,20 @@ void AccountingTreeGUI::removeItems(){
 
 void AccountingTreeGUI::changeCurrentItem(const QModelIndex &currentIndex  ) {
     if( currentIndex.isValid() ){
-        if( m_d->accountingBill != NULL ){
+        if( m_d->accountingBill != nullptr ){
             emit currentBillItemChanged( m_d->accountingBill->item( currentIndex ));
             return;
         }
-        if( m_d->accountingTAMBill != NULL ){
+        if( m_d->accountingTAMBill != nullptr ){
             emit currentTAMBillItemChanged( m_d->accountingTAMBill->item( currentIndex ));
             return;
         }
     }
-    emit currentBillItemChanged( NULL );
+    emit currentBillItemChanged( nullptr );
 }
 
 void AccountingTreeGUI::updateActiveActions() {
-    if( m_d->accountingBill != NULL ){
+    if( m_d->accountingBill != nullptr ){
         if( m_d->ui->treeView->selectionModel() ){
             AccountingBillItem * currItem = m_d->accountingBill->item( m_d->ui->treeView->selectionModel()->currentIndex() );
             if( currItem->itemType() == AccountingBillItem::Root ){
@@ -716,7 +716,7 @@ void AccountingTreeGUI::updateActiveActions() {
             m_d->addTAMAction->setEnabled( false );
             m_d->addPaymentAction->setEnabled( false );
         }
-    } else if( m_d->accountingTAMBill != NULL ){
+    } else if( m_d->accountingTAMBill != nullptr ){
         AccountingTAMBillItem * currItem = m_d->accountingTAMBill->item( m_d->ui->treeView->selectionModel()->currentIndex() );
         if( currItem->itemType() == AccountingTAMBillItem::Root ){
             m_d->addTAMBillAction->setEnabled( true );
@@ -742,21 +742,21 @@ void AccountingTreeGUI::updateActiveActions() {
 void AccountingTreeGUI::setPriceList() {
     QVariant v =  m_d->ui->priceListComboBox->itemData( m_d->ui->priceListComboBox->currentIndex() );
     PriceList * currentPriceList = (PriceList *) v.value<void *>();
-    if( m_d->accountingBill != NULL ){
-        if( m_d->accountingBill->priceList() != NULL && m_d->accountingBill->rowCount() > 0 ){
+    if( m_d->accountingBill != nullptr ){
+        if( m_d->accountingBill->priceList() != nullptr && m_d->accountingBill->rowCount() > 0 ){
             AccountingSetPriceListModeGUI modeGUI( this );
             AccountingBill::SetPriceListMode plMode = modeGUI.returnValue();
             m_d->accountingBill->setPriceList( currentPriceList, plMode );
         } else {
             m_d->accountingBill->setPriceList( currentPriceList );
         }
-        if( m_d->accountingBill->priceList() != NULL ){
+        if( m_d->accountingBill->priceList() != nullptr ){
             m_d->ui->currentPriceDataSetSpinBox->setMaximum( m_d->accountingBill->priceList()->priceDataSetCount() );
         } else {
             m_d->ui->currentPriceDataSetSpinBox->setMaximum( 1 );
         }
-    } else if( m_d->accountingTAMBill != NULL ){
-        if( (m_d->accountingTAMBill->priceList() != NULL) &&
+    } else if( m_d->accountingTAMBill != nullptr ){
+        if( (m_d->accountingTAMBill->priceList() != nullptr) &&
                 (m_d->accountingTAMBill->rowCount() > 0) ){
             AccountingSetPriceListModeGUI modeGUI( this );
             AccountingTAMBill::SetPriceListMode plMode = modeGUI.returnTAMValue();
@@ -764,7 +764,7 @@ void AccountingTreeGUI::setPriceList() {
         } else {
             m_d->accountingTAMBill->setPriceList( currentPriceList );
         }
-        if( m_d->accountingTAMBill->priceList() != NULL ){
+        if( m_d->accountingTAMBill->priceList() != nullptr ){
             m_d->ui->currentPriceDataSetSpinBox->setMaximum( m_d->accountingTAMBill->priceList()->priceDataSetCount() );
         } else {
             m_d->ui->currentPriceDataSetSpinBox->setMaximum( 1 );
@@ -773,7 +773,7 @@ void AccountingTreeGUI::setPriceList() {
 }
 
 void AccountingTreeGUI::setPriceDatSet() {
-    if( m_d->accountingBill != NULL ){
+    if( m_d->accountingBill != nullptr ){
         if( m_d->accountingBill->priceList() ){
             if( m_d->ui->currentPriceDataSetSpinBox->value() < 1 ){
                 m_d->ui->currentPriceDataSetSpinBox->setValue( 1 );
@@ -783,7 +783,7 @@ void AccountingTreeGUI::setPriceDatSet() {
                 m_d->accountingBill->setPriceDataSet( m_d->ui->currentPriceDataSetSpinBox->value()-1 );
             }
         }
-    } else if( m_d->accountingTAMBill != NULL ){
+    } else if( m_d->accountingTAMBill != nullptr ){
         if( m_d->accountingTAMBill->priceList() ){
             if( m_d->ui->currentPriceDataSetSpinBox->value() < 1 ){
                 m_d->ui->currentPriceDataSetSpinBox->setValue( 1 );
@@ -813,7 +813,7 @@ void AccountingTreeGUI::showEvent(QShowEvent *event) {
 
 void AccountingTreeGUI::populatePriceListComboBox(){
     m_d->ui->priceListComboBox->clear();
-    m_d->ui->priceListComboBox->addItem( QString("---"), qVariantFromValue((void *) NULL ));
+    m_d->ui->priceListComboBox->addItem( QString("---"), qVariantFromValue((void *) nullptr ));
     for( int i=0; i < m_d->project->priceListCount(); ++i){
         QString n;
         if( m_d->project->priceList(i) ){
@@ -824,13 +824,13 @@ void AccountingTreeGUI::populatePriceListComboBox(){
 }
 
 void AccountingTreeGUI::setPriceListComboBox() {
-    if( m_d->accountingBill != NULL ){
+    if( m_d->accountingBill != nullptr ){
         int i = m_d->ui->priceListComboBox->findData( qVariantFromValue((void *) m_d->accountingBill->priceList() ));
         if( i < 0 ){
             i = 0;
         }
         m_d->ui->priceListComboBox->setCurrentIndex( i );
-    } else if( m_d->accountingTAMBill != NULL ){
+    } else if( m_d->accountingTAMBill != nullptr ){
         int i = m_d->ui->priceListComboBox->findData( qVariantFromValue((void *) m_d->accountingTAMBill->priceList() ));
         if( i < 0 ){
             i = 0;
@@ -840,12 +840,12 @@ void AccountingTreeGUI::setPriceListComboBox() {
 }
 
 void AccountingTreeGUI::setCurrentPriceDataSetSpinBox() {
-    if( m_d->accountingBill != NULL ){
+    if( m_d->accountingBill != nullptr ){
         if( m_d->accountingBill->priceList() ){
             m_d->ui->currentPriceDataSetSpinBox->setMaximum( m_d->accountingBill->priceList()->priceDataSetCount() );
         }
         m_d->ui->currentPriceDataSetSpinBox->setValue( m_d->accountingBill->priceDataSet()+1 );
-    } else if( m_d->accountingTAMBill != NULL ){
+    } else if( m_d->accountingTAMBill != nullptr ){
         if( m_d->accountingTAMBill->priceList() ){
             m_d->ui->currentPriceDataSetSpinBox->setMaximum( m_d->accountingTAMBill->priceList()->priceDataSetCount() );
         }
@@ -865,7 +865,7 @@ void AccountingTreeGUI::resizeColumnsToContents(){
 }
 
 void AccountingTreeGUI::addItems(){
-    if( m_d->accountingBill != NULL ){
+    if( m_d->accountingBill != nullptr ){
         if( m_d->ui->treeView->selectionModel() ){
             QModelIndexList rowListSel = m_d->ui->treeView->selectionModel()->selectedRows();
             if( rowListSel.size() > 0 ){
@@ -954,7 +954,7 @@ void AccountingTreeGUI::addItems(){
                 }
             }
         }
-    } else if( m_d->accountingTAMBill != NULL ){
+    } else if( m_d->accountingTAMBill != nullptr ){
         if( m_d->ui->treeView->selectionModel() ){
             QModelIndexList rowListSel = m_d->ui->treeView->selectionModel()->selectedRows();
             if( rowListSel.size() > 0 ){

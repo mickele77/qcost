@@ -27,9 +27,9 @@
 
 class PriceFieldData{
 public:
-    PriceFieldData( const QString &np = QObject::trUtf8( "Prezzo"),
-                    const QString &na = QObject::trUtf8( "Importo"),
-                    const QString &um = QObject::trUtf8( "€"),
+    PriceFieldData( const QString &np = QObject::tr( "Prezzo"),
+                    const QString &na = QObject::tr( "Importo"),
+                    const QString &um = QObject::tr( "€"),
                     int p = 2,
                     PriceFieldModel::ApplyFormula af = PriceFieldModel::ToNone,
                     const QString &f = QString(),
@@ -184,7 +184,7 @@ public:
             writer->writeAttribute( "applyFormula", "false" );
         }
         QString formulaToWrite = formula;
-        if( parser != NULL ){
+        if( parser != nullptr ){
             formulaToWrite.replace( parser->decimalSeparator(), ".");
         }
         writer->writeAttribute( "formula", formulaToWrite );
@@ -201,7 +201,7 @@ public:
         writer->writeAttribute( "precision", QString::number( precision ) );
         writer->writeAttribute( "applyFormula", fromApplyFormulaToQString( applyFormula ) );
         QString formulaToWrite = formula;
-        if( parser != NULL ){
+        if( parser != nullptr ){
             formulaToWrite.replace( parser->decimalSeparator(), ".");
         }
         writer->writeAttribute( "formula", formulaToWrite );
@@ -275,7 +275,7 @@ public:
     }
 
     QString	toString(double i, char f = 'g', int prec = 6) const{
-        if( parser == NULL ){
+        if( parser == nullptr ){
             return QString::number( i, f, prec );
         } else {
             return parser->toString( i, f, prec );
@@ -308,18 +308,18 @@ int PriceFieldModelPrivate::fieldTypeCol = 8;
 QList<QPair<PriceFieldModel::ApplyFormula, QString> > PriceFieldModel::applyFormulaNames() {
     QList< QPair<PriceFieldModel::ApplyFormula, QString> > ret;
     ret.append(qMakePair( ToNone, QString("")));
-    ret.append(qMakePair( ToPriceItems, trUtf8("A voci prezzo")));
-    ret.append(qMakePair( ToBillItems, trUtf8("A voci computo")));
+    ret.append(qMakePair( ToPriceItems, tr("A voci prezzo")));
+    ret.append(qMakePair( ToBillItems, tr("A voci computo")));
     return ret;
 }
 
 QList<QPair<PriceFieldModel::FieldType, QString> > PriceFieldModel::standardFieldTypeNames() {
     QList< QPair<PriceFieldModel::FieldType, QString> > ret;
     ret.append(qMakePair( PriceNone, QString("")));
-    ret.append(qMakePair( PriceTotal, trUtf8("Costo Unitario")));
-    ret.append(qMakePair( PriceHuman, trUtf8("Costo M.O.")));
-    ret.append(qMakePair( PriceHumanNet, trUtf8("Costo M.O. netto")));
-    ret.append(qMakePair( PriceNoHumanNet, trUtf8("Costo extra M.O.")));
+    ret.append(qMakePair( PriceTotal, tr("Costo Unitario")));
+    ret.append(qMakePair( PriceHuman, tr("Costo M.O.")));
+    ret.append(qMakePair( PriceHumanNet, tr("Costo M.O. netto")));
+    ret.append(qMakePair( PriceNoHumanNet, tr("Costo extra M.O.")));
     return ret;
 }
 
@@ -330,7 +330,7 @@ int PriceFieldModel::applyFormulaCol() {
 QList< QPair<int, QString> > PriceFieldModel::multiplyByNames( int currentPF ){
     QList< QPair<int, QString> > ret;
     ret << qMakePair( -2, QString("") );
-    ret << qMakePair( -1, trUtf8("Quantità") );
+    ret << qMakePair( -1, tr("Quantità") );
     for( int i=0; i<m_d->fieldsList.size(); ++i ){
         if( i != currentPF && m_d->fieldsList.at(i)->multiplyBy != currentPF ){
             ret << qMakePair( i, QString::number(i+1) + " - " + m_d->fieldsList.at(i)->amountName );
@@ -570,33 +570,33 @@ bool PriceFieldModel::setFieldType(int pf, PriceFieldModel::FieldType newVal, bo
 
         if( resetField ){
             if( newVal == PriceTotal ){
-                setPriceName( pf, trUtf8("Costo Unitario") );
-                setAmountName( pf, trUtf8("Importo") );
-                setUnitMeasure( pf, trUtf8("€"));
+                setPriceName( pf, tr("Costo Unitario") );
+                setAmountName( pf, tr("Importo") );
+                setUnitMeasure( pf, tr("€"));
                 setPrecision( pf, 2 );
                 setApplyFormula( pf, PriceFieldModel::ToNone );
                 setFormula( pf, QString() );
             }
             if( newVal == PriceHuman){
-                setPriceName( pf, trUtf8("Costo Unitario M.O.") );
-                setAmountName( pf, trUtf8("Importo M.O.") );
-                setUnitMeasure( pf, trUtf8("€"));
+                setPriceName( pf, tr("Costo Unitario M.O.") );
+                setAmountName( pf, tr("Importo M.O.") );
+                setUnitMeasure( pf, tr("€"));
                 setPrecision( pf, 2 );
                 setApplyFormula( pf, PriceFieldModel::ToNone );
                 setFormula( pf, QString() );
             }
             if( newVal == PriceHumanNet ){
-                setPriceName( pf, trUtf8("Costo Unitario Netto M.O.") );
-                setAmountName( pf, trUtf8("Importo Netto M.O.") );
-                setUnitMeasure( pf, trUtf8("€"));
+                setPriceName( pf, tr("Costo Unitario Netto M.O.") );
+                setAmountName( pf, tr("Importo Netto M.O.") );
+                setUnitMeasure( pf, tr("€"));
                 setPrecision( pf, 2 );
                 setApplyFormula( pf, PriceFieldModel::ToPriceItems );
                 setFormula( pf, QString() );
             }
             if( newVal == PriceNoHumanNet ){
-                setPriceName( pf, trUtf8("Costo Unitario senza M.O.") );
-                setAmountName( pf, trUtf8("Importo senza M.O.") );
-                setUnitMeasure( pf, trUtf8("€"));
+                setPriceName( pf, tr("Costo Unitario senza M.O.") );
+                setAmountName( pf, tr("Importo senza M.O.") );
+                setUnitMeasure( pf, tr("€"));
                 setPrecision( pf, 2 );
                 setApplyFormula( pf, PriceFieldModel::ToPriceItems );
                 setFormula( pf, QString() );
@@ -721,23 +721,23 @@ QVariant PriceFieldModel::headerData(int section, Qt::Orientation orientation, i
 
     if (orientation == Qt::Horizontal ) {
         if( section == m_d->priceNameCol ) {
-            return trUtf8("Nome Quantità Unitaria");
+            return tr("Nome Quantità Unitaria");
         } else if( section == m_d->amountNameCol ) {
-            return trUtf8("Nome Quantità");
+            return tr("Nome Quantità");
         } else if( section == m_d->unitMeasureCol ) {
-            return trUtf8("Unità Misura");
+            return tr("Unità Misura");
         } else if( section == m_d->precisionCol ) {
-            return trUtf8("Precisione");
+            return tr("Precisione");
         } else if( section == m_d->formulaCol ) {
-            return trUtf8("Formula");
+            return tr("Formula");
         } else if( section == m_d->isPercentageCol ) {
-            return trUtf8("Percentuale");
+            return tr("Percentuale");
         } else if( section == m_d->applyFormulaCol ) {
-            return trUtf8("Applica Formula");
+            return tr("Applica Formula");
         } else if( section == m_d->multiplyByCol ) {
-            return trUtf8("Moltiplica per");
+            return tr("Moltiplica per");
         } else if( section == m_d->fieldTypeCol ) {
-            return trUtf8("Tipo Standard");
+            return tr("Tipo Standard");
         }
     } else if( orientation == Qt::Vertical ){
         return QVariant( section + 1 );
@@ -750,7 +750,7 @@ int PriceFieldModel::rowCount(const QModelIndex &) const {
 }
 
 int PriceFieldModel::columnCount(const QModelIndex &) const {
-    return 8;
+    return 9;
 }
 
 Qt::ItemFlags PriceFieldModel::flags(const QModelIndex &index) const {
@@ -1027,7 +1027,7 @@ void PriceFieldModel::loadFromXml10(int pf, const QXmlStreamAttributes &attrs) {
     }
     if( attrs.hasAttribute( "formula" ) ){
         QString f = attrs.value( "formula" ).toString();
-        if( m_d->parser != NULL ){
+        if( m_d->parser != nullptr ){
             f.replace( ".", m_d->parser->decimalSeparator() );
         }
         setFormula( pf, f );
@@ -1058,7 +1058,7 @@ void PriceFieldModel::loadFromXml20(int pf, const QXmlStreamAttributes &attrs) {
     }
     if( attrs.hasAttribute( "formula" ) ){
         QString f = attrs.value( "formula" ).toString();
-        if( m_d->parser != NULL ){
+        if( m_d->parser != nullptr ){
             f.replace( ".", m_d->parser->decimalSeparator() );
         }
         setFormula( pf, f );

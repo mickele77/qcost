@@ -31,7 +31,7 @@
 
 class AccountingLSBillsPrivate{
 public:
-    AccountingLSBillsPrivate( AccountingLSBills * lsBills, PriceFieldModel * pfm, MathParser * prs = NULL ):
+    AccountingLSBillsPrivate( AccountingLSBills * lsBills, PriceFieldModel * pfm, MathParser * prs = nullptr ):
         priceFieldModel(pfm),
         attributesModel( new AttributesModel( lsBills, prs, pfm ) ),
         parser(prs),
@@ -45,7 +45,7 @@ public:
     }
 
     QString	toString(double i, char f = 'g', int prec = 6) const{
-        if( parser != NULL ){
+        if( parser != nullptr ){
             return parser->toString( i, f, prec );
         } else {
             return QString::number( i, f, prec );
@@ -90,7 +90,7 @@ AccountingLSBill *AccountingLSBills::bill(int i) {
     if( i > -1 && i < m_d->billContainer.size() ){
         return m_d->billContainer[i];
     }
-    return NULL;
+    return nullptr;
 }
 
 AccountingLSBill *AccountingLSBills::billId(unsigned int dd) {
@@ -99,14 +99,14 @@ AccountingLSBill *AccountingLSBills::billId(unsigned int dd) {
             return (*i);
         }
     }
-    return NULL;
+    return nullptr;
 }
 
 ProjectItem *AccountingLSBills::child(int number) {
     if( number >= 0 && number < m_d->billContainer.size() ){
         return m_d->billContainer[number];
     }
-    return NULL;
+    return nullptr;
 }
 
 int AccountingLSBills::childCount() const {
@@ -133,13 +133,13 @@ bool AccountingLSBills::insertChildren(int position, int count) {
 
     for (int row = 0; row < count; ++row) {
         QString purposedBillCode = QString("%1 %2").arg( "C", QString::number(m_d->nextId));
-        QString purposedBillName = QString("%1 %2").arg(trUtf8("Categoria"), QString::number(m_d->nextId++));
+        QString purposedBillName = QString("%1 %2").arg(tr("Categoria"), QString::number(m_d->nextId++));
         QList<AccountingLSBill *>::iterator i = m_d->billContainer.begin();
         while( i != m_d->billContainer.end() ){
             if( ((*i)->code().toUpper() == purposedBillCode.toUpper()) ||
                     ((*i)->name().toUpper() == purposedBillName.toUpper()) ){
                 purposedBillCode = QString("%1 %2").arg( "C", QString::number(m_d->nextId));
-                purposedBillName = QString("%1 %2").arg(trUtf8("Categoria"), QString::number(m_d->nextId++));
+                purposedBillName = QString("%1 %2").arg(tr("Categoria"), QString::number(m_d->nextId++));
                 i = m_d->billContainer.begin();
             } else {
                 i++;
@@ -190,7 +190,7 @@ Qt::ItemFlags AccountingLSBills::flags() const {
 }
 
 QVariant AccountingLSBills::data() const {
-    return QVariant( QObject::trUtf8("Categorie a corpo") );
+    return QVariant( QObject::tr("Categorie a corpo") );
 }
 
 bool AccountingLSBills::setData(const QVariant &value) {
@@ -287,7 +287,7 @@ AttributesModel *AccountingLSBills::attributesModel() {
 }
 
 void AccountingLSBills::activateAttributeModel() {
-    if( m_d->attributesModel != NULL ){
+    if( m_d->attributesModel != nullptr ){
         m_d->attributesModel->setBill( this );
     }
 }

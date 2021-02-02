@@ -36,7 +36,7 @@ public:
     explicit AccountingTAMBillGUI( QMap<PriceListDBWidget::ImportOptions, bool> *EPAImpOptions,
                                    QString * EPAFileName,
                                    MathParser *prs, AccountingTAMBill *b, Project *p,
-                                   QString *wordProcessorFile = NULL, QWidget *parent = 0);
+                                   QString *wordProcessorFile = nullptr, QWidget *parent = 0);
 
     ~AccountingTAMBillGUI();
 
@@ -44,7 +44,7 @@ public:
 
 private slots:
     void setBillItem( AccountingTAMBillItem * );
-    void setBillItemNULL();
+    void setBillItemnullptr();
     void updateGUI();
 private:
     AccountingTAMBillGUIPrivate * m_d;

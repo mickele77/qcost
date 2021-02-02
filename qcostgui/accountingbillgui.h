@@ -36,7 +36,7 @@ public:
     explicit AccountingBillGUI( QMap<PriceListDBWidget::ImportOptions, bool> *EPAImpOptions,
                                 QString * EPAFileName,
                                 MathParser *prs, AccountingBill *b, Project *p,
-                                QString *wordProcessorFile = NULL,
+                                QString *wordProcessorFile = nullptr,
                                 QWidget *parent = 0 );
 
     ~AccountingBillGUI();
@@ -45,7 +45,7 @@ public:
 
 private slots:
     void setAccountingItem( AccountingBillItem * );
-    void setAccountingMeasureNULL();
+    void setAccountingMeasurenullptr();
     void updateAccountingMeasureGUI();
 private:
     AccountingBillGUIPrivate * m_d;

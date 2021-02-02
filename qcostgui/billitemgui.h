@@ -44,8 +44,8 @@ public:
 
 public slots:
     void setBillItem( BillItem * b );
-    void setBillItemNULL();
-    void setBillNULL();
+    void setBillItemnullptr();
+    void setBillnullptr();
 
 private slots:
     void connectPriceItem(PriceItem *oldPriceItem, PriceItem *newPriceItem);

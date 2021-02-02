@@ -37,7 +37,7 @@ public:
 
 private slots:
     void setDescription();
-    void setBillNULL();
+    void setBillnullptr();
 
     // aggiorna etichette e importi di tutti i campi prezzo
     void updateAmountsNameValue();

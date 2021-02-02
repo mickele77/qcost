@@ -50,7 +50,7 @@ ProjectItem *ProjectPriceListParentItem::child(int number) {
     if( number >= 0 && number < m_d->priceListContainer.size() ){
         return m_d->priceListContainer[number];
     }
-    return NULL;
+    return nullptr;
 }
 
 int ProjectPriceListParentItem::childCount() const {
@@ -76,18 +76,18 @@ bool ProjectPriceListParentItem::insertChildren(int position, int count) {
     emit beginInsertChildren( this, position, position+count-1);
 
     for (int row = 0; row < count; ++row) {
-        QString purposedPLName = trUtf8("Prezzario %1").arg(m_d->nextId++);
+        QString purposedPLName = tr("Prezzario %1").arg(m_d->nextId++);
         QList<PriceList *>::iterator i = m_d->priceListContainer.begin();
         while( i != m_d->priceListContainer.end() ){
             if( (*i)->name().toUpper() == purposedPLName.toUpper() ){
-                purposedPLName = trUtf8("Prezzario %1").arg(m_d->nextId++);
+                purposedPLName = tr("Prezzario %1").arg(m_d->nextId++);
                 i = m_d->priceListContainer.begin();
             } else {
                 i++;
             }
         }
         PriceList *item = new PriceList( purposedPLName, m_d->priceFieldsModel, this, m_d->parser );
-        while( priceListId(item->id()) != NULL ){
+        while( priceListId(item->id()) != nullptr ){
             item->nextId();
         }
         connect( item, &PriceList::removePriceItemSignal, this, &ProjectPriceListParentItem::emitRemovePriceItemSignal );
@@ -135,7 +135,7 @@ Qt::ItemFlags ProjectPriceListParentItem::flags() const {
 }
 
 QVariant ProjectPriceListParentItem::data() const {
-    return QVariant( QObject::trUtf8("Prezzari") );
+    return QVariant( QObject::tr("Prezzari") );
 }
 
 bool ProjectPriceListParentItem::setData(const QVariant &value) {
@@ -151,7 +151,7 @@ PriceList *ProjectPriceListParentItem::priceList(int i) {
     if( i > -1 && i < m_d->priceListContainer.size() ){
         return m_d->priceListContainer[i];
     }
-    return NULL;
+    return nullptr;
 }
 
 PriceList *ProjectPriceListParentItem::priceListId(unsigned int dd) {
@@ -160,7 +160,7 @@ PriceList *ProjectPriceListParentItem::priceListId(unsigned int dd) {
             return (*i);
         }
     }
-    return NULL;
+    return nullptr;
 }
 
 void ProjectPriceListParentItem::writeXml(QXmlStreamWriter *writer, const QString & vers ) const {

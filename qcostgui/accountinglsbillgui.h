@@ -36,7 +36,7 @@ public:
     explicit AccountingLSBillGUI( QMap<PriceListDBWidget::ImportOptions, bool> *EPAImpOptions,
                                   QString * EPAFileName,
                                   MathParser *prs, Project *p,
-                                  QString *wordProcessorFile = NULL, QWidget *parent = 0);
+                                  QString *wordProcessorFile = nullptr, QWidget *parent = 0);
 
     ~AccountingLSBillGUI();
 
@@ -46,7 +46,7 @@ public:
 
 private slots:
     void setBillItem( AccountingLSBillItem * );
-    void setBillItemNULL();
+    void setBillItemnullptr();
     void updateItemGUI();
 private:
     AccountingLSBillGUIPrivate * m_d;

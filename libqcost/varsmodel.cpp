@@ -132,13 +132,13 @@ QVariant VarsModel::headerData(int section, Qt::Orientation orientation, int rol
 
     if (orientation == Qt::Horizontal) {
         if( section == m_d->commentCol ) {
-            return trUtf8("Commento");
+            return tr("Commento");
         }
         if( section == m_d->nameCol ) {
-            return trUtf8("Variabile");
+            return tr("Variabile");
         }
         if( section == m_d->valueCol ) {
-            return trUtf8("Valore");
+            return tr("Valore");
         }
     } else if( orientation == Qt::Vertical ){
         return QVariant( section + 1 );
@@ -240,7 +240,7 @@ Var * VarsModel::var(int i) {
     if( i >= 0 && i < m_d->varsContainer.size() ){
         return m_d->varsContainer.at(i);
     }
-    return NULL;
+    return nullptr;
 }
 
 QString VarsModel::replaceVars( const QString & expr ) {

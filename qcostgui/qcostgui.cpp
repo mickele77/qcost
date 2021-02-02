@@ -73,17 +73,17 @@ class QCostGUIPrivate{
 public:
     QCostGUIPrivate( QMainWindow * parent ):
         projectItemsView( new ProjectItemsView(parent)),
-        projectItemsViewDock( new QDockWidget(QObject::trUtf8("Vista progetto"), parent)),
-        project(NULL),
+        projectItemsViewDock( new QDockWidget(QObject::tr("Vista progetto"), parent)),
+        project(nullptr),
         parser( QLocale::system() ),
         mainWidget( new QStackedWidget(parent)),
-        generalDataGUI(NULL),
-        priceListGUI(NULL),
-        billGUI(NULL),
-        accountingGUI(NULL),
-        accountingBillGUI(NULL),
-        accountingTAMBillGUI(NULL),
-        accountingLSBillGUI(NULL),
+        generalDataGUI(nullptr),
+        priceListGUI(nullptr),
+        billGUI(nullptr),
+        accountingGUI(nullptr),
+        accountingBillGUI(nullptr),
+        accountingTAMBillGUI(nullptr),
+        accountingLSBillGUI(nullptr),
         currentFileVersion("2.0"),
         EPAFileName(){
 
@@ -170,7 +170,7 @@ QCostGUI::QCostGUI(QWidget *parent) :
     m_d->accountingGUI = new AccountingGUI( m_d->project->accounting(), this );
     m_d->mainWidget->addWidget( m_d->accountingGUI );
 
-    m_d->accountingTAMBillGUI = new AccountingTAMBillGUI(  &(m_d->EPAImportOptions), &(m_d->EPAFileName), &(m_d->parser), NULL, m_d->project, &(m_d->sWordProcessorFile), this );
+    m_d->accountingTAMBillGUI = new AccountingTAMBillGUI(  &(m_d->EPAImportOptions), &(m_d->EPAFileName), &(m_d->parser), nullptr, m_d->project, &(m_d->sWordProcessorFile), this );
     m_d->mainWidget->addWidget( m_d->accountingTAMBillGUI );
 
     m_d->accountingLSBillsGUI = new AccountingLSBillsGUI( m_d->project->accountingLSBills(), m_d->project->priceFieldModel(), &(m_d->parser), &(m_d->sWordProcessorFile), this );
@@ -179,21 +179,21 @@ QCostGUI::QCostGUI(QWidget *parent) :
     m_d->accountingLSBillGUI = new AccountingLSBillGUI(  &(m_d->EPAImportOptions), &(m_d->EPAFileName), &(m_d->parser), m_d->project, &(m_d->sWordProcessorFile), this );
     m_d->mainWidget->addWidget( m_d->accountingLSBillGUI );
 
-    m_d->accountingBillGUI = new AccountingBillGUI( &(m_d->EPAImportOptions), &(m_d->EPAFileName), &(m_d->parser), NULL, m_d->project, &(m_d->sWordProcessorFile), this );
+    m_d->accountingBillGUI = new AccountingBillGUI( &(m_d->EPAImportOptions), &(m_d->EPAFileName), &(m_d->parser), nullptr, m_d->project, &(m_d->sWordProcessorFile), this );
     m_d->mainWidget->addWidget( m_d->accountingBillGUI );
 
-    m_d->billGUI = new BillGUI( &(m_d->EPAImportOptions), &(m_d->EPAFileName), &(m_d->parser), NULL, m_d->project, &(m_d->sWordProcessorFile), this );
+    m_d->billGUI = new BillGUI( &(m_d->EPAImportOptions), &(m_d->EPAFileName), &(m_d->parser), nullptr, m_d->project, &(m_d->sWordProcessorFile), this );
     m_d->mainWidget->addWidget( m_d->billGUI );
 
-    m_d->priceListGUI = new PriceListGUI( &(m_d->EPAImportOptions), &(m_d->EPAFileName), NULL, &(m_d->parser), m_d->project, this );
+    m_d->priceListGUI = new PriceListGUI( &(m_d->EPAImportOptions), &(m_d->EPAFileName), nullptr, &(m_d->parser), m_d->project, this );
     m_d->mainWidget->addWidget( m_d->priceListGUI );
 
     if( m_d->project->billCount() > 0 ){
         m_d->projectItemsView->setCurrentItem( m_d->project->bill(0) );
     }
 
-    setWindowTitle(QString("%1[*] - %2").arg(trUtf8("Senza titolo"))
-                   .arg(trUtf8("QCost")));
+    setWindowTitle(QString("%1[*] - %2").arg(tr("Senza titolo"))
+                   .arg(tr("QCost")));
     connect( m_d->project, &Project::modelChanged, this, static_cast<void(QCostGUI::*)()>(&QCostGUI::setModified) );
     setModified( false );
 
@@ -317,14 +317,14 @@ void QCostGUI::createActions(){
     m_d->exitAct->setIcon( QIcon(":/icons/system-log-out.svg"));
     connect(m_d->exitAct, &QAction::triggered, this, &QCostGUI::close );
 
-    m_d->viewerPLDBAct = new QAction(trUtf8("Visualizza &EPA"), this);
+    m_d->viewerPLDBAct = new QAction(tr("Visualizza &EPA"), this);
     m_d->viewerPLDBAct->setShortcut(tr("Ctrl+E"));
-    m_d->viewerPLDBAct->setStatusTip(trUtf8("Visualizzatore Elenco Prezzi Archvio"));
+    m_d->viewerPLDBAct->setStatusTip(tr("Visualizzatore Elenco Prezzi Archvio"));
     connect(m_d->viewerPLDBAct, &QAction::triggered, this, &QCostGUI::viewPLDB );
 
-    m_d->optionsPLDBAct = new QAction(trUtf8("&Opzioni"), this);
+    m_d->optionsPLDBAct = new QAction(tr("&Opzioni"), this);
     m_d->optionsPLDBAct->setShortcut(tr("Ctrl+O"));
-    m_d->optionsPLDBAct->setStatusTip(trUtf8("Opzioni disponibili"));
+    m_d->optionsPLDBAct->setStatusTip(tr("Opzioni disponibili"));
     connect(m_d->optionsPLDBAct, &QAction::triggered, this, &QCostGUI::setOptions );
 
     m_d->aboutQtAct = new QAction(tr("Informazioni sulle librerie Qt"), this);
@@ -337,7 +337,7 @@ void QCostGUI::createActions(){
 }
 
 void QCostGUI::createMenus(){
-    m_d->fileMenu = menuBar()->addMenu(trUtf8("&File"));
+    m_d->fileMenu = menuBar()->addMenu(tr("&File"));
     m_d->fileMenu->addAction( m_d->newEmptyProjectAct );
     m_d->fileMenu->addAction( m_d->newSimpleProjectAct );
     m_d->fileMenu->addAction( m_d->newProjectHumanNoDiscountAct );
@@ -353,18 +353,18 @@ void QCostGUI::createMenus(){
     m_d->fileMenu->addSeparator();
     m_d->fileMenu->addAction( m_d->exitAct );
 
-    m_d->toolsMenu = menuBar()->addMenu(trUtf8("&Strumenti"));
+    m_d->toolsMenu = menuBar()->addMenu(tr("&Strumenti"));
     m_d->toolsMenu->addAction( m_d->viewerPLDBAct );
     m_d->toolsMenu->addSeparator();
     m_d->toolsMenu->addAction( m_d->optionsPLDBAct );
 
-    m_d->helpMenu = menuBar()->addMenu(trUtf8("&Aiuto"));
+    m_d->helpMenu = menuBar()->addMenu(tr("&Aiuto"));
     m_d->helpMenu->addAction( m_d->aboutQtAct );
     m_d->helpMenu->addAction( m_d->aboutAct );
 }
 
 void QCostGUI::createToolBars(){
-    m_d->fileToolBar = new QToolBar(trUtf8("File"), this );
+    m_d->fileToolBar = new QToolBar(tr("File"), this );
     m_d->fileToolBar->addAction( m_d->newEmptyProjectAct );
     m_d->fileToolBar->addAction( m_d->newSimpleProjectAct );
     m_d->fileToolBar->addAction( m_d->newProjectHumanNoDiscountAct );
@@ -412,7 +412,7 @@ bool QCostGUI::setCurrentFile(const QString &fileName, bool readContent ) {
         }
 
         // aggiorna il titolo della finestra
-        QString shownName = trUtf8("Senza titolo");
+        QString shownName = tr("Senza titolo");
         if( m_d->currentFile.isOpen() ){
             shownName = m_d->currentFile.fileName();
             m_d->recentFiles.removeAll(fileName);
@@ -444,7 +444,7 @@ void QCostGUI::closeEvent(QCloseEvent *event) {
 bool QCostGUI::okToContinue() {
     if (isWindowModified()) {
         int r = QMessageBox::warning(this, tr("QCost"),
-                                     trUtf8("Il progetto è stato modificato.\n"
+                                     tr("Il progetto è stato modificato.\n"
                                             "Vuoi salvare i cambiamenti?"),
                                      QMessageBox::Yes | QMessageBox::No
                                      | QMessageBox::Cancel);
@@ -481,8 +481,8 @@ void QCostGUI::newProject() {
 void QCostGUI::openFile() {
     if (okToContinue()) {
         QString fileName = QFileDialog::getOpenFileName( this,
-                                                         trUtf8("Apri il progetto"), ".",
-                                                         trUtf8("File progetto QCost (*.qct)"));
+                                                         tr("Apri il progetto"), ".",
+                                                         tr("File progetto QCost (*.qct)"));
         setCurrentFile( fileName, true );
     }
 }
@@ -506,8 +506,8 @@ bool QCostGUI::save(){
 }
 
 bool QCostGUI::saveAs(){
-    QString saveVersion2 = trUtf8("File progetto QCost 2.0 (*.qct)");
-    QString saveVersion1 = trUtf8("File progetto QCost 1.0 (*.qct)");
+    QString saveVersion2 = tr("File progetto QCost 2.0 (*.qct)");
+    QString saveVersion1 = tr("File progetto QCost 1.0 (*.qct)");
     QString selectedFilter = saveVersion2;
     if( m_d->currentFileVersion == "2.0" ){
         selectedFilter = saveVersion2;
@@ -516,7 +516,7 @@ bool QCostGUI::saveAs(){
     }
 
     QString fileName = QFileDialog::getSaveFileName( this,
-                                                     trUtf8("Salva il progetto"), ".",
+                                                     tr("Salva il progetto"), ".",
                                                      saveVersion2 + ";;" + saveVersion1,
                                                      &selectedFilter);
     if (fileName.isEmpty()){
@@ -557,8 +557,8 @@ bool QCostGUI::printODT() {
 
         if( gui.exec() == QDialog::Accepted ){
             QString fileName = QFileDialog::getSaveFileName(this,
-                                                            trUtf8("Stampa Elenco Prezzi"), ".",
-                                                            trUtf8("Documento di testo ODT (*.odt)"));
+                                                            tr("Stampa Elenco Prezzi"), ".",
+                                                            tr("Documento di testo ODT (*.odt)"));
             if (!fileName.isEmpty()){
                 QString suf = fileName.split(".").last().toLower();
                 if( suf != "odt"){
@@ -582,7 +582,7 @@ bool QCostGUI::printODT() {
     }
 
     Bill * b = dynamic_cast< Bill *> (m_d->projectItemsView->currentItem());
-    if( b != NULL ){
+    if( b != nullptr ){
         BillPrinter::PrintBillItemsOption prItemsOption = BillPrinter::PrintLongDesc;
         BillPrinter::PrintOption prOptions = BillPrinter::PrintBill;
         QList<int> fieldsToPrint;
@@ -592,8 +592,8 @@ bool QCostGUI::printODT() {
         BillPrinterGUI gui( &prItemsOption, &prOptions, &fieldsToPrint, &paperWidth, &paperHeight, &paperOrientation,  &groupPrAm, m_d->project->priceFieldModel(), this );
         if( gui.exec() == QDialog::Accepted ){
             QString fileName = QFileDialog::getSaveFileName(this,
-                                                            trUtf8("Stampa Computo Metrico Estimativo"), ".",
-                                                            trUtf8("Documento di testo ODT (*.odt)"));
+                                                            tr("Stampa Computo Metrico Estimativo"), ".",
+                                                            tr("Documento di testo ODT (*.odt)"));
             if (!fileName.isEmpty()){
                 QString suf = fileName.split(".").last().toLower();
                 if( suf != "odt"){
@@ -616,7 +616,7 @@ bool QCostGUI::printODT() {
     }
 
     AccountingBill * bill = dynamic_cast<AccountingBill *> (m_d->projectItemsView->currentItem());
-    if( bill != NULL ){
+    if( bill != nullptr ){
         AccountingPrinter::PrintOption prOption = AccountingPrinter::PrintRawMeasures;
         AccountingPrinter::PrintAmountsOption prAmountsOption = AccountingPrinter::PrintAllAmounts;
         AccountingPrinter::PrintPPUDescOption prPPUDescOption = AccountingPrinter::PrintLongDesc;
@@ -627,8 +627,8 @@ bool QCostGUI::printODT() {
                                       &paperWidth, &paperHeight, &paperOrientation,  this );
         if( gui.exec() == QDialog::Accepted ){
             QString fileName = QFileDialog::getSaveFileName(this,
-                                                            trUtf8("Stampa Contabilità"), ".",
-                                                            trUtf8("Documento di testo ODT (*.odt)"));
+                                                            tr("Stampa Contabilità"), ".",
+                                                            tr("Documento di testo ODT (*.odt)"));
             if (!fileName.isEmpty()){
                 QString suf = fileName.split(".").last().toLower();
                 if( suf != "odt"){
@@ -651,7 +651,7 @@ bool QCostGUI::printODT() {
     }
 
     AccountingTAMBill * tamBill = dynamic_cast<AccountingTAMBill *> (m_d->projectItemsView->currentItem());
-    if( tamBill != NULL ){
+    if( tamBill != nullptr ){
         AccountingPrinter::PrintOption prOption = AccountingPrinter::PrintRawMeasures;
         AccountingPrinter::PrintAmountsOption prAmountsOption = AccountingPrinter::PrintAllAmounts;
         AccountingPrinter::PrintPPUDescOption prPPUDescOption = AccountingPrinter::PrintLongDesc;
@@ -662,8 +662,8 @@ bool QCostGUI::printODT() {
                                          &paperWidth, &paperHeight, &paperOrientation,  this );
         if( gui.exec() == QDialog::Accepted ){
             QString fileName = QFileDialog::getSaveFileName(this,
-                                                            trUtf8("Stampa Lista Opere in Economia"), ".",
-                                                            trUtf8("Documento di testo ODT (*.odt)"));
+                                                            tr("Stampa Lista Opere in Economia"), ".",
+                                                            tr("Documento di testo ODT (*.odt)"));
             if (!fileName.isEmpty()){
                 QString suf = fileName.split(".").last().toLower();
                 if( suf != "odt"){
@@ -686,7 +686,7 @@ bool QCostGUI::printODT() {
     }
 
     AccountingLSBills * lsBills = dynamic_cast<AccountingLSBills *> (m_d->projectItemsView->currentItem());
-    if( lsBills != NULL ){
+    if( lsBills != nullptr ){
         AccountingPrinter::PrintOption prOption = AccountingPrinter::PrintRawMeasures;
         AccountingPrinter::PrintLSOption prLSOption = AccountingPrinter::PrintLSProjAcc;
         AccountingPrinter::PrintPPUDescOption prPPUDescOption = AccountingPrinter::PrintLongDesc;
@@ -699,8 +699,8 @@ bool QCostGUI::printODT() {
                                         &payToPrint, &paperWidth, &paperHeight, &paperOrientation,  this );
         if( gui.exec() == QDialog::Accepted ){
             QString fileName = QFileDialog::getSaveFileName(this,
-                                                            trUtf8("Stampa Contabilità Opere a Corpo"), ".",
-                                                            trUtf8("Documento di testo ODT (*.odt)"));
+                                                            tr("Stampa Contabilità Opere a Corpo"), ".",
+                                                            tr("Documento di testo ODT (*.odt)"));
             if (!fileName.isEmpty()){
                 QString suf = fileName.split(".").last().toLower();
                 if( suf != "odt"){
@@ -725,7 +725,7 @@ bool QCostGUI::printODT() {
     }
 
     AccountingLSBill * lsBill = dynamic_cast<AccountingLSBill *> (m_d->projectItemsView->currentItem());
-    if( lsBill != NULL ){
+    if( lsBill != nullptr ){
         AccountingPrinter::PrintOption prOption = AccountingPrinter::PrintRawMeasures;
         AccountingPrinter::PrintLSOption prLSOption = AccountingPrinter::PrintLSProjAcc;
         AccountingPrinter::PrintPPUDescOption prPPUDescOption = AccountingPrinter::PrintLongDesc;
@@ -737,8 +737,8 @@ bool QCostGUI::printODT() {
                                         &payToPrint, &paperWidth, &paperHeight, &paperOrientation,  this );
         if( gui.exec() == QDialog::Accepted ){
             QString fileName = QFileDialog::getSaveFileName(this,
-                                                            trUtf8("Stampa Contabilità Opere a Corpo"), ".",
-                                                            trUtf8("Documento di testo ODT (*.odt)"));
+                                                            tr("Stampa Contabilità Opere a Corpo"), ".",
+                                                            tr("Documento di testo ODT (*.odt)"));
             if (!fileName.isEmpty()){
                 QString suf = fileName.split(".").last().toLower();
                 if( suf != "odt"){
@@ -773,8 +773,8 @@ bool QCostGUI::saveCurrentFile(){
             if( m_d->currentFileVersion == "1.0" ){
                 if( ! m_d->project->accounting()->isEmpty() ){
                     QMessageBox msgBox;
-                    msgBox.setText( trUtf8("La versione 1.0 non supporta la contabilità di cantiere") );
-                    msgBox.setInformativeText(trUtf8("Poiché il progetto contiene dati contabili, si consiglia di salvare in una versione successiva alla 1.0.") );
+                    msgBox.setText( tr("La versione 1.0 non supporta la contabilità di cantiere") );
+                    msgBox.setInformativeText(tr("Poiché il progetto contiene dati contabili, si consiglia di salvare in una versione successiva alla 1.0.") );
                     msgBox.setStandardButtons(QMessageBox::Ok );
                     msgBox.exec();
                 }
@@ -823,8 +823,8 @@ void QCostGUI::setOptions(){
 }
 
 void QCostGUI::about() {
-    QMessageBox::about(this, trUtf8("Informazioni su QCost"),
-                       trUtf8("<h1>QCost</h1>"
+    QMessageBox::about(this, tr("Informazioni su QCost"),
+                       tr("<h1>QCost</h1>"
                               "<h2>v0.9.0</h2>"
                               "<p>QCost è un software per la redazione di computi metrici estimativi e documenti contabili di cantiere."
                               "<p>Questo programma è software libero; puoi ridistribuirlo e/o modificarlo nei termini della GNU General Public License così come pubblicata dalla Free Software Foundation; sia nei termini della versione 3 della licenza che (a tua scelta) nei termini di qualsiasi altra versione successiva."

@@ -42,7 +42,7 @@ public:
 
 private slots:
     void setPriceItem(PriceItem *newItem);
-    void setPriceItemNULL();
+    void setPriceItemnullptr();
 private:
     PriceListGUIPrivate * m_d;
     void updatePriceItemGUI();

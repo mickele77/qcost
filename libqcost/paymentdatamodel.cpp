@@ -9,7 +9,7 @@
 class PaymentDataModelPrivate {
 public:
     PaymentDataModelPrivate( AccountingBillItem * rootItem, MathParser * prs ):
-        rootData( new PaymentData( NULL, PaymentData::Root, rootItem, prs ) ),
+        rootData( new PaymentData( nullptr, PaymentData::Root, rootItem, prs ) ),
         parser(prs){
     }
     PaymentData * data(const QModelIndex &index ) const {
@@ -35,7 +35,7 @@ QModelIndex PaymentDataModel::parent(const QModelIndex &index) const {
     PaymentData *childData = m_d->data(index);
     PaymentData *parentData = childData->parentData();
 
-    if (parentData == m_d->rootData || parentData == NULL )
+    if (parentData == m_d->rootData || parentData == nullptr )
         return QModelIndex();
 
     return createIndex( parentData->childNumber(), 0, parentData );
@@ -47,7 +47,7 @@ QModelIndex PaymentDataModel::index(int row, int col, const QModelIndex &parent)
 
     PaymentData *parentData = m_d->data(parent);
 
-    if( parentData != NULL ){
+    if( parentData != nullptr ){
         PaymentData *childData = dynamic_cast<PaymentData *>(parentData->child(row));
         if (childData) {
             return createIndex(row, col, childData);
@@ -60,7 +60,7 @@ PaymentData * PaymentDataModel::paymentData(int pos) {
     if( pos >= 0 && pos < m_d->rootData->childrenCount() ){
         return m_d->rootData->child( pos );
     }
-    return NULL;
+    return nullptr;
 }
 
 QVariant PaymentDataModel::data(const QModelIndex &index, int role) const {
@@ -97,11 +97,11 @@ QVariant PaymentDataModel::headerData(int section, Qt::Orientation orientation, 
         if (orientation == Qt::Horizontal ){
             switch( section ){
             case 0 :{
-                return QVariant( trUtf8("S.A.L."));
+                return QVariant( tr("S.A.L."));
                 break;
             }
             case 1 :{
-                return QVariant( trUtf8("Importo totale"));
+                return QVariant( tr("Importo totale"));
                 break;
             }
             }

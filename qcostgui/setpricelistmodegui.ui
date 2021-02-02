@@ -53,9 +53,9 @@
     </widget>
    </item>
    <item row="3" column="0">
-    <widget class="QRadioButton" name="nullPriceItemRadioButton">
+    <widget class="QRadioButton" name="nullptrPriceItemRadioButton">
      <property name="text">
-      <string>Annulla i prezzi</string>
+      <string>Annullptra i prezzi</string>
      </property>
     </widget>
    </item>

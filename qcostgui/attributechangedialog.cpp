@@ -32,25 +32,25 @@ public:
                                   AttributesModel * bam ):
         ui( new Ui::AttributeChangeDialog ),
         billItemsList(il),
-        accountingBillItemsList( NULL ),
-        accountingTAMBillItemsList( NULL ),
+        accountingBillItemsList( nullptr ),
+        accountingTAMBillItemsList( nullptr ),
         accountingAttModel(bam),
         selectModel( new AttributeSelectModel( bam ) ){
     }
     AttributeChangeDialogPrivate( QList<AccountingBillItem *> * il,
                                   AttributesModel * bam ):
         ui( new Ui::AttributeChangeDialog ),
-        billItemsList(NULL),
+        billItemsList(nullptr),
         accountingBillItemsList( il ),
-        accountingTAMBillItemsList( NULL ),
+        accountingTAMBillItemsList( nullptr ),
         accountingAttModel(bam),
         selectModel( new AttributeSelectModel( bam ) ){
     }
     AttributeChangeDialogPrivate( QList<AccountingTAMBillItem *> * il,
                                   AttributesModel * bam ):
         ui( new Ui::AttributeChangeDialog ),
-        billItemsList(NULL),
-        accountingBillItemsList( NULL ),
+        billItemsList(nullptr),
+        accountingBillItemsList( nullptr ),
         accountingTAMBillItemsList( il ),
         accountingAttModel(bam),
         selectModel( new AttributeSelectModel( bam ) ){
@@ -113,19 +113,19 @@ AttributeChangeDialog::~AttributeChangeDialog() {
 void AttributeChangeDialog::addAttributes(){
     if( m_d->ui->attributesTableView->selectionModel() ){
         QList<Attribute *> selectedAttributes = m_d->selectModel->selectedAttributes();
-        if( m_d->billItemsList != NULL ){
+        if( m_d->billItemsList != nullptr ){
             for( QList<BillItem *>::iterator i = m_d->billItemsList->begin(); i != m_d->billItemsList->end(); ++i){
                 for( QList<Attribute *>::iterator j = selectedAttributes.begin(); j != selectedAttributes.end(); ++j ){
                     (*i)->addAttribute( *j );
                 }
             }
-        } else if( m_d->accountingBillItemsList != NULL ){
+        } else if( m_d->accountingBillItemsList != nullptr ){
             for( QList<AccountingBillItem *>::iterator i = m_d->accountingBillItemsList->begin(); i != m_d->accountingBillItemsList->end(); ++i){
                 for( QList<Attribute *>::iterator j = selectedAttributes.begin(); j != selectedAttributes.end(); ++j ){
                     (*i)->addAttribute( *j );
                 }
             }
-        } else if( m_d->accountingTAMBillItemsList != NULL ){
+        } else if( m_d->accountingTAMBillItemsList != nullptr ){
             for( QList<AccountingTAMBillItem *>::iterator i = m_d->accountingTAMBillItemsList->begin(); i != m_d->accountingTAMBillItemsList->end(); ++i){
                 for( QList<Attribute *>::iterator j = selectedAttributes.begin(); j != selectedAttributes.end(); ++j ){
                     (*i)->addAttribute( *j );
@@ -139,19 +139,19 @@ void AttributeChangeDialog::addAttributes(){
 void AttributeChangeDialog::removeAttributes(){
     if( m_d->ui->attributesTableView->selectionModel() ){
         QList<Attribute *> selectedAttributes = m_d->selectModel->selectedAttributes();
-        if( m_d->billItemsList != NULL ){
+        if( m_d->billItemsList != nullptr ){
             for( QList<BillItem *>::iterator i = m_d->billItemsList->begin(); i != m_d->billItemsList->end(); ++i){
                 for( QList<Attribute *>::iterator j = selectedAttributes.begin(); j != selectedAttributes.end(); ++j ){
                     (*i)->removeAttribute( *j );
                 }
             }
-        } else if( m_d->accountingBillItemsList != NULL ){
+        } else if( m_d->accountingBillItemsList != nullptr ){
             for( QList<AccountingBillItem *>::iterator i = m_d->accountingBillItemsList->begin(); i != m_d->accountingBillItemsList->end(); ++i){
                 for( QList<Attribute *>::iterator j = selectedAttributes.begin(); j != selectedAttributes.end(); ++j ){
                     (*i)->removeAttribute( *j );
                 }
             }
-        } else if( m_d->accountingTAMBillItemsList != NULL ){
+        } else if( m_d->accountingTAMBillItemsList != nullptr ){
             for( QList<AccountingTAMBillItem *>::iterator i = m_d->accountingTAMBillItemsList->begin(); i != m_d->accountingTAMBillItemsList->end(); ++i){
                 for( QList<Attribute *>::iterator j = selectedAttributes.begin(); j != selectedAttributes.end(); ++j ){
                     (*i)->removeAttribute( *j );
@@ -165,21 +165,21 @@ void AttributeChangeDialog::removeAttributes(){
 void AttributeChangeDialog::setAttributes(){
     if( m_d->ui->attributesTableView->selectionModel() ){
         QList<Attribute *> selectedAttributes = m_d->selectModel->selectedAttributes();
-        if( m_d->billItemsList != NULL ){
+        if( m_d->billItemsList != nullptr ){
             for( QList<BillItem *>::iterator i = m_d->billItemsList->begin(); i != m_d->billItemsList->end(); ++i){
                 (*i)->removeAllAttributes();
                 for( QList<Attribute *>::iterator j = selectedAttributes.begin(); j != selectedAttributes.end(); ++j ){
                     (*i)->addAttribute( *j );
                 }
             }
-        } else if( m_d->accountingBillItemsList != NULL ){
+        } else if( m_d->accountingBillItemsList != nullptr ){
             for( QList<AccountingBillItem *>::iterator i = m_d->accountingBillItemsList->begin(); i != m_d->accountingBillItemsList->end(); ++i){
                 (*i)->removeAllAttributes();
                 for( QList<Attribute *>::iterator j = selectedAttributes.begin(); j != selectedAttributes.end(); ++j ){
                     (*i)->addAttribute( *j );
                 }
             }
-        } else if( m_d->accountingTAMBillItemsList != NULL ){
+        } else if( m_d->accountingTAMBillItemsList != nullptr ){
             for( QList<AccountingTAMBillItem *>::iterator i = m_d->accountingTAMBillItemsList->begin(); i != m_d->accountingTAMBillItemsList->end(); ++i){
                 (*i)->removeAllAttributes();
                 for( QList<Attribute *>::iterator j = selectedAttributes.begin(); j != selectedAttributes.end(); ++j ){

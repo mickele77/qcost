@@ -43,7 +43,7 @@ public:
                 return *i;
             }
         }
-        return NULL;
+        return nullptr;
     };
     MathParser * parser;
     QList<UnitMeasure *> unitMeasureModel;
@@ -66,32 +66,32 @@ UnitMeasureModel::~UnitMeasureModel(){
 void UnitMeasureModel::insertStandardUnits(){
     insert( 0, 4);
 
-    setData( createIndex(0,0), QVariant( trUtf8("Cadauno")) );
-    setData( createIndex(0,1), QVariant( trUtf8("cad")) );
+    setData( createIndex(0,0), QVariant( tr("Cadauno")) );
+    setData( createIndex(0,1), QVariant( tr("cad")) );
     if( m_d->parser ){
         setData( createIndex(0,2), QVariant( m_d->parser->toString( 2 ) ) );
     } else {
         setData( createIndex(0,2), QVariant( 1 ) );
     }
 
-    setData( createIndex(1,0), QVariant( trUtf8("Metro")) );
-    setData( createIndex(1,1), QVariant( trUtf8("m")) );
+    setData( createIndex(1,0), QVariant( tr("Metro")) );
+    setData( createIndex(1,1), QVariant( tr("m")) );
     if( m_d->parser ){
         setData( createIndex(1,2), QVariant( m_d->parser->toString( 2 ) ) );
     } else {
         setData( createIndex(1,2), QVariant( 2 ) );
     }
 
-    setData( createIndex(2,0), QVariant( trUtf8("Metri quadrati")) );
-    setData( createIndex(2,1), QVariant( trUtf8("m²")) );
+    setData( createIndex(2,0), QVariant( tr("Metri quadrati")) );
+    setData( createIndex(2,1), QVariant( tr("m²")) );
     if( m_d->parser ){
         setData( createIndex(2,2), QVariant( m_d->parser->toString( 2 ) ) );
     } else {
         setData( createIndex(2,2), QVariant( 2 ) );
     }
 
-    setData( createIndex(3,0), QVariant( trUtf8("Metri cubi")) );
-    setData( createIndex(3,1), QVariant( trUtf8("m³")) );
+    setData( createIndex(3,0), QVariant( tr("Metri cubi")) );
+    setData( createIndex(3,1), QVariant( tr("m³")) );
     if( m_d->parser ){
         setData( createIndex(3,2), QVariant( m_d->parser->toString( 3 ) ) );
     } else {
@@ -194,11 +194,11 @@ QVariant UnitMeasureModel::headerData(int section, Qt::Orientation orientation, 
     if (orientation == Qt::Horizontal) {
         switch (section) {
         case 0:
-            return trUtf8("Descrizione");
+            return tr("Descrizione");
         case 1:
-            return trUtf8("Simbolo");
+            return tr("Simbolo");
         case 2:
-            return trUtf8("Precisione");
+            return tr("Precisione");
         }
     } else if( orientation == Qt::Vertical ){
         return QVariant( section + 1 );
@@ -219,7 +219,7 @@ bool UnitMeasureModel::insert(int row, int count){
     beginInsertRows(QModelIndex(), row, row+count-1 );
     for(int i=0; i < count; ++i){
         UnitMeasure * ump = new UnitMeasure();
-        while( unitMeasureId(ump->id()) != NULL ){
+        while( unitMeasureId(ump->id()) != nullptr ){
             ump->nextId();
         }
         m_d->insert( row, ump );
@@ -274,7 +274,7 @@ UnitMeasure *UnitMeasureModel::unitMeasure(int i) {
     if( i >= 0 && i < m_d->unitMeasureModel.size()){
         return m_d->unitMeasureModel.value(i);
     }
-    return NULL;
+    return nullptr;
 }
 
 UnitMeasure *UnitMeasureModel::unitMeasureId(unsigned int id) {
@@ -283,7 +283,7 @@ UnitMeasure *UnitMeasureModel::unitMeasureId(unsigned int id) {
             return (*i);
         }
     }
-    return NULL;
+    return nullptr;
 }
 
 UnitMeasure *UnitMeasureModel::unitMeasureTag(const QString &tag) {
@@ -292,7 +292,7 @@ UnitMeasure *UnitMeasureModel::unitMeasureTag(const QString &tag) {
             return *i;
         }
     }
-    return NULL;
+    return nullptr;
 }
 
 int UnitMeasureModel::findTag(const QString & tag) {

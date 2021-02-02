@@ -123,7 +123,7 @@ AccountingBillPrinterGUI::AccountingBillPrinterGUI( AccountingBill * measuresBil
     for( int i=0; i < measuresBill->paymentsCount(); ++i ){
         m_d->ui->payToPrintComboBox->addItem( measuresBill->payment(i)->title(), QVariant(i) );
     }
-    m_d->ui->payToPrintComboBox->addItem(trUtf8("Tutti"), QVariant(-1) );
+    m_d->ui->payToPrintComboBox->addItem(tr("Tutti"), QVariant(-1) );
     if( *payToPrint < 0 ){
         m_d->ui->payToPrintComboBox->setCurrentIndex( measuresBill->paymentsCount() );
     } else {
@@ -147,7 +147,7 @@ void AccountingBillPrinterGUI::updateOptionsAvailable(){
         m_d->ui->printAmountsNotToDiscountRadioButton->setDisabled( true );
         m_d->ui->printAllAmountsRadioButton->setDisabled( true );
         if( m_d->ui->payToPrintComboBox->count() == m_d->paymentsCount ){
-            m_d->ui->payToPrintComboBox->addItem( trUtf8("Tutti"), QVariant(-1) );
+            m_d->ui->payToPrintComboBox->addItem( tr("Tutti"), QVariant(-1) );
         }
     } else if( m_d->ui->printPaymentButton->isChecked() ||
                m_d->ui->printAccountingButton->isChecked() ){
@@ -166,7 +166,7 @@ void AccountingBillPrinterGUI::updateOptionsAvailable(){
         m_d->ui->printAllAmountsRadioButton->setEnabled( true );
         m_d->ui->printAllAmountsRadioButton->setEnabled( true );
         if( m_d->ui->payToPrintComboBox->count() == m_d->paymentsCount ){
-            m_d->ui->payToPrintComboBox->addItem( trUtf8("Tutti"), QVariant(-1) );
+            m_d->ui->payToPrintComboBox->addItem( tr("Tutti"), QVariant(-1) );
         }
     }
 }

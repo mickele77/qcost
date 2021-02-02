@@ -14,10 +14,10 @@ public:
     MeasuresModelPrivate( BillItem * bItem, MathParser * p, UnitMeasure * ump ):
         parserWasCreated(false),
         billItem(bItem),
-        accountingBillItem(NULL),
+        accountingBillItem(nullptr),
         unitMeasure(ump),
         quantity( 0.0 ){
-        if( p == NULL ){
+        if( p == nullptr ){
             parser = new MathParser( QLocale::system() );
             parserWasCreated = true;
         } else {
@@ -26,11 +26,11 @@ public:
     }
     MeasuresModelPrivate( AccountingBillItem * accBItem, MathParser * p, UnitMeasure * ump ):
         parserWasCreated(false),
-        billItem(NULL),
+        billItem(nullptr),
         accountingBillItem(accBItem),
         unitMeasure(ump),
         quantity( 0.0 ){
-        if( p == NULL ){
+        if( p == nullptr ){
             parser = new MathParser( QLocale::system() );
             parserWasCreated = true;
         } else {
@@ -57,7 +57,7 @@ MeasuresModel::MeasuresModel(BillItem * bItem, MathParser * p, UnitMeasure * ump
     m_d(new MeasuresModelPrivate( bItem, p, ump )){
     insertRows(0);
 
-    if( m_d->unitMeasure != NULL ){
+    if( m_d->unitMeasure != nullptr ){
         connect( m_d->unitMeasure, &UnitMeasure::precisionChanged, this, &MeasuresModel::updateAllQuantities );
     }
 }
@@ -67,7 +67,7 @@ MeasuresModel::MeasuresModel(AccountingBillItem *accBItem, MathParser *p, UnitMe
     m_d(new MeasuresModelPrivate( accBItem, p, ump )){
     insertRows(0);
 
-    if( m_d->unitMeasure != NULL ){
+    if( m_d->unitMeasure != nullptr ){
         connect( m_d->unitMeasure, &UnitMeasure::precisionChanged, this, &MeasuresModel::updateAllQuantities );
     }
 }
@@ -171,13 +171,13 @@ QVariant MeasuresModel::headerData(int section, Qt::Orientation orientation, int
 
     if (orientation == Qt::Horizontal) {
         if( section == 0 ) {
-            return trUtf8("Commento");
+            return tr("Commento");
         }
         if( section == 1 ) {
-            return trUtf8("Misure");
+            return tr("Misure");
         }
         if( section == 2 ) {
-            return trUtf8("Quantità");
+            return tr("Quantità");
         }
     } else if( orientation == Qt::Vertical ){
         return QVariant( section + 1 );
@@ -198,10 +198,10 @@ bool MeasuresModel::insertRows(int row, int count, const QModelIndex &parent) {
     }
     beginInsertRows(QModelIndex(), row, row+count-1 );
     for(int i=0; i < count; ++i){
-        Measure * itemLine = NULL;
-        if(m_d->billItem != NULL ){
+        Measure * itemLine = nullptr;
+        if(m_d->billItem != nullptr ){
         itemLine = new Measure( m_d->billItem, m_d->parser, m_d->unitMeasure );
-        } else if( m_d->accountingBillItem != NULL ){
+        } else if( m_d->accountingBillItem != nullptr ){
             itemLine = new Measure( m_d->accountingBillItem, m_d->parser, m_d->unitMeasure );
         }
         connect( itemLine, &Measure::quantityChanged, this, &MeasuresModel::updateQuantity );
@@ -272,7 +272,7 @@ void MeasuresModel::updateAllQuantities() {
 void MeasuresModel::setUnitMeasure(UnitMeasure *ump) {
     if( m_d->unitMeasure != ump ){
         beginResetModel();
-        if( m_d->unitMeasure != NULL ){
+        if( m_d->unitMeasure != nullptr ){
             disconnect( m_d->unitMeasure, &UnitMeasure::precisionChanged, this, &MeasuresModel::updateAllQuantities );
         }
         m_d->unitMeasure = ump;
@@ -283,7 +283,7 @@ void MeasuresModel::setUnitMeasure(UnitMeasure *ump) {
             emit dataChanged( createIndex(0, 2), createIndex(m_d->linesContainer.size()-1, 2) );
         }
         updateQuantity();
-        if( m_d->unitMeasure != NULL ){
+        if( m_d->unitMeasure != nullptr ){
             connect( m_d->unitMeasure, &UnitMeasure::precisionChanged, this, &MeasuresModel::updateAllQuantities );
         }
         endResetModel();
@@ -359,7 +359,7 @@ Measure * MeasuresModel::measure(int i) {
     if( i >= 0 && i < m_d->linesContainer.size() ){
         return m_d->linesContainer.at(i);
     }
-    return NULL;
+    return nullptr;
 }
 
 QList<BillItem *> MeasuresModel::connectedBillItems() {

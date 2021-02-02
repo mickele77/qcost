@@ -18,9 +18,9 @@ public:
     AccountingItemLSGUIPrivate(  AccountingLSBills * lsb, PriceFieldModel * pfm ):
         ui(new Ui::AccountingItemLSGUI),
         lsBills( lsb ),
-        bill(NULL),
-        item(NULL),
-        itemAttributeModel( new AccountingItemAttributeModel(NULL, NULL) ),
+        bill(nullptr),
+        item(nullptr),
+        itemAttributeModel( new AccountingItemAttributeModel(nullptr, nullptr) ),
         priceFieldModel(pfm){
     }
     ~AccountingItemLSGUIPrivate(){
@@ -56,8 +56,8 @@ AccountingItemLSGUI::~AccountingItemLSGUI() {
 
 void AccountingItemLSGUI::setItem(AccountingBillItem *b) {
     if( m_d->item != b ){
-        if( m_d->item != NULL ){
-            disconnect( m_d->item, &AccountingBillItem::aboutToBeDeleted, this, &AccountingItemLSGUI::setAccountingItemNULL );
+        if( m_d->item != nullptr ){
+            disconnect( m_d->item, &AccountingBillItem::aboutToBeDeleted, this, &AccountingItemLSGUI::setAccountingItemnullptr );
 
             disconnect( m_d->item, &AccountingBillItem::dateBeginChanged, m_d->ui->beginDateLineEdit, &QLineEdit::setText );
             disconnect( m_d->item, &AccountingBillItem::dateEndChanged, m_d->ui->endDateLineEdit, &QLineEdit::setText );
@@ -87,8 +87,8 @@ void AccountingItemLSGUI::setItem(AccountingBillItem *b) {
 
         updateLumpSumsComboBox();
 
-        if( m_d->item != NULL ){
-            connect( m_d->item, &AccountingBillItem::aboutToBeDeleted, this, &AccountingItemLSGUI::setAccountingItemNULL );
+        if( m_d->item != nullptr ){
+            connect( m_d->item, &AccountingBillItem::aboutToBeDeleted, this, &AccountingItemLSGUI::setAccountingItemnullptr );
 
             m_d->ui->beginDateLineEdit->setText( m_d->item->dateBeginStr() );
             connect( m_d->item, &AccountingBillItem::dateBeginChanged, m_d->ui->beginDateLineEdit, &QLineEdit::setText );
@@ -113,12 +113,12 @@ void AccountingItemLSGUI::setItem(AccountingBillItem *b) {
     }
 }
 
-void AccountingItemLSGUI::setAccountingItemNULL() {
-    setItem( NULL );
+void AccountingItemLSGUI::setAccountingItemnullptr() {
+    setItem( nullptr );
 }
 
 void AccountingItemLSGUI::addAttribute(){
-    if( m_d->itemAttributeModel != NULL ){
+    if( m_d->itemAttributeModel != nullptr ){
         if( m_d->ui->attributeTableView->selectionModel() ){
             int count = 1;
             QModelIndexList selectedRows = m_d->ui->attributeTableView->selectionModel()->selectedRows();
@@ -136,7 +136,7 @@ void AccountingItemLSGUI::addAttribute(){
 }
 
 void AccountingItemLSGUI::removeAttribute(){
-    if( m_d->itemAttributeModel != NULL ){
+    if( m_d->itemAttributeModel != nullptr ){
         if( m_d->ui->attributeTableView->selectionModel() ){
             QModelIndexList selectedRows = m_d->ui->attributeTableView->selectionModel()->selectedRows();
             int count = selectedRows.size();
@@ -154,24 +154,24 @@ void AccountingItemLSGUI::removeAttribute(){
 }
 
 void AccountingItemLSGUI::setAccountingBill(AccountingBill *b) {
-    if( m_d->bill != NULL ){
-        m_d->itemAttributeModel->setAttributeModel( NULL );
-        disconnect( m_d->bill, &AccountingBill::aboutToBeDeleted, this, &AccountingItemLSGUI::setAccountingNULL );
+    if( m_d->bill != nullptr ){
+        m_d->itemAttributeModel->setAttributeModel( nullptr );
+        disconnect( m_d->bill, &AccountingBill::aboutToBeDeleted, this, &AccountingItemLSGUI::setAccountingnullptr );
     }
 
     m_d->bill = b;
 
-    if( m_d->bill != NULL ){
+    if( m_d->bill != nullptr ){
         m_d->itemAttributeModel->setAttributeModel( m_d->bill->attributesModel() );
-        connect( m_d->bill, &AccountingBill::aboutToBeDeleted, this, &AccountingItemLSGUI::setAccountingNULL );
+        connect( m_d->bill, &AccountingBill::aboutToBeDeleted, this, &AccountingItemLSGUI::setAccountingnullptr );
     }
 
     // quando si cambia computo corrente la scheda della riga si azzera
-    setItem( NULL );
+    setItem( nullptr );
 }
 
-void AccountingItemLSGUI::setAccountingNULL() {
-    setAccountingBill(NULL);
+void AccountingItemLSGUI::setAccountingnullptr() {
+    setAccountingBill(nullptr);
 }
 
 void AccountingItemLSGUI::updateLumpSumsComboBox() {
@@ -179,13 +179,13 @@ void AccountingItemLSGUI::updateLumpSumsComboBox() {
 
     m_d->ui->lumpSumsComboBox->clear();
     int currIndex = 0;
-    QVariant v = qVariantFromValue((void *) NULL);
+    QVariant v = qVariantFromValue((void *) nullptr);
     m_d->ui->lumpSumsComboBox->insertItem( 0, "", v);
     for( int i=0; i < m_d->lsBills->billCount(); ++i ){
         AccountingLSBill * b = m_d->lsBills->bill(i);
         v = qVariantFromValue((void *) b );
         m_d->ui->lumpSumsComboBox->insertItem( (i+1), b->name(), v );
-        if( m_d->item != NULL ){
+        if( m_d->item != nullptr ){
             if( m_d->item->lsBill() == b ){
                 currIndex = i+1;
             }
@@ -197,9 +197,9 @@ void AccountingItemLSGUI::updateLumpSumsComboBox() {
 }
 
 void AccountingItemLSGUI::setLSBill() {
-    if( m_d->item != NULL ){
+    if( m_d->item != nullptr ){
         QVariant v = m_d->ui->lumpSumsComboBox->currentData();
-        AccountingLSBill * newLSBill = NULL;
+        AccountingLSBill * newLSBill = nullptr;
         if( v.isValid() ){
             newLSBill = (AccountingLSBill *) v.value<void *>();
         }
@@ -209,7 +209,7 @@ void AccountingItemLSGUI::setLSBill() {
 
 bool AccountingItemLSGUI::eventFilter(QObject *object, QEvent *event) {
     if (event->type() == QEvent::MouseButtonDblClick )     {
-        if( m_d->item != NULL ){
+        if( m_d->item != nullptr ){
             if( object == m_d->ui->beginDateLineEdit ){
                 QDate d = m_d->item->dateBegin();
                 QCalendarDialog dialog( &d, this );

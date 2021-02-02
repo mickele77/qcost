@@ -39,7 +39,7 @@ public:
 
     void showEvent(QShowEvent *event);
 private slots:
-    void setAccountingBillNULL();
+    void setAccountingBillnullptr();
 
     void setPriceList();
     void setPriceDataSet();

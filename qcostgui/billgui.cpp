@@ -64,16 +64,16 @@ public:
                     MathParser * prs, Bill * b, Project * prj,
                     QString * wpf, QWidget *parent ):
         bill ( b ),
-        currentBillItem( NULL ),
+        currentBillItem( nullptr ),
         project(prj),
-        billItemEditingPrice(NULL),
-        billDataGUI( new BillDataGUI( prj->priceFieldModel(), NULL, parent ) ),
+        billItemEditingPrice(nullptr),
+        billDataGUI( new BillDataGUI( prj->priceFieldModel(), nullptr, parent ) ),
         billAttributesGUI( new AttributesGUI( prj->priceFieldModel(), prs, wpf, parent ) ),
-        billVarsGUI( new VarsGUI( (Bill *) NULL, parent ) ),
+        billVarsGUI( new VarsGUI( (Bill *) nullptr, parent ) ),
         mainSplitter( new QSplitter(Qt::Horizontal, parent ) ),
-        billTreeGUI( new BillTreeGUI( false, EPAImpOptions, EPAFileName, NULL, prs, prj, mainSplitter ) ),
-        billItemGUI( new BillItemGUI( EPAImpOptions, EPAFileName, NULL, prs, prj, parent ) ),
-        billItemTitleGUI( new BillItemTitleGUI( NULL, prj->priceFieldModel(), parent ) ),
+        billTreeGUI( new BillTreeGUI( false, EPAImpOptions, EPAFileName, nullptr, prs, prj, mainSplitter ) ),
+        billItemGUI( new BillItemGUI( EPAImpOptions, EPAFileName, nullptr, prs, prj, parent ) ),
+        billItemTitleGUI( new BillItemTitleGUI( nullptr, prj->priceFieldModel(), parent ) ),
         billItemWidget( new BillItemWidget(billItemGUI, billItemTitleGUI, mainSplitter ) ) {
         billItemGUI->hide();
         billItemTitleGUI->hide();
@@ -102,10 +102,10 @@ BillGUI::BillGUI( QMap<PriceListDBWidget::ImportOptions, bool> *EPAImpOptions,
     QTabWidget(parent),
     m_d( new BillGUIPrivate( EPAImpOptions, EPAFileName, prs, b, p, wordProcessorFile, this ) ){
 
-    addTab( m_d->billDataGUI, trUtf8("Dati generali"));
-    addTab( m_d->billAttributesGUI, trUtf8("Etichette"));
-    addTab( m_d->billVarsGUI, trUtf8("Variabili"));
-    addTab( m_d->mainSplitter, trUtf8("Misure"));
+    addTab( m_d->billDataGUI, tr("Dati generali"));
+    addTab( m_d->billAttributesGUI, tr("Etichette"));
+    addTab( m_d->billVarsGUI, tr("Variabili"));
+    addTab( m_d->mainSplitter, tr("Misure"));
 
     setCurrentIndex( count() - 1 );
     setBill(b);
@@ -129,31 +129,31 @@ void BillGUI::setBill( Bill * b ){
 }
 
 void BillGUI::setBillItem(BillItem * newItem ) {
-    if( m_d->currentBillItem != NULL ){
+    if( m_d->currentBillItem != nullptr ){
         disconnect( m_d->currentBillItem, static_cast<void(BillItem::*)(bool)>(&BillItem::hasChildrenChanged), this, &BillGUI::updateBillItemGUI );
-        disconnect( m_d->currentBillItem, &BillItem::aboutToBeDeleted, this, &BillGUI::setBillItemNULL );
-        m_d->billItemGUI->setBillItem( NULL );
+        disconnect( m_d->currentBillItem, &BillItem::aboutToBeDeleted, this, &BillGUI::setBillItemnullptr );
+        m_d->billItemGUI->setBillItem( nullptr );
         m_d->billItemGUI->hide();
-        m_d->billItemTitleGUI->setBillItem( NULL);
+        m_d->billItemTitleGUI->setBillItem( nullptr);
         m_d->billItemTitleGUI->hide();
     }
     m_d->currentBillItem = newItem;
-    if( m_d->currentBillItem != NULL ){
+    if( m_d->currentBillItem != nullptr ){
         updateBillItemGUI();
         connect( m_d->currentBillItem, static_cast<void(BillItem::*)(bool)>(&BillItem::hasChildrenChanged), this, &BillGUI::updateBillItemGUI );
-        connect( m_d->currentBillItem, &BillItem::aboutToBeDeleted, this, &BillGUI::setBillItemNULL );
+        connect( m_d->currentBillItem, &BillItem::aboutToBeDeleted, this, &BillGUI::setBillItemnullptr );
     }
 }
 
-void BillGUI::setBillItemNULL() {
-    setBillItem( NULL );
+void BillGUI::setBillItemnullptr() {
+    setBillItem( nullptr );
 }
 
 void BillGUI::updateBillItemGUI() {
-    if( m_d->currentBillItem != NULL ){
+    if( m_d->currentBillItem != nullptr ){
         if( m_d->currentBillItem->hasChildren() ){
             m_d->billItemGUI->hide();
-            m_d->billItemGUI->setBillItem( NULL );
+            m_d->billItemGUI->setBillItem( nullptr );
 
             m_d->billItemTitleGUI->setBillItem( m_d->currentBillItem );
             m_d->billItemTitleGUI->show();
@@ -162,13 +162,13 @@ void BillGUI::updateBillItemGUI() {
             m_d->billItemGUI->show();
 
             m_d->billItemTitleGUI->hide();
-            m_d->billItemTitleGUI->setBillItem( NULL );
+            m_d->billItemTitleGUI->setBillItem( nullptr );
         }
     } else {
         m_d->billItemGUI->hide();
-        m_d->billItemGUI->setBillItem( NULL );
+        m_d->billItemGUI->setBillItem( nullptr );
 
         m_d->billItemTitleGUI->hide();
-        m_d->billItemTitleGUI->setBillItem( NULL );
+        m_d->billItemTitleGUI->setBillItem( nullptr );
     }
 }

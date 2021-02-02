@@ -28,8 +28,8 @@ private slots:
 
     void addAttribute();
     void removeAttribute();
-    void setBillItemNULL();
-    void setBillNULL();
+    void setBillItemnullptr();
+    void setBillnullptr();
 
     void updateAmountNamesValues();
     void updateAmountValue(int priceField, const QString &newVal);

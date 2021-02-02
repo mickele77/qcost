@@ -29,7 +29,7 @@ class ProjectRootItemPrivate;
 class EXPORT_QCOST_LIB_OPT ProjectRootItem : public QObject, public ProjectItem {
     Q_OBJECT
 public:
-    ProjectRootItem(ProjectItem *parent=NULL);
+    ProjectRootItem(ProjectItem *parent=nullptr);
     ~ProjectRootItem();
 
     void insertChild( ProjectItem * item );

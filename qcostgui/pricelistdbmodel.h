@@ -11,7 +11,7 @@ class PriceListDBModel : public QAbstractItemModel {
     Q_OBJECT
 public:
     enum PriceColType{
-        nullCol,
+        nullptrCol,
         codeCol,
         shortDescCol,
         longDescCol,

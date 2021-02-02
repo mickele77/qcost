@@ -15,12 +15,12 @@ public:
         measuresModel(mModel),
         insertPosition(mPosition),
         parser(prs){
-        fieldsNames << QObject::trUtf8("---");
-        fieldsNames << QObject::trUtf8("Commento");
-        fieldsNames << QObject::trUtf8("Misure");
+        fieldsNames << QObject::tr("---");
+        fieldsNames << QObject::tr("Commento");
+        fieldsNames << QObject::tr("Misure");
 
-        fieldsSeparator << qMakePair( QString("\t"), QObject::trUtf8("TAB") );
-        fieldsSeparator << qMakePair( QString(" "), QObject::trUtf8("Spazio") );
+        fieldsSeparator << qMakePair( QString("\t"), QObject::tr("TAB") );
+        fieldsSeparator << qMakePair( QString(" "), QObject::tr("Spazio") );
     }
 
     ~ImportBillItemMeasuresTXTPrivate(){
@@ -42,10 +42,10 @@ ImportBillItemMeasuresTXT::ImportBillItemMeasuresTXT( MeasuresModel * mModel, in
     m_d( new ImportBillItemMeasuresTXTPrivate( mModel, mPosition, prs ) ){
     m_d->ui->setupUi(this);
 
-    setWindowTitle( trUtf8("Importa misure da file TXT") );
+    setWindowTitle( tr("Importa misure da file TXT") );
 
-    m_d->ui->decimalSeparatorLineEdit->setText( trUtf8("."));
-    m_d->ui->thousandSeparatorLineEdit->setText( trUtf8(""));
+    m_d->ui->decimalSeparatorLineEdit->setText( tr("."));
+    m_d->ui->thousandSeparatorLineEdit->setText( tr(""));
 
     connect( m_d->ui->insertFieldPushButton, &QPushButton::clicked, this, &ImportBillItemMeasuresTXT::insertFieldComboBox );
     connect( m_d->ui->removeFieldPushButton, &QPushButton::clicked, this, &ImportBillItemMeasuresTXT::removeFieldComboBox );
@@ -94,8 +94,8 @@ void ImportBillItemMeasuresTXT::removeFieldComboBox() {
 
 void ImportBillItemMeasuresTXT::editFileName() {
     QString fileName = QFileDialog::getOpenFileName( this,
-                                                     trUtf8("Apri file TXT"), ".",
-                                                     trUtf8("Documento di testo (*.txt)"));
+                                                     tr("Apri file TXT"), ".",
+                                                     tr("Documento di testo (*.txt)"));
     if( !(fileName.isEmpty()) ){
         QFile fileTxt( fileName );
         if(fileTxt.open(QIODevice::ReadOnly | QIODevice::Text)){

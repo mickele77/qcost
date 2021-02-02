@@ -22,13 +22,13 @@ public:
     void showEvent(QShowEvent * event);
 public slots:
     void setItem(AccountingBillItem *b );
-    void setAccountingItemNULL();
+    void setAccountingItemnullptr();
 
 private slots:
     void addAttribute();
     void removeAttribute();
 
-    void setAccountingNULL();
+    void setAccountingnullptr();
 
     void updateLumpSumsComboBox();
     void setLSBill();

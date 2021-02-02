@@ -62,11 +62,11 @@ public:
         SearchAndAdd,
         Add,
         Search,
-        NULLPriceItem,
+        nullptrPriceItem,
         ResetBill
     };
 
-    AccountingBill( const QString & n, ProjectItem *parent, PriceFieldModel *pfm, MathParser * parser = NULL );
+    AccountingBill( const QString & n, ProjectItem *parent, PriceFieldModel *pfm, MathParser * parser = nullptr );
     AccountingBill( AccountingBill & );
 
     AccountingBill & operator= (const AccountingBill & cp );

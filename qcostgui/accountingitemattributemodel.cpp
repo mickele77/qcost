@@ -27,9 +27,9 @@
 class AccountingItemAttributeModelModelPrivate{
 public:
     AccountingItemAttributeModelModelPrivate( AttributesModel * attrModel):
-        accountingBillItem(NULL),
-        accountingTAMBillItem(NULL),
-        accountingLSBillItem(NULL),
+        accountingBillItem(nullptr),
+        accountingTAMBillItem(nullptr),
+        accountingLSBillItem(nullptr),
         attributeModel(attrModel){
     }
     AccountingBillItem * accountingBillItem;
@@ -49,7 +49,7 @@ AccountingItemAttributeModel::~AccountingItemAttributeModel(){
 
 int AccountingItemAttributeModel::rowCount(const QModelIndex &parent) const {
     Q_UNUSED( parent );
-    if( m_d->attributeModel != NULL ){
+    if( m_d->attributeModel != nullptr ){
         return m_d->attributeModel->size();
     }
     return 0;
@@ -64,7 +64,7 @@ Qt::ItemFlags AccountingItemAttributeModel::flags(const QModelIndex &index) cons
     if (!index.isValid())
         return QAbstractTableModel::flags(index);
 
-    if( m_d->accountingBillItem != NULL ){
+    if( m_d->accountingBillItem != nullptr ){
         Attribute * attr = m_d->attributeModel->attribute(index.row() );
         if( m_d->accountingBillItem->containsAttributeInherited( attr ) ){
             return Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsEditable;
@@ -74,7 +74,7 @@ Qt::ItemFlags AccountingItemAttributeModel::flags(const QModelIndex &index) cons
 }
 
 QVariant AccountingItemAttributeModel::data(const QModelIndex &index, int role) const {
-    if( m_d->attributeModel != NULL ){
+    if( m_d->attributeModel != nullptr ){
         if( !index.isValid() || !(index.row() < m_d->attributeModel->size()) ){
             return QVariant();
         }
@@ -82,7 +82,7 @@ QVariant AccountingItemAttributeModel::data(const QModelIndex &index, int role) 
             if( role == Qt::DisplayRole || role == Qt::EditRole){
                 return QVariant( m_d->attributeModel->attribute(index.row() )->name() );
             } else if( role == Qt::CheckStateRole ){
-                if( m_d->accountingBillItem != NULL ){
+                if( m_d->accountingBillItem != nullptr ){
                     if( m_d->accountingBillItem->containsAttribute( m_d->attributeModel->attribute(index.row()) ) ){
                         return QVariant( Qt::Checked );
                     } else {
@@ -98,10 +98,10 @@ QVariant AccountingItemAttributeModel::data(const QModelIndex &index, int role) 
 }
 
 bool AccountingItemAttributeModel::setData(const QModelIndex &index, const QVariant &value, int role) {
-    if(m_d->attributeModel != NULL){
+    if(m_d->attributeModel != nullptr){
         if (index.isValid() && index.row() < m_d->attributeModel->size() ) {
             if( role == Qt::CheckStateRole ){
-                if( m_d->accountingBillItem != NULL ){
+                if( m_d->accountingBillItem != nullptr ){
                     if( index.column() == 0 ){
                         if( value.toInt() == Qt::Checked ){
                             m_d->accountingBillItem->addAttribute( m_d->attributeModel->attribute(index.row() ) );
@@ -129,7 +129,7 @@ QVariant AccountingItemAttributeModel::headerData(int section, Qt::Orientation o
 
     if (orientation == Qt::Horizontal) {
         if(section == 0 ) {
-            return trUtf8("Etichetta");
+            return tr("Etichetta");
         }
     } else if( orientation == Qt::Vertical ){
         return QVariant( section + 1 );
@@ -138,7 +138,7 @@ QVariant AccountingItemAttributeModel::headerData(int section, Qt::Orientation o
 }
 
 bool AccountingItemAttributeModel::insertRows(int row, int count) {
-    if( m_d->attributeModel != NULL ){
+    if( m_d->attributeModel != nullptr ){
         if( count < 1 ){
             return false;
         }
@@ -157,14 +157,14 @@ bool AccountingItemAttributeModel::insertRows(int row, int count) {
 }
 
 bool AccountingItemAttributeModel::append() {
-    if( m_d->attributeModel != NULL ){
+    if( m_d->attributeModel != nullptr ){
         return insertRows( m_d->attributeModel->size(), 1 );
     }
     return false;
 }
 
 bool AccountingItemAttributeModel::removeRows(int row, int count) {
-    if( m_d->attributeModel != NULL ){
+    if( m_d->attributeModel != nullptr ){
         if( count < 1 || row < 0 || row > m_d->attributeModel->size() ){
             return false;
         }
@@ -182,111 +182,111 @@ bool AccountingItemAttributeModel::removeRows(int row, int count) {
 }
 
 bool AccountingItemAttributeModel::clear() {
-    if( m_d->attributeModel != NULL ){
+    if( m_d->attributeModel != nullptr ){
         return removeRows( 0, m_d->attributeModel->size() );
     }
     return false;
 }
 
 void AccountingItemAttributeModel::setAttributeModel(AttributesModel *attrModel) {
-    if( m_d->attributeModel != NULL ){
-        disconnect( m_d->attributeModel, &AttributesModel::aboutToBeDeleted, this, &AccountingItemAttributeModel::setAttributeModelNULL );
+    if( m_d->attributeModel != nullptr ){
+        disconnect( m_d->attributeModel, &AttributesModel::aboutToBeDeleted, this, &AccountingItemAttributeModel::setAttributeModelnullptr );
     }
     beginResetModel();
     m_d->attributeModel = attrModel;
-    setItemNULL();
+    setItemnullptr();
     endResetModel();
-    if( m_d->attributeModel != NULL ){
-        connect( m_d->attributeModel, &AttributesModel::aboutToBeDeleted, this, &AccountingItemAttributeModel::setAttributeModelNULL );
+    if( m_d->attributeModel != nullptr ){
+        connect( m_d->attributeModel, &AttributesModel::aboutToBeDeleted, this, &AccountingItemAttributeModel::setAttributeModelnullptr );
     }
 }
 
-void AccountingItemAttributeModel::setAttributeModelNULL() {
-    setAttributeModel( NULL );
+void AccountingItemAttributeModel::setAttributeModelnullptr() {
+    setAttributeModel( nullptr );
 }
 
 void AccountingItemAttributeModel::setItem( AccountingBillItem * item ){
-    if( m_d->accountingBillItem != item || m_d->accountingTAMBillItem != NULL || m_d->accountingLSBillItem != NULL ){
-        if( m_d->accountingBillItem != NULL ){
-            disconnect( m_d->accountingBillItem, &AccountingBillItem::aboutToBeDeleted, this, &AccountingItemAttributeModel::setItemNULL );
+    if( m_d->accountingBillItem != item || m_d->accountingTAMBillItem != nullptr || m_d->accountingLSBillItem != nullptr ){
+        if( m_d->accountingBillItem != nullptr ){
+            disconnect( m_d->accountingBillItem, &AccountingBillItem::aboutToBeDeleted, this, &AccountingItemAttributeModel::setItemnullptr );
         }
-        if( m_d->accountingTAMBillItem != NULL ){
-            disconnect( m_d->accountingTAMBillItem, &AccountingTAMBillItem::aboutToBeDeleted, this, &AccountingItemAttributeModel::setItemNULL );
+        if( m_d->accountingTAMBillItem != nullptr ){
+            disconnect( m_d->accountingTAMBillItem, &AccountingTAMBillItem::aboutToBeDeleted, this, &AccountingItemAttributeModel::setItemnullptr );
         }
-        if( m_d->accountingLSBillItem != NULL ){
-            disconnect( m_d->accountingLSBillItem, &AccountingLSBillItem::aboutToBeDeleted, this, &AccountingItemAttributeModel::setItemNULL );
+        if( m_d->accountingLSBillItem != nullptr ){
+            disconnect( m_d->accountingLSBillItem, &AccountingLSBillItem::aboutToBeDeleted, this, &AccountingItemAttributeModel::setItemnullptr );
         }
 
         m_d->accountingBillItem = item;
-        m_d->accountingTAMBillItem = NULL;
-        m_d->accountingLSBillItem = NULL;
+        m_d->accountingTAMBillItem = nullptr;
+        m_d->accountingLSBillItem = nullptr;
 
-        if( m_d->attributeModel != NULL ){
+        if( m_d->attributeModel != nullptr ){
             if( m_d->attributeModel->size() > 0 ){
                 emit dataChanged( createIndex(0,0), createIndex(m_d->attributeModel->size(), 0) );
             }
         }
-        if( m_d->accountingBillItem != NULL ){
-            connect( m_d->accountingBillItem, &AccountingBillItem::aboutToBeDeleted, this, &AccountingItemAttributeModel::setItemNULL );
+        if( m_d->accountingBillItem != nullptr ){
+            connect( m_d->accountingBillItem, &AccountingBillItem::aboutToBeDeleted, this, &AccountingItemAttributeModel::setItemnullptr );
         }
     }
 }
 
 void AccountingItemAttributeModel::setItem( AccountingTAMBillItem * item ){
-    if( m_d->accountingTAMBillItem != item || m_d->accountingBillItem != NULL || m_d->accountingLSBillItem != NULL ){
-        if( m_d->accountingBillItem != NULL ){
-            disconnect( m_d->accountingBillItem, &AccountingBillItem::aboutToBeDeleted, this, &AccountingItemAttributeModel::setItemNULL );
+    if( m_d->accountingTAMBillItem != item || m_d->accountingBillItem != nullptr || m_d->accountingLSBillItem != nullptr ){
+        if( m_d->accountingBillItem != nullptr ){
+            disconnect( m_d->accountingBillItem, &AccountingBillItem::aboutToBeDeleted, this, &AccountingItemAttributeModel::setItemnullptr );
         }
-        if( m_d->accountingTAMBillItem != NULL ){
-            disconnect( m_d->accountingTAMBillItem, &AccountingTAMBillItem::aboutToBeDeleted, this, &AccountingItemAttributeModel::setItemNULL );
+        if( m_d->accountingTAMBillItem != nullptr ){
+            disconnect( m_d->accountingTAMBillItem, &AccountingTAMBillItem::aboutToBeDeleted, this, &AccountingItemAttributeModel::setItemnullptr );
         }
-        if( m_d->accountingLSBillItem != NULL ){
-            disconnect( m_d->accountingLSBillItem, &AccountingLSBillItem::aboutToBeDeleted, this, &AccountingItemAttributeModel::setItemNULL );
+        if( m_d->accountingLSBillItem != nullptr ){
+            disconnect( m_d->accountingLSBillItem, &AccountingLSBillItem::aboutToBeDeleted, this, &AccountingItemAttributeModel::setItemnullptr );
         }
 
-        m_d->accountingBillItem = NULL;
+        m_d->accountingBillItem = nullptr;
         m_d->accountingTAMBillItem = item;
-        m_d->accountingLSBillItem = NULL;
+        m_d->accountingLSBillItem = nullptr;
 
-        if( m_d->attributeModel != NULL ){
+        if( m_d->attributeModel != nullptr ){
             if( m_d->attributeModel->size() > 0 ){
                 emit dataChanged( createIndex(0,0), createIndex(m_d->attributeModel->size(), 0) );
             }
         }
-        if( m_d->accountingTAMBillItem != NULL ){
-            connect( m_d->accountingTAMBillItem, &AccountingTAMBillItem::aboutToBeDeleted, this, &AccountingItemAttributeModel::setItemNULL );
+        if( m_d->accountingTAMBillItem != nullptr ){
+            connect( m_d->accountingTAMBillItem, &AccountingTAMBillItem::aboutToBeDeleted, this, &AccountingItemAttributeModel::setItemnullptr );
         }
     }
 }
 
 void AccountingItemAttributeModel::setItem(AccountingLSBillItem *item) {
-    if( m_d->accountingLSBillItem != item || m_d->accountingTAMBillItem != NULL || m_d->accountingBillItem != NULL ){
-        if( m_d->accountingBillItem != NULL ){
-            disconnect( m_d->accountingBillItem, &AccountingBillItem::aboutToBeDeleted, this, &AccountingItemAttributeModel::setItemNULL );
+    if( m_d->accountingLSBillItem != item || m_d->accountingTAMBillItem != nullptr || m_d->accountingBillItem != nullptr ){
+        if( m_d->accountingBillItem != nullptr ){
+            disconnect( m_d->accountingBillItem, &AccountingBillItem::aboutToBeDeleted, this, &AccountingItemAttributeModel::setItemnullptr );
         }
-        if( m_d->accountingTAMBillItem != NULL ){
-            disconnect( m_d->accountingTAMBillItem, &AccountingTAMBillItem::aboutToBeDeleted, this, &AccountingItemAttributeModel::setItemNULL );
+        if( m_d->accountingTAMBillItem != nullptr ){
+            disconnect( m_d->accountingTAMBillItem, &AccountingTAMBillItem::aboutToBeDeleted, this, &AccountingItemAttributeModel::setItemnullptr );
         }
-        if( m_d->accountingLSBillItem != NULL ){
-            disconnect( m_d->accountingLSBillItem, &AccountingLSBillItem::aboutToBeDeleted, this, &AccountingItemAttributeModel::setItemNULL );
+        if( m_d->accountingLSBillItem != nullptr ){
+            disconnect( m_d->accountingLSBillItem, &AccountingLSBillItem::aboutToBeDeleted, this, &AccountingItemAttributeModel::setItemnullptr );
         }
-        m_d->accountingBillItem = NULL;
-        m_d->accountingTAMBillItem = NULL;
+        m_d->accountingBillItem = nullptr;
+        m_d->accountingTAMBillItem = nullptr;
         m_d->accountingLSBillItem = item;
 
-        if( m_d->attributeModel != NULL ){
+        if( m_d->attributeModel != nullptr ){
             if( m_d->attributeModel->size() > 0 ){
                 emit dataChanged( createIndex(0,0), createIndex(m_d->attributeModel->size(), 0) );
             }
         }
-        if( m_d->accountingLSBillItem != NULL ){
-            connect( m_d->accountingLSBillItem, &AccountingLSBillItem::aboutToBeDeleted, this, &AccountingItemAttributeModel::setItemNULL );
+        if( m_d->accountingLSBillItem != nullptr ){
+            connect( m_d->accountingLSBillItem, &AccountingLSBillItem::aboutToBeDeleted, this, &AccountingItemAttributeModel::setItemnullptr );
         }
     }
 }
 
-void AccountingItemAttributeModel::setItemNULL(){
-    setItem( (AccountingLSBillItem *)(NULL));
-    setItem( (AccountingTAMBillItem *)(NULL));
-    setItem( (AccountingBillItem *)(NULL));
+void AccountingItemAttributeModel::setItemnullptr(){
+    setItem( (AccountingLSBillItem *)(nullptr));
+    setItem( (AccountingTAMBillItem *)(nullptr));
+    setItem( (AccountingBillItem *)(nullptr));
 }

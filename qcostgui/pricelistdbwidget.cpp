@@ -36,7 +36,7 @@ public:
         fileName(fileNameInput),
         importOptions(impOptions),
         fileNameWasCreated(false){
-        if( fileName == NULL ){
+        if( fileName == nullptr ){
             fileName = new QString();
             fileNameWasCreated = true;
         }
@@ -49,7 +49,7 @@ public:
         }
     }
     QString	toString(double i, char f = 'g', int prec = 6) const{
-        if( parser == NULL ){
+        if( parser == nullptr ){
             return QString::number( i, f, prec );
         } else {
             return parser->toString( i, f, prec );
@@ -74,7 +74,7 @@ PriceListDBWidget::PriceListDBWidget( QMap<ImportOptions, bool> * impOptions, QS
     m_d->ui->importOptionsGroupBox->setVisible( false );
     m_d->ui->filtersGroupBox->setVisible( false );
 
-    if( m_d->importOptions != NULL ){
+    if( m_d->importOptions != nullptr ){
         if( m_d->importOptions->contains( ImportCode ) ){
             m_d->ui->importCodeCheckBox->setChecked( m_d->importOptions->value(ImportCode) );
         } else {
@@ -176,8 +176,8 @@ void PriceListDBWidget::setCurrentPrice(const QModelIndex &current ) {
 
 void PriceListDBWidget::editDBFileName(){
     QString fileName = QFileDialog::getOpenFileName(this,
-                                                    trUtf8("Apri E.P. Archivio"), ".",
-                                                    trUtf8("E.P.Archivio QCost(*.qdb);;"));
+                                                    tr("Apri E.P. Archivio"), ".",
+                                                    tr("E.P.Archivio QCost(*.qdb);;"));
     if( QFileInfo( fileName ).exists() ){
         *(m_d->fileName) = fileName;
         m_d->ui->dbFileNameLineEdit->setText( fileName );
@@ -313,7 +313,7 @@ void PriceListDBWidget::applyFilter(){
 }
 
 void PriceListDBWidget::syncImportOptions( bool isChecked ) {
-    if( m_d->importOptions != NULL ){
+    if( m_d->importOptions != nullptr ){
         QCheckBox * checkBoxSender = dynamic_cast<QCheckBox * >(sender());
         if( checkBoxSender == m_d->ui->importCodeCheckBox ){
             (*(m_d->importOptions))[ImportCode] = isChecked;

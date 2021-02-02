@@ -41,7 +41,7 @@ class AccountingLSBillsPrivate;
 class EXPORT_QCOST_LIB_OPT AccountingLSBills : public QObject, public ProjectItem {
     Q_OBJECT
 public:
-    AccountingLSBills( ProjectItem * parent, PriceFieldModel * pfm, MathParser * p = NULL );
+    AccountingLSBills( ProjectItem * parent, PriceFieldModel * pfm, MathParser * p = nullptr );
     ~AccountingLSBills();
 
     bool isEmpty();

@@ -53,8 +53,8 @@ public:
         defaultPointSize(8),
         document(&doc),
         device(dev),
-        strategy(0),
-        codec(0),
+        strategy(nullptr),
+        codec(nullptr),
         createArchive(true){
     }
     double pageWidth;

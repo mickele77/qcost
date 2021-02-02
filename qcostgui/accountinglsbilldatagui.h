@@ -38,7 +38,7 @@ public:
     void setAccountingBill(AccountingLSBill *b);
 private slots:
     void setDescription();
-    void setAccountingBillNULL();
+    void setAccountingBillnullptr();
 
     void setPPUTotalToDiscount();
     void setPPUNotToDiscount();

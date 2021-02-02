@@ -34,7 +34,7 @@ public:
     }
 
     int fromModelToViewModel( int row ){
-        if( model != NULL ){
+        if( model != nullptr ){
             if( row <= model->lastValueRow() ){
                 return 2*row;
             } else {
@@ -45,7 +45,7 @@ public:
     }
 
     int fromViewModelToModel( int row ){
-        if( model != NULL ){
+        if( model != nullptr ){
             int retRow = row / 2;
             if( retRow <= model->lastValueRow() ){
                 if( row % 2 == 0 ){
@@ -60,7 +60,7 @@ public:
     }
 
     QString	toString(double i, char f = 'g', int prec = 6) const{
-        if( parser == NULL ){
+        if( parser == nullptr ){
             return QString::number( i, f, prec );
         } else {
             return parser->toString( i, f, prec );
@@ -74,7 +74,7 @@ public:
 
 PriceItemDataSetViewModel::PriceItemDataSetViewModel( PriceItemDataSetModel * m, int curPriceDataSet, MathParser * prs, QObject * parent ):
     QAbstractTableModel( parent ),
-    m_d( new PriceItemDataSetViewModelPrivate( NULL, 0, prs )){
+    m_d( new PriceItemDataSetViewModelPrivate( nullptr, 0, prs )){
     setModel(m);
     setCurrentPriceDataSet( curPriceDataSet );
 }
@@ -86,7 +86,7 @@ PriceItemDataSetViewModel::~PriceItemDataSetViewModel(){
 void PriceItemDataSetViewModel::setModel(PriceItemDataSetModel * m ){
     if( m_d->model != m ){
         beginResetModel();
-        if( m_d->model != NULL ){
+        if( m_d->model != nullptr ){
             disconnect( m_d->model, &PriceItemDataSetModel::beginInsertPriceDataSets, this, &PriceItemDataSetViewModel::beginInsertPriceDataSets );
             disconnect( m_d->model, &PriceItemDataSetModel::endInsertPriceDataSets, this, &PriceItemDataSetViewModel::endInsertPriceDataSets );
             disconnect( m_d->model, &PriceItemDataSetModel::beginRemovePriceDataSets, this, &PriceItemDataSetViewModel::beginRemovePriceDataSets );
@@ -94,7 +94,7 @@ void PriceItemDataSetViewModel::setModel(PriceItemDataSetModel * m ){
             disconnect( m_d->model, &PriceItemDataSetModel::dataChanged, this, &PriceItemDataSetViewModel::dataHaveChanged );
         }
         m_d->model = m;
-        if( m_d->model != NULL ){
+        if( m_d->model != nullptr ){
             connect( m_d->model, &PriceItemDataSetModel::beginInsertPriceDataSets, this, &PriceItemDataSetViewModel::beginInsertPriceDataSets );
             connect( m_d->model, &PriceItemDataSetModel::endInsertPriceDataSets, this, &PriceItemDataSetViewModel::endInsertPriceDataSets );
             connect( m_d->model, &PriceItemDataSetModel::beginRemovePriceDataSets, this, &PriceItemDataSetViewModel::beginRemovePriceDataSets );
@@ -146,7 +146,7 @@ void PriceItemDataSetViewModel::endRemovePriceField( int firstRow, int lastRow )
 }
 
 void PriceItemDataSetViewModel::dataHaveChanged( const QModelIndex & topLeft, const QModelIndex & bottomRight ){
-    if( m_d->model != NULL ){
+    if( m_d->model != nullptr ){
         for( int modelRow = topLeft.row(); modelRow < bottomRight.row(); ++ modelRow ){
             int viewRow = m_d->fromModelToViewModel( modelRow );
             QModelIndex viewTopLeft = createIndex( viewRow, topLeft.column() );
@@ -170,21 +170,21 @@ void PriceItemDataSetViewModel::dataHaveChanged( const QModelIndex & topLeft, co
 
 int PriceItemDataSetViewModel::rowCount(const QModelIndex &parent) const {
     Q_UNUSED(parent);
-    if( m_d->model != NULL ){
+    if( m_d->model != nullptr ){
         return m_d->model->lastValueRow() * 2 + 1 + ( m_d->model->rowCount(parent) - m_d->model->lastValueRow() );
     }
     return 0;
 }
 
 int PriceItemDataSetViewModel::columnCount(const QModelIndex &parent) const {
-    if( m_d->model != NULL ){
+    if( m_d->model != nullptr ){
         return m_d->model->columnCount( parent );
     }
     return 0;
 }
 
 Qt::ItemFlags PriceItemDataSetViewModel::flags(const QModelIndex &index) const {
-    if( m_d->model != NULL ){
+    if( m_d->model != nullptr ){
         int row = index.row() / 2;
         if( row <= m_d->model->lastValueRow() ){
             if( index.row() % 2 == 0 ){
@@ -217,7 +217,7 @@ QVariant PriceItemDataSetViewModel::data(const QModelIndex &index, int role) con
         return Qt::AlignRight + Qt::AlignVCenter ;
     }
 
-    if( m_d->model != NULL ){
+    if( m_d->model != nullptr ){
         int row = index.row() / 2;
         if( row <= m_d->model->lastValueRow() ){
             if( index.row() % 2 == 0 ){
@@ -246,7 +246,7 @@ bool PriceItemDataSetViewModel::setData(const QModelIndex &index, const QVariant
         return false;
     }
 
-    if( m_d->model != NULL ){
+    if( m_d->model != nullptr ){
         int row = index.row() / 2;
         if( row <= m_d->model->lastValueRow() ){
             if( index.row() % 2 == 0 ){
@@ -262,7 +262,7 @@ bool PriceItemDataSetViewModel::setData(const QModelIndex &index, const QVariant
 }
 
 QVariant PriceItemDataSetViewModel::headerData(int section, Qt::Orientation orientation, int role) const {
-    if( m_d->model != NULL ){
+    if( m_d->model != nullptr ){
         if (orientation == Qt::Horizontal ){
             return m_d->model->headerData( section, orientation, role );
         } else {
@@ -294,7 +294,7 @@ int PriceItemDataSetViewModel::currentPriceDataSet() const {
 void PriceItemDataSetViewModel::setCurrentPriceDataSet(int newDataSet) {
     if( m_d->currentPriceDataSet != newDataSet ){
         m_d->currentPriceDataSet = newDataSet;
-        if( m_d->model != NULL ){
+        if( m_d->model != nullptr ){
             for( int i=0; i <= m_d->model->lastValueRow() ; ++i ){
                 int viewRow = m_d->fromModelToViewModel( i ) + 1;
                 QModelIndex topLeft = createIndex( viewRow, 0 );
@@ -306,7 +306,7 @@ void PriceItemDataSetViewModel::setCurrentPriceDataSet(int newDataSet) {
 }
 
 int PriceItemDataSetViewModel::associatedAPRow() {
-    if( m_d->model != NULL ){
+    if( m_d->model != nullptr ){
         int r = m_d->fromModelToViewModel( m_d->model->associatedAPRow() );
         return r;
     }

@@ -51,7 +51,7 @@ public:
         SearchAndAdd,
         Add,
         Search,
-        NULLPriceItem,
+        nullptrPriceItem,
         ResetBill
     };
 
@@ -60,7 +60,7 @@ public:
                       ProjectItem *parent,
                       PriceFieldModel *pfm,
                       AttributesModel * attrsModel,
-                      MathParser * parser = NULL );
+                      MathParser * parser = nullptr );
     AccountingLSBill( AccountingLSBill & );
 
     AccountingLSBill & operator= (const AccountingLSBill & cp );

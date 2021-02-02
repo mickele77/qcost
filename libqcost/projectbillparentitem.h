@@ -40,7 +40,7 @@ class ProjectBillParentItemPrivate;
 class EXPORT_QCOST_LIB_OPT ProjectBillParentItem : public QObject, public ProjectItem {
     Q_OBJECT
 public:
-    ProjectBillParentItem( ProjectItem * parent, PriceFieldModel * pfm, MathParser * p = NULL );
+    ProjectBillParentItem( ProjectItem * parent, PriceFieldModel * pfm, MathParser * p = nullptr );
 
     int billCount();
     Bill * bill( int i );

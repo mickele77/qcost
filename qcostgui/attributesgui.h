@@ -34,7 +34,7 @@ class AttributesGUIPrivate;
 class AttributesGUI : public QWidget {
     Q_OBJECT
 public:
-    explicit AttributesGUI( PriceFieldModel * pfm, MathParser *prs, QString * wordProcessorFile = NULL, QWidget *parent = 0);
+    explicit AttributesGUI( PriceFieldModel * pfm, MathParser *prs, QString * wordProcessorFile = nullptr, QWidget *parent = 0);
     ~AttributesGUI();
 
     void setBill( Bill * b);
@@ -46,7 +46,7 @@ public:
     void activateAttributeModel();
 
 private slots:
-    void setBillNULL();
+    void setBillnullptr();
     void addAttribute();
     void removeAttribute();
 

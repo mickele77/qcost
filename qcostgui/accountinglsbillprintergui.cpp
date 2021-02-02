@@ -116,7 +116,7 @@ AccountingLSBillPrinterGUI::AccountingLSBillPrinterGUI( AccountingBill * measure
     for( int i=0; i < measuresBill->paymentsCount(); ++i ){
         m_d->ui->payToPrintComboBox->addItem( measuresBill->payment(i)->title(), QVariant(i) );
     }
-    m_d->ui->payToPrintComboBox->addItem(trUtf8("Tutti"), QVariant(-1) );
+    m_d->ui->payToPrintComboBox->addItem(tr("Tutti"), QVariant(-1) );
     if( *payToPrint < 0 ){
         m_d->ui->payToPrintComboBox->setCurrentIndex( measuresBill->paymentsCount() );
     } else {

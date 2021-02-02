@@ -46,7 +46,7 @@ public:
 public slots:
     void setBillItem(AccountingLSBillItem *b );
     void clear();
-    void setBillNULL();
+    void setBillnullptr();
 
 private slots:
     void connectPriceItem(PriceItem *oldPriceItem, PriceItem *newPriceItem);

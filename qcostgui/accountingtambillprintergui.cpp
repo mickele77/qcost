@@ -115,7 +115,7 @@ AccountingTAMBillPrinterGUI::AccountingTAMBillPrinterGUI(AccountingTAMBill *bill
         m_d->ui->billToPrintComboBox->addItem( (*iter)->title(), QVariant(i) );
         ++i;
     }
-    m_d->ui->billToPrintComboBox->addItem( trUtf8("Tutti"), QVariant(-1) );
+    m_d->ui->billToPrintComboBox->addItem( tr("Tutti"), QVariant(-1) );
     if( *billToPrint < 0 ){
         m_d->ui->billToPrintComboBox->setCurrentIndex( bill->bills().size() );
     } else {

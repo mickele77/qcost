@@ -44,7 +44,7 @@ public:
         ui(new Ui::BillTreeGUI),
         parser(prs),
         priceFieldModel( p->priceFieldModel() ),
-        bill(NULL),
+        bill(nullptr),
         project( p ),
         EPAImportOptions(EPAImpOptions),
         EPAFileName(fileName){
@@ -90,32 +90,32 @@ BillTreeGUI::~BillTreeGUI() {
 
 void BillTreeGUI::billTreeViewCustomMenuRequested(QPoint pos){
     QMenu *menu=new QMenu(this);
-    QAction * addAction = new QAction( trUtf8("Aggiungi"), this);
+    QAction * addAction = new QAction( tr("Aggiungi"), this);
     connect( addAction, SIGNAL(triggered()), this, SLOT(addItems()) );
     menu->addAction( addAction );
-    QAction * addChildAction = new QAction( trUtf8("Aggiungi ▼"), this);
+    QAction * addChildAction = new QAction( tr("Aggiungi ▼"), this);
     connect( addChildAction, SIGNAL(triggered()), this, SLOT(addChildItems()) );
     menu->addAction( addChildAction );
-    QAction * delAction = new QAction( trUtf8("Elimina"), this);
+    QAction * delAction = new QAction( tr("Elimina"), this);
     connect( delAction, SIGNAL(triggered()), this, SLOT(removeItems()) );
     menu->addAction( delAction );
     menu->addSeparator();
-    QAction * attributesAction = new QAction( trUtf8("Etichette"), this);
+    QAction * attributesAction = new QAction( tr("Etichette"), this);
     connect( attributesAction, SIGNAL(triggered()), this, SLOT(editAttributes()) );
     menu->addAction( attributesAction );
     menu->addSeparator();
-    QAction * cutAction = new QAction( trUtf8("Taglia"), this);
+    QAction * cutAction = new QAction( tr("Taglia"), this);
     connect( cutAction, SIGNAL(triggered()), this, SLOT(cutToClipboard()) );
     menu->addAction( cutAction );
-    QAction * copyAction = new QAction( trUtf8("Copia"), this);
+    QAction * copyAction = new QAction( tr("Copia"), this);
     connect( copyAction, SIGNAL(triggered()), this, SLOT(copyToClipboard()) );
     menu->addAction( copyAction );
-    QAction * pasteAction = new QAction( trUtf8("Incolla"), this);
+    QAction * pasteAction = new QAction( tr("Incolla"), this);
     connect( pasteAction, SIGNAL(triggered()), this, SLOT(pasteFromClipboard()) );
     menu->addAction( pasteAction );
 
     menu->addSeparator();
-    QAction * resizeColToContent = new QAction( trUtf8("Ottimizza colonne"), this);
+    QAction * resizeColToContent = new QAction( tr("Ottimizza colonne"), this);
     connect( resizeColToContent, SIGNAL(triggered()), SLOT(resizeColumnsToContents()) );
     menu->addAction( resizeColToContent );
 
@@ -123,11 +123,11 @@ void BillTreeGUI::billTreeViewCustomMenuRequested(QPoint pos){
 }
 
 void BillTreeGUI::copyToClipboard(){
-    if( m_d->bill != NULL ){
+    if( m_d->bill != nullptr ){
         if( m_d->ui->treeView->selectionModel() ){
             QCostClipboardData *data = new QCostClipboardData();
             const QCostClipboardData *clipData = qobject_cast<const QCostClipboardData *>(QApplication::clipboard()->mimeData());
-            if( clipData != NULL ){
+            if( clipData != nullptr ){
                 *data = *clipData;
             }
             QModelIndexList selRows = m_d->ui->treeView->selectionModel()->selectedRows();
@@ -142,11 +142,11 @@ void BillTreeGUI::copyToClipboard(){
 }
 
 void BillTreeGUI::cutToClipboard(){
-    if( m_d->bill != NULL ){
+    if( m_d->bill != nullptr ){
         if( m_d->ui->treeView->selectionModel() ){
             QCostClipboardData *data = new QCostClipboardData();
             const QCostClipboardData *clipData = qobject_cast<const QCostClipboardData *>(QApplication::clipboard()->mimeData());
-            if( clipData != NULL ){
+            if( clipData != nullptr ){
                 *data = *clipData;
             }
             QModelIndexList selRows = m_d->ui->treeView->selectionModel()->selectedRows();
@@ -161,13 +161,13 @@ void BillTreeGUI::cutToClipboard(){
 }
 
 void BillTreeGUI::pasteFromClipboard(){
-    if( m_d->bill != NULL ){
+    if( m_d->bill != nullptr ){
         if( m_d->ui->treeView->selectionModel() ){
             QClipboard * clp = QApplication::clipboard();
             const QMimeData * mimeData = clp->mimeData();
             const QCostClipboardData *data = qobject_cast<const QCostClipboardData *>( mimeData );
 
-            if( data != NULL ){
+            if( data != nullptr ){
                 QModelIndex currIndex = m_d->ui->treeView->currentIndex();
                 int currRow = m_d->bill->rowCount( )-1;
                 QModelIndex currParent = QModelIndex();
@@ -176,18 +176,18 @@ void BillTreeGUI::pasteFromClipboard(){
                     currParent = currIndex.parent();
                 }
                 QList<BillItem *> itemsToCopy;
-                Bill * itemsToCopyBill = NULL;
+                Bill * itemsToCopyBill = nullptr;
                 QCostClipboardData::Mode mode;
                 data->getCopiedBillItems( &itemsToCopy, itemsToCopyBill, &mode);
-                if( itemsToCopyBill != NULL ){
+                if( itemsToCopyBill != nullptr ){
                     if( mode == QCostClipboardData::Copy ){
                         if( itemsToCopyBill->priceList() != m_d->bill->priceList() ){
                             for( QList<BillItem *>::iterator i=itemsToCopy.begin(); i != itemsToCopy.end(); ++i ){
                                 if( (*i)->hasChildren() ){
-                                    (*i)->setPriceItem( NULL );
+                                    (*i)->setPriceItem( nullptr );
                                 } else {
                                     PriceItem * pItem = m_d->bill->priceList()->priceItemCode( (*i)->priceItem()->codeFull() );
-                                    if( pItem == NULL ){
+                                    if( pItem == nullptr ){
                                         pItem = m_d->bill->priceList()->appendPriceItem();
                                         *pItem = *((*i)->priceItem());
                                     }
@@ -206,7 +206,7 @@ void BillTreeGUI::pasteFromClipboard(){
                                 }
                             }
                             if( !containsParent ){
-                                if(m_d->bill->insertItems( NULL, currRow+1, 1, currParent )) {
+                                if(m_d->bill->insertItems( nullptr, currRow+1, 1, currParent )) {
                                     *(m_d->bill->item( m_d->bill->index(currRow+1, 0, currParent ) ) ) = *(*i);
                                 }
                             }
@@ -256,10 +256,10 @@ void BillTreeGUI::editAttributes(){
 void BillTreeGUI::editBillItemPrice( const QModelIndex & index ){
     if( m_d->bill ){
         if( index.column() >= 0 && index.column() < 4 ){
-            if( m_d->bill->priceList() == NULL ){
+            if( m_d->bill->priceList() == nullptr ){
                 QMessageBox msgBox;
-                msgBox.setText( trUtf8("Al computo non è associato alcun elenco prezzi") );
-                msgBox.setInformativeText(trUtf8("Prima di associare un prezzo ad una riga è necessario aver impostato l'elenco prezzi del computo.") );
+                msgBox.setText( tr("Al computo non è associato alcun elenco prezzi") );
+                msgBox.setInformativeText(tr("Prima di associare un prezzo ad una riga è necessario aver impostato l'elenco prezzi del computo.") );
                 msgBox.setStandardButtons(QMessageBox::Ok );
                 msgBox.exec();
             } else {
@@ -274,18 +274,18 @@ void BillTreeGUI::editBillItemPrice( const QModelIndex & index ){
 
 BillItem *BillTreeGUI::currentBillItem() {
     if( m_d->ui->treeView->selectionModel() ){
-        if( m_d->bill != NULL ){
+        if( m_d->bill != nullptr ){
             if( m_d->ui->treeView->selectionModel()->currentIndex().isValid() ){
                 return m_d->bill->item( m_d->ui->treeView->selectionModel()->currentIndex() );
             }
         }
     }
-    return NULL;
+    return nullptr;
 }
 
 void BillTreeGUI::setBill(Bill *b ) {
     if( m_d->bill != b ){
-        if( m_d->bill != NULL ){
+        if( m_d->bill != nullptr ){
             disconnect( m_d->bill, SIGNAL(amountChanged(int,QString)), this, SLOT(updateAmountValue(int,QString) ));
             disconnect( m_d->ui->priceListComboBox, static_cast<void(QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this, &BillTreeGUI::setPriceList );
             disconnect( m_d->ui->currentPriceDataSetSpinBox, static_cast<void(QSpinBox::*)(int)>(&QSpinBox::valueChanged), this, &BillTreeGUI::setPriceDataSet );
@@ -308,7 +308,7 @@ void BillTreeGUI::setBill(Bill *b ) {
         m_d->bill = b;
 
         m_d->ui->treeView->setModel( b );
-        if( m_d->bill != NULL ){
+        if( m_d->bill != nullptr ){
             for( int i=0; i < m_d->amountLEditList.size(); ++i){
                 if( i < m_d->priceFieldModel->fieldCount() ){
                     m_d->amountLEditList.at(i)->setText( m_d->bill->amountStr(i) );
@@ -333,11 +333,11 @@ void BillTreeGUI::setBill(Bill *b ) {
 }
 
 void BillTreeGUI::clear(){
-    setBill(NULL);
+    setBill(nullptr);
 }
 
 void BillTreeGUI::addItems(){
-    if( m_d->bill != NULL ){
+    if( m_d->bill != nullptr ){
         if( m_d->ui->treeView->selectionModel() ){
             QModelIndexList rowListSel = m_d->ui->treeView->selectionModel()->selectedRows();
             if( rowListSel.size() > 0 ){
@@ -356,14 +356,14 @@ void BillTreeGUI::addItems(){
                         }
                     }
                 }
-                m_d->bill->insertItems( NULL, rowList.last().row()+1, rowList.size(), rowList.last().parent() );
+                m_d->bill->insertItems( nullptr, rowList.last().row()+1, rowList.size(), rowList.last().parent() );
                 if( m_d->ui->treeView->selectionModel() ){
                     m_d->ui->treeView->selectionModel()->clearSelection();
                     m_d->ui->treeView->selectionModel()->setCurrentIndex( m_d->bill->index( rowList.last().row()+rowList.size(), 0, rowList.last().parent() ),
                                                                           QItemSelectionModel::Rows | QItemSelectionModel::SelectCurrent );
                 }
             } else {
-                m_d->bill->insertItems( NULL, 0 );
+                m_d->bill->insertItems( nullptr, 0 );
                 if( m_d->ui->treeView->selectionModel() ){
                     m_d->ui->treeView->selectionModel()->clearSelection();
                     m_d->ui->treeView->selectionModel()->setCurrentIndex( m_d->bill->index( 0, 0, QModelIndex() ),
@@ -393,7 +393,7 @@ void BillTreeGUI::addChildItems(){
 }
 
 void BillTreeGUI::removeItems(){
-    if( m_d->bill != NULL ){
+    if( m_d->bill != nullptr ){
         if( m_d->ui->treeView->selectionModel() ){
             // se la lista non contiene il genitore dell'oggetto lo rimuovo
             // altrimenti è sufficiente rimuovere il genitore
@@ -413,12 +413,12 @@ void BillTreeGUI::removeItems(){
 
 void BillTreeGUI::changeCurrentItem(const QModelIndex &currentIndex  ) {
     if( currentIndex.isValid() ){
-        if( m_d->bill != NULL ){
+        if( m_d->bill != nullptr ){
             emit currentItemChanged( m_d->bill->item( currentIndex ));
             return;
         }
     }
-    emit currentItemChanged( NULL );
+    emit currentItemChanged( nullptr );
 }
 
 void BillTreeGUI::setPriceList() {
@@ -471,7 +471,7 @@ void BillTreeGUI::updateAmountsNameValue(){
         QLineEdit * lEdit = new QLineEdit();
         lEdit->setReadOnly( true );
         lEdit->setAlignment( Qt::AlignRight);
-        if( m_d->bill != NULL ){
+        if( m_d->bill != nullptr ){
             lEdit->setText( m_d->bill->amountStr(i));
         }
         m_d->ui->amountsLayout->addWidget( label, i, 0 );
@@ -509,7 +509,7 @@ void BillTreeGUI::showEvent(QShowEvent *event) {
 
 void BillTreeGUI::populatePriceListComboBox(){
     m_d->ui->priceListComboBox->clear();
-    m_d->ui->priceListComboBox->addItem( QString("---"), qVariantFromValue((void *) NULL ));
+    m_d->ui->priceListComboBox->addItem( QString("---"), qVariantFromValue((void *) nullptr ));
     for( int i=0; i < m_d->project->priceListCount(); ++i){
         QString n;
         if( m_d->project->priceList(i) ){

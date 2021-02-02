@@ -218,13 +218,13 @@ public:
                     }
                     if( leftPart.isEmpty() ){
                         if( errorMsg ){
-                            errorMsg->append( trUtf8("Manca un valore prima dell'operatore %1.\n").arg(oper) );
+                            errorMsg->append( tr("Manca un valore prima dell'operatore %1.\n").arg(oper) );
                         }
                         return 0.0;
                     }
                     if( rightPart.isEmpty() ){
                         if( errorMsg ){
-                            errorMsg->append( trUtf8("Manca un valore dopo l'operatore %1.\n").arg(oper) );
+                            errorMsg->append( tr("Manca un valore dopo l'operatore %1.\n").arg(oper) );
                         }
                         return 0.0;
                     }
@@ -243,7 +243,7 @@ public:
                     case '/':{
                         if( rightValue == 0.0 ){
                             if( errorMsg ){
-                                errorMsg->append( trUtf8("Divisione per zero.\n") );
+                                errorMsg->append( tr("Divisione per zero.\n") );
                             }
                             return 0.0;
                         }
@@ -292,7 +292,7 @@ public:
             }
             // non abbiamo trovato la funzione: errore!
             if( errorMsg ){
-                errorMsg->append( trUtf8("Errore: funzione %1 sconosciuta.\n").arg(function));
+                errorMsg->append( tr("Errore: funzione %1 sconosciuta.\n").arg(function));
             }
             return 0.0;
         }
@@ -303,7 +303,7 @@ public:
             double ret = locale.toDouble( expr, &ok );
             if( !ok ){
                 if( errorMsg ){
-                    errorMsg->append( trUtf8("Errore nella conversione del valore %1.").arg(expr));
+                    errorMsg->append( tr("Errore nella conversione del valore %1.").arg(expr));
                 }
             }
             return ret;
@@ -316,7 +316,7 @@ public:
 
         // se siamo arrivati fin qui qualcosa è andata storto
         if( errorMsg ){
-            errorMsg->append( trUtf8("Errore di sintassi nella parte %1.\n").arg(expr) );
+            errorMsg->append( tr("Errore di sintassi nella parte %1.\n").arg(expr) );
         }
         return 0.0;
     }
@@ -419,7 +419,7 @@ QString MathParser::spellInt(QString numStr) {
             } else {
                 // ventitre => ventitrè
                 if( sect == 0 && digit[2] == 3 ) {
-                    text[2]	= QObject::trUtf8("trè");
+                    text[2]	= QObject::tr("trè");
                 } else {
                     text[2]	= oneDigitNums[digit[2]];
                 }
@@ -463,7 +463,7 @@ QString MathParser::spellInt(QString numStr) {
     }
 
     if( !isPositive ){
-        result = QString("%1 ").arg( QObject::trUtf8("meno")) + result;
+        result = QString("%1 ").arg( QObject::tr("meno")) + result;
     }
 
     return result;

@@ -32,14 +32,14 @@ class AccountingBillDataGUIPrivate;
 class AccountingBillDataGUI : public QWidget {
     Q_OBJECT
 public:
-    explicit AccountingBillDataGUI( PriceFieldModel * pfm, MathParser *prs, AccountingBill * b, Project * prj, QString * wordProcessorFile = NULL, QWidget *parent = 0);
+    explicit AccountingBillDataGUI( PriceFieldModel * pfm, MathParser *prs, AccountingBill * b, Project * prj, QString * wordProcessorFile = nullptr, QWidget *parent = 0);
     ~AccountingBillDataGUI();
 
     void setAccountingBill( AccountingBill * b);
 
 private slots:
     void setDescription();
-    void setAccountingNULL();
+    void setAccountingnullptr();
 
 private:
     AccountingBillDataGUIPrivate * m_d;

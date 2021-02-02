@@ -24,13 +24,13 @@ public:
 
 public slots:
     void setAccountingItem(AccountingBillItem *b );
-    void setAccountingItemNULL();
+    void setAccountingItemnullptr();
 
 private slots:
     void addAttribute();
     void removeAttribute();
 
-    void setAccountingNULL();
+    void setAccountingnullptr();
 
     void updateTAMBillComboBox();
 

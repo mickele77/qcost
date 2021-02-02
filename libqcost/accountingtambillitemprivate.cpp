@@ -31,7 +31,7 @@ AccountingTAMBillItemPrivate::AccountingTAMBillItemPrivate( AccountingTAMBillIte
     name(QString()),
     startDate( nullptr ),
     endDate( nullptr ),
-    text( QObject::trUtf8("Commento") ),
+    text( QObject::tr("Commento") ),
     quantity(0.0),
     priceItem( nullptr ),
     PPUTotalToDiscount(0.0),

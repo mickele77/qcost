@@ -38,7 +38,7 @@ class AccountingLSBillDataGUIPrivate{
 public:
     AccountingLSBillDataGUIPrivate():
         ui(new Ui::AccountingLSBillDataGUI() ),
-        accounting(NULL){
+        accounting(nullptr){
     }
     Ui::AccountingLSBillDataGUI * ui;
     AccountingLSBill * accounting;
@@ -59,7 +59,7 @@ AccountingLSBillDataGUI::~AccountingLSBillDataGUI(){
 
 void AccountingLSBillDataGUI::setAccountingBill(AccountingLSBill *b) {
     if( m_d->accounting != b ){
-        if( m_d->accounting != NULL ){
+        if( m_d->accounting != nullptr ){
             disconnect( m_d->ui->codeLineEdit, &QLineEdit::textEdited, m_d->accounting, &AccountingLSBill::setCode );
             disconnect( m_d->ui->nameLineEdit, &QLineEdit::textEdited, m_d->accounting, &AccountingLSBill::setName );
             disconnect( m_d->ui->descriptionTextEdit, &QPlainTextEdit::textChanged, this, &AccountingLSBillDataGUI::setDescription );
@@ -77,7 +77,7 @@ void AccountingLSBillDataGUI::setAccountingBill(AccountingLSBill *b) {
 
         m_d->accounting = b;
 
-        if( m_d->accounting != NULL ){
+        if( m_d->accounting != nullptr ){
             m_d->ui->codeLineEdit->setText( m_d->accounting->code() );
             connect( m_d->ui->codeLineEdit, &QLineEdit::textEdited, m_d->accounting, &AccountingLSBill::setCode );
             m_d->ui->nameLineEdit->setText( m_d->accounting->name() );
@@ -93,7 +93,7 @@ void AccountingLSBillDataGUI::setAccountingBill(AccountingLSBill *b) {
             m_d->ui->percentageAccountedLineEdit->setText( m_d->accounting->percentageAccountedStr() );
             connect( m_d->accounting, &AccountingLSBill::percentageAccountedChanged, m_d->ui->percentageAccountedLineEdit, &QLineEdit::setText );
 
-            connect( m_d->accounting, &AccountingLSBill::aboutToBeDeleted, this, &AccountingLSBillDataGUI::setAccountingBillNULL );
+            connect( m_d->accounting, &AccountingLSBill::aboutToBeDeleted, this, &AccountingLSBillDataGUI::setAccountingBillnullptr );
         }
     }
 }
@@ -104,18 +104,18 @@ void AccountingLSBillDataGUI::setDescription(){
     }
 }
 
-void AccountingLSBillDataGUI::setAccountingBillNULL(){
-    setAccountingBill( NULL );
+void AccountingLSBillDataGUI::setAccountingBillnullptr(){
+    setAccountingBill( nullptr );
 }
 
 void AccountingLSBillDataGUI::setPPUTotalToDiscount(){
-    if( m_d->accounting != NULL ){
+    if( m_d->accounting != nullptr ){
         m_d->accounting->setPPUTotalToDiscount( m_d->ui->PPUTotalToDiscountLineEdit->text() );
     }
 }
 
 void AccountingLSBillDataGUI::setPPUNotToDiscount(){
-    if( m_d->accounting != NULL ){
+    if( m_d->accounting != nullptr ){
         m_d->accounting->setPPUNotToDiscount( m_d->ui->PPUNotToDiscountLineEdit->text() );
     }
 }

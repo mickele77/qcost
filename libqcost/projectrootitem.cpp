@@ -45,7 +45,7 @@ ProjectItem *ProjectRootItem::child(int number) {
     if( number >= 0 && number < m_d->childrenContainer.size() ){
         return m_d->childrenContainer[number];
     }
-    return NULL;
+    return nullptr;
 }
 
 int ProjectRootItem::childCount() const {

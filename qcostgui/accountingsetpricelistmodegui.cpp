@@ -36,10 +36,10 @@ AccountingSetPriceListModeGUI::AccountingSetPriceListModeGUI(QWidget *parent) :
     m_d(new AccountingSetPriceListModeGUIPrivate()) {
     m_d->ui->setupUi(this);
 
-    m_d->ui->searchAndAddRadioButton->setToolTip( trUtf8("Cerca i prezzi nel nuovo elenco prezzi in base al codice; aggiunge all'ellenco prezzi i prezzi mancanti"));
-    m_d->ui->addRadioButton->setToolTip( trUtf8("Aggiunge i prezzo del vecchio EP al nuovo EP"));
-    m_d->ui->searchRadioButton->setToolTip( trUtf8("Cerca i prezzi nel nuovo elenco prezzi in base al codice; imposta un prezzo nullo per le voci mancanti"));
-    m_d->ui->nullPriceItemRadioButton->setToolTip( "Imposta un prezzo nullo per le voci di computo conservandone le quantità" );
+    m_d->ui->searchAndAddRadioButton->setToolTip( tr("Cerca i prezzi nel nuovo elenco prezzi in base al codice; aggiunge all'ellenco prezzi i prezzi mancanti"));
+    m_d->ui->addRadioButton->setToolTip( tr("Aggiunge i prezzo del vecchio EP al nuovo EP"));
+    m_d->ui->searchRadioButton->setToolTip( tr("Cerca i prezzi nel nuovo elenco prezzi in base al codice; imposta un prezzo nullptro per le voci mancanti"));
+    m_d->ui->nullptrPriceItemRadioButton->setToolTip( "Imposta un prezzo nullptro per le voci di computo conservandone le quantità" );
     m_d->ui->resetRadioButton->setToolTip( "Cancella tutte le righe del computo" );
 
     m_d->ui->searchAndAddRadioButton->setChecked( true );
@@ -61,8 +61,8 @@ AccountingBill::SetPriceListMode AccountingSetPriceListModeGUI::returnValue() {
             return AccountingBill::Add;
         } else if( m_d->ui->searchRadioButton->isChecked() ){
             return AccountingBill::Search;
-        } else if( m_d->ui->nullPriceItemRadioButton->isChecked() ){
-            return AccountingBill::NULLPriceItem;
+        } else if( m_d->ui->nullptrPriceItemRadioButton->isChecked() ){
+            return AccountingBill::nullptrPriceItem;
         } else if( m_d->ui->resetRadioButton->isChecked() ){
             return AccountingBill::ResetBill;
         }
@@ -78,8 +78,8 @@ AccountingTAMBill::SetPriceListMode AccountingSetPriceListModeGUI::returnTAMValu
             return AccountingTAMBill::Add;
         } else if( m_d->ui->searchRadioButton->isChecked() ){
             return AccountingTAMBill::Search;
-        } else if( m_d->ui->nullPriceItemRadioButton->isChecked() ){
-            return AccountingTAMBill::NULLPriceItem;
+        } else if( m_d->ui->nullptrPriceItemRadioButton->isChecked() ){
+            return AccountingTAMBill::nullptrPriceItem;
         } else if( m_d->ui->resetRadioButton->isChecked() ){
             return AccountingTAMBill::ResetBill;
         }
@@ -95,8 +95,8 @@ AccountingLSBill::SetPriceListMode AccountingSetPriceListModeGUI::returnLSValue(
             return AccountingLSBill::Add;
         } else if( m_d->ui->searchRadioButton->isChecked() ){
             return AccountingLSBill::Search;
-        } else if( m_d->ui->nullPriceItemRadioButton->isChecked() ){
-            return AccountingLSBill::NULLPriceItem;
+        } else if( m_d->ui->nullptrPriceItemRadioButton->isChecked() ){
+            return AccountingLSBill::nullptrPriceItem;
         } else if( m_d->ui->resetRadioButton->isChecked() ){
             return AccountingLSBill::ResetBill;
         }

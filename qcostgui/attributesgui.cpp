@@ -39,11 +39,11 @@ class AttributesGUIPrivate{
 public:
     AttributesGUIPrivate(PriceFieldModel * pfm, MathParser * prs, QString * wpf):
         ui(new Ui::BillAttributesGUI() ),
-        bill(NULL),
-        accountingBill(NULL),
-        accountingTAMBill(NULL),
-        accountingLSBills(NULL),
-        accountingLSBill(NULL),
+        bill(nullptr),
+        accountingBill(nullptr),
+        accountingTAMBill(nullptr),
+        accountingLSBills(nullptr),
+        accountingLSBill(nullptr),
         parser(prs),
         wordProcessorFile(wpf),
         priceFieldModel(pfm){
@@ -76,193 +76,193 @@ AttributesGUI::~AttributesGUI(){
 }
 
 void AttributesGUI::setBill(Bill *b) {
-    if( m_d->accountingBill != NULL || m_d->accountingTAMBill != NULL ||
-            m_d->accountingLSBill != NULL || m_d->accountingLSBills != NULL ||
+    if( m_d->accountingBill != nullptr || m_d->accountingTAMBill != nullptr ||
+            m_d->accountingLSBill != nullptr || m_d->accountingLSBills != nullptr ||
             m_d->bill != b ){
-        if( m_d->bill != NULL ){
-            disconnect( m_d->bill, &Bill::aboutToBeDeleted, this, &AttributesGUI::setBillNULL );
-            m_d->bill = NULL;
+        if( m_d->bill != nullptr ){
+            disconnect( m_d->bill, &Bill::aboutToBeDeleted, this, &AttributesGUI::setBillnullptr );
+            m_d->bill = nullptr;
         }
-        if( m_d->accountingBill != NULL ){
-            disconnect( m_d->accountingBill, &AccountingBill::aboutToBeDeleted, this, &AttributesGUI::setBillNULL );
-            m_d->accountingBill = NULL;
+        if( m_d->accountingBill != nullptr ){
+            disconnect( m_d->accountingBill, &AccountingBill::aboutToBeDeleted, this, &AttributesGUI::setBillnullptr );
+            m_d->accountingBill = nullptr;
         }
-        if( m_d->accountingTAMBill != NULL ){
-            disconnect( m_d->accountingTAMBill, &AccountingTAMBill::aboutToBeDeleted, this, &AttributesGUI::setBillNULL );
-            m_d->accountingTAMBill = NULL;
+        if( m_d->accountingTAMBill != nullptr ){
+            disconnect( m_d->accountingTAMBill, &AccountingTAMBill::aboutToBeDeleted, this, &AttributesGUI::setBillnullptr );
+            m_d->accountingTAMBill = nullptr;
         }
-        if( m_d->accountingLSBills != NULL ){
-            m_d->accountingLSBills = NULL;
+        if( m_d->accountingLSBills != nullptr ){
+            m_d->accountingLSBills = nullptr;
         }
-        if( m_d->accountingLSBill != NULL ){
-            disconnect( m_d->accountingLSBill, &AccountingLSBill::aboutToBeDeleted, this, &AttributesGUI::setBillNULL );
-            m_d->accountingLSBill = NULL;
+        if( m_d->accountingLSBill != nullptr ){
+            disconnect( m_d->accountingLSBill, &AccountingLSBill::aboutToBeDeleted, this, &AttributesGUI::setBillnullptr );
+            m_d->accountingLSBill = nullptr;
         }
-        m_d->ui->attributesTableView->setModel( NULL );
+        m_d->ui->attributesTableView->setModel( nullptr );
 
         m_d->bill = b;
 
-        if( m_d->bill != NULL ){
+        if( m_d->bill != nullptr ){
             m_d->ui->attributesTableView->setModel( m_d->bill->attributesModel() );
-            connect( m_d->bill, &Bill::aboutToBeDeleted, this, &AttributesGUI::setBillNULL );
+            connect( m_d->bill, &Bill::aboutToBeDeleted, this, &AttributesGUI::setBillnullptr );
         }
     }
 }
 
 void AttributesGUI::setBill( AccountingBill *b ) {
-    if( m_d->bill != NULL || m_d->accountingTAMBill != NULL ||
-            m_d->accountingLSBill != NULL || m_d->accountingLSBills != NULL ||
+    if( m_d->bill != nullptr || m_d->accountingTAMBill != nullptr ||
+            m_d->accountingLSBill != nullptr || m_d->accountingLSBills != nullptr ||
             m_d->accountingBill != b ){
-        if( m_d->bill != NULL ){
-            disconnect( m_d->bill, &Bill::aboutToBeDeleted, this, &AttributesGUI::setBillNULL );
-            m_d->bill = NULL;
+        if( m_d->bill != nullptr ){
+            disconnect( m_d->bill, &Bill::aboutToBeDeleted, this, &AttributesGUI::setBillnullptr );
+            m_d->bill = nullptr;
         }
-        if( m_d->accountingBill != NULL ){
-            disconnect( m_d->accountingBill, &AccountingBill::aboutToBeDeleted, this, &AttributesGUI::setBillNULL );
-            m_d->accountingBill = NULL;
+        if( m_d->accountingBill != nullptr ){
+            disconnect( m_d->accountingBill, &AccountingBill::aboutToBeDeleted, this, &AttributesGUI::setBillnullptr );
+            m_d->accountingBill = nullptr;
         }
-        if( m_d->accountingTAMBill != NULL ){
-            disconnect( m_d->accountingTAMBill, &AccountingTAMBill::aboutToBeDeleted, this, &AttributesGUI::setBillNULL );
-            m_d->accountingTAMBill = NULL;
+        if( m_d->accountingTAMBill != nullptr ){
+            disconnect( m_d->accountingTAMBill, &AccountingTAMBill::aboutToBeDeleted, this, &AttributesGUI::setBillnullptr );
+            m_d->accountingTAMBill = nullptr;
         }
-        if( m_d->accountingLSBills != NULL ){
-            m_d->accountingLSBills = NULL;
+        if( m_d->accountingLSBills != nullptr ){
+            m_d->accountingLSBills = nullptr;
         }
-        if( m_d->accountingLSBill != NULL ){
-            disconnect( m_d->accountingLSBill, &AccountingLSBill::aboutToBeDeleted, this, &AttributesGUI::setBillNULL );
-            m_d->accountingLSBill = NULL;
+        if( m_d->accountingLSBill != nullptr ){
+            disconnect( m_d->accountingLSBill, &AccountingLSBill::aboutToBeDeleted, this, &AttributesGUI::setBillnullptr );
+            m_d->accountingLSBill = nullptr;
         }
-        m_d->ui->attributesTableView->setModel( NULL );
+        m_d->ui->attributesTableView->setModel( nullptr );
 
         m_d->accountingBill = b;
 
-        if( m_d->accountingBill != NULL ){
+        if( m_d->accountingBill != nullptr ){
             m_d->ui->attributesTableView->setModel( m_d->accountingBill->attributesModel() );
-            connect( m_d->accountingBill, &AccountingBill::aboutToBeDeleted, this, &AttributesGUI::setBillNULL );
+            connect( m_d->accountingBill, &AccountingBill::aboutToBeDeleted, this, &AttributesGUI::setBillnullptr );
         }
     }
 }
 
 void AttributesGUI::setBill( AccountingTAMBill *b ) {
-    if( m_d->accountingBill != NULL || m_d->bill != NULL ||
-            m_d->accountingLSBill != NULL || m_d->accountingLSBills != NULL ||
+    if( m_d->accountingBill != nullptr || m_d->bill != nullptr ||
+            m_d->accountingLSBill != nullptr || m_d->accountingLSBills != nullptr ||
             m_d->accountingTAMBill != b ){
-        if( m_d->bill != NULL ){
-            disconnect( m_d->bill, &Bill::aboutToBeDeleted, this, &AttributesGUI::setBillNULL );
-            m_d->bill = NULL;
+        if( m_d->bill != nullptr ){
+            disconnect( m_d->bill, &Bill::aboutToBeDeleted, this, &AttributesGUI::setBillnullptr );
+            m_d->bill = nullptr;
         }
-        if( m_d->accountingBill != NULL ){
-            disconnect( m_d->accountingBill, &AccountingBill::aboutToBeDeleted, this, &AttributesGUI::setBillNULL );
-            m_d->accountingBill = NULL;
+        if( m_d->accountingBill != nullptr ){
+            disconnect( m_d->accountingBill, &AccountingBill::aboutToBeDeleted, this, &AttributesGUI::setBillnullptr );
+            m_d->accountingBill = nullptr;
         }
-        if( m_d->accountingTAMBill != NULL ){
-            disconnect( m_d->accountingTAMBill, &AccountingTAMBill::aboutToBeDeleted, this, &AttributesGUI::setBillNULL );
-            m_d->accountingTAMBill = NULL;
+        if( m_d->accountingTAMBill != nullptr ){
+            disconnect( m_d->accountingTAMBill, &AccountingTAMBill::aboutToBeDeleted, this, &AttributesGUI::setBillnullptr );
+            m_d->accountingTAMBill = nullptr;
         }
-        if( m_d->accountingLSBills != NULL ){
-            m_d->accountingLSBills = NULL;
+        if( m_d->accountingLSBills != nullptr ){
+            m_d->accountingLSBills = nullptr;
         }
-        if( m_d->accountingLSBill != NULL ){
-            disconnect( m_d->accountingLSBill, &AccountingLSBill::aboutToBeDeleted, this, &AttributesGUI::setBillNULL );
-            m_d->accountingLSBill = NULL;
+        if( m_d->accountingLSBill != nullptr ){
+            disconnect( m_d->accountingLSBill, &AccountingLSBill::aboutToBeDeleted, this, &AttributesGUI::setBillnullptr );
+            m_d->accountingLSBill = nullptr;
         }
-        m_d->ui->attributesTableView->setModel( NULL );
+        m_d->ui->attributesTableView->setModel( nullptr );
 
         m_d->accountingTAMBill = b;
 
-        if( m_d->accountingTAMBill != NULL ){
+        if( m_d->accountingTAMBill != nullptr ){
             m_d->ui->attributesTableView->setModel( m_d->accountingTAMBill->attributesModel() );
-            connect( m_d->accountingTAMBill, &AccountingTAMBill::aboutToBeDeleted, this, &AttributesGUI::setBillNULL );
+            connect( m_d->accountingTAMBill, &AccountingTAMBill::aboutToBeDeleted, this, &AttributesGUI::setBillnullptr );
         }
     }
 }
 
 void AttributesGUI::setBill( AccountingLSBills *b ) {
-    if( m_d->accountingBill != NULL || m_d->bill != NULL ||
-            m_d->accountingTAMBill != NULL || m_d->accountingLSBill != NULL ||
+    if( m_d->accountingBill != nullptr || m_d->bill != nullptr ||
+            m_d->accountingTAMBill != nullptr || m_d->accountingLSBill != nullptr ||
             m_d->accountingLSBills != b ){
-        if( m_d->bill != NULL ){
-            disconnect( m_d->bill, &Bill::aboutToBeDeleted, this, &AttributesGUI::setBillNULL );
-            m_d->bill = NULL;
+        if( m_d->bill != nullptr ){
+            disconnect( m_d->bill, &Bill::aboutToBeDeleted, this, &AttributesGUI::setBillnullptr );
+            m_d->bill = nullptr;
         }
-        if( m_d->accountingBill != NULL ){
-            disconnect( m_d->accountingBill, &AccountingBill::aboutToBeDeleted, this, &AttributesGUI::setBillNULL );
-            m_d->accountingBill = NULL;
+        if( m_d->accountingBill != nullptr ){
+            disconnect( m_d->accountingBill, &AccountingBill::aboutToBeDeleted, this, &AttributesGUI::setBillnullptr );
+            m_d->accountingBill = nullptr;
         }
-        if( m_d->accountingTAMBill != NULL ){
-            disconnect( m_d->accountingTAMBill, &AccountingTAMBill::aboutToBeDeleted, this, &AttributesGUI::setBillNULL );
-            m_d->accountingTAMBill = NULL;
+        if( m_d->accountingTAMBill != nullptr ){
+            disconnect( m_d->accountingTAMBill, &AccountingTAMBill::aboutToBeDeleted, this, &AttributesGUI::setBillnullptr );
+            m_d->accountingTAMBill = nullptr;
         }
-        if( m_d->accountingLSBills != NULL ){
-            m_d->accountingLSBills = NULL;
+        if( m_d->accountingLSBills != nullptr ){
+            m_d->accountingLSBills = nullptr;
         }
-        if( m_d->accountingLSBill != NULL ){
-            disconnect( m_d->accountingLSBill, &AccountingLSBill::aboutToBeDeleted, this, &AttributesGUI::setBillNULL );
-            m_d->accountingLSBill = NULL;
+        if( m_d->accountingLSBill != nullptr ){
+            disconnect( m_d->accountingLSBill, &AccountingLSBill::aboutToBeDeleted, this, &AttributesGUI::setBillnullptr );
+            m_d->accountingLSBill = nullptr;
         }
-        m_d->ui->attributesTableView->setModel( NULL );
+        m_d->ui->attributesTableView->setModel( nullptr );
 
         m_d->accountingLSBills = b;
 
-        if( m_d->accountingLSBills != NULL ){
+        if( m_d->accountingLSBills != nullptr ){
             m_d->ui->attributesTableView->setModel( m_d->accountingLSBills->attributesModel() );
         }
     }
 }
 
 void AttributesGUI::setBill( AccountingLSBill *b ) {
-    if( m_d->accountingBill != NULL || m_d->bill != NULL ||
-            m_d->accountingTAMBill != NULL || m_d->accountingLSBills != NULL ||
+    if( m_d->accountingBill != nullptr || m_d->bill != nullptr ||
+            m_d->accountingTAMBill != nullptr || m_d->accountingLSBills != nullptr ||
             m_d->accountingLSBill != b ){
-        if( m_d->bill != NULL ){
-            disconnect( m_d->bill, &Bill::aboutToBeDeleted, this, &AttributesGUI::setBillNULL );
-            m_d->bill = NULL;
+        if( m_d->bill != nullptr ){
+            disconnect( m_d->bill, &Bill::aboutToBeDeleted, this, &AttributesGUI::setBillnullptr );
+            m_d->bill = nullptr;
         }
-        if( m_d->accountingBill != NULL ){
-            disconnect( m_d->accountingBill, &AccountingBill::aboutToBeDeleted, this, &AttributesGUI::setBillNULL );
-            m_d->accountingBill = NULL;
+        if( m_d->accountingBill != nullptr ){
+            disconnect( m_d->accountingBill, &AccountingBill::aboutToBeDeleted, this, &AttributesGUI::setBillnullptr );
+            m_d->accountingBill = nullptr;
         }
-        if( m_d->accountingTAMBill != NULL ){
-            disconnect( m_d->accountingTAMBill, &AccountingTAMBill::aboutToBeDeleted, this, &AttributesGUI::setBillNULL );
-            m_d->accountingTAMBill = NULL;
+        if( m_d->accountingTAMBill != nullptr ){
+            disconnect( m_d->accountingTAMBill, &AccountingTAMBill::aboutToBeDeleted, this, &AttributesGUI::setBillnullptr );
+            m_d->accountingTAMBill = nullptr;
         }
-        if( m_d->accountingLSBills != NULL ){
-            m_d->accountingLSBills = NULL;
+        if( m_d->accountingLSBills != nullptr ){
+            m_d->accountingLSBills = nullptr;
         }
-        if( m_d->accountingLSBill != NULL ){
-            disconnect( m_d->accountingLSBill, &AccountingLSBill::aboutToBeDeleted, this, &AttributesGUI::setBillNULL );
-            m_d->accountingLSBill = NULL;
+        if( m_d->accountingLSBill != nullptr ){
+            disconnect( m_d->accountingLSBill, &AccountingLSBill::aboutToBeDeleted, this, &AttributesGUI::setBillnullptr );
+            m_d->accountingLSBill = nullptr;
         }
-        m_d->ui->attributesTableView->setModel( NULL );
+        m_d->ui->attributesTableView->setModel( nullptr );
 
         m_d->accountingLSBill = b;
 
-        if( m_d->accountingLSBill != NULL ){
+        if( m_d->accountingLSBill != nullptr ){
             m_d->ui->attributesTableView->setModel( m_d->accountingLSBill->attributesModel() );
-            connect( m_d->accountingLSBill, &AccountingLSBill::aboutToBeDeleted, this, &AttributesGUI::setBillNULL );
+            connect( m_d->accountingLSBill, &AccountingLSBill::aboutToBeDeleted, this, &AttributesGUI::setBillnullptr );
         }
     }
 }
 
-void AttributesGUI::setBillNULL(){
-    if( m_d->bill != NULL ){
-        disconnect( m_d->bill, &Bill::aboutToBeDeleted, this, &AttributesGUI::setBillNULL );
-        m_d->bill = NULL;
+void AttributesGUI::setBillnullptr(){
+    if( m_d->bill != nullptr ){
+        disconnect( m_d->bill, &Bill::aboutToBeDeleted, this, &AttributesGUI::setBillnullptr );
+        m_d->bill = nullptr;
     }
-    if( m_d->accountingBill != NULL ){
-        disconnect( m_d->accountingBill, &AccountingBill::aboutToBeDeleted, this, &AttributesGUI::setBillNULL );
-        m_d->accountingBill = NULL;
+    if( m_d->accountingBill != nullptr ){
+        disconnect( m_d->accountingBill, &AccountingBill::aboutToBeDeleted, this, &AttributesGUI::setBillnullptr );
+        m_d->accountingBill = nullptr;
     }
-    if( m_d->accountingTAMBill != NULL ){
-        disconnect( m_d->accountingTAMBill, &AccountingTAMBill::aboutToBeDeleted, this, &AttributesGUI::setBillNULL );
-        m_d->accountingTAMBill = NULL;
+    if( m_d->accountingTAMBill != nullptr ){
+        disconnect( m_d->accountingTAMBill, &AccountingTAMBill::aboutToBeDeleted, this, &AttributesGUI::setBillnullptr );
+        m_d->accountingTAMBill = nullptr;
     }
-    if( m_d->accountingLSBills != NULL ){
-        m_d->accountingLSBills = NULL;
+    if( m_d->accountingLSBills != nullptr ){
+        m_d->accountingLSBills = nullptr;
     }
-    if( m_d->accountingLSBill != NULL ){
-        disconnect( m_d->accountingLSBill, &AccountingLSBill::aboutToBeDeleted, this, &AttributesGUI::setBillNULL );
-        m_d->accountingLSBill = NULL;
+    if( m_d->accountingLSBill != nullptr ){
+        disconnect( m_d->accountingLSBill, &AccountingLSBill::aboutToBeDeleted, this, &AttributesGUI::setBillnullptr );
+        m_d->accountingLSBill = nullptr;
     }
 }
 
@@ -282,15 +282,15 @@ void AttributesGUI::addAttribute(){
             row = selectedRows.last() + 1;
             count = selectedRows.size();
         }
-        if( m_d->bill != NULL ){
+        if( m_d->bill != nullptr ){
             m_d->bill->attributesModel()->insertRows( row, count );
-        } else if( m_d->accountingBill != NULL ){
+        } else if( m_d->accountingBill != nullptr ){
             m_d->accountingBill->attributesModel()->insertRows( row, count );
-        } else if( m_d->accountingLSBill != NULL ){
+        } else if( m_d->accountingLSBill != nullptr ){
             m_d->accountingLSBill->attributesModel()->insertRows( row, count );
-        } else if( m_d->accountingLSBills != NULL ){
+        } else if( m_d->accountingLSBills != nullptr ){
             m_d->accountingLSBills->attributesModel()->insertRows( row, count );
-        } else if( m_d->accountingTAMBill != NULL ){
+        } else if( m_d->accountingTAMBill != nullptr ){
             m_d->accountingTAMBill->attributesModel()->insertRows( row, count );
         }
     }
@@ -307,15 +307,15 @@ void AttributesGUI::removeAttribute(){
                     row = selectedRows.at(i).row();
                 }
             }
-            if( m_d->bill != NULL ){
+            if( m_d->bill != nullptr ){
                 m_d->bill->attributesModel()->removeRows( row, count );
-            } else if( m_d->accountingBill != NULL ){
+            } else if( m_d->accountingBill != nullptr ){
                 m_d->accountingBill->attributesModel()->removeRows( row, count );
-            } else if( m_d->accountingLSBill != NULL ){
+            } else if( m_d->accountingLSBill != nullptr ){
                 m_d->accountingLSBill->attributesModel()->removeRows( row, count );
-            } else if( m_d->accountingLSBills != NULL ){
+            } else if( m_d->accountingLSBills != nullptr ){
                 m_d->accountingLSBills->attributesModel()->removeRows( row, count );
-            } else if( m_d->accountingTAMBill != NULL ){
+            } else if( m_d->accountingTAMBill != nullptr ){
                 m_d->accountingTAMBill->attributesModel()->removeRows( row, count );
             }
         }
@@ -323,7 +323,7 @@ void AttributesGUI::removeAttribute(){
 }
 
 bool AttributesGUI::printAttributeBillODT(){
-    if( m_d->bill != NULL ){
+    if( m_d->bill != nullptr ){
         BillPrinter::PrintBillItemsOption prBillItemOption;
         BillPrinter::AttributePrintOption prOption;
         QList<int> prFields;
@@ -343,8 +343,8 @@ bool AttributesGUI::printAttributeBillODT(){
                                           this );
         if( printGUI.exec() == QDialog::Accepted ){
             QString fileName = QFileDialog::getSaveFileName( this,
-                                                             trUtf8("Stampa Computo Metrico Estimativo"), ".",
-                                                             trUtf8("Documento di testo (*.odt)"));
+                                                             tr("Stampa Computo Metrico Estimativo"), ".",
+                                                             tr("Documento di testo (*.odt)"));
 
             if (!fileName.isEmpty()){
                 QString suf = fileName.split(".").last().toLower();
@@ -353,7 +353,7 @@ bool AttributesGUI::printAttributeBillODT(){
                 }
                 BillPrinter printer( m_d->bill, m_d->priceFieldModel, m_d->parser );
                 bool ret = printer.printAttributeODT( prBillItemOption, prOption, prFields, prAttrs, fileName, paperWidth, paperHeight, paperOrientation, groupPrAm );
-                if( m_d->wordProcessorFile != NULL ){
+                if( m_d->wordProcessorFile != nullptr ){
                     if( !m_d->wordProcessorFile->isEmpty() ){
                         if( QFileInfo(*(m_d->wordProcessorFile)).exists() ){
                             QStringList args;
@@ -366,7 +366,7 @@ bool AttributesGUI::printAttributeBillODT(){
                 return ret;
             }
         }
-    } else if( m_d->accountingBill != NULL ){
+    } else if( m_d->accountingBill != nullptr ){
         AccountingPrinter::PrintPPUDescOption prAccountingMeasureOption;
         AccountingPrinter::PrintAmountsOption prAmountsOption;
         AccountingPrinter::AttributePrintOption prOption;
@@ -383,8 +383,8 @@ bool AttributesGUI::printAttributeBillODT(){
                                                 this );
         if( printGUI.exec() == QDialog::Accepted ){
             QString fileName = QFileDialog::getSaveFileName( this,
-                                                             trUtf8("Stampa Computo Metrico Estimativo"), ".",
-                                                             trUtf8("Documento di testo (*.odt)"));
+                                                             tr("Stampa Computo Metrico Estimativo"), ".",
+                                                             tr("Documento di testo (*.odt)"));
 
             if (!fileName.isEmpty()){
                 QString suf = fileName.split(".").last().toLower();
@@ -393,7 +393,7 @@ bool AttributesGUI::printAttributeBillODT(){
                 }
                 AccountingPrinter printer( m_d->accountingBill, m_d->parser );
                 bool ret = printer.printAttributeODT( prOption, prAmountsOption, prAccountingMeasureOption, prAttrs, fileName, paperWidth, paperHeight, paperOrientation );
-                if( m_d->wordProcessorFile != NULL ){
+                if( m_d->wordProcessorFile != nullptr ){
                     if( !m_d->wordProcessorFile->isEmpty() ){
                         if( QFileInfo(*(m_d->wordProcessorFile)).exists() ){
                             QStringList args;
@@ -417,21 +417,21 @@ void AttributesGUI::resizeAttributeColsToContents(){
 
 void AttributesGUI::attributesTableViewCustomMenuRequested(QPoint pos){
     QMenu *menu=new QMenu(this);
-    QAction * addAction = new QAction( trUtf8("Aggiungi"), this);
+    QAction * addAction = new QAction( tr("Aggiungi"), this);
     connect( addAction, &QAction::triggered, this, &AttributesGUI::addAttribute );
     menu->addAction( addAction );
-    QAction * delAction = new QAction( trUtf8("Elimina"), this);
+    QAction * delAction = new QAction( tr("Elimina"), this);
     connect( delAction, &QAction::triggered, this, &AttributesGUI::removeAttribute );
     menu->addAction( delAction );
     menu->addSeparator();
 
     menu->addSeparator();
-    QAction * printAttributeBill = new QAction( trUtf8("Stampa"), this);
+    QAction * printAttributeBill = new QAction( tr("Stampa"), this);
     connect( printAttributeBill, &QAction::triggered, this, &AttributesGUI::printAttributeBillODT );
     menu->addAction( printAttributeBill );
 
     menu->addSeparator();
-    QAction * resizeColToContentAction = new QAction( trUtf8("Ottimizza colonne"), this);
+    QAction * resizeColToContentAction = new QAction( tr("Ottimizza colonne"), this);
     connect( resizeColToContentAction, &QAction::triggered, this, &AttributesGUI::resizeAttributesColToContents );
     menu->addAction( resizeColToContentAction );
 
@@ -447,15 +447,15 @@ void AttributesGUI::resizeAttributesColToContents(){
 }
 
 void AttributesGUI::activateAttributeModel(){
-    if( m_d->bill != NULL ){
+    if( m_d->bill != nullptr ){
         m_d->bill->activateAttributeModel();
-    } else if( m_d->accountingBill != NULL ){
+    } else if( m_d->accountingBill != nullptr ){
         m_d->accountingBill->activateAttributeModel();
-    } else if( m_d->accountingTAMBill != NULL ){
+    } else if( m_d->accountingTAMBill != nullptr ){
         m_d->accountingTAMBill->activateAttributeModel();
-    } else if( m_d->accountingLSBill != NULL ){
+    } else if( m_d->accountingLSBill != nullptr ){
         m_d->accountingLSBill->activateAttributeModel();
-    } else if( m_d->accountingLSBills != NULL ){
+    } else if( m_d->accountingLSBills != nullptr ){
         m_d->accountingLSBills->activateAttributeModel();
     }
 }

@@ -34,7 +34,7 @@
 
 class ProjectAccountingParentItemPrivate{
 public:
-    ProjectAccountingParentItemPrivate( PriceFieldModel * pfm, MathParser * p = NULL ):
+    ProjectAccountingParentItemPrivate( PriceFieldModel * pfm, MathParser * p = nullptr ):
         priceFieldModel(pfm),
         parser(p),
         nextId(1) {
@@ -43,7 +43,7 @@ public:
         delete dataModel;
     }
     QString amountToString( double val ){
-        if( parser != NULL ){
+        if( parser != nullptr ){
             return parser->toString( val, 'f', amountPrecision );
         }
         return QString::number( val, 'f', amountPrecision );
@@ -65,7 +65,7 @@ int ProjectAccountingParentItemPrivate::amountPrecision = 2;
 ProjectAccountingParentItem::ProjectAccountingParentItem( ProjectItem *parent, PriceFieldModel * pfm, MathParser * prs ):
     ProjectRootItem(parent),
     m_d( new ProjectAccountingParentItemPrivate( pfm, prs ) ){
-    m_d->measuresBill = new AccountingBill( trUtf8("Libretto delle misure"), this, pfm, prs );
+    m_d->measuresBill = new AccountingBill( tr("Libretto delle misure"), this, pfm, prs );
     m_d->dataModel = new PaymentDataModel( m_d->measuresBill->rootItem(), prs );
     insertChild( m_d->measuresBill );
 
@@ -81,7 +81,7 @@ ProjectAccountingParentItem::ProjectAccountingParentItem( ProjectItem *parent, P
     connect( m_d->lumpSumBills, &AccountingLSBills::endRemoveChildren, this, &ProjectAccountingParentItem::endRemoveChildren );
     connect( m_d->lumpSumBills, &AccountingLSBills::modelChanged, this, &ProjectAccountingParentItem::modelChanged );
 
-    m_d->timeAndMaterialBill = new AccountingTAMBill( trUtf8("Opere in economia"), this, pfm, prs );
+    m_d->timeAndMaterialBill = new AccountingTAMBill( tr("Opere in economia"), this, pfm, prs );
     insertChild( m_d->timeAndMaterialBill );
     connect( m_d->timeAndMaterialBill, &AccountingTAMBill::modelChanged, this, &ProjectAccountingParentItem::modelChanged );
 }
@@ -175,7 +175,7 @@ ProjectItem *ProjectAccountingParentItem::child(int number) {
     } else if( number == 2 ){
         return m_d->timeAndMaterialBill;
     }
-    return NULL;
+    return nullptr;
 }
 
 int ProjectAccountingParentItem::childCount() const {
@@ -202,7 +202,7 @@ Qt::ItemFlags ProjectAccountingParentItem::flags() const {
 }
 
 QVariant ProjectAccountingParentItem::data() const {
-    return QVariant( QObject::trUtf8("Contabilità") );
+    return QVariant( QObject::tr("Contabilità") );
 }
 
 bool ProjectAccountingParentItem::setData(const QVariant &value) {

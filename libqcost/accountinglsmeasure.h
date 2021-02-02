@@ -17,7 +17,7 @@ class EXPORT_QCOST_LIB_OPT AccountingLSMeasure : public QObject
 {
     Q_OBJECT
 public:
-    explicit AccountingLSMeasure(MathParser *p = NULL, UnitMeasure * ump = NULL);
+    explicit AccountingLSMeasure(MathParser *p = nullptr, UnitMeasure * ump = nullptr);
     ~AccountingLSMeasure();
 
     AccountingLSMeasure &operator =(const AccountingLSMeasure &cp);

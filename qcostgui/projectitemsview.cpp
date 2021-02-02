@@ -106,35 +106,35 @@ void ProjectItemsView::treeViewCustomMenuRequested(QPoint pos){
         QModelIndex index = m_d->ui->treeView->selectionModel()->currentIndex();
         ProjectItem * item = m_d->project->getItem(index);
 
-        if( dynamic_cast<ProjectDataParentItem *>(item) == NULL ){
+        if( dynamic_cast<ProjectDataParentItem *>(item) == nullptr ){
             QMenu *menu=new QMenu(this);
 
             QModelIndex index = m_d->ui->treeView->selectionModel()->currentIndex();
             ProjectItem * item = m_d->project->getItem(index);
             if( dynamic_cast<ProjectBillParentItem *>(item) ){
-                QAction * addAction = new QAction( trUtf8("Aggiungi Computo"), this);
+                QAction * addAction = new QAction( tr("Aggiungi Computo"), this);
                 connect( addAction, &QAction::triggered, this, &ProjectItemsView::insertChildren );
                 menu->addAction(addAction);
             } else if( dynamic_cast<Bill *>(item) ){
-                QAction * addAction = new QAction( trUtf8("Aggiungi Computo"), this);
+                QAction * addAction = new QAction( tr("Aggiungi Computo"), this);
                 connect( addAction, &QAction::triggered, this, &ProjectItemsView::insertChildren );
                 menu->addAction(addAction);
-                QAction * removeAction = new QAction( trUtf8("Elimina Computo"), this);
+                QAction * removeAction = new QAction( tr("Elimina Computo"), this);
                 connect( removeAction, &QAction::triggered, this, &ProjectItemsView::removeChildren );
                 menu->addAction(removeAction);
             } else if( dynamic_cast<ProjectPriceListParentItem *>(item) ){
-                QAction * addAction = new QAction( trUtf8("Aggiungi E.P."), this);
+                QAction * addAction = new QAction( tr("Aggiungi E.P."), this);
                 connect( addAction, &QAction::triggered, this, &ProjectItemsView::insertChildren );
                 menu->addAction(addAction);
             } else if( dynamic_cast<PriceList *>(item) ){
-                QAction * addAction = new QAction( trUtf8("Aggiungi E.P."), this);
+                QAction * addAction = new QAction( tr("Aggiungi E.P."), this);
                 connect( addAction, &QAction::triggered, this, &ProjectItemsView::insertChildren );
                 menu->addAction(addAction);
-                QAction * removeAction = new QAction( trUtf8("Elimina E.P."), this);
+                QAction * removeAction = new QAction( tr("Elimina E.P."), this);
                 connect( removeAction, &QAction::triggered, this, &ProjectItemsView::removeChildren );
                 menu->addAction(removeAction);
             } else if( dynamic_cast<AccountingLSBills *>(item) ){
-                QAction * addAction = new QAction( trUtf8("Aggiungi Categoria"), this);
+                QAction * addAction = new QAction( tr("Aggiungi Categoria"), this);
                 connect( addAction, &QAction::triggered, this, &ProjectItemsView::insertChildren );
                 menu->addAction(addAction);
             }

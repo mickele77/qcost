@@ -47,12 +47,12 @@ public:
     AccountingItemPPUGUIPrivate( QMap<PriceListDBWidget::ImportOptions, bool> * EPAImpOptions, QString * EPAFileName, MathParser * prs, Project * prj ):
         ui(new Ui::AccountingItemPPUGUI),
         parser(prs),
-        billItem(NULL),
-        TAMBillItem(NULL),
-        connectedUnitMeasure(NULL),
-        itemAttributeModel( new AccountingItemAttributeModel(NULL, NULL ) ),
-        priceItemGUI( new PriceItemGUI( EPAImpOptions, EPAFileName, NULL, 0, prs, prj, NULL )),
-        vSpacer(NULL) {
+        billItem(nullptr),
+        TAMBillItem(nullptr),
+        connectedUnitMeasure(nullptr),
+        itemAttributeModel( new AccountingItemAttributeModel(nullptr, nullptr ) ),
+        priceItemGUI( new PriceItemGUI( EPAImpOptions, EPAFileName, nullptr, 0, prs, prj, nullptr )),
+        vSpacer(nullptr) {
     }
     ~AccountingItemPPUGUIPrivate(){
         delete ui;
@@ -103,8 +103,8 @@ AccountingItemPPUGUI::~AccountingItemPPUGUI() {
 }
 
 void AccountingItemPPUGUI::setItem(AccountingTAMBillItem *b) {
-    if( m_d->TAMBillItem != b || m_d->billItem != NULL ){
-        if( m_d->billItem != NULL ){
+    if( m_d->TAMBillItem != b || m_d->billItem != nullptr ){
+        if( m_d->billItem != nullptr ){
             disconnect( m_d->billItem, &AccountingBillItem::dateChanged, m_d->ui->dateLineEdit, &QLineEdit::setText );
             disconnect( m_d->ui->dateLineEdit, &QLineEdit::editingFinished, this, &AccountingItemPPUGUI::setDateLE );
             disconnect( m_d->billItem, &AccountingBillItem::quantityChanged, m_d->ui->quantityLineEdit, &QLineEdit::setText );
@@ -121,9 +121,9 @@ void AccountingItemPPUGUI::setItem(AccountingTAMBillItem *b) {
             disconnectPriceItem( m_d->billItem->priceItem() );
 
             disconnect( m_d->ui->associateLinesCheckBox, &QCheckBox::toggled, this, &AccountingItemPPUGUI::associateLinesModel );
-            disconnect( m_d->billItem, &AccountingBillItem::aboutToBeDeleted, this, &AccountingItemPPUGUI::setAccountingItemNULL );
+            disconnect( m_d->billItem, &AccountingBillItem::aboutToBeDeleted, this, &AccountingItemPPUGUI::setAccountingItemnullptr );
         }
-        if( m_d->TAMBillItem != NULL ){
+        if( m_d->TAMBillItem != nullptr ){
             disconnect( m_d->TAMBillItem, &AccountingTAMBillItem::startDateChanged, m_d->ui->dateLineEdit, &QLineEdit::setText );
             disconnect( m_d->ui->dateLineEdit, &QLineEdit::editingFinished, this, &AccountingItemPPUGUI::setDateLE );
             disconnect( m_d->TAMBillItem, &AccountingTAMBillItem::quantityChanged, m_d->ui->quantityLineEdit, &QLineEdit::setText );
@@ -140,7 +140,7 @@ void AccountingItemPPUGUI::setItem(AccountingTAMBillItem *b) {
             disconnectPriceItem( m_d->TAMBillItem->priceItem() );
 
             disconnect( m_d->ui->associateLinesCheckBox, &QCheckBox::toggled, this, &AccountingItemPPUGUI::associateLinesModel );
-            disconnect( m_d->TAMBillItem, &AccountingTAMBillItem::aboutToBeDeleted, this, &AccountingItemPPUGUI::setAccountingItemNULL );
+            disconnect( m_d->TAMBillItem, &AccountingTAMBillItem::aboutToBeDeleted, this, &AccountingItemPPUGUI::setAccountingItemnullptr );
         }
 
         m_d->ui->totalAmountToDiscountLineEdit->clear();
@@ -150,11 +150,11 @@ void AccountingItemPPUGUI::setItem(AccountingTAMBillItem *b) {
         m_d->ui->PPUTotalToDiscountLineEdit->clear();
         m_d->ui->PPUNotToBDiscountedLineEdit->clear();
 
-        m_d->billItem = NULL;
+        m_d->billItem = nullptr;
         m_d->TAMBillItem = b;
         m_d->itemAttributeModel->setItem( b );
 
-        if( m_d->TAMBillItem != NULL ){
+        if( m_d->TAMBillItem != nullptr ){
             m_d->ui->dateLineEdit->setText( m_d->TAMBillItem->startDateStr() );
             connect( m_d->TAMBillItem, &AccountingTAMBillItem::startDateChanged, m_d->ui->dateLineEdit, &QLineEdit::setText );
             connect( m_d->ui->dateLineEdit, &QLineEdit::editingFinished, this, &AccountingItemPPUGUI::setDateLE );
@@ -169,7 +169,7 @@ void AccountingItemPPUGUI::setItem(AccountingTAMBillItem *b) {
             m_d->ui->totalAmountLineEdit->setText( m_d->TAMBillItem->totalAmountStr() );
             connect( m_d->TAMBillItem, &AccountingTAMBillItem::totalAmountChanged, m_d->ui->totalAmountLineEdit, &QLineEdit::setText );
 
-            connectPriceItem( NULL, m_d->TAMBillItem->priceItem());
+            connectPriceItem( nullptr, m_d->TAMBillItem->priceItem());
             connect( m_d->TAMBillItem, &AccountingTAMBillItem::priceItemChanged, this, &AccountingItemPPUGUI::connectPriceItem );
 
             m_d->ui->PPUTotalToDiscountLineEdit->setText( m_d->TAMBillItem->PPUTotalToDiscountStr() );
@@ -181,12 +181,12 @@ void AccountingItemPPUGUI::setItem(AccountingTAMBillItem *b) {
 
             m_d->ui->itemMeasuresTableView->setModel( m_d->TAMBillItem->measuresModel() );
 
-            associateLinesModel( m_d->TAMBillItem->measuresModel() != NULL );
+            associateLinesModel( m_d->TAMBillItem->measuresModel() != nullptr );
 
-            m_d->ui->associateLinesCheckBox->setChecked(  m_d->TAMBillItem->measuresModel() != NULL  );
+            m_d->ui->associateLinesCheckBox->setChecked(  m_d->TAMBillItem->measuresModel() != nullptr  );
             connect( m_d->ui->associateLinesCheckBox, &QCheckBox::toggled, this, &AccountingItemPPUGUI::associateLinesModel );
 
-            connect( m_d->TAMBillItem, &AccountingTAMBillItem::aboutToBeDeleted, this, &AccountingItemPPUGUI::setAccountingItemNULL );
+            connect( m_d->TAMBillItem, &AccountingTAMBillItem::aboutToBeDeleted, this, &AccountingItemPPUGUI::setAccountingItemnullptr );
         } else {
             m_d->ui->quantityLineEdit->clear();
             m_d->ui->priceCodeLineEdit->clear();
@@ -199,16 +199,16 @@ void AccountingItemPPUGUI::setItem(AccountingTAMBillItem *b) {
             m_d->ui->amountNotToDiscountLineEdit->clear();
             m_d->ui->totalAmountLineEdit->clear();
 
-            m_d->priceItemGUI->setPriceItemNULL();
-            m_d->ui->itemMeasuresTableView->setModel( NULL );
+            m_d->priceItemGUI->setPriceItemnullptr();
+            m_d->ui->itemMeasuresTableView->setModel( nullptr );
             associateLinesModel( false );
         }
     }
 }
 
 void AccountingItemPPUGUI::setItem(AccountingBillItem *b) {
-    if( m_d->billItem != b || m_d->TAMBillItem != NULL ){
-        if( m_d->billItem != NULL ){
+    if( m_d->billItem != b || m_d->TAMBillItem != nullptr ){
+        if( m_d->billItem != nullptr ){
             disconnect( m_d->billItem, &AccountingBillItem::dateChanged, m_d->ui->dateLineEdit, &QLineEdit::setText );
             disconnect( m_d->ui->dateLineEdit, &QLineEdit::editingFinished, this, &AccountingItemPPUGUI::setDateLE );
             disconnect( m_d->billItem, &AccountingBillItem::quantityChanged, m_d->ui->quantityLineEdit, &QLineEdit::setText );
@@ -225,9 +225,9 @@ void AccountingItemPPUGUI::setItem(AccountingBillItem *b) {
             disconnectPriceItem( m_d->billItem->priceItem() );
 
             disconnect( m_d->ui->associateLinesCheckBox, &QCheckBox::toggled, this, &AccountingItemPPUGUI::associateLinesModel );
-            disconnect( m_d->billItem, &AccountingBillItem::aboutToBeDeleted, this, &AccountingItemPPUGUI::setAccountingItemNULL );
+            disconnect( m_d->billItem, &AccountingBillItem::aboutToBeDeleted, this, &AccountingItemPPUGUI::setAccountingItemnullptr );
         }
-        if( m_d->TAMBillItem != NULL ){
+        if( m_d->TAMBillItem != nullptr ){
             disconnect( m_d->TAMBillItem, &AccountingTAMBillItem::startDateChanged, m_d->ui->dateLineEdit, &QLineEdit::setText );
             disconnect( m_d->ui->dateLineEdit, &QLineEdit::editingFinished, this, &AccountingItemPPUGUI::setDateLE );
             disconnect( m_d->TAMBillItem, &AccountingTAMBillItem::quantityChanged, m_d->ui->quantityLineEdit, &QLineEdit::setText );
@@ -244,17 +244,17 @@ void AccountingItemPPUGUI::setItem(AccountingBillItem *b) {
             disconnectPriceItem( m_d->TAMBillItem->priceItem() );
 
             disconnect( m_d->ui->associateLinesCheckBox, &QCheckBox::toggled, this, &AccountingItemPPUGUI::associateLinesModel );
-            disconnect( m_d->TAMBillItem, &AccountingTAMBillItem::aboutToBeDeleted, this, &AccountingItemPPUGUI::setAccountingItemNULL );
+            disconnect( m_d->TAMBillItem, &AccountingTAMBillItem::aboutToBeDeleted, this, &AccountingItemPPUGUI::setAccountingItemnullptr );
         }
 
         m_d->ui->PPUTotalToDiscountLineEdit->clear();
         m_d->ui->PPUNotToBDiscountedLineEdit->clear();
 
         m_d->billItem = b;
-        m_d->TAMBillItem = NULL;
+        m_d->TAMBillItem = nullptr;
         m_d->itemAttributeModel->setItem( b );
 
-        if( m_d->billItem != NULL ){
+        if( m_d->billItem != nullptr ){
             m_d->ui->accountingProgNumberLineEdit->setText( m_d->billItem->accountingProgCode() );
             m_d->ui->progNumberLineEdit->setText( m_d->billItem->progCode() );
 
@@ -272,7 +272,7 @@ void AccountingItemPPUGUI::setItem(AccountingBillItem *b) {
             m_d->ui->totalAmountLineEdit->setText( m_d->billItem->totalAmountStr() );
             connect( m_d->billItem, &AccountingBillItem::totalAmountChanged, m_d->ui->totalAmountLineEdit, &QLineEdit::setText );
 
-            connectPriceItem( NULL, m_d->billItem->priceItem());
+            connectPriceItem( nullptr, m_d->billItem->priceItem());
             connect( m_d->billItem, &AccountingBillItem::priceItemChanged, this, &AccountingItemPPUGUI::connectPriceItem );
 
             m_d->ui->PPUTotalToDiscountLineEdit->setText( m_d->billItem->PPUTotalToDiscountStr() );
@@ -284,12 +284,12 @@ void AccountingItemPPUGUI::setItem(AccountingBillItem *b) {
 
             m_d->ui->itemMeasuresTableView->setModel( m_d->billItem->measuresModel() );
 
-            associateLinesModel( m_d->billItem->measuresModel() != NULL );
+            associateLinesModel( m_d->billItem->measuresModel() != nullptr );
 
-            m_d->ui->associateLinesCheckBox->setChecked(  m_d->billItem->measuresModel() != NULL  );
+            m_d->ui->associateLinesCheckBox->setChecked(  m_d->billItem->measuresModel() != nullptr  );
             connect( m_d->ui->associateLinesCheckBox, &QCheckBox::toggled, this, &AccountingItemPPUGUI::associateLinesModel );
 
-            connect( m_d->billItem, &AccountingBillItem::aboutToBeDeleted, this, &AccountingItemPPUGUI::setAccountingItemNULL );
+            connect( m_d->billItem, &AccountingBillItem::aboutToBeDeleted, this, &AccountingItemPPUGUI::setAccountingItemnullptr );
         } else {
             m_d->ui->progNumberLineEdit->clear();
             m_d->ui->accountingProgNumberLineEdit->clear();
@@ -304,35 +304,35 @@ void AccountingItemPPUGUI::setItem(AccountingBillItem *b) {
             m_d->ui->amountNotToDiscountLineEdit->clear();
             m_d->ui->totalAmountLineEdit->clear();
 
-            m_d->priceItemGUI->setPriceItemNULL();
-            m_d->ui->itemMeasuresTableView->setModel( NULL );
+            m_d->priceItemGUI->setPriceItemnullptr();
+            m_d->ui->itemMeasuresTableView->setModel( nullptr );
             associateLinesModel( false );
         }
     }
 }
 
 void AccountingItemPPUGUI::setAccountingTAMBill(AccountingTAMBill *b) {
-    if( b != NULL ){
+    if( b != nullptr ){
         m_d->itemAttributeModel->setAttributeModel( b->attributesModel() );
     } else {
-        m_d->itemAttributeModel->setAttributeModel( NULL );
+        m_d->itemAttributeModel->setAttributeModel( nullptr );
     }
     // quando si cambia computo corrente la scheda della riga si azzera
-    setItem( (AccountingTAMBillItem *)(NULL) );
+    setItem( (AccountingTAMBillItem *)(nullptr) );
 }
 
 void AccountingItemPPUGUI::setAccountingBill(AccountingBill *b) {
-    if( b != NULL ){
+    if( b != nullptr ){
         m_d->itemAttributeModel->setAttributeModel( b->attributesModel() );
     } else {
-        m_d->itemAttributeModel->setAttributeModel( NULL );
+        m_d->itemAttributeModel->setAttributeModel( nullptr );
     }
     // quando si cambia computo corrente la scheda della riga si azzera
-    setItem( (AccountingBillItem *)(NULL) );
+    setItem( (AccountingBillItem *)(nullptr) );
 }
 
 void AccountingItemPPUGUI::changeItemDateGUI(){
-    if( m_d->TAMBillItem != NULL ){
+    if( m_d->TAMBillItem != nullptr ){
         QDate d = m_d->TAMBillItem->startDate();
         QCalendarDialog dialog( &d, this );
         if( dialog.exec() == QDialog::Accepted ){
@@ -342,19 +342,19 @@ void AccountingItemPPUGUI::changeItemDateGUI(){
 }
 
 void AccountingItemPPUGUI::setDateLE(){
-    if( m_d->TAMBillItem != NULL ){
+    if( m_d->TAMBillItem != nullptr ){
         m_d->TAMBillItem->setStartDate( m_d->ui->quantityLineEdit->text() );
     }
 }
 
 void AccountingItemPPUGUI::setQuantityLE(){
-    if( m_d->TAMBillItem != NULL ){
+    if( m_d->TAMBillItem != nullptr ){
         m_d->TAMBillItem->setQuantity( m_d->ui->quantityLineEdit->text() );
     }
 }
 
 void AccountingItemPPUGUI::disconnectPriceItem( PriceItem * priceItem ) {
-    if( priceItem != NULL ){
+    if( priceItem != nullptr ){
         disconnect( priceItem, &PriceItem::codeFullChanged, m_d->ui->priceCodeLineEdit, &QLineEdit::setText );
         disconnect( priceItem, &PriceItem::shortDescriptionFullChanged, m_d->ui->priceShortDescLineEdit, &QLineEdit::setText );
         disconnect( priceItem, &PriceItem::unitMeasureChanged, this, &AccountingItemPPUGUI::connectPriceUnitMeasure );
@@ -364,14 +364,14 @@ void AccountingItemPPUGUI::disconnectPriceItem( PriceItem * priceItem ) {
         m_d->ui->priceCodeLineEdit->clear();
         m_d->ui->priceShortDescLineEdit->clear();
         m_d->ui->priceUnitMeasureLineEdit->clear();
-        m_d->priceItemGUI->setPriceItem( NULL );
+        m_d->priceItemGUI->setPriceItem( nullptr );
     }
 }
 
 void AccountingItemPPUGUI::connectPriceItem( PriceItem * oldPriceItem, PriceItem * newPriceItem ) {
     disconnectPriceItem( oldPriceItem );
 
-    if( newPriceItem != NULL ){
+    if( newPriceItem != nullptr ){
         m_d->ui->priceCodeLineEdit->setText( newPriceItem->codeFull() );
         m_d->ui->priceShortDescLineEdit->setText( newPriceItem->shortDescriptionFull() );
         if( newPriceItem->unitMeasure() ){
@@ -391,33 +391,33 @@ void AccountingItemPPUGUI::connectPriceItem( PriceItem * oldPriceItem, PriceItem
         m_d->ui->priceCodeLineEdit->clear();
         m_d->ui->priceShortDescLineEdit->clear();
         m_d->ui->priceUnitMeasureLineEdit->clear();
-        m_d->priceItemGUI->setPriceItemNULL();
+        m_d->priceItemGUI->setPriceItemnullptr();
     }
 }
 
 void AccountingItemPPUGUI::connectPriceUnitMeasure(){
-    if( m_d->TAMBillItem != NULL ){
-        if( m_d->TAMBillItem->priceItem() != NULL ) {
-            if( m_d->connectedUnitMeasure != NULL ){
+    if( m_d->TAMBillItem != nullptr ){
+        if( m_d->TAMBillItem->priceItem() != nullptr ) {
+            if( m_d->connectedUnitMeasure != nullptr ){
                 disconnect(  m_d->connectedUnitMeasure, &UnitMeasure::tagChanged, m_d->ui->priceUnitMeasureLineEdit, &QLineEdit::setText );
             }
 
             m_d->connectedUnitMeasure = m_d->TAMBillItem->priceItem()->unitMeasure();
 
-            if( m_d->connectedUnitMeasure != NULL ){
+            if( m_d->connectedUnitMeasure != nullptr ){
                 m_d->ui->priceUnitMeasureLineEdit->setText( m_d->connectedUnitMeasure->tag()  );
                 connect(  m_d->connectedUnitMeasure, &UnitMeasure::tagChanged, m_d->ui->priceUnitMeasureLineEdit, &QLineEdit::setText );
             }
         }
-    } else if( m_d->billItem != NULL ){
-        if( m_d->billItem->priceItem() != NULL ) {
-            if( m_d->connectedUnitMeasure != NULL ){
+    } else if( m_d->billItem != nullptr ){
+        if( m_d->billItem->priceItem() != nullptr ) {
+            if( m_d->connectedUnitMeasure != nullptr ){
                 disconnect(  m_d->connectedUnitMeasure, &UnitMeasure::tagChanged, m_d->ui->priceUnitMeasureLineEdit, &QLineEdit::setText );
             }
 
             m_d->connectedUnitMeasure = m_d->billItem->priceItem()->unitMeasure();
 
-            if( m_d->connectedUnitMeasure != NULL ){
+            if( m_d->connectedUnitMeasure != nullptr ){
                 m_d->ui->priceUnitMeasureLineEdit->setText( m_d->connectedUnitMeasure->tag()  );
                 connect(  m_d->connectedUnitMeasure, &UnitMeasure::tagChanged, m_d->ui->priceUnitMeasureLineEdit, &QLineEdit::setText );
             }
@@ -430,26 +430,26 @@ void AccountingItemPPUGUI::associateLinesModel(bool ass) {
     m_d->ui->itemMeasuresGroupBox->setVisible( ass );
     m_d->ui->quantityLineEdit->setReadOnly( ass );
     if( ass ){
-        if( m_d->TAMBillItem != NULL ){
+        if( m_d->TAMBillItem != nullptr ){
             m_d->ui->itemMeasuresTableView->setModel( m_d->TAMBillItem->generateMeasuresModel() );
         }
-        if( m_d->billItem != NULL ){
+        if( m_d->billItem != nullptr ){
             m_d->ui->itemMeasuresTableView->setModel( m_d->billItem->generateMeasuresModel() );
         }
-        if( m_d->vSpacer != NULL ){
+        if( m_d->vSpacer != nullptr ){
             m_d->ui->dataTabSAContentsLayout->removeItem( m_d->vSpacer);
             delete m_d->vSpacer;
-            m_d->vSpacer = NULL;
+            m_d->vSpacer = nullptr;
         }
     } else {
-        if( m_d->TAMBillItem != NULL ){
+        if( m_d->TAMBillItem != nullptr ){
             m_d->TAMBillItem->removeMeasuresModel();
         }
-        if( m_d->billItem != NULL ){
+        if( m_d->billItem != nullptr ){
             m_d->billItem->removeMeasuresModel();
         }
-        m_d->ui->itemMeasuresTableView->setModel( NULL );
-        if( m_d->vSpacer == NULL ){
+        m_d->ui->itemMeasuresTableView->setModel( nullptr );
+        if( m_d->vSpacer == nullptr ){
             m_d->vSpacer = new QSpacerItem(0,0, QSizePolicy::Minimum, QSizePolicy::Expanding);
             m_d->ui->dataTabSAContentsLayout->addItem( m_d->vSpacer, m_d->ui->dataTabSAContentsLayout->rowCount(), 0, 1, 3 );
         }
@@ -457,7 +457,7 @@ void AccountingItemPPUGUI::associateLinesModel(bool ass) {
 }
 
 void AccountingItemPPUGUI::addMeasureLines() {
-    if( m_d->TAMBillItem != NULL ){
+    if( m_d->TAMBillItem != nullptr ){
         if( m_d->TAMBillItem->measuresModel() ){
             QModelIndexList rowListSelected = m_d->ui->itemMeasuresTableView->selectionModel()->selectedIndexes();
             QList<int> rowList;
@@ -474,7 +474,7 @@ void AccountingItemPPUGUI::addMeasureLines() {
                 m_d->TAMBillItem->measuresModel()->insertRows( 0 );
             }
         }
-    } else if( m_d->billItem != NULL ){
+    } else if( m_d->billItem != nullptr ){
         if( m_d->billItem->measuresModel() ){
             QModelIndexList rowListSelected = m_d->ui->itemMeasuresTableView->selectionModel()->selectedIndexes();
             QList<int> rowList;
@@ -495,7 +495,7 @@ void AccountingItemPPUGUI::addMeasureLines() {
 }
 
 void AccountingItemPPUGUI::delMeasureLines() {
-    if( m_d->TAMBillItem != NULL ){
+    if( m_d->TAMBillItem != nullptr ){
         if( m_d->TAMBillItem->measuresModel() ){
             QModelIndexList rowListSelected = m_d->ui->itemMeasuresTableView->selectionModel()->selectedRows();
             if( !rowListSelected.isEmpty() ){
@@ -509,7 +509,7 @@ void AccountingItemPPUGUI::delMeasureLines() {
                 m_d->TAMBillItem->measuresModel()->removeRows( rowList.first(), rowList.size() );
             }
         }
-    } else if( m_d->billItem != NULL ){
+    } else if( m_d->billItem != nullptr ){
         if( m_d->billItem->measuresModel() ){
             QModelIndexList rowListSelected = m_d->ui->itemMeasuresTableView->selectionModel()->selectedRows();
             if( !rowListSelected.isEmpty() ){
@@ -527,7 +527,7 @@ void AccountingItemPPUGUI::delMeasureLines() {
 }
 
 void AccountingItemPPUGUI::importAccountingMeasureMeasuresTXT() {
-    if( m_d->billItem != NULL ){
+    if( m_d->billItem != nullptr ){
         if( m_d->billItem->measuresModel() ){
             QModelIndexList rowListSelected = m_d->ui->itemMeasuresTableView->selectionModel()->selectedRows();
             QList<int> rowList;
@@ -549,13 +549,13 @@ void AccountingItemPPUGUI::importAccountingMeasureMeasuresTXT() {
     }
 }
 
-void AccountingItemPPUGUI::setAccountingItemNULL() {
-    setItem( (AccountingTAMBillItem *)( NULL ));
-    setItem( (AccountingBillItem *)( NULL ));
+void AccountingItemPPUGUI::setAccountingItemnullptr() {
+    setItem( (AccountingTAMBillItem *)( nullptr ));
+    setItem( (AccountingBillItem *)( nullptr ));
 }
 
 void AccountingItemPPUGUI::addAttribute(){
-    if( m_d->itemAttributeModel != NULL ){
+    if( m_d->itemAttributeModel != nullptr ){
         if( m_d->ui->attributeTableView->selectionModel() ){
             int count = 1;
             QModelIndexList selectedRows = m_d->ui->attributeTableView->selectionModel()->selectedRows();
@@ -573,7 +573,7 @@ void AccountingItemPPUGUI::addAttribute(){
 }
 
 void AccountingItemPPUGUI::removeAttribute(){
-    if( m_d->itemAttributeModel != NULL ){
+    if( m_d->itemAttributeModel != nullptr ){
         if( m_d->ui->attributeTableView->selectionModel() ){
             QModelIndexList selectedRows = m_d->ui->attributeTableView->selectionModel()->selectedRows();
             int count = selectedRows.size();
@@ -592,7 +592,7 @@ void AccountingItemPPUGUI::removeAttribute(){
 
 bool AccountingItemPPUGUI::eventFilter(QObject *object, QEvent *event) {
     if (event->type() == QEvent::MouseButtonDblClick )     {
-        if( m_d->TAMBillItem != NULL ){
+        if( m_d->TAMBillItem != nullptr ){
             if( object == m_d->ui->dateLineEdit ){
                 QDate d = m_d->TAMBillItem->startDate();
                 QCalendarDialog dialog( &d, this );
@@ -601,7 +601,7 @@ bool AccountingItemPPUGUI::eventFilter(QObject *object, QEvent *event) {
                 }
             }
         }
-        if( m_d->billItem != NULL ){
+        if( m_d->billItem != nullptr ){
             if( object == m_d->ui->dateLineEdit ){
                 QDate d = m_d->billItem->date();
                 QCalendarDialog dialog( &d, this );

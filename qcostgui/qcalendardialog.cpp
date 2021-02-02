@@ -30,7 +30,7 @@ QCalendarDialog::~QCalendarDialog() {
 }
 
 void QCalendarDialog::changeDateAndClose(){
-    if( m_d->date != NULL ) {
+    if( m_d->date != nullptr ) {
         *(m_d->date) = m_d->ui->calendarWidget->selectedDate();
     }
     accept();

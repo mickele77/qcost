@@ -55,7 +55,7 @@ public:
     static QList< QPair<FieldType, QString> > standardFieldTypeNames();
     static int fieldTypeCol();
 
-    PriceFieldModel( MathParser * prs, QObject * parent = 0 );
+    PriceFieldModel( MathParser * prs, QObject * parent = nullptr );
     virtual ~PriceFieldModel();
 
     PriceFieldModel &operator =(const PriceFieldModel &cp);

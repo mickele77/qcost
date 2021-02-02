@@ -117,7 +117,7 @@ bool PriceListPrinter::printODT( PriceListPrinter::PrintPriceItemsOption printOp
 
             cursor.insertBlock( headerBlockFormat );
             cursor.setBlockCharFormat( headerBlockCharFormat );
-            cursor.insertText(QObject::trUtf8("Elenco Prezzi") );
+            cursor.insertText(QObject::tr("Elenco Prezzi") );
 
             cursor.insertBlock( parBlockFormat );
 
@@ -181,7 +181,7 @@ bool PriceListPrinter::printODT( PriceListPrinter::PrintPriceItemsOption printOp
 
                         cursor.insertBlock( headerBlockFormat );
                         cursor.setBlockCharFormat( headerBlockCharFormat );
-                        cursor.insertText(QObject::trUtf8("Analisi Prezzi") );
+                        cursor.insertText(QObject::tr("Analisi Prezzi") );
 
                         cursor.insertBlock( parBlockFormat );
 

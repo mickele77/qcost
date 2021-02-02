@@ -159,13 +159,13 @@ QVariant AccountingTAMMeasuresModel::headerData(int section, Qt::Orientation ori
 
     if (orientation == Qt::Horizontal) {
         if( section == AccountingTAMMeasuresModelPrivate::commentCol ) {
-            return trUtf8("Commento");
+            return tr("Commento");
         }
         if( section >= AccountingTAMMeasuresModelPrivate::firstFormulaCol && section >= m_d->lastFormulaCol() ) {
             return m_d->tamBillItem->dayStr( section - AccountingTAMMeasuresModelPrivate::firstFormulaCol );
         }
         if( section == m_d->quantityCol() ) {
-            return trUtf8("Quantità");
+            return tr("Quantità");
         }
     } else if( orientation == Qt::Vertical ){
         return QVariant( section + 1 );
@@ -174,7 +174,7 @@ QVariant AccountingTAMMeasuresModel::headerData(int section, Qt::Orientation ori
 }
 
 bool AccountingTAMMeasuresModel::insertRows(int row, int count, const QModelIndex &parent) {
-    Q_UNUSED(parent);
+    Q_UNUSED(parent)
     if( count < 1 ){
         return false;
     }

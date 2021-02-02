@@ -216,59 +216,59 @@ void QCostClipboardData::setCopiedAccountingLSBillItems( QList<AccountingLSBillI
 
 void QCostClipboardData::removeFromList(){
     AccountingBill * a = dynamic_cast<AccountingBill *>(sender() );
-    if( a != NULL ){
+    if( a != nullptr ){
         if( m_d->copiedAccBills.contains( a ) ){
             m_d->copiedAccBills.removeAll(a);
         }
         if( m_d->copiedAccBillItemsBill == a ){
-            m_d->copiedAccBillItemsBill = NULL;
+            m_d->copiedAccBillItemsBill = nullptr;
             m_d->copiedAccBillItems.clear();
         }
     }
 
     AccountingBillItem * ai = dynamic_cast<AccountingBillItem *>(sender() );
-    if( ai != NULL ){
+    if( ai != nullptr ){
         m_d->copiedAccBillItems.removeAll( ai );
         if( m_d->copiedAccBillItems.size() < 1 ){
-            m_d->copiedAccBillItemsBill = NULL;
+            m_d->copiedAccBillItemsBill = nullptr;
         }
     }
 
     Bill * b = dynamic_cast<Bill *>(sender() );
-    if( b != NULL ){
+    if( b != nullptr ){
         if( m_d->copiedBills.contains( b ) ){
             m_d->copiedBills.removeAll(b);
         }
         if( m_d->copiedBillItemsBill == b ){
-            m_d->copiedBillItemsBill = NULL;
+            m_d->copiedBillItemsBill = nullptr;
             m_d->copiedBillItems.clear();
         }
     }
 
     BillItem * bi = dynamic_cast<BillItem *>(sender() );
-    if( bi != NULL ){
+    if( bi != nullptr ){
         m_d->copiedBillItems.removeAll( bi );
         if( m_d->copiedBillItems.size() < 1 ){
-            m_d->copiedBillItemsBill = NULL;
+            m_d->copiedBillItemsBill = nullptr;
         }
     }
 
     PriceList * pl = dynamic_cast<PriceList *>(sender() );
-    if( pl != NULL ){
+    if( pl != nullptr ){
         if( m_d->copiedPriceLists.contains( pl ) ){
             m_d->copiedPriceLists.removeAll(pl);
         }
         if( m_d->copiedPriceItemsPriceList == pl ){
-            m_d->copiedPriceItemsPriceList = NULL;
+            m_d->copiedPriceItemsPriceList = nullptr;
             m_d->copiedPriceItems.clear();
         }
     }
 
     PriceItem * pi = dynamic_cast<PriceItem *>(sender() );
-    if( pi != NULL ){
+    if( pi != nullptr ){
         m_d->copiedPriceItems.removeAll( pi );
         if( m_d->copiedPriceItems.size() < 1 ){
-            m_d->copiedPriceItemsPriceList = NULL;
+            m_d->copiedPriceItemsPriceList = nullptr;
         }
     }
 

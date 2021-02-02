@@ -514,9 +514,9 @@ protected slots:
     void updateTotalAmount();
 
     // nel caso di lumpsum, azzera l'oggetto AccountingLSBill associato
-    void setLSBillNULL();
+    void setLSBillnullptr();
     // nel caso di tam, azzera l'oggetto AccountingBillItem associato
-    void setTAMBillItemNULL();
+    void setTAMBillItemnullptr();
 
     /** Aggiorna i prezzi della contabilita */
     void updatePPUs();

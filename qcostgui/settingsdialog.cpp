@@ -41,7 +41,7 @@ void SettingsDialog::setValuesAndExit(){
 }
 
 void SettingsDialog::wordProcessorSelectFile(){
-    QString txt = QFileDialog::getOpenFileName( this, trUtf8("Seleziona WordProcessor ODT"), "", "" );
+    QString txt = QFileDialog::getOpenFileName( this, tr("Seleziona WordProcessor ODT"), "", "" );
     if( !txt.isEmpty() ){
         m_d->ui->wordProcessorFileLineEdit->setText(txt);
     }

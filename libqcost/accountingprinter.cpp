@@ -38,29 +38,29 @@ class AccountingPrinterPrivate{
 public:
     AccountingPrinterPrivate(AccountingBill * b, MathParser * prs):
         accountingBill(b),
-        accountingTAMBill(NULL),
-        accountingLSBills(NULL),
-        accountingLSBill(NULL),
+        accountingTAMBill(nullptr),
+        accountingLSBills(nullptr),
+        accountingLSBill(nullptr),
         parser(prs){
     }
     AccountingPrinterPrivate(AccountingTAMBill * b, MathParser * prs):
-        accountingBill(NULL),
+        accountingBill(nullptr),
         accountingTAMBill(b),
-        accountingLSBills(NULL),
-        accountingLSBill(NULL),
+        accountingLSBills(nullptr),
+        accountingLSBill(nullptr),
         parser(prs){
     }
     AccountingPrinterPrivate(AccountingLSBills * b, MathParser * prs):
-        accountingBill(NULL),
-        accountingTAMBill(NULL),
+        accountingBill(nullptr),
+        accountingTAMBill(nullptr),
         accountingLSBills(b),
-        accountingLSBill(NULL),
+        accountingLSBill(nullptr),
         parser(prs){
     }
     AccountingPrinterPrivate(AccountingLSBill * b, MathParser * prs):
-        accountingBill(NULL),
-        accountingTAMBill(NULL),
-        accountingLSBills(NULL),
+        accountingBill(nullptr),
+        accountingTAMBill(nullptr),
+        accountingLSBills(nullptr),
         accountingLSBill(b),
         parser(prs){
     }
@@ -119,12 +119,12 @@ bool AccountingPrinter::printODT( int payToPrint, AccountingPrinter::PrintOption
         }
     }
 
-    if( m_d->accountingTAMBill != NULL ){
+    if( m_d->accountingTAMBill != nullptr ){
         if( (prOption == PrintAccounting) ||
                 (prOption == PrintRawMeasures) ){
             return printAccountingTAMBillODT( payToPrint, prOption, prAmountsOption, prPPUDescOption, fileName, paperWidth, paperHeight, paperOrientation );
         }
-    } else if( m_d->accountingBill != NULL ){
+    } else if( m_d->accountingBill != nullptr ){
         if( (prOption == PrintMeasures) ||
                 (prOption == PrintRawMeasures) ){
             return printMeasuresODT( payToPrint, prOption, prAmountsOption, prPPUDescOption, fileName, paperWidth, paperHeight, paperOrientation );
@@ -147,7 +147,7 @@ bool AccountingPrinter::printAttributeODT( AccountingPrinter::AttributePrintOpti
                                            double paperWidth,
                                            double paperHeight,
                                            Qt::Orientation paperOrientation) const {
-    if( m_d->accountingBill != NULL ){
+    if( m_d->accountingBill != nullptr ){
         if( paperOrientation == Qt::Horizontal ){
             if( paperHeight > paperWidth ){
                 double com = paperHeight;
@@ -186,7 +186,7 @@ bool AccountingPrinter::printAttributeODT( AccountingPrinter::AttributePrintOpti
         cursor.insertBlock( headerBlockFormat );
         cursor.setBlockCharFormat( headerBlockCharFormat );
 
-        cursor.insertText(QObject::trUtf8("Libretto delle Misure") );
+        cursor.insertText(QObject::tr("Libretto delle Misure") );
 
         cursor.insertBlock( parBlockFormat );
 
@@ -257,7 +257,7 @@ bool AccountingPrinter::printAttributeODT( AccountingPrinter::AttributePrintOpti
             writer.setPageOrientation( paperOrientation );
             return writer.writeAll();
         }
-    } else if( m_d->accountingTAMBill != NULL ){
+    } else if( m_d->accountingTAMBill != nullptr ){
         if( paperOrientation == Qt::Horizontal ){
             if( paperHeight > paperWidth ){
                 double com = paperHeight;
@@ -296,7 +296,7 @@ bool AccountingPrinter::printAttributeODT( AccountingPrinter::AttributePrintOpti
         cursor.insertBlock( headerBlockFormat );
         cursor.setBlockCharFormat( headerBlockCharFormat );
 
-        cursor.insertText(QObject::trUtf8("Lista Opere in economia") );
+        cursor.insertText(QObject::tr("Lista Opere in economia") );
 
         cursor.insertBlock( parBlockFormat );
 
@@ -394,13 +394,13 @@ bool AccountingPrinter::printODT( int payToPrint,
         }
     }
 
-    if( m_d->accountingLSBill != NULL ){
+    if( m_d->accountingLSBill != nullptr ){
         return printAccountingLSBillODT( payToPrint, measuresBill,
                                          prOption, prLSOption, prPPDescOption, printAmounts,
                                          fileName, paperWidth, paperHeight, paperOrientation );
     }
 
-    if( m_d->accountingLSBills != NULL ){
+    if( m_d->accountingLSBills != nullptr ){
         return printAccountingLSBillsODT( payToPrint, measuresBill,
                                           prOption, prLSOption, prPPDescOption, printAmounts,
                                           fileName, paperWidth, paperHeight, paperOrientation );
@@ -417,7 +417,7 @@ bool AccountingPrinter::printMeasuresODT( int payToPrint,
                                           double paperWidth, double paperHeight,
                                           Qt::Orientation paperOrientation) const {
 
-    if( m_d->accountingBill != NULL ){
+    if( m_d->accountingBill != nullptr ){
         double tableWidth = paperWidth - 2.0 * AccountingPrinterPrivate::margin;
 
         // numero progressivo + data + codice + descrizione + unità di misura + quantità + [prezzo + importo]
@@ -500,10 +500,10 @@ bool AccountingPrinter::printMeasuresODT( int payToPrint,
         cursor.setBlockCharFormat( headerBlockCharFormat );
 
         if( prOption == PrintRawMeasures ){
-            cursor.insertText(QObject::trUtf8("Brogliaccio del Libretto delle Misure") );
+            cursor.insertText(QObject::tr("Brogliaccio del Libretto delle Misure") );
             cursor.insertBlock( parBlockFormat );
         } else if( prOption == PrintMeasures ){
-            cursor.insertText(QObject::trUtf8("Libretto delle Misure") );
+            cursor.insertText(QObject::tr("Libretto delle Misure") );
             cursor.insertBlock( parBlockFormat );
         }
 
@@ -539,7 +539,7 @@ bool AccountingPrinter::printAccountingODT( int payToPrint,
                                             double paperWidth, double paperHeight,
                                             Qt::Orientation paperOrientation ) const {
 
-    if( m_d->accountingBill != NULL ){
+    if( m_d->accountingBill != nullptr ){
         double tableWidth = paperWidth - 2.0 * AccountingPrinterPrivate::margin;
 
 
@@ -611,7 +611,7 @@ bool AccountingPrinter::printAccountingTAMBillODT( int billToPrint,
                                                    const QString &fileName,
                                                    double paperWidth, double paperHeight,
                                                    Qt::Orientation paperOrientation ) const {
-    if( m_d->accountingTAMBill != NULL ){
+    if( m_d->accountingTAMBill != nullptr ){
         double tableWidth = paperWidth - 2.0 * AccountingPrinterPrivate::margin;
 
         // numero progressivo + codice + descrizione + unità di misura + quantità + [ prezzo campo, importo campo ]
@@ -696,9 +696,9 @@ bool AccountingPrinter::printAccountingTAMBillODT( int billToPrint,
 
         if( billToPrint < 0 ){
             if( prOption == PrintRawMeasures ){
-                cursor.insertText(QObject::trUtf8("Brogliaccio delle liste in economia") );
+                cursor.insertText(QObject::tr("Brogliaccio delle liste in economia") );
             } else if( prOption == PrintAccounting ){
-                cursor.insertText(QObject::trUtf8("Liste in Economia") );
+                cursor.insertText(QObject::tr("Liste in Economia") );
             }
         }
 
@@ -861,7 +861,7 @@ bool AccountingPrinter::printAccountingLSBillODT( int payToPrint,
                                                   const QString &fileName,
                                                   double paperWidth, double paperHeight,
                                                   Qt::Orientation paperOrientation) const {
-    if( m_d->accountingLSBill != NULL ){
+    if( m_d->accountingLSBill != nullptr ){
         double tableWidth = paperWidth - 2.0 * AccountingPrinterPrivate::margin;
         QVector<QTextLength> colWidths = printAccountingLSColWidth( tableWidth, prLSOption, paperOrientation, printAmounts );
 
@@ -890,9 +890,9 @@ bool AccountingPrinter::printAccountingLSBillODT( int payToPrint,
         cursor.setBlockFormat( headerBlockFormat );
         cursor.setBlockCharFormat( headerBlockCharFormat );
         if( prOption == PrintRawMeasures ){
-            cursor.insertText(QObject::trUtf8("Brogliaccio delle libretto delle misure - Opere a Corpo") );
+            cursor.insertText(QObject::tr("Brogliaccio delle libretto delle misure - Opere a Corpo") );
         } else if( prOption == PrintAccounting ){
-            cursor.insertText(QObject::trUtf8("Libretto delle misure - Opere a Corpo") );
+            cursor.insertText(QObject::tr("Libretto delle misure - Opere a Corpo") );
         }
 
         QList<int> payToPrintList;
@@ -944,7 +944,7 @@ bool AccountingPrinter::printAccountingLSBillODT( int payToPrint,
 bool AccountingPrinter::printAccountingLSBillsODT( int payToPrint, AccountingBill * measuresBill,
                                                    AccountingPrinter::PrintOption prOption, AccountingPrinter::PrintLSOption prLSOption, AccountingPrinter::PrintPPUDescOption prPPDescOption, bool printAmounts,
                                                    const QString &fileName, double paperWidth, double paperHeight, Qt::Orientation paperOrientation) const {
-    if( m_d->accountingLSBills != NULL ){
+    if( m_d->accountingLSBills != nullptr ){
         double tableWidth = paperWidth - 2.0 * AccountingPrinterPrivate::margin;
         QVector<QTextLength> colWidths = printAccountingLSColWidth( tableWidth, prLSOption, paperOrientation, printAmounts );
 
@@ -973,9 +973,9 @@ bool AccountingPrinter::printAccountingLSBillsODT( int payToPrint, AccountingBil
         cursor.setBlockFormat( headerBlockFormat );
         cursor.setBlockCharFormat( headerBlockCharFormat );
         if( prOption == PrintRawMeasures ){
-            cursor.insertText(QObject::trUtf8("Brogliaccio delle libretto delle misure - Opere a Corpo") );
+            cursor.insertText(QObject::tr("Brogliaccio delle libretto delle misure - Opere a Corpo") );
         } else if( prOption == PrintAccounting ){
-            cursor.insertText(QObject::trUtf8("Libretto delle misure - Opere a Corpo") );
+            cursor.insertText(QObject::tr("Libretto delle misure - Opere a Corpo") );
         }
 
         cursor.insertBlock( parBlockFormat );
@@ -1034,7 +1034,7 @@ bool AccountingPrinter::printAccountingSummaryODT( int payToPrint,
                                                    const QString &fileName,
                                                    double paperWidth, double paperHeight,
                                                    Qt::Orientation paperOrientation ) const {
-    if( m_d->accountingBill != NULL ){
+    if( m_d->accountingBill != nullptr ){
         if( paperOrientation == Qt::Horizontal ){
             if( paperHeight > paperWidth ){
                 double com = paperHeight;
@@ -1073,7 +1073,7 @@ bool AccountingPrinter::printAccountingSummaryODT( int payToPrint,
         cursor.insertBlock( headerBlockFormat );
         cursor.setBlockCharFormat( headerBlockCharFormat );
 
-        cursor.insertText(QObject::trUtf8("Sommario Registro di contabilità") );
+        cursor.insertText(QObject::tr("Sommario Registro di contabilità") );
 
         cursor.insertBlock( parBlockFormat );
 
@@ -1163,7 +1163,7 @@ bool AccountingPrinter::printPaymentODT( int payToPrint,
                                          const QString &fileName,
                                          double paperWidth, double paperHeight,
                                          Qt::Orientation paperOrientation ) const{
-    if( m_d->accountingBill != NULL ){
+    if( m_d->accountingBill != nullptr ){
         // se payToPrint è negativo, stampa l'ultimo SAL
         if( payToPrint < 0 || payToPrint > (m_d->accountingBill->paymentsCount()-1) ){
             payToPrint = m_d->accountingBill->paymentsCount() - 1;
@@ -1228,10 +1228,10 @@ bool AccountingPrinter::printPaymentODT( int payToPrint,
         cursor.setBlockFormat( headerWithPBBlockFormat );
         cursor.setBlockCharFormat( headerBlockCharFormat );
         cursor.insertText( m_d->accountingBill->payment(payToPrint)->title() );
-        if( m_d->accountingBill->payment(payToPrint) != NULL ){
+        if( m_d->accountingBill->payment(payToPrint) != nullptr ){
             cursor.insertBlock( subHeaderBlockFormat );
             cursor.setBlockCharFormat( subHeaderBlockCharFormat );
-            cursor.insertText( QObject::trUtf8("Opere eseguite a tutto il %1").arg(m_d->accountingBill->payment(payToPrint)->dateEndStr() ) );
+            cursor.insertText( QObject::tr("Opere eseguite a tutto il %1").arg(m_d->accountingBill->payment(payToPrint)->dateEndStr() ) );
         }
 
         cursor.insertBlock( parBlockFormat );

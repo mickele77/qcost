@@ -35,14 +35,14 @@
 
 class AccountingBillPrivate{
 public:
-    AccountingBillPrivate( const QString &n, AccountingBill * b, PriceFieldModel * pfm, MathParser * prs = NULL ):
+    AccountingBillPrivate( const QString &n, AccountingBill * b, PriceFieldModel * pfm, MathParser * prs = nullptr ):
         name(n),
         priceFieldModel(pfm),
         parser(prs),
-        priceList( NULL ),
+        priceList( nullptr ),
         attributesModel( new AttributesModel( b, parser, pfm )),
         varsModel( new VarsModel(parser) ),
-        rootItem(new AccountingBillItem( NULL, AccountingBillItem::Root, pfm, parser, varsModel )),
+        rootItem(new AccountingBillItem( nullptr, AccountingBillItem::Root, pfm, parser, varsModel )),
         priceListIdTmp(0){
     }
     ~AccountingBillPrivate(){
@@ -52,10 +52,10 @@ public:
     }
 
     static void setPriceItemParents( PriceList *pl, PriceItem * basePriceItem, PriceItem * newPriceItem ){
-        if( basePriceItem->parentItem() != NULL ){
-            if( basePriceItem->parentItem()->parentItem() != NULL ){
+        if( basePriceItem->parentItem() != nullptr ){
+            if( basePriceItem->parentItem()->parentItem() != nullptr ){
                 PriceItem * newPriceItemParent = pl->priceItemCode( basePriceItem->parentItem()->code() );
-                if( newPriceItemParent == NULL ){
+                if( newPriceItemParent == nullptr ){
                     newPriceItemParent = pl->appendPriceItem();
                     *newPriceItemParent = *(basePriceItem->parentItem());
                 }
@@ -183,7 +183,7 @@ void AccountingBill::setPriceDataSet(int v) {
 }
 
 ProjectItem *AccountingBill::child(int /*number*/) {
-    return NULL;
+    return nullptr;
 }
 
 int AccountingBill::childCount() const {
@@ -219,7 +219,7 @@ bool AccountingBill::clear() {
     bool ret = m_d->rootItem->clear();
     m_d->rootItem->setCurrentPriceDataSet( 0 );
     setName("");
-    setPriceList( NULL );
+    setPriceList( nullptr );
     m_d->attributesModel->clear();
     m_d->varsModel->clear();
     endResetModel();
@@ -227,7 +227,7 @@ bool AccountingBill::clear() {
 }
 
 QVariant AccountingBill::data() const {
-    return QVariant( trUtf8("Libretto delle misure" ) );
+    return QVariant( tr("Libretto delle misure" ) );
 }
 
 bool AccountingBill::setData(const QVariant &value) {
@@ -264,15 +264,15 @@ AccountingPriceFieldModel *AccountingBill::noDiscountAmountPriceFieldModel() {
 void AccountingBill::setPriceList(PriceList *pl, AccountingBill::SetPriceListMode plMode) {
     if( pl != m_d->priceList ){
         if( plMode != None ){
-            if( m_d->priceList != NULL ){
+            if( m_d->priceList != nullptr ){
                 if( plMode == SearchAndAdd ){
                     // cerca in base al codice e aggiunge se manca
                     QList<AccountingBillItem *> allItems = m_d->rootItem->allChildren();
                     for(QList<AccountingBillItem *>::iterator i = allItems.begin(); i != allItems.end(); ++i ){
-                        PriceItem * newPriceItem = NULL;
-                        if( (*i)->priceItem()!= NULL ){
+                        PriceItem * newPriceItem = nullptr;
+                        if( (*i)->priceItem()!= nullptr ){
                             newPriceItem = pl->priceItemCode( (*i)->priceItem()->code() );
-                            if( newPriceItem == NULL ){
+                            if( newPriceItem == nullptr ){
                                 newPriceItem = pl->appendPriceItem();
                                 AccountingBillPrivate::setPriceItemParents( pl, (*i)->priceItem(), newPriceItem );
                                 *newPriceItem = *((*i)->priceItem());
@@ -284,8 +284,8 @@ void AccountingBill::setPriceList(PriceList *pl, AccountingBill::SetPriceListMod
                     // aggiunge sempre e comunque
                     QList<AccountingBillItem *> allItems = m_d->rootItem->allChildren();
                     for(QList<AccountingBillItem *>::iterator i = allItems.begin(); i != allItems.end(); ++i ){
-                        PriceItem * newPriceItem = NULL;
-                        if( (*i)->priceItem()!= NULL ){
+                        PriceItem * newPriceItem = nullptr;
+                        if( (*i)->priceItem()!= nullptr ){
                             newPriceItem = pl->appendPriceItem();
                             AccountingBillPrivate::setPriceItemParents( pl, (*i)->priceItem(), newPriceItem );
                             *newPriceItem = *((*i)->priceItem());
@@ -298,17 +298,17 @@ void AccountingBill::setPriceList(PriceList *pl, AccountingBill::SetPriceListMod
                     for(QList<AccountingBillItem *>::iterator i = allItems.begin(); i != allItems.end(); ++i ){
                         (*i)->setPriceItem( pl->priceItemCode( (*i)->priceItem()->code() ) );
                     }
-                } else if( plMode == NULLPriceItem ){
-                    // annulla
+                } else if( plMode == nullptrPriceItem ){
+                    // annullptra
                     QList<AccountingBillItem *> allItems = m_d->rootItem->allChildren();
                     for(QList<AccountingBillItem *>::iterator i = allItems.begin(); i != allItems.end(); ++i ){
-                        (*i)->setPriceItem( NULL );
+                        (*i)->setPriceItem( nullptr );
                     }
                 } else if( plMode == ResetBill ){
                     // resetta il computo
                     removeItems( 0, m_d->rootItem->childrenCount() );
                 }
-                if( pl == NULL ){
+                if( pl == nullptr ){
                     m_d->rootItem->setCurrentPriceDataSet( 0 );
                 } else {
                     if( m_d->rootItem->currentPriceDataSet() > pl->priceDataSetCount() ){
@@ -417,7 +417,7 @@ Qt::ItemFlags AccountingBill::flags(const QModelIndex &index) const {
     return QAbstractItemModel::flags(index);
 
     AccountingBillItem *b = item(index);
-    if( b != NULL ){
+    if( b != nullptr ){
         return (b->flags(  index.column() ) );
     } else {
         return QAbstractItemModel::flags(index);
@@ -465,7 +465,7 @@ AccountingBillItem *AccountingBill::payment(int pay) {
     if( pay >= 0 && pay < m_d->rootItem->childrenCount() ){
         return m_d->rootItem->childItem( pay );
     }
-    return NULL;
+    return nullptr;
 }
 
 bool AccountingBill::removeItems(int position, int rows, const QModelIndex &parent) {
@@ -493,7 +493,7 @@ QModelIndex AccountingBill::parent(const QModelIndex &index) const {
     AccountingBillItem *childItem = item(index);
     AccountingBillItem *parentItem = childItem->parent();
 
-    if (parentItem == m_d->rootItem || parentItem == NULL )
+    if (parentItem == m_d->rootItem || parentItem == nullptr )
         return QModelIndex();
 
     return createIndex( parentItem->childNumber(), 0, parentItem );
@@ -514,10 +514,10 @@ QModelIndex AccountingBill::index(int row, int col, const QModelIndex &parent) c
 }
 
 QModelIndex AccountingBill::index(AccountingBillItem *item, int column) const {
-    if (item == NULL )
+    if (item == nullptr )
         return QModelIndex();
 
-    if( item->parent() == NULL ){
+    if( item->parent() == nullptr ){
         return QModelIndex();
     } else {
         return createIndex(item->childNumber(), column, item);
@@ -617,7 +617,7 @@ AttributesModel *AccountingBill::attributesModel() {
 }
 
 void AccountingBill::activateAttributeModel() {
-    if( m_d->attributesModel != NULL ){
+    if( m_d->attributesModel != nullptr ){
         m_d->attributesModel->setBill( this );
     }
 }
@@ -641,14 +641,14 @@ bool AccountingBill::isUsingPriceList(PriceList *pl) {
 
 void AccountingBill::setBillDateEnd(const QDate &newDate, int position) {
     AccountingBillItem * item = m_d->rootItem->childItem(position);
-    if( item != NULL ){
+    if( item != nullptr ){
         item->setDateEnd( newDate );
     }
 }
 
 void AccountingBill::setBillDateBegin(const QDate &newDate, int position) {
     AccountingBillItem * item = m_d->rootItem->childItem(position);
-    if( item != NULL ){
+    if( item != nullptr ){
         item->setDateBegin( newDate );
     }
 }

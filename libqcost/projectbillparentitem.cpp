@@ -29,7 +29,7 @@
 
 class ProjectBillParentItemPrivate{
 public:
-    ProjectBillParentItemPrivate( PriceFieldModel * pfm, MathParser * p = NULL ):
+    ProjectBillParentItemPrivate( PriceFieldModel * pfm, MathParser * p = nullptr ):
         priceFieldModel(pfm),
         parser(p),
         nextId(1){
@@ -53,14 +53,14 @@ Bill *ProjectBillParentItem::bill(int i) {
     if( i > -1 && i < m_d->billContainer.size() ){
         return m_d->billContainer[i];
     }
-    return NULL;
+    return nullptr;
 }
 
 ProjectItem *ProjectBillParentItem::child(int number) {
     if( number >= 0 && number < m_d->billContainer.size() ){
         return m_d->billContainer[number];
     }
-    return NULL;
+    return nullptr;
 }
 
 int ProjectBillParentItem::childCount() const {
@@ -86,11 +86,11 @@ bool ProjectBillParentItem::insertChildren(int position, int count) {
     emit beginInsertChildren( this, position, position+count-1);
 
     for (int row = 0; row < count; ++row) {
-        QString purposedBillName = QString("%1 %2").arg(trUtf8("Computo"), QString::number(m_d->nextId++));
+        QString purposedBillName = QString("%1 %2").arg(tr("Computo"), QString::number(m_d->nextId++));
         QList<Bill *>::iterator i = m_d->billContainer.begin();
         while( i != m_d->billContainer.end() ){
             if( (*i)->name().toUpper() == purposedBillName.toUpper() ){
-                purposedBillName = QString("%1 %2").arg(trUtf8("Computo"), QString::number(m_d->nextId++));
+                purposedBillName = QString("%1 %2").arg(tr("Computo"), QString::number(m_d->nextId++));
                 i = m_d->billContainer.begin();
             } else {
                 i++;
@@ -135,7 +135,7 @@ Qt::ItemFlags ProjectBillParentItem::flags() const {
 }
 
 QVariant ProjectBillParentItem::data() const {
-    return QVariant( QObject::trUtf8("Computi") );
+    return QVariant( QObject::tr("Computi") );
 }
 
 bool ProjectBillParentItem::setData(const QVariant &value) {

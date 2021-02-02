@@ -30,20 +30,20 @@ AccountingBillItemPrivate::AccountingBillItemPrivate( AccountingBillItem * paren
     name(QString()),
     date( QDate::currentDate() ),
     dateEnd( QDate::currentDate() ),
-    text( QObject::trUtf8("Commento") ),
+    text( QObject::tr("Commento") ),
     quantity(0.0),
-    priceItem(NULL),
+    priceItem(nullptr),
     PPUTotalToDiscount(0.0),
     PPUNotToDiscount(0.0),
-    measuresModel(NULL),
+    measuresModel(nullptr),
     currentPriceDataSet(0),
     discount(0.0),
-    totalAmountPriceFieldsList(NULL),
-    noDiscountAmountPriceFieldsList(NULL),
-    totalAmountPriceFieldModel( NULL ),
-    noDiscountAmountPriceFieldModel( NULL ),
-    lsBill(NULL),
-    tamBillItem(NULL),
+    totalAmountPriceFieldsList(nullptr),
+    noDiscountAmountPriceFieldsList(nullptr),
+    totalAmountPriceFieldModel( nullptr ),
+    noDiscountAmountPriceFieldModel( nullptr ),
+    lsBill(nullptr),
+    tamBillItem(nullptr),
     colCount(totalAmountCol+1),
     totalAmountToDiscount(0.0),
     amountNotToDiscount(0.0),
@@ -65,19 +65,19 @@ AccountingBillItemPrivate::AccountingBillItemPrivate( AccountingBillItem * paren
 }
 
 AccountingBillItemPrivate::~AccountingBillItemPrivate(){
-    if( totalAmountPriceFieldModel != NULL ){
+    if( totalAmountPriceFieldModel != nullptr ){
         delete totalAmountPriceFieldModel;
     }
-    if( noDiscountAmountPriceFieldModel != NULL ){
+    if( noDiscountAmountPriceFieldModel != nullptr ){
         delete noDiscountAmountPriceFieldModel;
     }
-    if( totalAmountPriceFieldsList != NULL ){
+    if( totalAmountPriceFieldsList != nullptr ){
         delete totalAmountPriceFieldsList;
     }
-    if( noDiscountAmountPriceFieldsList != NULL ){
+    if( noDiscountAmountPriceFieldsList != nullptr ){
         delete noDiscountAmountPriceFieldsList;
     }
-    if( measuresModel != NULL ){
+    if( measuresModel != nullptr ){
         delete measuresModel;
     }
     for( QList<AccountingBillItem *>::iterator i = childrenContainer.begin(); i != childrenContainer.end(); ++i ){
@@ -86,7 +86,7 @@ AccountingBillItemPrivate::~AccountingBillItemPrivate(){
 }
 
 QString	AccountingBillItemPrivate::toString(double i, char f, int prec ) const{
-    if( parser != NULL ){
+    if( parser != nullptr ){
         return parser->toString( i, f, prec );
     } else {
         return QString::number( i, f, prec );
@@ -100,7 +100,7 @@ QString AccountingBillItemPrivate::percentageToString(double v) const {
 void AccountingBillItemPrivate::writeDescriptionCell(PriceItem * priceItemToPrint, QTextCursor *cursor, QTextTable * table, const QTextTableCellFormat &centralFormat,
                                                       const QTextBlockFormat & txtBlockFormat, const QTextCharFormat & txtCharFormat, const QTextCharFormat & txtBoldCharFormat,
                                                       AccountingPrinter::PrintPPUDescOption prPPUDescOption ){
-    if( priceItemToPrint != NULL ){
+    if( priceItemToPrint != nullptr ){
         if( prPPUDescOption == AccountingPrinter::PrintShortDesc ){
             writeCell( cursor, table, centralFormat, txtBlockFormat, priceItemToPrint->shortDescriptionFull() );
         } else if( prPPUDescOption == AccountingPrinter::PrintLongDesc ){

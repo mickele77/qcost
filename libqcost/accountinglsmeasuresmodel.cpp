@@ -17,7 +17,7 @@ public:
         unitMeasure(ump),
         projQuantity( 0.0 ),
         accQuantity(0.0){
-        if( p == NULL ){
+        if( p == nullptr ){
             parser = new MathParser( QLocale::system() );
             parserWasCreated = true;
         } else {
@@ -61,7 +61,7 @@ AccountingLSMeasuresModel::AccountingLSMeasuresModel(MathParser * p, UnitMeasure
     m_d(new AccountingLSMeasuresModelPrivate( p, ump )){
     insertRows(0);
 
-    if( m_d->unitMeasure != NULL ){
+    if( m_d->unitMeasure != nullptr ){
         connect( m_d->unitMeasure, &UnitMeasure::precisionChanged, this, &AccountingLSMeasuresModel::updateAllProjQuantities );
         connect( m_d->unitMeasure, &UnitMeasure::precisionChanged, this, &AccountingLSMeasuresModel::updateAllAccQuantities );
     }
@@ -216,22 +216,22 @@ QVariant AccountingLSMeasuresModel::headerData(int section, Qt::Orientation orie
 
     if (orientation == Qt::Horizontal) {
         if( section == AccountingLSMeasuresModelPrivate::commentCol ) {
-            return trUtf8("Commento");
+            return tr("Commento");
         }
         if( section == AccountingLSMeasuresModelPrivate::projFormulaCol ) {
-            return trUtf8("Misura prog.");
+            return tr("Misura prog.");
         }
         if( section == AccountingLSMeasuresModelPrivate::projQuantityCol ) {
-            return trUtf8("Quantità prog.");
+            return tr("Quantità prog.");
         }
         if( section == AccountingLSMeasuresModelPrivate::accDateCol ) {
-            return trUtf8("Data Misura");
+            return tr("Data Misura");
         }
         if( section == AccountingLSMeasuresModelPrivate::accFormulaCol ) {
-            return trUtf8("Misura");
+            return tr("Misura");
         }
         if( section == AccountingLSMeasuresModelPrivate::accQuantityCol ) {
-            return trUtf8("Quantità");
+            return tr("Quantità");
         }
     } else if( orientation == Qt::Vertical ){
         return QVariant( section + 1 );
@@ -354,7 +354,7 @@ void AccountingLSMeasuresModel::updateAllAccQuantities() {
 void AccountingLSMeasuresModel::setUnitMeasure(UnitMeasure *ump) {
     if( m_d->unitMeasure != ump ){
         beginResetModel();
-        if( m_d->unitMeasure != NULL ){
+        if( m_d->unitMeasure != nullptr ){
             disconnect( m_d->unitMeasure, &UnitMeasure::precisionChanged, this, &AccountingLSMeasuresModel::updateAllProjQuantities );
         }
         m_d->unitMeasure = ump;
@@ -365,7 +365,7 @@ void AccountingLSMeasuresModel::setUnitMeasure(UnitMeasure *ump) {
             emit dataChanged( createIndex(0, 2), createIndex(m_d->linesContainer.size()-1, 2) );
         }
         updateProjQuantity();
-        if( m_d->unitMeasure != NULL ){
+        if( m_d->unitMeasure != nullptr ){
             connect( m_d->unitMeasure, &UnitMeasure::precisionChanged, this, &AccountingLSMeasuresModel::updateAllProjQuantities );
         }
         endResetModel();
@@ -408,5 +408,5 @@ AccountingLSMeasure * AccountingLSMeasuresModel::measure(int i) {
     if( i >= 0 && i < m_d->linesContainer.size() ){
         return m_d->linesContainer.at(i);
     }
-    return NULL;
+    return nullptr;
 }

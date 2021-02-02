@@ -51,7 +51,7 @@ signals:
 public slots:
     void setPriceItem( PriceItem * newPriceItem, int newCurPriceDataSet = 0 );
     void setCurrentPriceDataSet(int priceDataSet);
-    void setPriceItemNULL();
+    void setPriceItemnullptr();
 
 private slots:
     void setParentLongDescriptionGUI();

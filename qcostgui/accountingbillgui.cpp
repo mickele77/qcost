@@ -85,13 +85,13 @@ public:
                               MathParser * prs, AccountingBill * b, Project * prj,
                               QString * wpf, QWidget *parent ):
         accounting ( b ),
-        currentItem( NULL ),
+        currentItem( nullptr ),
         project(prj),
-        accountingItemEditingPrice(NULL),
-        accountingDataGUI( new AccountingBillDataGUI( prj->priceFieldModel(), prs, NULL, prj, wpf, parent ) ),
-        accountingPriceGUI( new AccountingBillPriceDataGUI( prj->priceFieldModel(), prs, NULL, prj, wpf, parent ) ),
+        accountingItemEditingPrice(nullptr),
+        accountingDataGUI( new AccountingBillDataGUI( prj->priceFieldModel(), prs, nullptr, prj, wpf, parent ) ),
+        accountingPriceGUI( new AccountingBillPriceDataGUI( prj->priceFieldModel(), prs, nullptr, prj, wpf, parent ) ),
         attributesGUI( new AttributesGUI( prj->priceFieldModel(), prs, wpf, parent ) ),
-        varsGUI( new VarsGUI( (AccountingBill *)(NULL), parent ) ),
+        varsGUI( new VarsGUI( (AccountingBill *)(nullptr), parent ) ),
         mainSplitter( new QSplitter(Qt::Horizontal, parent ) ),
         accountingTreeGUI( new AccountingTreeGUI( EPAImpOptions, EPAFileName, b, prs, prj, mainSplitter ) ),
         accountingItemBillGUI( new AccountingItemPaymentGUI( prj->priceFieldModel(), parent ) ),
@@ -134,11 +134,11 @@ AccountingBillGUI::AccountingBillGUI( QMap<PriceListDBWidget::ImportOptions, boo
     QTabWidget(parent),
     m_d( new AccountingBillGUIPrivate( EPAImpOptions, EPAFileName, prs, b, p, wordProcessorFile, this ) ){
 
-    addTab( m_d->accountingDataGUI, trUtf8("Dati generali"));
-    addTab( m_d->accountingPriceGUI, trUtf8("Prezzi"));
-    addTab( m_d->attributesGUI, trUtf8("Etichette"));
-    addTab( m_d->varsGUI, trUtf8("Variabili"));
-    addTab( m_d->mainSplitter, trUtf8("Misure"));
+    addTab( m_d->accountingDataGUI, tr("Dati generali"));
+    addTab( m_d->accountingPriceGUI, tr("Prezzi"));
+    addTab( m_d->attributesGUI, tr("Etichette"));
+    addTab( m_d->varsGUI, tr("Variabili"));
+    addTab( m_d->mainSplitter, tr("Misure"));
 
     setCurrentIndex( count()-1 );
     setAccountingBill(b);
@@ -165,118 +165,118 @@ void AccountingBillGUI::setAccountingBill( AccountingBill * b ){
 }
 
 void AccountingBillGUI::setAccountingItem(AccountingBillItem * newItem ) {
-    if( m_d->currentItem != NULL ){
+    if( m_d->currentItem != nullptr ){
         disconnect( m_d->currentItem, static_cast<void(AccountingBillItem::*)(bool)>(&AccountingBillItem::hasChildrenChanged), this, &AccountingBillGUI::updateAccountingMeasureGUI );
-        disconnect( m_d->currentItem, &AccountingBillItem::aboutToBeDeleted, this, &AccountingBillGUI::setAccountingMeasureNULL );
-        m_d->accountingItemBillGUI->setAccountingItemNULL();
+        disconnect( m_d->currentItem, &AccountingBillItem::aboutToBeDeleted, this, &AccountingBillGUI::setAccountingMeasurenullptr );
+        m_d->accountingItemBillGUI->setAccountingItemnullptr();
         m_d->accountingItemBillGUI->hide();
-        m_d->accountingItemPPUGUI->setAccountingItemNULL();
+        m_d->accountingItemPPUGUI->setAccountingItemnullptr();
         m_d->accountingItemPPUGUI->hide();
-        m_d->accountingItemLSGUI->setAccountingItemNULL();
+        m_d->accountingItemLSGUI->setAccountingItemnullptr();
         m_d->accountingItemLSGUI->hide();
-        m_d->accountingItemTAMGUI->setAccountingItemNULL();
+        m_d->accountingItemTAMGUI->setAccountingItemnullptr();
         m_d->accountingItemTAMGUI->hide();
-        m_d->accountingItemCommentGUI->setAccountingItemNULL();
+        m_d->accountingItemCommentGUI->setAccountingItemnullptr();
         m_d->accountingItemCommentGUI->hide();
     }
     m_d->currentItem = newItem;
-    if( m_d->currentItem != NULL ){
+    if( m_d->currentItem != nullptr ){
         updateAccountingMeasureGUI();
         connect( m_d->currentItem, static_cast<void(AccountingBillItem::*)(bool)>(&AccountingBillItem::hasChildrenChanged), this, &AccountingBillGUI::updateAccountingMeasureGUI );
-        connect( m_d->currentItem, &AccountingBillItem::aboutToBeDeleted, this, &AccountingBillGUI::setAccountingMeasureNULL );
+        connect( m_d->currentItem, &AccountingBillItem::aboutToBeDeleted, this, &AccountingBillGUI::setAccountingMeasurenullptr );
     }
 }
 
-void AccountingBillGUI::setAccountingMeasureNULL() {
-    setAccountingItem( NULL );
+void AccountingBillGUI::setAccountingMeasurenullptr() {
+    setAccountingItem( nullptr );
 }
 
 void AccountingBillGUI::updateAccountingMeasureGUI() {
-    if( m_d->currentItem != NULL ){
+    if( m_d->currentItem != nullptr ){
         if( m_d->currentItem->itemType() == AccountingBillItem::Payment ){
             m_d->accountingItemBillGUI->show();
             m_d->accountingItemBillGUI->setAccountingItem( m_d->currentItem );
 
             m_d->accountingItemPPUGUI->hide();
-            m_d->accountingItemPPUGUI->setAccountingItemNULL();
+            m_d->accountingItemPPUGUI->setAccountingItemnullptr();
 
             m_d->accountingItemLSGUI->hide();
-            m_d->accountingItemLSGUI->setAccountingItemNULL();
+            m_d->accountingItemLSGUI->setAccountingItemnullptr();
 
             m_d->accountingItemTAMGUI->hide();
-            m_d->accountingItemTAMGUI->setAccountingItemNULL();
+            m_d->accountingItemTAMGUI->setAccountingItemnullptr();
 
             m_d->accountingItemCommentGUI->hide();
-            m_d->accountingItemCommentGUI->setAccountingItemNULL();
+            m_d->accountingItemCommentGUI->setAccountingItemnullptr();
 
             return;
         }
         if( m_d->currentItem->itemType() == AccountingBillItem::PPU ){
             m_d->accountingItemBillGUI->hide();
-            m_d->accountingItemBillGUI->setAccountingItemNULL();
+            m_d->accountingItemBillGUI->setAccountingItemnullptr();
 
             m_d->accountingItemPPUGUI->show();
             m_d->accountingItemPPUGUI->setItem( m_d->currentItem );
 
             m_d->accountingItemLSGUI->hide();
-            m_d->accountingItemLSGUI->setAccountingItemNULL();
+            m_d->accountingItemLSGUI->setAccountingItemnullptr();
 
             m_d->accountingItemTAMGUI->hide();
-            m_d->accountingItemTAMGUI->setAccountingItemNULL();
+            m_d->accountingItemTAMGUI->setAccountingItemnullptr();
 
             m_d->accountingItemCommentGUI->hide();
-            m_d->accountingItemCommentGUI->setAccountingItemNULL();
+            m_d->accountingItemCommentGUI->setAccountingItemnullptr();
 
             return;
         }
         if(  m_d->currentItem->itemType() == AccountingBillItem::LumpSum ){
             m_d->accountingItemBillGUI->hide();
-            m_d->accountingItemBillGUI->setAccountingItemNULL();
+            m_d->accountingItemBillGUI->setAccountingItemnullptr();
 
             m_d->accountingItemPPUGUI->hide();
-            m_d->accountingItemPPUGUI->setAccountingItemNULL();
+            m_d->accountingItemPPUGUI->setAccountingItemnullptr();
 
             m_d->accountingItemLSGUI->show();
             m_d->accountingItemLSGUI->setItem( m_d->currentItem );
 
             m_d->accountingItemTAMGUI->hide();
-            m_d->accountingItemTAMGUI->setAccountingItemNULL();
+            m_d->accountingItemTAMGUI->setAccountingItemnullptr();
 
             m_d->accountingItemCommentGUI->hide();
-            m_d->accountingItemCommentGUI->setAccountingItemNULL();
+            m_d->accountingItemCommentGUI->setAccountingItemnullptr();
 
             return;
         }
         if(  m_d->currentItem->itemType() == AccountingBillItem::TimeAndMaterials ){
             m_d->accountingItemBillGUI->hide();
-            m_d->accountingItemBillGUI->setAccountingItemNULL();
+            m_d->accountingItemBillGUI->setAccountingItemnullptr();
 
             m_d->accountingItemPPUGUI->hide();
-            m_d->accountingItemPPUGUI->setAccountingItemNULL();
+            m_d->accountingItemPPUGUI->setAccountingItemnullptr();
 
             m_d->accountingItemLSGUI->hide();
-            m_d->accountingItemLSGUI->setAccountingItemNULL();
+            m_d->accountingItemLSGUI->setAccountingItemnullptr();
 
             m_d->accountingItemTAMGUI->show();
             m_d->accountingItemTAMGUI->setAccountingItem( m_d->currentItem );
 
             m_d->accountingItemCommentGUI->hide();
-            m_d->accountingItemCommentGUI->setAccountingItemNULL();
+            m_d->accountingItemCommentGUI->setAccountingItemnullptr();
 
             return;
         }
         if(  m_d->currentItem->itemType() == AccountingBillItem::Comment ){
             m_d->accountingItemBillGUI->hide();
-            m_d->accountingItemBillGUI->setAccountingItemNULL();
+            m_d->accountingItemBillGUI->setAccountingItemnullptr();
 
             m_d->accountingItemPPUGUI->hide();
-            m_d->accountingItemPPUGUI->setAccountingItemNULL();
+            m_d->accountingItemPPUGUI->setAccountingItemnullptr();
 
             m_d->accountingItemLSGUI->hide();
-            m_d->accountingItemLSGUI->setAccountingItemNULL();
+            m_d->accountingItemLSGUI->setAccountingItemnullptr();
 
             m_d->accountingItemTAMGUI->hide();
-            m_d->accountingItemTAMGUI->setAccountingItemNULL();
+            m_d->accountingItemTAMGUI->setAccountingItemnullptr();
 
             m_d->accountingItemCommentGUI->show();
             m_d->accountingItemCommentGUI->setAccountingItem( m_d->currentItem );
@@ -285,17 +285,17 @@ void AccountingBillGUI::updateAccountingMeasureGUI() {
         }
     }
     m_d->accountingItemBillGUI->hide();
-    m_d->accountingItemBillGUI->setAccountingItemNULL();
+    m_d->accountingItemBillGUI->setAccountingItemnullptr();
 
     m_d->accountingItemPPUGUI->hide();
-    m_d->accountingItemPPUGUI->setAccountingItemNULL();
+    m_d->accountingItemPPUGUI->setAccountingItemnullptr();
 
     m_d->accountingItemLSGUI->hide();
-    m_d->accountingItemLSGUI->setAccountingItemNULL();
+    m_d->accountingItemLSGUI->setAccountingItemnullptr();
 
     m_d->accountingItemTAMGUI->hide();
-    m_d->accountingItemTAMGUI->setAccountingItemNULL();
+    m_d->accountingItemTAMGUI->setAccountingItemnullptr();
 
     m_d->accountingItemCommentGUI->hide();
-    m_d->accountingItemCommentGUI->setAccountingItemNULL();
+    m_d->accountingItemCommentGUI->setAccountingItemnullptr();
 }

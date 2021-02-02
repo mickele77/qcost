@@ -45,7 +45,7 @@ class ProjectAccountingParentItemPrivate;
 class EXPORT_QCOST_LIB_OPT ProjectAccountingParentItem : public ProjectRootItem {
     Q_OBJECT
 public:
-    ProjectAccountingParentItem( ProjectItem * parent, PriceFieldModel * pfm, MathParser * p = NULL );
+    ProjectAccountingParentItem( ProjectItem * parent, PriceFieldModel * pfm, MathParser * p = nullptr );
     ~ProjectAccountingParentItem();
 
     int paymentsCount();

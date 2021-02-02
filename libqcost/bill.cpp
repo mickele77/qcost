@@ -36,14 +36,14 @@
 
 class BillPrivate{
 public:
-    BillPrivate( const QString &n, Bill * b, PriceFieldModel * pfm, MathParser * prs = NULL ):
+    BillPrivate( const QString &n, Bill * b, PriceFieldModel * pfm, MathParser * prs = nullptr ):
         id(0),
         name( n ),
         priceFieldModel(pfm),
         parser(prs),
         varsModel( new VarsModel( parser )),
-        rootItem(new BillItem( NULL, NULL, pfm, parser, varsModel )),
-        priceList( NULL ),
+        rootItem(new BillItem( nullptr, nullptr, pfm, parser, varsModel )),
+        priceList( nullptr ),
         attributesModel( new AttributesModel( b, parser, pfm )),
         priceListIdTmp(0){
     }
@@ -54,10 +54,10 @@ public:
     }
 
     static void setPriceItemParents( PriceList *pl, PriceItem * basePriceItem, PriceItem * newPriceItem ){
-        if( basePriceItem->parentItem() != NULL ){
-            if( basePriceItem->parentItem()->parentItem() != NULL ){
+        if( basePriceItem->parentItem() != nullptr ){
+            if( basePriceItem->parentItem()->parentItem() != nullptr ){
                 PriceItem * newPriceItemParent = pl->priceItemCode( basePriceItem->parentItem()->code() );
-                if( newPriceItemParent == NULL ){
+                if( newPriceItemParent == nullptr ){
                     newPriceItemParent = pl->appendPriceItem();
                     *newPriceItemParent = *(basePriceItem->parentItem());
                 }
@@ -173,7 +173,7 @@ void Bill::setPriceDataSet(int v) {
 }
 
 ProjectItem *Bill::child(int /*number*/) {
-    return NULL;
+    return nullptr;
 }
 
 int Bill::childCount() const {
@@ -222,15 +222,15 @@ bool Bill::setData(const QVariant &value) {
 void Bill::setPriceList(PriceList *pl, Bill::SetPriceListMode plMode) {
     if( pl != m_d->priceList ){
         if( plMode != None ){
-            if( m_d->priceList != NULL ){
+            if( m_d->priceList != nullptr ){
                 if( plMode == SearchAndAdd ){
                     // cerca in base al codice e aggiunge se manca
                     QList<BillItem *> allItems = m_d->rootItem->allChildren();
                     for(QList<BillItem *>::iterator i = allItems.begin(); i != allItems.end(); ++i ){
-                        PriceItem * newPriceItem = NULL;
-                        if( (*i)->priceItem()!= NULL ){
+                        PriceItem * newPriceItem = nullptr;
+                        if( (*i)->priceItem()!= nullptr ){
                             newPriceItem = pl->priceItemCode( (*i)->priceItem()->code() );
-                            if( newPriceItem == NULL ){
+                            if( newPriceItem == nullptr ){
                                 newPriceItem = pl->appendPriceItem();
                                 BillPrivate::setPriceItemParents( pl, (*i)->priceItem(), newPriceItem );
                                 *newPriceItem = *((*i)->priceItem());
@@ -242,8 +242,8 @@ void Bill::setPriceList(PriceList *pl, Bill::SetPriceListMode plMode) {
                     // aggiunge sempre e comunque
                     QList<BillItem *> allItems = m_d->rootItem->allChildren();
                     for(QList<BillItem *>::iterator i = allItems.begin(); i != allItems.end(); ++i ){
-                        PriceItem * newPriceItem = NULL;
-                        if( (*i)->priceItem()!= NULL ){
+                        PriceItem * newPriceItem = nullptr;
+                        if( (*i)->priceItem()!= nullptr ){
                             newPriceItem = pl->appendPriceItem();
                             BillPrivate::setPriceItemParents( pl, (*i)->priceItem(), newPriceItem );
                             *newPriceItem = *((*i)->priceItem());
@@ -256,17 +256,17 @@ void Bill::setPriceList(PriceList *pl, Bill::SetPriceListMode plMode) {
                     for(QList<BillItem *>::iterator i = allItems.begin(); i != allItems.end(); ++i ){
                         (*i)->setPriceItem( pl->priceItemCode( (*i)->priceItem()->code() ) );
                     }
-                } else if( plMode == NULLPriceItem ){
-                    // annulla
+                } else if( plMode == nullptrPriceItem ){
+                    // annullptra
                     QList<BillItem *> allItems = m_d->rootItem->allChildren();
                     for(QList<BillItem *>::iterator i = allItems.begin(); i != allItems.end(); ++i ){
-                        (*i)->setPriceItem( NULL );
+                        (*i)->setPriceItem( nullptr );
                     }
                 } else if( plMode == ResetBill ){
                     // resetta il computo
                     removeItems( 0, m_d->rootItem->childrenCount() );
                 }
-                if( pl == NULL ){
+                if( pl == nullptr ){
                     m_d->rootItem->setCurrentPriceDataSet( 0 );
                 } else {
                     if( m_d->rootItem->currentPriceDataSet() > pl->priceDataSetCount() ){
@@ -428,10 +428,10 @@ QModelIndex Bill::index(int row, int column, const QModelIndex &parent) const {
 }
 
 QModelIndex Bill::index(BillItem *item, int column) const {
-    if (item == NULL )
+    if (item == nullptr )
         return QModelIndex();
 
-    if( item->parent() == NULL ){
+    if( item->parent() == nullptr ){
         return QModelIndex();
     } else {
         return createIndex(item->childNumber(), column, item);
@@ -511,7 +511,7 @@ AttributesModel *Bill::attributesModel() {
 }
 
 void Bill::activateAttributeModel() {
-    if( m_d->attributesModel != NULL ){
+    if( m_d->attributesModel != nullptr ){
         m_d->attributesModel->setBill( this );
     }
 }

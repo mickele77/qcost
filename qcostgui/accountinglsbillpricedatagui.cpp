@@ -40,7 +40,7 @@ public:
     AccountingLSBillPriceDataGUIPrivate( Project * prj ):
         ui(new Ui::AccountingLSBillPriceDataGUI() ),
         project(prj),
-        accounting(NULL){
+        accounting(nullptr){
     }
     Ui::AccountingLSBillPriceDataGUI * ui;
     Project * project;
@@ -62,8 +62,8 @@ AccountingLSBillPriceDataGUI::~AccountingLSBillPriceDataGUI(){
 
 void AccountingLSBillPriceDataGUI::setAccountingBill(AccountingLSBill *b) {
     if( m_d->accounting != b ){
-        if( m_d->accounting != NULL ){
-            disconnect( m_d->accounting, &AccountingLSBill::aboutToBeDeleted, this, &AccountingLSBillPriceDataGUI::setAccountingBillNULL );
+        if( m_d->accounting != nullptr ){
+            disconnect( m_d->accounting, &AccountingLSBill::aboutToBeDeleted, this, &AccountingLSBillPriceDataGUI::setAccountingBillnullptr );
             disconnect( m_d->ui->priceListComboBox, static_cast<void(QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this, &AccountingLSBillPriceDataGUI::setPriceList );
             disconnect( m_d->ui->currentPriceDataSetSpinBox, static_cast<void(QSpinBox::*)(int)>(&QSpinBox::valueChanged), this, &AccountingLSBillPriceDataGUI::setPriceDataSet );
         }
@@ -71,11 +71,11 @@ void AccountingLSBillPriceDataGUI::setAccountingBill(AccountingLSBill *b) {
         m_d->ui->currentPriceDataSetSpinBox->setMaximum(1);
         m_d->ui->currentPriceDataSetSpinBox->setValue(1);
 
-        m_d->ui->totalPriceFieldTableView->setModel( NULL );
+        m_d->ui->totalPriceFieldTableView->setModel( nullptr );
 
         m_d->accounting = b;
 
-        if( m_d->accounting != NULL ){
+        if( m_d->accounting != nullptr ){
             setPriceListComboBox();
             connect( m_d->ui->priceListComboBox, static_cast<void(QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this, &AccountingLSBillPriceDataGUI::setPriceList );
             setPriceDataSetSpinBox();
@@ -83,13 +83,13 @@ void AccountingLSBillPriceDataGUI::setAccountingBill(AccountingLSBill *b) {
 
             m_d->ui->totalPriceFieldTableView->setModel( m_d->accounting->totalAmountPriceFieldModel() );
 
-            connect( m_d->accounting, &AccountingLSBill::aboutToBeDeleted, this, &AccountingLSBillPriceDataGUI::setAccountingBillNULL );
+            connect( m_d->accounting, &AccountingLSBill::aboutToBeDeleted, this, &AccountingLSBillPriceDataGUI::setAccountingBillnullptr );
         }
     }
 }
 
-void AccountingLSBillPriceDataGUI::setAccountingBillNULL(){
-    setAccountingBill( NULL );
+void AccountingLSBillPriceDataGUI::setAccountingBillnullptr(){
+    setAccountingBill( nullptr );
 }
 
 void AccountingLSBillPriceDataGUI::showEvent(QShowEvent *event) {
@@ -108,7 +108,7 @@ void AccountingLSBillPriceDataGUI::showEvent(QShowEvent *event) {
 
 void AccountingLSBillPriceDataGUI::populatePriceListComboBox(){
     m_d->ui->priceListComboBox->clear();
-    m_d->ui->priceListComboBox->addItem( QString("---"), qVariantFromValue((void *) NULL ));
+    m_d->ui->priceListComboBox->addItem( QString("---"), qVariantFromValue((void *) nullptr ));
     for( int i=0; i < m_d->project->priceListCount(); ++i){
         QString n;
         if( m_d->project->priceList(i) ){
@@ -143,7 +143,7 @@ void AccountingLSBillPriceDataGUI::setPriceDataSetSpinBox() {
 void AccountingLSBillPriceDataGUI::setPriceList() {
     QVariant v =  m_d->ui->priceListComboBox->itemData( m_d->ui->priceListComboBox->currentIndex() );
     PriceList * currentPriceList = (PriceList *) v.value<void *>();
-    if( m_d->accounting != NULL ){
+    if( m_d->accounting != nullptr ){
         if( m_d->accounting->priceList() && m_d->accounting->rowCount() > 0 ){
             AccountingBillSetPriceListModeGUI modeGUI( this );
             AccountingLSBill::SetPriceListMode plMode = modeGUI.returnValueLSBill();
@@ -160,7 +160,7 @@ void AccountingLSBillPriceDataGUI::setPriceList() {
 }
 
 void AccountingLSBillPriceDataGUI::setPriceDataSet() {
-    if( m_d->accounting != NULL ){
+    if( m_d->accounting != nullptr ){
         if( m_d->accounting->priceList() ){
             if( m_d->ui->currentPriceDataSetSpinBox->value() < 1 ){
                 m_d->ui->currentPriceDataSetSpinBox->setValue( 1 );

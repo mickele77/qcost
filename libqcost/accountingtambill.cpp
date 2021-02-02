@@ -170,7 +170,7 @@ void AccountingTAMBill::setPriceDataSet(int v) {
 }
 
 ProjectItem *AccountingTAMBill::child(int /*number*/) {
-    return NULL;
+    return nullptr;
 }
 
 int AccountingTAMBill::childCount() const {
@@ -257,7 +257,7 @@ void AccountingTAMBill::setPriceList(PriceList *pl, AccountingTAMBill::SetPriceL
                     // cerca in base al codice e aggiunge se manca
                     QList<AccountingTAMBillItem *> allItems = m_d->rootItem->allChildren();
                     for(QList<AccountingTAMBillItem *>::iterator i = allItems.begin(); i != allItems.end(); ++i ){
-                        PriceItem * newPriceItem = NULL;
+                        PriceItem * newPriceItem = nullptr;
                         if( (*i)->priceItem()!= nullptr ){
                             newPriceItem = pl->priceItemCode( (*i)->priceItem()->code() );
                             if( newPriceItem == nullptr ){
@@ -272,7 +272,7 @@ void AccountingTAMBill::setPriceList(PriceList *pl, AccountingTAMBill::SetPriceL
                     // aggiunge sempre e comunque
                     QList<AccountingTAMBillItem *> allItems = m_d->rootItem->allChildren();
                     for(QList<AccountingTAMBillItem *>::iterator i = allItems.begin(); i != allItems.end(); ++i ){
-                        PriceItem * newPriceItem = NULL;
+                        PriceItem * newPriceItem = nullptr;
                         if( (*i)->priceItem()!= nullptr ){
                             newPriceItem = pl->appendPriceItem();
                             AccountingTAMBillPrivate::setPriceItemParents( pl, (*i)->priceItem(), newPriceItem );
@@ -286,8 +286,8 @@ void AccountingTAMBill::setPriceList(PriceList *pl, AccountingTAMBill::SetPriceL
                     for(QList<AccountingTAMBillItem *>::iterator i = allItems.begin(); i != allItems.end(); ++i ){
                         (*i)->setPriceItem( pl->priceItemCode( (*i)->priceItem()->code() ) );
                     }
-                } else if( plMode == NULLPriceItem ){
-                    // annulla
+                } else if( plMode == nullptrPriceItem ){
+                    // annullptra
                     QList<AccountingTAMBillItem *> allItems = m_d->rootItem->allChildren();
                     for(QList<AccountingTAMBillItem *>::iterator i = allItems.begin(); i != allItems.end(); ++i ){
                         (*i)->setPriceItem( nullptr );

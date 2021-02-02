@@ -40,7 +40,7 @@ class EXPORT_QCOST_LIB_OPT ProjectPriceListParentItem : public QObject, public P
 public:
     friend class Project;
 
-    explicit ProjectPriceListParentItem( ProjectItem *parent, PriceFieldModel * priceFields, MathParser * p = NULL );
+    explicit ProjectPriceListParentItem( ProjectItem *parent, PriceFieldModel * priceFields, MathParser * p = nullptr );
     ~ProjectPriceListParentItem();
 
     ProjectItem *child(int number);

@@ -19,7 +19,7 @@ class EXPORT_QCOST_LIB_OPT AccountingLSMeasuresModel : public QAbstractTableMode
 public:
     static int accDateCol();
 
-    explicit AccountingLSMeasuresModel(MathParser *p = NULL, UnitMeasure *ump = NULL, QObject *parent = 0);
+    explicit AccountingLSMeasuresModel(MathParser *p = nullptr, UnitMeasure *ump = nullptr, QObject *parent = 0);
 
     ~AccountingLSMeasuresModel();
 

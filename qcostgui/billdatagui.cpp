@@ -30,10 +30,10 @@ class BillDataGUIPrivate{
 public:
     BillDataGUIPrivate(PriceFieldModel * pfm ):
         ui(new Ui::BillDataGUI() ),
-        bill(NULL),
+        bill(nullptr),
         priceFieldModel(pfm),
-        amountVertSpacer(NULL),
-        amountHorSpacer(NULL){
+        amountVertSpacer(nullptr),
+        amountHorSpacer(nullptr){
     };
     Ui::BillDataGUI * ui;
     Bill * bill;
@@ -62,11 +62,11 @@ BillDataGUI::~BillDataGUI(){
 
 void BillDataGUI::setBill(Bill *b) {
     if( m_d->bill != b ){
-        if( m_d->bill != NULL ){
+        if( m_d->bill != nullptr ){
             disconnect( m_d->ui->nameLineEdit, &QLineEdit::textEdited, m_d->bill, &Bill::setName );
             disconnect( m_d->ui->descriptionTextEdit, &QPlainTextEdit::textChanged, this, &BillDataGUI::setDescription );
             disconnect( m_d->bill, static_cast<void(Bill::*)(int,const QString &)> (&Bill::amountChanged), this, &BillDataGUI::updateAmountValue );
-            disconnect( m_d->bill, &Bill::aboutToBeDeleted, this, &BillDataGUI::setBillNULL );
+            disconnect( m_d->bill, &Bill::aboutToBeDeleted, this, &BillDataGUI::setBillnullptr );
         }
         m_d->ui->nameLineEdit->clear();
         m_d->ui->descriptionTextEdit->clear();
@@ -78,7 +78,7 @@ void BillDataGUI::setBill(Bill *b) {
 
         m_d->bill = b;
 
-        if( m_d->bill != NULL ){
+        if( m_d->bill != nullptr ){
             m_d->ui->nameLineEdit->setText( m_d->bill->name() );
             connect( m_d->ui->nameLineEdit, &QLineEdit::textEdited, m_d->bill, &Bill::setName );
             m_d->ui->descriptionTextEdit->setPlainText( m_d->bill->description() );
@@ -91,7 +91,7 @@ void BillDataGUI::setBill(Bill *b) {
             }
             connect( m_d->bill, static_cast<void(Bill::*)(int,const QString &)> (&Bill::amountChanged), this, &BillDataGUI::updateAmountValue );
 
-            connect( m_d->bill, &Bill::aboutToBeDeleted, this, &BillDataGUI::setBillNULL );
+            connect( m_d->bill, &Bill::aboutToBeDeleted, this, &BillDataGUI::setBillnullptr );
         }
     }
 }
@@ -103,8 +103,8 @@ void BillDataGUI::setDescription(){
     }
 }
 
-void BillDataGUI::setBillNULL(){
-    setBill( NULL );
+void BillDataGUI::setBillnullptr(){
+    setBill( nullptr );
 }
 
 void BillDataGUI::updateAmountsNameValue(){
@@ -117,15 +117,15 @@ void BillDataGUI::updateAmountsNameValue(){
         m_d->ui->amountsLayout->removeWidget( *i );
         delete *i;
     }
-    if( m_d->amountVertSpacer != NULL ){
+    if( m_d->amountVertSpacer != nullptr ){
         m_d->ui->amountsLayout->removeItem( m_d->amountVertSpacer );
         delete m_d->amountVertSpacer;
-        m_d->amountVertSpacer = NULL;
+        m_d->amountVertSpacer = nullptr;
     }
-    if( m_d->amountHorSpacer != NULL ){
+    if( m_d->amountHorSpacer != nullptr ){
         m_d->ui->amountsLayout->removeItem( m_d->amountHorSpacer );
         delete m_d->amountHorSpacer;
-        m_d->amountHorSpacer = NULL;
+        m_d->amountHorSpacer = nullptr;
     }
     m_d->amountLEditList.clear();
 
@@ -134,7 +134,7 @@ void BillDataGUI::updateAmountsNameValue(){
         QLineEdit * lEdit = new QLineEdit();
         lEdit->setReadOnly( true );
         lEdit->setAlignment( Qt::AlignRight);
-        if( m_d->bill != NULL ){
+        if( m_d->bill != nullptr ){
             lEdit->setText( m_d->bill->amountStr(i));
         }
         m_d->ui->amountsLayout->addWidget( label, i, 0 );

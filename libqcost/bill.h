@@ -51,11 +51,11 @@ public:
         SearchAndAdd,
         Add,
         Search,
-        NULLPriceItem,
+        nullptrPriceItem,
         ResetBill
     };
 
-    Bill(const QString &n, ProjectItem *parent, PriceFieldModel *pfm, MathParser * parser = NULL );
+    Bill(const QString &n, ProjectItem *parent, PriceFieldModel *pfm, MathParser * parser = nullptr );
     Bill( Bill & );
 
     Bill & operator= (const Bill & cp );

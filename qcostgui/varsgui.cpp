@@ -30,8 +30,8 @@ class VarsGUIPrivate{
 public:
     VarsGUIPrivate():
         ui(new Ui::VarsGUI() ),
-        bill(NULL),
-        accountingBill(NULL){
+        bill(nullptr),
+        accountingBill(nullptr){
     }
     Ui::VarsGUI * ui;
     Bill * bill;
@@ -67,60 +67,60 @@ VarsGUI::~VarsGUI(){
 }
 
 void VarsGUI::setBill(Bill *b) {
-    if( m_d->bill != b || m_d->accountingBill != NULL ){
-        if( m_d->bill != NULL ){
-            disconnect( m_d->bill, &Bill::aboutToBeDeleted, this, &VarsGUI::setBillNULL );
-            m_d->bill = NULL;
+    if( m_d->bill != b || m_d->accountingBill != nullptr ){
+        if( m_d->bill != nullptr ){
+            disconnect( m_d->bill, &Bill::aboutToBeDeleted, this, &VarsGUI::setBillnullptr );
+            m_d->bill = nullptr;
         }
-        if( m_d->accountingBill != NULL ){
-            disconnect( m_d->accountingBill, &AccountingBill::aboutToBeDeleted, this, &VarsGUI::setBillNULL );
-            m_d->accountingBill = NULL;
+        if( m_d->accountingBill != nullptr ){
+            disconnect( m_d->accountingBill, &AccountingBill::aboutToBeDeleted, this, &VarsGUI::setBillnullptr );
+            m_d->accountingBill = nullptr;
         }
-        m_d->ui->varsTableView->setModel( NULL );
+        m_d->ui->varsTableView->setModel( nullptr );
 
         m_d->bill = b;
 
-        if( m_d->bill != NULL ){
+        if( m_d->bill != nullptr ){
             m_d->ui->varsTableView->setModel( m_d->bill->varsModel() );
-            connect( m_d->bill, &Bill::aboutToBeDeleted, this, &VarsGUI::setBillNULL );
+            connect( m_d->bill, &Bill::aboutToBeDeleted, this, &VarsGUI::setBillnullptr );
         }
     }
 }
 
 void VarsGUI::setBill(AccountingBill *b) {
-    if( m_d->accountingBill != b || m_d->bill != NULL ){
-        if( m_d->bill != NULL ){
-            disconnect( m_d->bill, &Bill::aboutToBeDeleted, this, &VarsGUI::setBillNULL );
-            m_d->bill = NULL;
+    if( m_d->accountingBill != b || m_d->bill != nullptr ){
+        if( m_d->bill != nullptr ){
+            disconnect( m_d->bill, &Bill::aboutToBeDeleted, this, &VarsGUI::setBillnullptr );
+            m_d->bill = nullptr;
         }
-        if( m_d->accountingBill != NULL ){
-            disconnect( m_d->accountingBill, &AccountingBill::aboutToBeDeleted, this, &VarsGUI::setBillNULL );
-            m_d->accountingBill = NULL;
+        if( m_d->accountingBill != nullptr ){
+            disconnect( m_d->accountingBill, &AccountingBill::aboutToBeDeleted, this, &VarsGUI::setBillnullptr );
+            m_d->accountingBill = nullptr;
         }
-        m_d->ui->varsTableView->setModel( NULL );
+        m_d->ui->varsTableView->setModel( nullptr );
 
         m_d->accountingBill = b;
 
-        if( m_d->accountingBill != NULL ){
+        if( m_d->accountingBill != nullptr ){
             m_d->ui->varsTableView->setModel( m_d->accountingBill->varsModel() );
-            connect( m_d->accountingBill, &AccountingBill::aboutToBeDeleted, this, &VarsGUI::setBillNULL );
+            connect( m_d->accountingBill, &AccountingBill::aboutToBeDeleted, this, &VarsGUI::setBillnullptr );
         }
     }
 }
 
-void VarsGUI::setBillNULL(){
-    if( m_d->bill != NULL ){
-        disconnect( m_d->bill, &Bill::aboutToBeDeleted, this, &VarsGUI::setBillNULL );
-        m_d->bill = NULL;
+void VarsGUI::setBillnullptr(){
+    if( m_d->bill != nullptr ){
+        disconnect( m_d->bill, &Bill::aboutToBeDeleted, this, &VarsGUI::setBillnullptr );
+        m_d->bill = nullptr;
     }
-    if( m_d->accountingBill != NULL ){
-        disconnect( m_d->accountingBill, &AccountingBill::aboutToBeDeleted, this, &VarsGUI::setBillNULL );
-        m_d->accountingBill = NULL;
+    if( m_d->accountingBill != nullptr ){
+        disconnect( m_d->accountingBill, &AccountingBill::aboutToBeDeleted, this, &VarsGUI::setBillnullptr );
+        m_d->accountingBill = nullptr;
     }
 }
 
 void VarsGUI::addVar(){
-    if( m_d->bill != NULL ){
+    if( m_d->bill != nullptr ){
         if( m_d->ui->varsTableView->selectionModel() ){
             QModelIndexList selectedIndexes = m_d->ui->varsTableView->selectionModel()->selectedIndexes();
             int count = 1;
@@ -142,7 +142,7 @@ void VarsGUI::addVar(){
 }
 
 void VarsGUI::removeVar(){
-    if( m_d->bill != NULL ){
+    if( m_d->bill != nullptr ){
         if( m_d->ui->varsTableView->selectionModel() ){
             QModelIndexList selectedRows = m_d->ui->varsTableView->selectionModel()->selectedRows();
             int count = selectedRows.size();
@@ -165,16 +165,16 @@ void VarsGUI::resizeVarColsToContents(){
 
 void VarsGUI::varsTableViewCustomMenuRequested(QPoint pos){
     QMenu *menu=new QMenu(this);
-    QAction * addAction = new QAction( trUtf8("Aggiungi"), this);
+    QAction * addAction = new QAction( tr("Aggiungi"), this);
     connect( addAction, &QAction::triggered, this, &VarsGUI::addVar );
     menu->addAction( addAction );
-    QAction * delAction = new QAction( trUtf8("Elimina"), this);
+    QAction * delAction = new QAction( tr("Elimina"), this);
     connect( delAction, &QAction::triggered, this, &VarsGUI::removeVar );
     menu->addAction( delAction );
     menu->addSeparator();
 
     menu->addSeparator();
-    QAction * resizeColToContentAction = new QAction( trUtf8("Ottimizza colonne"), this);
+    QAction * resizeColToContentAction = new QAction( tr("Ottimizza colonne"), this);
     connect( resizeColToContentAction, &QAction::triggered, this, &VarsGUI::resizeVarsColToContents );
     menu->addAction( resizeColToContentAction );
 

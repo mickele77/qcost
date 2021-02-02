@@ -19,8 +19,8 @@ class EXPORT_QCOST_LIB_OPT MeasuresModel : public QAbstractTableModel
 {
     Q_OBJECT
 public:
-    explicit MeasuresModel(BillItem *bItem, MathParser *p = NULL, UnitMeasure *ump = NULL);
-    explicit MeasuresModel(AccountingBillItem *accBItem, MathParser *p = NULL, UnitMeasure *ump = NULL);
+    explicit MeasuresModel(BillItem *bItem, MathParser *p = nullptr, UnitMeasure *ump = nullptr);
+    explicit MeasuresModel(AccountingBillItem *accBItem, MathParser *p = nullptr, UnitMeasure *ump = nullptr);
 
     ~MeasuresModel();
 

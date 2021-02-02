@@ -43,7 +43,7 @@ BillItemAttributeModel::~BillItemAttributeModel(){
 
 int BillItemAttributeModel::rowCount(const QModelIndex &parent) const {
     Q_UNUSED( parent );
-    if( m_d->attributeModel != NULL ){
+    if( m_d->attributeModel != nullptr ){
         return m_d->attributeModel->size();
     }
     return 0;
@@ -58,7 +58,7 @@ Qt::ItemFlags BillItemAttributeModel::flags(const QModelIndex &index) const {
     if (!index.isValid())
         return QAbstractTableModel::flags(index);
 
-    if( m_d->billItem != NULL ){
+    if( m_d->billItem != nullptr ){
         Attribute * attr = m_d->attributeModel->attribute(index.row() );
         if( m_d->billItem->containsAttributeInherited( attr ) ){
             return Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsEditable;
@@ -68,7 +68,7 @@ Qt::ItemFlags BillItemAttributeModel::flags(const QModelIndex &index) const {
 }
 
 QVariant BillItemAttributeModel::data(const QModelIndex &index, int role) const {
-    if( m_d->attributeModel != NULL ){
+    if( m_d->attributeModel != nullptr ){
         if( !index.isValid() || !(index.row() < m_d->attributeModel->size()) ){
             return QVariant();
         }
@@ -76,7 +76,7 @@ QVariant BillItemAttributeModel::data(const QModelIndex &index, int role) const 
             if( role == Qt::DisplayRole || role == Qt::EditRole){
                 return QVariant( m_d->attributeModel->attribute(index.row() )->name() );
             } else if( role == Qt::CheckStateRole ){
-                if( m_d->billItem != NULL ){
+                if( m_d->billItem != nullptr ){
                     if( m_d->billItem->containsAttribute( m_d->attributeModel->attribute(index.row()) ) ){
                         return QVariant( Qt::Checked );
                     } else {
@@ -92,10 +92,10 @@ QVariant BillItemAttributeModel::data(const QModelIndex &index, int role) const 
 }
 
 bool BillItemAttributeModel::setData(const QModelIndex &index, const QVariant &value, int role) {
-    if(m_d->attributeModel != NULL){
+    if(m_d->attributeModel != nullptr){
         if (index.isValid() && index.row() < m_d->attributeModel->size() ) {
             if( role == Qt::CheckStateRole ){
-                if( m_d->billItem != NULL ){
+                if( m_d->billItem != nullptr ){
                     if( index.column() == 0 ){
                         if( value.toInt() == Qt::Checked ){
                             m_d->billItem->addAttribute( m_d->attributeModel->attribute(index.row() ) );
@@ -123,7 +123,7 @@ QVariant BillItemAttributeModel::headerData(int section, Qt::Orientation orienta
 
     if (orientation == Qt::Horizontal) {
         if(section == 0 ) {
-            return trUtf8("Etichetta");
+            return tr("Etichetta");
         }
     } else if( orientation == Qt::Vertical ){
         return QVariant( section + 1 );
@@ -132,7 +132,7 @@ QVariant BillItemAttributeModel::headerData(int section, Qt::Orientation orienta
 }
 
 bool BillItemAttributeModel::insertRows(int row, int count) {
-    if( m_d->attributeModel != NULL ){
+    if( m_d->attributeModel != nullptr ){
         if( count < 1 ){
             return false;
         }
@@ -151,14 +151,14 @@ bool BillItemAttributeModel::insertRows(int row, int count) {
 }
 
 bool BillItemAttributeModel::append() {
-    if( m_d->attributeModel != NULL ){
+    if( m_d->attributeModel != nullptr ){
         return insertRows( m_d->attributeModel->size(), 1 );
     }
     return false;
 }
 
 bool BillItemAttributeModel::removeRows(int row, int count) {
-    if( m_d->attributeModel != NULL ){
+    if( m_d->attributeModel != nullptr ){
         if( count < 1 || row < 0 || row > m_d->attributeModel->size() ){
             return false;
         }
@@ -176,44 +176,44 @@ bool BillItemAttributeModel::removeRows(int row, int count) {
 }
 
 bool BillItemAttributeModel::clear() {
-    if( m_d->attributeModel != NULL ){
+    if( m_d->attributeModel != nullptr ){
         return removeRows( 0, m_d->attributeModel->size() );
     }
     return false;
 }
 
 void BillItemAttributeModel::setAttributeModel(AttributesModel *attrModel) {
-    if( m_d->attributeModel != NULL ){
-        disconnect( m_d->attributeModel, &AttributesModel::aboutToBeDeleted, this, &BillItemAttributeModel::setAttributeModelNULL );
+    if( m_d->attributeModel != nullptr ){
+        disconnect( m_d->attributeModel, &AttributesModel::aboutToBeDeleted, this, &BillItemAttributeModel::setAttributeModelnullptr );
     }
     beginResetModel();
     m_d->attributeModel = attrModel;
-    m_d->billItem = NULL;
+    m_d->billItem = nullptr;
     endResetModel();
-    if( m_d->attributeModel != NULL ){
-        connect( m_d->attributeModel, &AttributesModel::aboutToBeDeleted, this, &BillItemAttributeModel::setAttributeModelNULL );
+    if( m_d->attributeModel != nullptr ){
+        connect( m_d->attributeModel, &AttributesModel::aboutToBeDeleted, this, &BillItemAttributeModel::setAttributeModelnullptr );
     }
 }
 
-void BillItemAttributeModel::setAttributeModelNULL() {
-    setAttributeModel( NULL );
+void BillItemAttributeModel::setAttributeModelnullptr() {
+    setAttributeModel( nullptr );
 }
 
 void BillItemAttributeModel::setBillItem( BillItem * item ){
-    if( m_d->billItem != NULL ){
-        disconnect( m_d->billItem, &BillItem::aboutToBeDeleted, this, &BillItemAttributeModel::setBillItemNULL );
+    if( m_d->billItem != nullptr ){
+        disconnect( m_d->billItem, &BillItem::aboutToBeDeleted, this, &BillItemAttributeModel::setBillItemnullptr );
     }
     m_d->billItem = item;
-    if( m_d->attributeModel != NULL ){
+    if( m_d->attributeModel != nullptr ){
         if( m_d->attributeModel->size() > 0 ){
             emit dataChanged( createIndex(0,0), createIndex(m_d->attributeModel->size(), 0) );
         }
     }
-    if( m_d->billItem != NULL ){
-        connect( m_d->billItem, &BillItem::aboutToBeDeleted, this, &BillItemAttributeModel::setBillItemNULL );
+    if( m_d->billItem != nullptr ){
+        connect( m_d->billItem, &BillItem::aboutToBeDeleted, this, &BillItemAttributeModel::setBillItemnullptr );
     }
 }
 
-void BillItemAttributeModel::setBillItemNULL(){
-    setBillItem( NULL );
+void BillItemAttributeModel::setBillItemnullptr(){
+    setBillItem( nullptr );
 }

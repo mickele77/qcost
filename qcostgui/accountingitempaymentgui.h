@@ -25,13 +25,13 @@ public:
 public slots:
     void setAccountingItem(AccountingTAMBillItem *b );
     void setAccountingItem(AccountingBillItem *b );
-    void setAccountingItemNULL();
+    void setAccountingItemnullptr();
 
 private slots:
     void addAttribute();
     void removeAttribute();
 
-    void setAccountingNULL();
+    void setAccountingnullptr();
 
     void setDateBegin( const QString & newVal );
     void setDateEnd( const QString & newVal );

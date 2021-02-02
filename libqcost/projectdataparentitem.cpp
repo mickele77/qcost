@@ -26,7 +26,7 @@ ProjectDataParentItem::ProjectDataParentItem( ProjectItem * parent ):
 
 ProjectItem *ProjectDataParentItem::child(int number) {
     Q_UNUSED(number);
-    return NULL;
+    return nullptr;
 }
 
 int ProjectDataParentItem::childCount() const {
@@ -59,7 +59,7 @@ Qt::ItemFlags ProjectDataParentItem::flags() const {
 }
 
 QVariant ProjectDataParentItem::data() const {
-    return QVariant( QObject::trUtf8("Dati generali") );
+    return QVariant( QObject::tr("Dati generali") );
 }
 
 bool ProjectDataParentItem::setData(const QVariant &value) {

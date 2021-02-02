@@ -43,12 +43,12 @@ public:
     AccountingLSBillItemGUIPrivate( QMap<PriceListDBWidget::ImportOptions, bool> * EPAImpOptions, QString * EPAFileName, MathParser * prs, Project * prj ):
         ui(new Ui::AccountingLSBillItemGUI),
         parser(prs),
-        item(NULL),
-        bill(NULL),
-        connectedUnitMeasure(NULL),
-        itemAttributeModel( new AccountingItemAttributeModel(NULL, NULL) ),
-        priceItemGUI( new PriceItemGUI( EPAImpOptions, EPAFileName, NULL, 0, prs, prj, NULL )),
-        vSpacer(NULL),
+        item(nullptr),
+        bill(nullptr),
+        connectedUnitMeasure(nullptr),
+        itemAttributeModel( new AccountingItemAttributeModel(nullptr, nullptr) ),
+        priceItemGUI( new PriceItemGUI( EPAImpOptions, EPAFileName, nullptr, 0, prs, prj, nullptr )),
+        vSpacer(nullptr),
         priceFieldModel( prj->priceFieldModel() ){
     }
     ~AccountingLSBillItemGUIPrivate(){
@@ -99,7 +99,7 @@ AccountingLSBillItemGUI::~AccountingLSBillItemGUI() {
 
 void AccountingLSBillItemGUI::setBillItem(AccountingLSBillItem *b) {
     if( m_d->item != b ){
-        if( m_d->item != NULL ){
+        if( m_d->item != nullptr ){
             disconnect( m_d->item, &AccountingLSBillItem::projQuantityChanged, m_d->ui->projQuantityLineEdit, &QLineEdit::setText );
             disconnect( m_d->item, &AccountingLSBillItem::projAmountChanged, m_d->ui->projAmountLineEdit, &QLineEdit::setText );
             disconnect( m_d->item, &AccountingLSBillItem::accQuantityChanged, m_d->ui->accQuantityLineEdit, &QLineEdit::setText );
@@ -120,7 +120,7 @@ void AccountingLSBillItemGUI::setBillItem(AccountingLSBillItem *b) {
         m_d->item = b;
         m_d->itemAttributeModel->setItem( b );
 
-        if( m_d->item != NULL ){
+        if( m_d->item != nullptr ){
             m_d->ui->projQuantityLineEdit->setText( m_d->item->projQuantityStr() );
             connect( m_d->item, &AccountingLSBillItem::projQuantityChanged, m_d->ui->projQuantityLineEdit, &QLineEdit::setText );
 
@@ -140,7 +140,7 @@ void AccountingLSBillItemGUI::setBillItem(AccountingLSBillItem *b) {
             connect( m_d->item, &AccountingLSBillItem::PPUChanged, m_d->ui->PPULineEdit, &QLineEdit::setText );
 
             connect( m_d->item, &AccountingLSBillItem::priceItemChanged, this, &AccountingLSBillItemGUI::connectPriceItem );
-            connectPriceItem( NULL, m_d->item->priceItem());
+            connectPriceItem( nullptr, m_d->item->priceItem());
 
             m_d->priceItemGUI->setCurrentPriceDataSet( m_d->item->currentPriceDataSet() );
 
@@ -153,15 +153,15 @@ void AccountingLSBillItemGUI::setBillItem(AccountingLSBillItem *b) {
 
 void AccountingLSBillItemGUI::setBill(AccountingLSBill *b) {
     if( m_d->bill != b ){
-        if( m_d->bill != NULL ){
-            m_d->itemAttributeModel->setAttributeModel( NULL );
+        if( m_d->bill != nullptr ){
+            m_d->itemAttributeModel->setAttributeModel( nullptr );
         }
 
         m_d->bill = b;
 
-        if( m_d->bill != NULL ){
+        if( m_d->bill != nullptr ){
             m_d->itemAttributeModel->setAttributeModel( b->attributesModel() );
-            connect( m_d->bill, &AccountingLSBill::aboutToBeDeleted, this, &AccountingLSBillItemGUI::setBillNULL );
+            connect( m_d->bill, &AccountingLSBill::aboutToBeDeleted, this, &AccountingLSBillItemGUI::setBillnullptr );
         }
 
         // quando si cambia computo corrente la scheda della riga si azzera
@@ -169,19 +169,19 @@ void AccountingLSBillItemGUI::setBill(AccountingLSBill *b) {
     }
 }
 
-void AccountingLSBillItemGUI::setBillNULL() {
-    setBill(NULL);
+void AccountingLSBillItemGUI::setBillnullptr() {
+    setBill(nullptr);
 }
 
 void AccountingLSBillItemGUI::disconnectPriceItem( PriceItem * priceItem ) {
-    if( priceItem != NULL ){
+    if( priceItem != nullptr ){
         disconnect( priceItem, &PriceItem::codeFullChanged, m_d->ui->priceCodeLineEdit, &QLineEdit::setText );
         disconnect( priceItem, &PriceItem::shortDescriptionFullChanged, m_d->ui->priceShortDescLineEdit, &QLineEdit::setText );
         disconnect( priceItem, &PriceItem::unitMeasureChanged, this, &AccountingLSBillItemGUI::connectPriceUnitMeasure );
         if( priceItem->unitMeasure() ){
             disconnect( priceItem->unitMeasure(), &UnitMeasure::tagChanged, m_d->ui->priceUnitMeasureLineEdit, &QLineEdit::setText );
         }
-        m_d->priceItemGUI->setPriceItem( NULL );
+        m_d->priceItemGUI->setPriceItem( nullptr );
     }
 }
 
@@ -190,7 +190,7 @@ void AccountingLSBillItemGUI::connectPriceItem( PriceItem * oldPriceItem, PriceI
 
         disconnectPriceItem( oldPriceItem );
 
-        if( newPriceItem != NULL ){
+        if( newPriceItem != nullptr ){
             m_d->ui->priceCodeLineEdit->setText( newPriceItem->codeFull() );
             m_d->ui->priceShortDescLineEdit->setText( newPriceItem->shortDescriptionFull() );
             if( newPriceItem->unitMeasure() ){
@@ -208,7 +208,7 @@ void AccountingLSBillItemGUI::connectPriceItem( PriceItem * oldPriceItem, PriceI
             m_d->ui->priceCodeLineEdit->clear();
             m_d->ui->priceShortDescLineEdit->clear();
             m_d->ui->priceUnitMeasureLineEdit->clear();
-            m_d->priceItemGUI->setPriceItemNULL();
+            m_d->priceItemGUI->setPriceItemnullptr();
         }
     }
 }
@@ -216,13 +216,13 @@ void AccountingLSBillItemGUI::connectPriceItem( PriceItem * oldPriceItem, PriceI
 void AccountingLSBillItemGUI::connectPriceUnitMeasure(){
     if( m_d->item ){
         if( m_d->item->priceItem()){
-            if( m_d->connectedUnitMeasure != NULL ){
+            if( m_d->connectedUnitMeasure != nullptr ){
                 disconnect(  m_d->connectedUnitMeasure, &UnitMeasure::tagChanged, m_d->ui->priceUnitMeasureLineEdit, &QLineEdit::setText );
             }
 
             m_d->connectedUnitMeasure = m_d->item->priceItem()->unitMeasure();
 
-            if( m_d->connectedUnitMeasure != NULL ){
+            if( m_d->connectedUnitMeasure != nullptr ){
                 m_d->ui->priceUnitMeasureLineEdit->setText( m_d->connectedUnitMeasure->tag()  );
                 connect(  m_d->connectedUnitMeasure, &UnitMeasure::tagChanged, m_d->ui->priceUnitMeasureLineEdit, &QLineEdit::setText );
             }
@@ -231,7 +231,7 @@ void AccountingLSBillItemGUI::connectPriceUnitMeasure(){
 }
 
 void AccountingLSBillItemGUI::addMeasureLines() {
-    if( m_d->item != NULL ){
+    if( m_d->item != nullptr ){
         if( m_d->item->measuresModel() ){
             QModelIndexList rowListSelected = m_d->ui->measuresTableView->selectionModel()->selectedIndexes();
             QList<int> rowList;
@@ -252,7 +252,7 @@ void AccountingLSBillItemGUI::addMeasureLines() {
 }
 
 void AccountingLSBillItemGUI::delMeasureLines() {
-    if( m_d->item != NULL ){
+    if( m_d->item != nullptr ){
         if( m_d->item->measuresModel() ){
             QModelIndexList rowListSelected = m_d->ui->measuresTableView->selectionModel()->selectedRows();
             if( !rowListSelected.isEmpty() ){
@@ -270,7 +270,7 @@ void AccountingLSBillItemGUI::delMeasureLines() {
 }
 
 void AccountingLSBillItemGUI::importMeasuresTXT() {
-    if( m_d->item != NULL ){
+    if( m_d->item != nullptr ){
         if( m_d->item->measuresModel() ){
             QModelIndexList rowListSelected = m_d->ui->measuresTableView->selectionModel()->selectedRows();
             QList<int> rowList;
@@ -293,11 +293,11 @@ void AccountingLSBillItemGUI::importMeasuresTXT() {
 }
 
 void AccountingLSBillItemGUI::clear() {
-    setBillItem( NULL );
+    setBillItem( nullptr );
 }
 
 void AccountingLSBillItemGUI::addAttribute(){
-    if( m_d->itemAttributeModel != NULL ){
+    if( m_d->itemAttributeModel != nullptr ){
         if( m_d->ui->attributeTableView->selectionModel() ){
             int count = 1;
             QModelIndexList selectedRows = m_d->ui->attributeTableView->selectionModel()->selectedRows();
@@ -315,7 +315,7 @@ void AccountingLSBillItemGUI::addAttribute(){
 }
 
 void AccountingLSBillItemGUI::removeAttribute(){
-    if( m_d->itemAttributeModel != NULL ){
+    if( m_d->itemAttributeModel != nullptr ){
         if( m_d->ui->attributeTableView->selectionModel() ){
             QModelIndexList selectedRows = m_d->ui->attributeTableView->selectionModel()->selectedRows();
             int count = selectedRows.size();
@@ -333,7 +333,7 @@ void AccountingLSBillItemGUI::removeAttribute(){
 }
 
 void AccountingLSBillItemGUI::editMeasureDate( const QModelIndex & index ) {
-    if( m_d->item != NULL ){
+    if( m_d->item != nullptr ){
         if( index.column() == m_d->item->measuresModel()->accDateCol() ){
             AccountingLSMeasure * m = m_d->item->measuresModel()->measure(index.row() );
             QDate d = m->accDate();

@@ -20,7 +20,7 @@ public:
 public slots:
     void setAccountingItem(AccountingTAMBillItem *b );
     void setAccountingItem(AccountingBillItem *b );
-    void setAccountingItemNULL();
+    void setAccountingItemnullptr();
 
 private slots:
     void updateTextLineEdit();

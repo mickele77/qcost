@@ -32,7 +32,7 @@ public:
     PriceListPrivate( const QString &n, PriceFieldModel *priceFields, MathParser * prs ):
         id(0),
         name( n ),
-        rootItem( new PriceItem( NULL, priceFields, prs ) ),
+        rootItem( new PriceItem( nullptr, priceFields, prs ) ),
         parser(prs) {
     };
     ~PriceListPrivate(){
@@ -86,7 +86,7 @@ int PriceList::childNumber(ProjectItem *item) {
 
 ProjectItem *PriceList::child(int number) {
     Q_UNUSED(number);
-    return NULL;
+    return nullptr;
 }
 
 int PriceList::childCount() const {
@@ -164,7 +164,7 @@ PriceItem *PriceList::defaultPriceItem() {
         item = dynamic_cast<PriceItem *>(item->child(0));
     }
     if( item == m_d->rootItem ){
-        return NULL;
+        return nullptr;
     } else {
         return item;
     }
@@ -198,10 +198,10 @@ QModelIndex PriceList::index(int row, int column, const QModelIndex &parent) con
 }
 
 QModelIndex PriceList::index(PriceItem * item, int column) const {
-    if (item == NULL )
+    if (item == nullptr )
         return QModelIndex();
 
-    if( item->parentItem() == NULL ){
+    if( item->parentItem() == nullptr ){
         return QModelIndex();
     } else {
         return createIndex(item->childNumber(), column, item);

@@ -49,8 +49,8 @@ public:
     void setBillItem(BillItem *item);
 
 private slots:
-    void setAttributeModelNULL();
-    void setBillItemNULL();
+    void setAttributeModelnullptr();
+    void setBillItemnullptr();
 private:
     BillItemAttributeModelPrivate * m_d;
 };

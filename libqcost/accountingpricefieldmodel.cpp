@@ -88,7 +88,7 @@ QVariant AccountingPriceFieldModel::headerData(int section, Qt::Orientation orie
 
     if (orientation == Qt::Horizontal ) {
         if( section == 0 ) {
-            return trUtf8("Nome campo");
+            return tr("Nome campo");
         }
     } else if( orientation == Qt::Vertical ){
         return QVariant( section + 1 );

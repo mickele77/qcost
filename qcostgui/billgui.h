@@ -36,7 +36,7 @@ public:
     explicit BillGUI( QMap<PriceListDBWidget::ImportOptions, bool> *EPAImpOptions,
                       QString * EPAFileName,
                       MathParser *prs, Bill *b, Project *p,
-                      QString *wordProcessorFile = NULL, QWidget *parent = 0);
+                      QString *wordProcessorFile = nullptr, QWidget *parent = 0);
 
     ~BillGUI();
 
@@ -44,7 +44,7 @@ public:
 
 private slots:
     void setBillItem( BillItem * );
-    void setBillItemNULL();
+    void setBillItemnullptr();
     void updateBillItemGUI();
 private:
     BillGUIPrivate * m_d;

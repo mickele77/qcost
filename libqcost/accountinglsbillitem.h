@@ -50,7 +50,7 @@ class AccountingLSBillItemPrivate;
 class EXPORT_QCOST_LIB_OPT AccountingLSBillItem :  public QObject, public TreeItem {
     Q_OBJECT
 public:
-    AccountingLSBillItem( PriceItem * p, AccountingLSBillItem * parentItem, PriceFieldModel * pfm, MathParser * parser = NULL );
+    AccountingLSBillItem( PriceItem * p, AccountingLSBillItem * parentItem, PriceFieldModel * pfm, MathParser * parser = nullptr );
     ~AccountingLSBillItem();
 
     AccountingLSBillItem &operator =(const AccountingLSBillItem &cp);

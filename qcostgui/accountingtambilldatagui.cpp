@@ -39,8 +39,8 @@ class AccountingTAMBillDataGUIPrivate{
 public:
     AccountingTAMBillDataGUIPrivate():
         ui(new Ui::AccountingTAMBillDataGUI() ),
-        accounting(NULL),
-        amountSpacer(NULL){
+        accounting(nullptr),
+        amountSpacer(nullptr){
     }
     Ui::AccountingTAMBillDataGUI * ui;
     AccountingTAMBill * accounting;
@@ -61,13 +61,13 @@ AccountingTAMBillDataGUI::~AccountingTAMBillDataGUI(){
 
 void AccountingTAMBillDataGUI::setAccountingTAMBill(AccountingTAMBill *b) {
     if( m_d->accounting != b ){
-        if( m_d->accounting != NULL ){
+        if( m_d->accounting != nullptr ){
             disconnect( m_d->accounting, &AccountingTAMBill::totalAmountToDiscountChanged, m_d->ui->totalAmountToDiscountLineEdit, &QLineEdit::setText );
             disconnect( m_d->accounting, &AccountingTAMBill::amountNotToDiscountChanged, m_d->ui->amountNotToDiscountLineEdit, &QLineEdit::setText );
             disconnect( m_d->accounting, &AccountingTAMBill::amountToDiscountChanged, m_d->ui->amountToDiscountLineEdit, &QLineEdit::setText );
             disconnect( m_d->accounting, &AccountingTAMBill::amountDiscountedChanged, m_d->ui->amountDiscountedLineEdit, &QLineEdit::setText );
             disconnect( m_d->accounting, &AccountingTAMBill::totalAmountChanged, m_d->ui->totalAmountLineEdit, &QLineEdit::setText );
-            disconnect( m_d->accounting, &AccountingTAMBill::aboutToBeDeleted, this, &AccountingTAMBillDataGUI::setAccountingNULL );
+            disconnect( m_d->accounting, &AccountingTAMBill::aboutToBeDeleted, this, &AccountingTAMBillDataGUI::setAccountingnullptr );
         }
 
         for( int i=0; i < m_d->amountLEditList.size(); ++i){
@@ -76,7 +76,7 @@ void AccountingTAMBillDataGUI::setAccountingTAMBill(AccountingTAMBill *b) {
 
         m_d->accounting = b;
 
-        if( m_d->accounting != NULL ){
+        if( m_d->accounting != nullptr ){
             m_d->ui->totalAmountToDiscountLineEdit->setText( m_d->accounting->totalAmountToDiscountStr() );
             connect( m_d->accounting, &AccountingTAMBill::totalAmountToDiscountChanged, m_d->ui->totalAmountToDiscountLineEdit, &QLineEdit::setText );
             m_d->ui->amountNotToDiscountLineEdit->setText( m_d->accounting->amountNotToDiscountStr() );
@@ -88,13 +88,13 @@ void AccountingTAMBillDataGUI::setAccountingTAMBill(AccountingTAMBill *b) {
             m_d->ui->totalAmountLineEdit->setText( m_d->accounting->totalAmountStr() );
             connect( m_d->accounting, &AccountingTAMBill::totalAmountChanged, m_d->ui->totalAmountLineEdit, &QLineEdit::setText );
 
-            connect( m_d->accounting, &AccountingTAMBill::aboutToBeDeleted, this, &AccountingTAMBillDataGUI::setAccountingNULL );
+            connect( m_d->accounting, &AccountingTAMBill::aboutToBeDeleted, this, &AccountingTAMBillDataGUI::setAccountingnullptr );
         }
     }
 }
 
-void AccountingTAMBillDataGUI::setAccountingNULL(){
-    setAccountingTAMBill( NULL );
+void AccountingTAMBillDataGUI::setAccountingnullptr(){
+    setAccountingTAMBill( nullptr );
 }
 
 void AccountingTAMBillDataGUI::updateAmountValue(int priceField, const QString & newVal ){

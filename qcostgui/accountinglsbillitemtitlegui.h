@@ -21,8 +21,8 @@ public:
 
 public slots:
     void setBillItem( AccountingLSBillItem * b );
-    void setBillItemNULL();
-    void setBillNULL();
+    void setBillItemnullptr();
+    void setBillnullptr();
 
 private slots:
     void addAttribute();

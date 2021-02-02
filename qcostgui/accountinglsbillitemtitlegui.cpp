@@ -12,9 +12,9 @@ class AccountingLSBillItemTitleGUIPrivate{
 public:
     AccountingLSBillItemTitleGUIPrivate( PriceFieldModel * pfm ):
         ui(new Ui::AccountingLSBillItemTitleGUI),
-        bill(NULL),
-        item(NULL),
-        itemAttributeModel( new AccountingItemAttributeModel( NULL ) ),
+        bill(nullptr),
+        item(nullptr),
+        itemAttributeModel( new AccountingItemAttributeModel( nullptr ) ),
         priceFieldModel(pfm){
     }
     ~AccountingLSBillItemTitleGUIPrivate(){
@@ -42,13 +42,13 @@ AccountingLSBillItemTitleGUI::~AccountingLSBillItemTitleGUI() {
 
 void AccountingLSBillItemTitleGUI::setBillItem(AccountingLSBillItem *b) {
     if( m_d->item != b ){
-        if( m_d->item != NULL ){
+        if( m_d->item != nullptr ){
             disconnect( m_d->item, &AccountingLSBillItem::nameChanged, m_d->ui->nameLineEdit, &QLineEdit::setText );
             disconnect( m_d->ui->nameLineEdit, &QLineEdit::textEdited, m_d->item, &AccountingLSBillItem::setName );
             disconnect( m_d->item, &AccountingLSBillItem::projAmountChanged, m_d->ui->projTotalAmountLineEdit, &QLineEdit::setText );
             disconnect( m_d->item, &AccountingLSBillItem::accAmountChanged, m_d->ui->accTotalAmountLineEdit, &QLineEdit::setText );
             disconnect( m_d->item, &AccountingLSBillItem::percentageAccountedChanged, m_d->ui->percentageAccountedLineEdit, &QLineEdit::setText );
-            disconnect( m_d->item, &AccountingLSBillItem::aboutToBeDeleted, this, &AccountingLSBillItemTitleGUI::setBillItemNULL );
+            disconnect( m_d->item, &AccountingLSBillItem::aboutToBeDeleted, this, &AccountingLSBillItemTitleGUI::setBillItemnullptr );
         }
 
         m_d->ui->nameLineEdit->clear();
@@ -58,24 +58,24 @@ void AccountingLSBillItemTitleGUI::setBillItem(AccountingLSBillItem *b) {
         m_d->item = b;
         m_d->itemAttributeModel->setItem( b );
 
-        if( m_d->item != NULL ){
+        if( m_d->item != nullptr ){
             m_d->ui->nameLineEdit->setText( m_d->item->name() );
             connect( m_d->item, &AccountingLSBillItem::nameChanged, m_d->ui->nameLineEdit, &QLineEdit::setText );
             connect( m_d->ui->nameLineEdit, &QLineEdit::textEdited, m_d->item, &AccountingLSBillItem::setName );
             connect( m_d->item, &AccountingLSBillItem::projAmountChanged, m_d->ui->projTotalAmountLineEdit, &QLineEdit::setText );
             connect( m_d->item, &AccountingLSBillItem::accAmountChanged, m_d->ui->accTotalAmountLineEdit, &QLineEdit::setText );
             connect( m_d->item, &AccountingLSBillItem::percentageAccountedChanged, m_d->ui->percentageAccountedLineEdit, &QLineEdit::setText );
-            connect( m_d->item, &AccountingLSBillItem::aboutToBeDeleted, this, &AccountingLSBillItemTitleGUI::setBillItemNULL );
+            connect( m_d->item, &AccountingLSBillItem::aboutToBeDeleted, this, &AccountingLSBillItemTitleGUI::setBillItemnullptr );
         }
     }
 }
 
-void AccountingLSBillItemTitleGUI::setBillItemNULL() {
-    setBillItem( NULL );
+void AccountingLSBillItemTitleGUI::setBillItemnullptr() {
+    setBillItem( nullptr );
 }
 
 void AccountingLSBillItemTitleGUI::addAttribute(){
-    if( m_d->itemAttributeModel != NULL ){
+    if( m_d->itemAttributeModel != nullptr ){
         if( m_d->ui->attributeTableView->selectionModel() ){
             int count = 1;
             QModelIndexList selectedRows = m_d->ui->attributeTableView->selectionModel()->selectedRows();
@@ -93,7 +93,7 @@ void AccountingLSBillItemTitleGUI::addAttribute(){
 }
 
 void AccountingLSBillItemTitleGUI::removeAttribute(){
-    if( m_d->itemAttributeModel != NULL ){
+    if( m_d->itemAttributeModel != nullptr ){
         if( m_d->ui->attributeTableView->selectionModel() ){
             QModelIndexList selectedRows = m_d->ui->attributeTableView->selectionModel()->selectedRows();
             int count = selectedRows.size();
@@ -112,23 +112,23 @@ void AccountingLSBillItemTitleGUI::removeAttribute(){
 
 void AccountingLSBillItemTitleGUI::setBill( AccountingLSBill *b ) {
     if( b != m_d->bill ){
-        if( m_d->bill != NULL ){
-            m_d->itemAttributeModel->setAttributeModel( NULL );
-            disconnect( m_d->bill, &AccountingLSBill::aboutToBeDeleted, this, &AccountingLSBillItemTitleGUI::setBillNULL );
+        if( m_d->bill != nullptr ){
+            m_d->itemAttributeModel->setAttributeModel( nullptr );
+            disconnect( m_d->bill, &AccountingLSBill::aboutToBeDeleted, this, &AccountingLSBillItemTitleGUI::setBillnullptr );
         }
 
         m_d->bill = b;
 
-        if( m_d->bill != NULL ){
+        if( m_d->bill != nullptr ){
             m_d->itemAttributeModel->setAttributeModel( m_d->bill->attributesModel() );
-            connect( m_d->bill, &AccountingLSBill::aboutToBeDeleted, this, &AccountingLSBillItemTitleGUI::setBillNULL );
+            connect( m_d->bill, &AccountingLSBill::aboutToBeDeleted, this, &AccountingLSBillItemTitleGUI::setBillnullptr );
         }
 
         // quando si cambia computo corrente la scheda della riga si azzera
-        setBillItemNULL();
+        setBillItemnullptr();
     }
 }
 
-void AccountingLSBillItemTitleGUI::setBillNULL() {
-    setBill(NULL);
+void AccountingLSBillItemTitleGUI::setBillnullptr() {
+    setBill(nullptr);
 }

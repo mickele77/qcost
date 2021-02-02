@@ -43,7 +43,7 @@ ImportPriceItemDBDialog::ImportPriceItemDBDialog(QMap<PriceListDBWidget::ImportO
     connect( m_d->buttonBox, &QDialogButtonBox::accepted, this, &ImportPriceItemDBDialog::importSinglePriceItemDB );
     connect( m_d->buttonBox, &QDialogButtonBox::rejected, this, &ImportPriceItemDBDialog::reject );
     m_d->dbWidget->setMode( PriceListDBWidget::ImportSingle );
-    setWindowTitle(trUtf8("Importa voce di prezzo da E.P.A."));
+    setWindowTitle(tr("Importa voce di prezzo da E.P.A."));
 }
 
 ImportPriceItemDBDialog::ImportPriceItemDBDialog( QMap<PriceListDBWidget::ImportOptions, bool> * EPAImpOptions,
@@ -52,11 +52,11 @@ ImportPriceItemDBDialog::ImportPriceItemDBDialog( QMap<PriceListDBWidget::Import
                                                   MathParser *prs, UnitMeasureModel * uml,
                                                   QWidget *parent ) :
     QDialog(parent),
-    m_d( new ImportPriceItemDBDialogPrivate( EPAImpOptions, EPAFileName, NULL, 0, connectionName, prs, uml, this )) {
+    m_d( new ImportPriceItemDBDialogPrivate( EPAImpOptions, EPAFileName, nullptr, 0, connectionName, prs, uml, this )) {
     connect( m_d->buttonBox, &QDialogButtonBox::accepted, this, static_cast<void(ImportPriceItemDBDialog::*)()>(&ImportPriceItemDBDialog::importMultiPriceItemDB) );
     connect( m_d->buttonBox, &QDialogButtonBox::rejected, this, &ImportPriceItemDBDialog::reject );
     m_d->dbWidget->setMode( PriceListDBWidget::ImportMulti );
-    setWindowTitle(trUtf8("Importa da E.P.A."));
+    setWindowTitle(tr("Importa da E.P.A."));
 
     Qt::WindowFlags flags = windowFlags();
     flags |= Qt::WindowMaximizeButtonHint;
@@ -70,7 +70,7 @@ ImportPriceItemDBDialog::~ImportPriceItemDBDialog(){
 void ImportPriceItemDBDialog::importSinglePriceItemDB(){
     QList<QPair<QString,QVariant> > data;
     m_d->dbWidget->importSinglePriceItemDB( &data );
-    if( m_d->importingDataPriceItem != NULL ){
+    if( m_d->importingDataPriceItem != nullptr ){
         for(int j=0; j < data.size(); ++j){
             if( data.at(j).first.toUpper() == "CODE" ){
                 m_d->importingDataPriceItem->setCode( data.at(j).second.toString());
@@ -80,7 +80,7 @@ void ImportPriceItemDBDialog::importSinglePriceItemDB(){
                 m_d->importingDataPriceItem->setLongDescription( data.at(j).second.toString());
             } else if( data.at(j).first.toUpper() == "UNITMEASURE" ){
                 if( data.at(j).second.toString() == "---"){
-                    m_d->importingDataPriceItem->setUnitMeasure( NULL );
+                    m_d->importingDataPriceItem->setUnitMeasure( nullptr );
                 } else {
                     int umRow = m_d->unitMeasureModel->findTag( data.at(j).second.toString() );
                     if( umRow < 0 ){

@@ -43,17 +43,17 @@ public:
         priceFieldModel(pfm),
         parser(prs),
         inheritCodeFromParent(true),
-        shortDescription( QObject::trUtf8( "Denominazione" ) ),
+        shortDescription( QObject::tr( "Denominazione" ) ),
         inheritShortDescFromParent(false),
         longDescription( "" ),
         inheritLongDescFromParent( false ),
-        unitMeasure(NULL),
+        unitMeasure(nullptr),
         codeCol(0),
         sDescCol(1),
         umCol(2),
         firstValueCol(3),
         nextCode(1){
-        if( parent != NULL ){
+        if( parent != nullptr ){
             id = 1;
         } else {
             id = 0;
@@ -63,14 +63,14 @@ public:
         qDeleteAll( childrenContainer.begin(), childrenContainer.end());
     }
     QString	toString(double i, char f = 'g', int prec = 6) const{
-        if( parser == NULL ){
+        if( parser == nullptr ){
             return QString::number( i, f, prec );
         } else {
             return parser->toString( i, f, prec );
         }
     }
     double	toDouble( const QString & str ) const{
-        if( parser == NULL ){
+        if( parser == nullptr ){
             return str.toDouble();
         } else {
             return parser->evaluate( str );
@@ -171,7 +171,7 @@ PriceItem::PriceItem(PriceItem *parentItem, PriceFieldModel * pfm, MathParser *p
     connect( m_d->dataModel, &PriceItemDataSetModel::beginRemovePriceDataSets, this, &PriceItem::beginRemovePriceDataSets );
     connect( m_d->dataModel, &PriceItemDataSetModel::endRemovePriceDataSets, this, &PriceItem::endRemovePriceDataSets );
 
-    if( parentItem != NULL ){
+    if( parentItem != nullptr ){
         m_d->code = giveMeUniqueCode();
     }
 
@@ -278,7 +278,7 @@ PriceItem *PriceItem::parentItem() {
 }
 
 bool PriceItem::isDescendant(PriceItem *ascendent) const {
-    if( m_d->parentItem == NULL ){
+    if( m_d->parentItem == nullptr ){
         return (m_d->parentItem == ascendent );
     } else {
         if( m_d->parentItem == ascendent ){
@@ -356,11 +356,11 @@ void PriceItem::setParentItem(PriceItem * newParent, int position ) {
         position = newParent->childrenCount();
     }
     if( m_d->parentItem != newParent ){
-        if( m_d->parentItem != NULL ){
+        if( m_d->parentItem != nullptr ){
             m_d->parentItem->removeChild( childNumber() );
         }
         m_d->parentItem = newParent;
-        if( newParent != NULL ){
+        if( newParent != nullptr ){
             newParent->addChild( this, position);
         }
     } else {
@@ -401,21 +401,21 @@ TreeItem *PriceItem::child(int number) {
     if( number >= 0 && number < m_d->childrenContainer.size() ){
         return m_d->childrenContainer[number];
     }
-    return NULL;
+    return nullptr;
 }
 
 PriceItem * PriceItem::childItem(int number){
     if( number >= 0 && number < m_d->childrenContainer.size() ){
         return m_d->childrenContainer[number];
     }
-    return NULL;
+    return nullptr;
 }
 
 PriceItem *PriceItem::lastChild() {
     if( m_d->childrenContainer.size() > 0 ){
         return m_d->childrenContainer.last();
     }
-    return NULL;
+    return nullptr;
 }
 
 UnitMeasure *PriceItem::unitMeasure() {
@@ -558,7 +558,7 @@ bool PriceItem::insertChildren(int position, int count){
 
     for (int row = 0; row < count; ++row) {
         PriceItem *item = new PriceItem( this, m_d->priceFieldModel, m_d->parser );
-        while( priceItemId( item->id() ) != NULL ){
+        while( priceItemId( item->id() ) != nullptr ){
             item->setId( item->id() + 1 );
         }
         m_d->childrenContainer.insert(position+row, item);
@@ -637,7 +637,7 @@ QList<PriceItem *> PriceItem::allChildrenList() {
 }
 
 PriceItem *PriceItem::priceItemId(unsigned int dd) {
-    if( m_d->parentItem == NULL ){
+    if( m_d->parentItem == nullptr ){
         return priceItemIdChildren(dd);
     } else {
         return m_d->parentItem->priceItemId(dd);
@@ -650,15 +650,15 @@ PriceItem *PriceItem::priceItemIdChildren(unsigned int dd) {
     }
     for( QList<PriceItem *>::iterator i = m_d->childrenContainer.begin(); i != m_d->childrenContainer.end(); ++i ){
         PriceItem * pItem = (*i)->priceItemIdChildren(dd);
-        if( pItem != NULL ){
+        if( pItem != nullptr ){
             return pItem;
         }
     }
-    return NULL;
+    return nullptr;
 }
 
 PriceItem *PriceItem::priceItemFullCode(const QString & c) {
-    if( m_d->parentItem == NULL ){
+    if( m_d->parentItem == nullptr ){
         return priceItemFullCodeChildren(c);
     } else {
         return m_d->parentItem->priceItemFullCode(c);
@@ -671,11 +671,11 @@ PriceItem *PriceItem::priceItemFullCodeChildren(const QString & c) {
     }
     for( QList<PriceItem *>::iterator i = m_d->childrenContainer.begin(); i != m_d->childrenContainer.end(); ++i ){
         PriceItem * pItem = (*i)->priceItemFullCodeChildren(c);
-        if( pItem != NULL ){
+        if( pItem != nullptr ){
             return pItem;
         }
     }
-    return NULL;
+    return nullptr;
 }
 
 Qt::ItemFlags PriceItem::flags( int column ) const {
@@ -701,8 +701,8 @@ QVariant PriceItem::data(int column, int role) const {
         if( role == Qt::TextAlignmentRole ){
             return Qt::AlignLeft + Qt::AlignVCenter;
         } else { // role == Qt::DisplayRole || role == Qt::EditRole
-            if( m_d->parentItem == NULL ){
-                return QVariant(QObject::trUtf8("Codice") );
+            if( m_d->parentItem == nullptr ){
+                return QVariant(QObject::tr("Codice") );
             } else {
                 if( role == Qt::EditRole ){
                     return QVariant(m_d->code);
@@ -715,8 +715,8 @@ QVariant PriceItem::data(int column, int role) const {
         if( role == Qt::TextAlignmentRole ){
             return Qt::AlignLeft + Qt::AlignVCenter;
         } else { // role == Qt::DisplayRole || role == Qt::EditRole
-            if( m_d->parentItem == NULL ){
-                return QVariant(QObject::trUtf8("Denominazione") );
+            if( m_d->parentItem == nullptr ){
+                return QVariant(QObject::tr("Denominazione") );
             } else {
                 return QVariant(m_d->shortDescription);
             }
@@ -725,8 +725,8 @@ QVariant PriceItem::data(int column, int role) const {
         if( role == Qt::TextAlignmentRole ){
             return Qt::AlignHCenter + Qt::AlignVCenter;
         } else { // role == Qt::DisplayRole || role == Qt::EditRole
-            if( m_d->parentItem == NULL ){
-                return QVariant(QObject::trUtf8("UdM") );
+            if( m_d->parentItem == nullptr ){
+                return QVariant(QObject::tr("UdM") );
             }
             if( hasChildren() ){
                 return QVariant();
@@ -740,7 +740,7 @@ QVariant PriceItem::data(int column, int role) const {
         }
     } else {
         if( role == Qt::TextAlignmentRole ){
-            if( m_d->parentItem == NULL ){
+            if( m_d->parentItem == nullptr ){
                 return Qt::AlignHCenter + Qt::AlignVCenter;
             } else {
                 return Qt::AlignRight + Qt::AlignVCenter;
@@ -749,7 +749,7 @@ QVariant PriceItem::data(int column, int role) const {
             int priceField = column - m_d->firstValueCol;
             int priceDataSet = priceField / m_d->priceFieldModel->fieldCount();
             priceField = priceField % m_d->priceFieldModel->fieldCount();
-            if( m_d->parentItem == NULL ){
+            if( m_d->parentItem == nullptr ){
                 if( priceField < m_d->priceFieldModel->fieldCount() ){
                     return QVariant( m_d->priceFieldModel->priceName( priceField ) );
                 }
@@ -792,8 +792,8 @@ QString PriceItem::code() const {
 }
 
 QString PriceItem::codeFull() const {
-    if( m_d->parentItem != NULL ){
-        if( m_d->parentItem->parentInternal() != NULL ){
+    if( m_d->parentItem != nullptr ){
+        if( m_d->parentItem->parentInternal() != nullptr ){
             if( m_d->inheritCodeFromParent ){
                 return m_d->parentItem->codeFull() + codeSeparator() + code();
             }
@@ -838,8 +838,8 @@ QString PriceItem::shortDescription() const {
 }
 
 QString PriceItem::shortDescriptionFull() const {
-    if( m_d->parentItem != NULL ){
-        if( m_d->parentItem->parentInternal() != NULL ){
+    if( m_d->parentItem != nullptr ){
+        if( m_d->parentItem->parentInternal() != nullptr ){
             if( m_d->inheritShortDescFromParent ){
                 return m_d->parentItem->shortDescriptionFull() + shortDescSeparator() + shortDescription();
             }
@@ -883,8 +883,8 @@ QString PriceItem::longDescription() const {
 }
 
 QString PriceItem::longDescriptionFull() const {
-    if( m_d->parentItem != NULL ){
-        if( m_d->parentItem->parentInternal() != NULL ){
+    if( m_d->parentItem != nullptr ){
+        if( m_d->parentItem->parentInternal() != nullptr ){
             if( m_d->inheritLongDescFromParent ){
                 return m_d->parentItem->longDescriptionFull() + longDescSeparator() + longDescription();
             }
@@ -973,7 +973,7 @@ void PriceItem::setHasChildrenChanged(PriceItem *p, QList<int> indexes ) {
 }
 
 void PriceItem::writeXml10(QXmlStreamWriter *writer) {
-    if( m_d->parentItem != NULL ){
+    if( m_d->parentItem != nullptr ){
         // se non e' l'elemento root
         writer->writeStartElement( "PriceItem" );
         writer->writeAttribute( "id", QString::number(m_d->id) );
@@ -1008,7 +1008,7 @@ void PriceItem::writeXml10(QXmlStreamWriter *writer) {
 }
 
 void PriceItem::writeXml20(QXmlStreamWriter *writer) {
-    if( m_d->parentItem != NULL ){
+    if( m_d->parentItem != nullptr ){
         // se non e' l'elemento root
         writer->writeStartElement( "PriceItem" );
         writer->writeAttribute( "id", QString::number(m_d->id) );
@@ -1043,7 +1043,7 @@ void PriceItem::writeXml20(QXmlStreamWriter *writer) {
 }
 
 void PriceItem::readXml10(QXmlStreamReader *reader, UnitMeasureModel * uml ) {
-    if( m_d->parentItem != NULL ){
+    if( m_d->parentItem != nullptr ){
         if(reader->isStartElement() && reader->name().toString().toUpper() == "PRICEITEM"){
             loadFromXml10( reader->attributes(), uml );
         }
@@ -1112,13 +1112,13 @@ void PriceItem::readFromXmlTmp10( ProjectPriceListParentItem * priceLists ) {
         for( QList<PriceItem *>::iterator i = m_d->childrenContainer.begin(); i != m_d->childrenContainer.end(); ++i){
             (*i)->readFromXmlTmp10( priceLists );
         }
-    } else if(m_d->parentItem != NULL ){
+    } else if(m_d->parentItem != nullptr ){
         m_d->dataModel->readFromXmlTmp10( priceLists );
     }
 }
 
 void PriceItem::readXml20(QXmlStreamReader *reader, UnitMeasureModel * uml ) {
-    if( m_d->parentItem != NULL ){
+    if( m_d->parentItem != nullptr ){
         if(reader->isStartElement() && reader->name().toString().toUpper() == "PRICEITEM"){
             loadFromXml20( reader->attributes(), uml );
         }
@@ -1189,7 +1189,7 @@ void PriceItem::readFromXmlTmp20( ProjectPriceListParentItem * priceLists ) {
         for( QList<PriceItem *>::iterator i = m_d->childrenContainer.begin(); i != m_d->childrenContainer.end(); ++i){
             (*i)->readFromXmlTmp20( priceLists );
         }
-    } else if(m_d->parentItem != NULL ){
+    } else if(m_d->parentItem != nullptr ){
         m_d->dataModel->readFromXmlTmp20( priceLists );
     }
 }
@@ -1258,10 +1258,10 @@ void PriceItem::writeODTOnTable( QTextCursor *cursor,
 
     int cellCount = 3 + fieldsToPrint.size();
 
-    if( m_d->parentItem == NULL ){
-        PriceItemPrivate::writeCell( cursor, table, leftHeaderFormat, headerBlockFormat, QObject::trUtf8("Art. Elenco"), false );
-        PriceItemPrivate::writeCell( cursor, table, centralHeaderFormat, headerBlockFormat, QObject::trUtf8("Descrizione"));
-        PriceItemPrivate::writeCell( cursor, table, centralHeaderFormat, headerBlockFormat, QObject::trUtf8("Unità di Misura"));
+    if( m_d->parentItem == nullptr ){
+        PriceItemPrivate::writeCell( cursor, table, leftHeaderFormat, headerBlockFormat, QObject::tr("Art. Elenco"), false );
+        PriceItemPrivate::writeCell( cursor, table, centralHeaderFormat, headerBlockFormat, QObject::tr("Descrizione"));
+        PriceItemPrivate::writeCell( cursor, table, centralHeaderFormat, headerBlockFormat, QObject::tr("Unità di Misura"));
         for( int i=0; i < fieldsToPrint.size(); ++i ){
             if( i == fieldsToPrint.size() - 1 ){
                 PriceItemPrivate::writeCell( cursor, table, rightHeaderFormat, headerBlockFormat, m_d->priceFieldModel->priceName( fieldsToPrint.at(i)) );
@@ -1282,7 +1282,7 @@ void PriceItem::writeODTOnTable( QTextCursor *cursor,
             }
         }
         PriceItemPrivate::insertEmptyRow( cellCount, cursor, leftBottomFormat, centralBottomFormat, rightBottomFormat);
-    } else { // m_d->parentItem != NULL
+    } else { // m_d->parentItem != nullptr
         if( hasChildren() ){
             table->appendRows(1);
             cursor->movePosition(QTextCursor::PreviousRow );
@@ -1357,12 +1357,12 @@ void PriceItem::writeODTOnTable( QTextCursor *cursor,
                 txt << qMakePair( "\n" + lDesc, txtCharFormat );
                 PriceItemPrivate::writeCell( cursor, table, centralFormat, txtBlockFormat, txt );
             }
-            QString txt = m_d->unitMeasure == NULL ? "": m_d->unitMeasure->tag();
+            QString txt = m_d->unitMeasure == nullptr ? "": m_d->unitMeasure->tag();
             PriceItemPrivate::writeCell( cursor, table, centralFormat, tagBlockFormat, txt );
 
             for( int i=0; i < fieldsToPrint.size(); ++i ){
                 QString valToPrint = valueStr( fieldsToPrint.at(i), priceDataSetToPrint );
-                if( printNumLetters && m_d->parser != NULL ){
+                if( printNumLetters && m_d->parser != nullptr ){
                     valToPrint = m_d->parser->spellDouble( valToPrint );
                 }
                 if( i == fieldsToPrint.size() - 1 ){

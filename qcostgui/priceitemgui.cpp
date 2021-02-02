@@ -41,7 +41,7 @@ public:
         priceFieldModel( prj->priceFieldModel() ),
         parser( prs ),
         unitMeasureModel( prj->unitMeasureModel() ),
-        priceItem(NULL),
+        priceItem(nullptr),
         currentPriceDataSet(0),
         ui(new Ui::PriceItemGUI() ),
         EPAImportOptions(impOptions),
@@ -78,7 +78,7 @@ PriceItemGUI::PriceItemGUI( QMap<PriceListDBWidget::ImportOptions, bool> * EPAIm
     m_d->ui->parentLongDescTextEdit->setVisible( false );
     m_d->ui->importPriceItemDBButton->setDisabled( true );
 
-    m_d->dataSetViewModel = new PriceItemDataSetViewModel( NULL, 0, parser, this );
+    m_d->dataSetViewModel = new PriceItemDataSetViewModel( nullptr, 0, parser, this );
     m_d->ui->dataTableView->setModel( m_d->dataSetViewModel );
 
     setPriceItem( pr, curPriceDataSet );
@@ -133,8 +133,8 @@ void PriceItemGUI::updateFieldList(){
         bool ro = m_d->priceFieldModel->applyFormula(i)==PriceFieldModel::ToPriceItems || m_d->priceFieldModel->applyFormula(i)==PriceFieldModel::ToBillItems;
         lEdit->setReadOnly( ro );
         lEdit->setAlignment( Qt::AlignRight );
-        if( m_d->priceItem != NULL ){
-            if( m_d->parser != NULL ){
+        if( m_d->priceItem != nullptr ){
+            if( m_d->parser != nullptr ){
                 lEdit->setText( m_d->priceItem->valueStr(i, m_d->currentPriceDataSet ) );
             } else {
                 lEdit->setText( QString::number( m_d->priceItem->value(i, m_d->currentPriceDataSet ), 'f', m_d->priceFieldModel->precision(i) ) );
@@ -147,7 +147,7 @@ void PriceItemGUI::updateFieldList(){
 }
 
 void PriceItemGUI::editPriceItemAP( const QModelIndex & index ){
-    if( m_d->priceItem != NULL ){
+    if( m_d->priceItem != nullptr ){
         if( index.column()  < m_d->priceItem->priceDataSetCount() ){
             if( m_d->priceItem->associateAP(index.column() ) ){
                 EditPriceItemAPDialog dialog( m_d->EPAImportOptions, m_d->EPAFileName, m_d->priceItem, index.column(), m_d->project, m_d->parser, this );
@@ -158,7 +158,7 @@ void PriceItemGUI::editPriceItemAP( const QModelIndex & index ){
 }
 
 void PriceItemGUI::editPriceItemAP(){
-    if( m_d->priceItem != NULL ){
+    if( m_d->priceItem != nullptr ){
         int curPriceCol = m_d->currentPriceDataSet<0?0:m_d->currentPriceDataSet;
         if( curPriceCol  < m_d->priceItem->priceDataSetCount() ){
             if( m_d->priceItem->associateAP( curPriceCol ) ){
@@ -194,8 +194,8 @@ void PriceItemGUI::clearWidgets() {
 
     m_d->ui->longDescTextEdit->clear();
 
-    // m_d->ui->dataTableView->setModel(NULL);
-    m_d->dataSetViewModel->setModel( NULL );
+    // m_d->ui->dataTableView->setModel(nullptr);
+    m_d->dataSetViewModel->setModel( nullptr );
 
     m_d->ui->unitMeasureComboBox->setCurrentIndex(0);
 }
@@ -203,8 +203,8 @@ void PriceItemGUI::clearWidgets() {
 void PriceItemGUI::setPriceItem(PriceItem * newPriceItem, int newCurPriceDataSet ) {
     if( m_d->priceItem != newPriceItem ){
         if( m_d->priceItem ){
-            if( m_d->priceItem->parentItem() != NULL ){
-                if( m_d->priceItem->parentItem()->parentItem() != NULL ){
+            if( m_d->priceItem->parentItem() != nullptr ){
+                if( m_d->priceItem->parentItem()->parentItem() != nullptr ){
                     // connette code
                     disconnect( m_d->ui->codeCheckBox, &QCheckBox::toggled, m_d->priceItem, &PriceItem::setInheritCodeFromParent );
                     disconnect( m_d->priceItem, &PriceItem::inheritCodeFromParentChanged,m_d->ui->parentCodeLineEdit, &QLineEdit::setVisible );
@@ -222,7 +222,7 @@ void PriceItemGUI::setPriceItem(PriceItem * newPriceItem, int newCurPriceDataSet
                 }
             }
 
-            disconnect( m_d->priceItem, &PriceItem::aboutToBeDeleted, this, &PriceItemGUI::setPriceItemNULL );
+            disconnect( m_d->priceItem, &PriceItem::aboutToBeDeleted, this, &PriceItemGUI::setPriceItemnullptr );
 
             // disconnette code
             disconnect( m_d->priceItem, &PriceItem::codeChanged, m_d->ui->codeLineEdit, &QLineEdit::setText );
@@ -259,17 +259,17 @@ void PriceItemGUI::setPriceItem(PriceItem * newPriceItem, int newCurPriceDataSet
 
             disconnect( m_d->priceItem, static_cast<void(PriceItem::*)(bool)>(&PriceItem::hasChildrenChanged), this, &PriceItemGUI::updatePriceDataGUI );
 
-            // m_d->ui->dataTableView->setModel( NULL );
-            // m_d->dataTableDelegate->setModel( NULL );
-            m_d->dataSetViewModel->setModel( NULL );
+            // m_d->ui->dataTableView->setModel( nullptr );
+            // m_d->dataTableDelegate->setModel( nullptr );
+            m_d->dataSetViewModel->setModel( nullptr );
         }
 
         clearWidgets();
         m_d->priceItem = newPriceItem;
-        m_d->ui->importPriceItemDBButton->setDisabled( m_d->priceItem == NULL );
+        m_d->ui->importPriceItemDBButton->setDisabled( m_d->priceItem == nullptr );
 
-        if( m_d->priceItem != NULL ){
-            connect( m_d->priceItem, &PriceItem::aboutToBeDeleted, this, &PriceItemGUI::setPriceItemNULL );
+        if( m_d->priceItem != nullptr ){
+            connect( m_d->priceItem, &PriceItem::aboutToBeDeleted, this, &PriceItemGUI::setPriceItemnullptr );
 
             // connette code
             m_d->ui->codeLineEdit->setText( m_d->priceItem->code() );
@@ -317,8 +317,8 @@ void PriceItemGUI::setPriceItem(PriceItem * newPriceItem, int newCurPriceDataSet
 
             m_d->dataSetViewModel->setModel( m_d->priceItem->dataModel() );
 
-            if( m_d->priceItem->parentItem() != NULL ){
-                if( m_d->priceItem->parentItem()->parentItem() != NULL ){
+            if( m_d->priceItem->parentItem() != nullptr ){
+                if( m_d->priceItem->parentItem()->parentItem() != nullptr ){
                     // connette code
                     m_d->ui->codeCheckBox->setVisible( true );
                     m_d->ui->codeCheckBox->setChecked( m_d->priceItem->inheritCodeFromParent() );
@@ -360,13 +360,13 @@ void PriceItemGUI::setPriceItem(PriceItem * newPriceItem, int newCurPriceDataSet
         }
         updatePriceDataTable();
     }
-    if( m_d->priceItem != NULL ){
+    if( m_d->priceItem != nullptr ){
         setCurrentPriceDataSet( newCurPriceDataSet );
     }
 }
 
 void PriceItemGUI::setAssociatedAPToCheckBox(int pCol,bool val ){
-    if( m_d->priceItem != NULL ){
+    if( m_d->priceItem != nullptr ){
         if( m_d->currentPriceDataSet == pCol ){
             m_d->ui->singleDataAssociateAPCheckBox->setChecked( val );
             m_d->ui->singleDataEditAPPushButton->setEnabled( val );
@@ -375,32 +375,32 @@ void PriceItemGUI::setAssociatedAPToCheckBox(int pCol,bool val ){
 }
 
 void PriceItemGUI::setCodeFromLineEdit(){
-    if( m_d->priceItem != NULL ){
+    if( m_d->priceItem != nullptr ){
         m_d->priceItem->setCode(  m_d->ui->codeLineEdit->text() );
     }
 }
 
 void PriceItemGUI::setShortDescriptionFromLineEdit(){
-    if( m_d->priceItem != NULL ){
+    if( m_d->priceItem != nullptr ){
         m_d->priceItem->setShortDescription(  m_d->ui->shortDescLineEdit->text() );
     }
 }
 
 void PriceItemGUI::setLongDescFromTextEdit(){
-    if( m_d->priceItem != NULL ){
+    if( m_d->priceItem != nullptr ){
         m_d->priceItem->setLongDescription( m_d->ui->longDescTextEdit->toPlainText() );
     }
 }
 
 void PriceItemGUI::emitImportSinglePriceItemDB() {
-    if( m_d->priceItem != NULL ){
+    if( m_d->priceItem != nullptr ){
         emit importSinglePriceItemDB( m_d->priceItem );
     }
 }
 
 bool PriceItemGUI::eventFilter(QObject *object, QEvent *event) {
     if (event->type() == QEvent::FocusOut)     {
-        if( m_d->priceItem != NULL ){
+        if( m_d->priceItem != nullptr ){
             if (object == m_d->ui->longDescTextEdit)  {
                 m_d->priceItem->setLongDescription( m_d->ui->longDescTextEdit->toPlainText() );
             }
@@ -518,16 +518,16 @@ void PriceItemGUI::setParentLongDescriptionGUI(){
 }
 
 void PriceItemGUI::updateUnitMeasureComboBox() {
-    if( m_d->priceItem != NULL ){
+    if( m_d->priceItem != nullptr ){
         disconnect( m_d->ui->unitMeasureComboBox, static_cast<void(QComboBox::*)( int )>(&QComboBox::currentIndexChanged), this, &PriceItemGUI::setUnitMeasure );
     }
     m_d->ui->unitMeasureComboBox->clear();
-    m_d->ui->unitMeasureComboBox->addItem( QString("---"), qVariantFromValue((void *) NULL ));
+    m_d->ui->unitMeasureComboBox->addItem( QString("---"), qVariantFromValue((void *) nullptr ));
     for( int i=0; i<m_d->unitMeasureModel->size(); ++i){
         m_d->ui->unitMeasureComboBox->addItem( m_d->unitMeasureModel->unitMeasure(i)->tag(), qVariantFromValue((void *) m_d->unitMeasureModel->unitMeasure(i) ));
     }
 
-    if( m_d->priceItem != NULL ){
+    if( m_d->priceItem != nullptr ){
         int i = m_d->ui->unitMeasureComboBox->findData( qVariantFromValue((void *) m_d->priceItem->unitMeasure() ));
         if( i < 0 ){
             i = 0;
@@ -537,8 +537,8 @@ void PriceItemGUI::updateUnitMeasureComboBox() {
     }
 }
 
-void PriceItemGUI::setPriceItemNULL() {
-    setPriceItem( NULL );
+void PriceItemGUI::setPriceItemnullptr() {
+    setPriceItem( nullptr );
 }
 
 void PriceItemGUI::setItemUnitMeasureFromComboBox() {
@@ -601,7 +601,7 @@ void PriceItemGUI::setCurrentPriceDataSet(){
 }
 
 void PriceItemGUI::updatePriceDataGUI(){
-    if( m_d->priceItem != NULL ){
+    if( m_d->priceItem != nullptr ){
         if( m_d->priceItem->hasChildren() ){
             m_d->ui->priceDataGroupBox->setVisible( false );
         } else {

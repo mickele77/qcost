@@ -30,7 +30,7 @@ PriceDataTableDelegate::~PriceDataTableDelegate(){
 
 void PriceDataTableDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const {
     QStyledItemDelegate::paint( painter, option, index);
-    if( m_d->dataModel != NULL ){
+    if( m_d->dataModel != nullptr ){
         if( index.row() == m_d->dataModel->associatedAPRow() ){
             QStyleOptionButton button;
 
@@ -54,7 +54,7 @@ void PriceDataTableDelegate::paint(QPainter *painter, const QStyleOptionViewItem
 }
 
 bool PriceDataTableDelegate::editorEvent(QEvent *event, QAbstractItemModel *model, const QStyleOptionViewItem &option, const QModelIndex &index)  {
-    if( m_d->dataModel != NULL ){
+    if( m_d->dataModel != nullptr ){
         if( index.row() == m_d->dataModel->associatedAPRow() ){
             if( event->type() == QEvent::MouseButtonRelease )  {
                 QMouseEvent * e = (QMouseEvent *)event;

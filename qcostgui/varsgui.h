@@ -40,7 +40,7 @@ public:
     void setBill( AccountingBill * b);
 
 private slots:
-    void setBillNULL();
+    void setBillnullptr();
     void addVar();
     void removeVar();
 

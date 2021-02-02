@@ -53,14 +53,14 @@ public:
     PriceListGUIPrivate( QMap<PriceListDBWidget::ImportOptions, bool> * EPAImpOptions, QString * fileName, PriceList * pl, MathParser * prs, Project * prj, QWidget *parent):
         project( prj ),
         priceList( pl ),
-        currentPriceItem(NULL),
-        dataGUI( new PriceListDataGUI( NULL, parent ) ),
+        currentPriceItem(nullptr),
+        dataGUI( new PriceListDataGUI( nullptr, parent ) ),
         priceItemsSplitter( new QSplitter( parent ) ),
-        treeGUI( new PriceListTreeGUI( EPAImpOptions, fileName, NULL, 0, prs, prj->priceFieldModel(), prj->unitMeasureModel(), priceItemsSplitter )),
-        itemGUI( new PriceItemGUI( EPAImpOptions, fileName, NULL, 0, prs, prj, parent )),
+        treeGUI( new PriceListTreeGUI( EPAImpOptions, fileName, nullptr, 0, prs, prj->priceFieldModel(), prj->unitMeasureModel(), priceItemsSplitter )),
+        itemGUI( new PriceItemGUI( EPAImpOptions, fileName, nullptr, 0, prs, prj, parent )),
         itemWidget( new PriceItemWidget(itemGUI, priceItemsSplitter ) ),
-        editingPriceListAP(NULL),
-        importingDataPriceItem(NULL){
+        editingPriceListAP(nullptr),
+        importingDataPriceItem(nullptr){
         priceItemsSplitter->addWidget( treeGUI );
         priceItemsSplitter->addWidget( itemWidget );
         priceItemsSplitter->setSizePolicy( QSizePolicy::Expanding, QSizePolicy::Expanding);
@@ -85,8 +85,8 @@ PriceListGUI::PriceListGUI( QMap<PriceListDBWidget::ImportOptions, bool> * EPAIm
 
     setSizePolicy( QSizePolicy::Expanding, QSizePolicy::Expanding);
 
-    addTab( m_d->dataGUI, trUtf8("Prezzi - Dati generali") );
-    addTab( m_d->priceItemsSplitter, trUtf8("Prezzi - Elenco") );
+    addTab( m_d->dataGUI, tr("Prezzi - Dati generali") );
+    addTab( m_d->priceItemsSplitter, tr("Prezzi - Elenco") );
 
     setCurrentIndex( 1 );
 
@@ -110,24 +110,24 @@ void PriceListGUI::setPriceList(PriceList *pl) {
 }
 
 void PriceListGUI::setPriceItem(PriceItem * newItem ) {
-    if( m_d->currentPriceItem != NULL ){
-        disconnect( m_d->currentPriceItem, &PriceItem::aboutToBeDeleted, this, &PriceListGUI::setPriceItemNULL );
-        m_d->itemGUI->setPriceItem( NULL );
+    if( m_d->currentPriceItem != nullptr ){
+        disconnect( m_d->currentPriceItem, &PriceItem::aboutToBeDeleted, this, &PriceListGUI::setPriceItemnullptr );
+        m_d->itemGUI->setPriceItem( nullptr );
         m_d->itemGUI->hide();
     }
     m_d->currentPriceItem = newItem;
-    if( m_d->currentPriceItem != NULL ){
+    if( m_d->currentPriceItem != nullptr ){
         updatePriceItemGUI();
-        connect( m_d->currentPriceItem, &PriceItem::aboutToBeDeleted, this, &PriceListGUI::setPriceItemNULL );
+        connect( m_d->currentPriceItem, &PriceItem::aboutToBeDeleted, this, &PriceListGUI::setPriceItemnullptr );
     }
 }
 
-void PriceListGUI::setPriceItemNULL() {
-    setPriceItem( NULL );
+void PriceListGUI::setPriceItemnullptr() {
+    setPriceItem( nullptr );
 }
 
 void PriceListGUI::updatePriceItemGUI() {
-    if( m_d->currentPriceItem != NULL ){
+    if( m_d->currentPriceItem != nullptr ){
         m_d->itemGUI->show();
         m_d->itemGUI->setPriceItem( m_d->currentPriceItem );
     } else {

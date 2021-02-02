@@ -18,8 +18,8 @@ class MeasurePrivate;
 class EXPORT_QCOST_LIB_OPT Measure : public QObject {
     Q_OBJECT
 public:
-    explicit Measure(BillItem * bItem, MathParser *p = NULL, UnitMeasure * ump = NULL );
-    explicit Measure( AccountingBillItem * accBItem, MathParser *p = NULL, UnitMeasure * ump = NULL );
+    explicit Measure(BillItem * bItem, MathParser *p = nullptr, UnitMeasure * ump = nullptr );
+    explicit Measure( AccountingBillItem * accBItem, MathParser *p = nullptr, UnitMeasure * ump = nullptr );
     ~Measure();
 
     Measure &operator =(const Measure &cp);

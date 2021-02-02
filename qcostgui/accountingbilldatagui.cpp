@@ -39,11 +39,11 @@ public:
     AccountingBillDataGUIPrivate(PriceFieldModel * pfm, MathParser * prs, Project * prj, QString * wpf):
         ui(new Ui::AccountingBillDataGUI() ),
         project(prj),
-        accounting(NULL),
+        accounting(nullptr),
         parser(prs),
         wordProcessorFile(wpf),
         priceFieldModel(pfm),
-        amountSpacer(NULL){
+        amountSpacer(nullptr){
     }
     Ui::AccountingBillDataGUI * ui;
     Project * project;
@@ -70,7 +70,7 @@ AccountingBillDataGUI::~AccountingBillDataGUI(){
 
 void AccountingBillDataGUI::setAccountingBill(AccountingBill *b) {
     if( m_d->accounting != b ){
-        if( m_d->accounting != NULL ){
+        if( m_d->accounting != nullptr ){
             disconnect( m_d->ui->nameLineEdit, &QLineEdit::textEdited, m_d->accounting, &AccountingBill::setName );
             disconnect( m_d->ui->descriptionTextEdit, &QPlainTextEdit::textChanged, this, &AccountingBillDataGUI::setDescription );
 
@@ -80,7 +80,7 @@ void AccountingBillDataGUI::setAccountingBill(AccountingBill *b) {
             disconnect( m_d->accounting, &AccountingBill::amountDiscountedChanged, m_d->ui->amountDiscountedLineEdit, &QLineEdit::setText );
             disconnect( m_d->accounting, &AccountingBill::totalAmountChanged, m_d->ui->totalAmountLineEdit, &QLineEdit::setText );
 
-            disconnect( m_d->accounting, &AccountingBill::aboutToBeDeleted, this, &AccountingBillDataGUI::setAccountingNULL );
+            disconnect( m_d->accounting, &AccountingBill::aboutToBeDeleted, this, &AccountingBillDataGUI::setAccountingnullptr );
         }
 
         m_d->ui->totalAmountToDiscountLineEdit->clear();
@@ -99,7 +99,7 @@ void AccountingBillDataGUI::setAccountingBill(AccountingBill *b) {
 
         m_d->accounting = b;
 
-        if( m_d->accounting != NULL ){
+        if( m_d->accounting != nullptr ){
             m_d->ui->nameLineEdit->setText( m_d->accounting->name() );
             connect( m_d->ui->nameLineEdit, &QLineEdit::textEdited, m_d->accounting, &AccountingBill::setName );
             m_d->ui->descriptionTextEdit->setPlainText( m_d->accounting->description() );
@@ -116,17 +116,17 @@ void AccountingBillDataGUI::setAccountingBill(AccountingBill *b) {
             m_d->ui->totalAmountLineEdit->setText( m_d->accounting->totalAmountStr() );
             connect( m_d->accounting, &AccountingBill::totalAmountChanged, m_d->ui->totalAmountLineEdit, &QLineEdit::setText );
 
-            connect( m_d->accounting, &AccountingBill::aboutToBeDeleted, this, &AccountingBillDataGUI::setAccountingNULL );
+            connect( m_d->accounting, &AccountingBill::aboutToBeDeleted, this, &AccountingBillDataGUI::setAccountingnullptr );
         }
     }
 }
 
 void AccountingBillDataGUI::setDescription(){
-    if( m_d->accounting != NULL ){
+    if( m_d->accounting != nullptr ){
         m_d->accounting->setDescription( m_d->ui->descriptionTextEdit->toPlainText() );
     }
 }
 
-void AccountingBillDataGUI::setAccountingNULL(){
-    setAccountingBill( NULL );
+void AccountingBillDataGUI::setAccountingnullptr(){
+    setAccountingBill( nullptr );
 }

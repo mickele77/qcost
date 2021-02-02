@@ -42,7 +42,7 @@ public:
 
 private slots:
     void setDiscount();
-    void setAccountingNULL();
+    void setAccountingnullptr();
 
     void setPriceList();
     void setPriceDataSet();

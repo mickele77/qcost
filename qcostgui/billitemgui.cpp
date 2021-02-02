@@ -37,12 +37,12 @@ public:
     BillItemGUIPrivate( QMap<PriceListDBWidget::ImportOptions, bool> * EPAImpOptions, QString * EPAFileName, MathParser * prs, Project * prj ):
         ui(new Ui::BillItemGUI),
         parser(prs),
-        item(NULL),
-        bill(NULL),
-        connectedUnitMeasure(NULL),
-        itemAttributeModel( new BillItemAttributeModel(NULL, NULL) ),
-        priceItemGUI( new PriceItemGUI( EPAImpOptions, EPAFileName, NULL, 0, prs, prj, NULL )),
-        vSpacer(NULL),
+        item(nullptr),
+        bill(nullptr),
+        connectedUnitMeasure(nullptr),
+        itemAttributeModel( new BillItemAttributeModel(nullptr, nullptr) ),
+        priceItemGUI( new PriceItemGUI( EPAImpOptions, EPAFileName, nullptr, 0, prs, prj, nullptr )),
+        vSpacer(nullptr),
         priceFieldModel( prj->priceFieldModel() ){
     }
     ~BillItemGUIPrivate(){
@@ -104,7 +104,7 @@ BillItemGUI::~BillItemGUI() {
 
 void BillItemGUI::setBillItem(BillItem *b) {
     if( m_d->item != b ){
-        if( m_d->item != NULL ){
+        if( m_d->item != nullptr ){
             disconnect( m_d->item, &BillItem::currentPriceDataSetChanged, this, &BillItemGUI::updatePriceValues );
             disconnect( m_d->item, &BillItem::quantityChanged, m_d->ui->quantityLineEdit, &QLineEdit::setText );
             disconnect( m_d->ui->quantityLineEdit, &QLineEdit::editingFinished, this, &BillItemGUI::setQuantityLE );
@@ -112,13 +112,13 @@ void BillItemGUI::setBillItem(BillItem *b) {
             disconnect( m_d->item, &BillItem::priceItemChanged, this, &BillItemGUI::connectPriceItem );
             disconnectPriceItem( m_d->item->priceItem() );
             disconnect( m_d->ui->associateLinesCheckBox, &QCheckBox::toggled, this, &BillItemGUI::associateLinesModel );
-            disconnect( m_d->item, &BillItem::aboutToBeDeleted, this, &BillItemGUI::setBillItemNULL );
+            disconnect( m_d->item, &BillItem::aboutToBeDeleted, this, &BillItemGUI::setBillItemnullptr );
         }
 
         m_d->item = b;
         m_d->itemAttributeModel->setBillItem( b );
 
-        if( m_d->item != NULL ){
+        if( m_d->item != nullptr ){
             connect( m_d->item, &BillItem::currentPriceDataSetChanged, this, &BillItemGUI::updatePriceValues );
 
             m_d->ui->quantityLineEdit->setText( m_d->item->quantityStr() );
@@ -128,18 +128,18 @@ void BillItemGUI::setBillItem(BillItem *b) {
             updateAmountValues();
 
             connect( m_d->item, &BillItem::priceItemChanged, this, &BillItemGUI::connectPriceItem );
-            connectPriceItem( NULL, m_d->item->priceItem());
+            connectPriceItem( nullptr, m_d->item->priceItem());
 
             m_d->priceItemGUI->setCurrentPriceDataSet( m_d->item->currentPriceDataSet() );
 
             m_d->ui->billItemLinesTableView->setModel( m_d->item->measuresModel() );
 
-            associateLinesModel( m_d->item->measuresModel() != NULL );
+            associateLinesModel( m_d->item->measuresModel() != nullptr );
 
-            m_d->ui->associateLinesCheckBox->setChecked(  m_d->item->measuresModel() != NULL  );
+            m_d->ui->associateLinesCheckBox->setChecked(  m_d->item->measuresModel() != nullptr  );
             connect( m_d->ui->associateLinesCheckBox, &QCheckBox::toggled, this, &BillItemGUI::associateLinesModel );
 
-            connect( m_d->item, &BillItem::aboutToBeDeleted, this, &BillItemGUI::setBillItemNULL );
+            connect( m_d->item, &BillItem::aboutToBeDeleted, this, &BillItemGUI::setBillItemnullptr );
         } else {
             m_d->ui->quantityLineEdit->clear();
             m_d->ui->priceCodeLineEdit->clear();
@@ -150,8 +150,8 @@ void BillItemGUI::setBillItem(BillItem *b) {
             for( int i=0; i < m_d->amountDataFieldLEdit.size(); ++i ){
                 m_d->amountDataFieldLEdit.at(i)->clear();
             }
-            m_d->priceItemGUI->setPriceItemNULL();
-            m_d->ui->billItemLinesTableView->setModel( NULL );
+            m_d->priceItemGUI->setPriceItemnullptr();
+            m_d->ui->billItemLinesTableView->setModel( nullptr );
             associateLinesModel( false );
         }
     }
@@ -159,34 +159,34 @@ void BillItemGUI::setBillItem(BillItem *b) {
 
 void BillItemGUI::setBill(Bill *b) {
     if( b != m_d->bill ){
-        if( m_d->bill != NULL ){
-            m_d->itemAttributeModel->setAttributeModel( NULL );
-            disconnect( m_d->bill, &Bill::aboutToBeDeleted, this, &BillItemGUI::setBillNULL );
+        if( m_d->bill != nullptr ){
+            m_d->itemAttributeModel->setAttributeModel( nullptr );
+            disconnect( m_d->bill, &Bill::aboutToBeDeleted, this, &BillItemGUI::setBillnullptr );
         }
 
         m_d->bill = b;
-        if( m_d->bill != NULL ){
+        if( m_d->bill != nullptr ){
             m_d->itemAttributeModel->setAttributeModel( b->attributesModel() );
-            connect( m_d->bill, &Bill::aboutToBeDeleted, this, &BillItemGUI::setBillNULL );
+            connect( m_d->bill, &Bill::aboutToBeDeleted, this, &BillItemGUI::setBillnullptr );
         }
 
         // quando si cambia computo corrente la scheda della riga si azzera
-        setBillItemNULL();
+        setBillItemnullptr();
     }
 }
 
-void BillItemGUI::setBillNULL() {
-    setBill(NULL);
+void BillItemGUI::setBillnullptr() {
+    setBill(nullptr);
 }
 
 void BillItemGUI::setQuantityLE(){
-    if( m_d->item != NULL ){
+    if( m_d->item != nullptr ){
         m_d->item->setQuantity( m_d->ui->quantityLineEdit->text() );
     }
 }
 
 void BillItemGUI::disconnectPriceItem( PriceItem * priceItem ) {
-    if( priceItem != NULL ){
+    if( priceItem != nullptr ){
         disconnect( priceItem, &PriceItem::codeFullChanged, m_d->ui->priceCodeLineEdit, &QLineEdit::setText );
         disconnect( priceItem, &PriceItem::shortDescriptionFullChanged, m_d->ui->priceShortDescLineEdit, &QLineEdit::setText );
         disconnect( priceItem, &PriceItem::unitMeasureChanged, this, &BillItemGUI::connectPriceUnitMeasure );
@@ -194,7 +194,7 @@ void BillItemGUI::disconnectPriceItem( PriceItem * priceItem ) {
         if( priceItem->unitMeasure() ){
             disconnect( priceItem->unitMeasure(), &UnitMeasure::tagChanged, m_d->ui->priceUnitMeasureLineEdit, &QLineEdit::setText );
         }
-        m_d->priceItemGUI->setPriceItem( NULL );
+        m_d->priceItemGUI->setPriceItem( nullptr );
     }
 }
 
@@ -203,7 +203,7 @@ void BillItemGUI::connectPriceItem( PriceItem * oldPriceItem, PriceItem * newPri
 
         disconnectPriceItem( oldPriceItem );
 
-        if( newPriceItem != NULL ){
+        if( newPriceItem != nullptr ){
             m_d->ui->priceCodeLineEdit->setText( newPriceItem->codeFull() );
             m_d->ui->priceShortDescLineEdit->setText( newPriceItem->shortDescriptionFull() );
             if( newPriceItem->unitMeasure() ){
@@ -228,7 +228,7 @@ void BillItemGUI::connectPriceItem( PriceItem * oldPriceItem, PriceItem * newPri
             for( int i=0; i < m_d->priceDataFieldLEdit.size(); ++i ){
                 m_d->priceDataFieldLEdit.at(i)->clear();
             }
-            m_d->priceItemGUI->setPriceItemNULL();
+            m_d->priceItemGUI->setPriceItemnullptr();
         }
     }
 }
@@ -236,13 +236,13 @@ void BillItemGUI::connectPriceItem( PriceItem * oldPriceItem, PriceItem * newPri
 void BillItemGUI::connectPriceUnitMeasure(){
     if( m_d->item ){
         if( m_d->item->priceItem()){
-            if( m_d->connectedUnitMeasure != NULL ){
+            if( m_d->connectedUnitMeasure != nullptr ){
                 disconnect(  m_d->connectedUnitMeasure, &UnitMeasure::tagChanged, m_d->ui->priceUnitMeasureLineEdit, &QLineEdit::setText );
             }
 
             m_d->connectedUnitMeasure = m_d->item->priceItem()->unitMeasure();
 
-            if( m_d->connectedUnitMeasure != NULL ){
+            if( m_d->connectedUnitMeasure != nullptr ){
                 m_d->ui->priceUnitMeasureLineEdit->setText( m_d->connectedUnitMeasure->tag()  );
                 connect(  m_d->connectedUnitMeasure, &UnitMeasure::tagChanged, m_d->ui->priceUnitMeasureLineEdit, &QLineEdit::setText );
             }
@@ -252,24 +252,24 @@ void BillItemGUI::connectPriceUnitMeasure(){
 
 void BillItemGUI::associateLinesModel(bool ass) {
     if( ass ){
-        if( m_d->item != NULL ){
+        if( m_d->item != nullptr ){
             m_d->ui->billItemLinesGroupBox->setVisible( true );
             m_d->ui->billItemLinesTableView->setModel( m_d->item->generateMeasuresModel() );
             m_d->ui->quantityLineEdit->setReadOnly( true );
-            if( m_d->vSpacer != NULL ){
+            if( m_d->vSpacer != nullptr ){
                 m_d->ui->dataTabLayout->removeItem( m_d->vSpacer);
                 delete m_d->vSpacer;
-                m_d->vSpacer = NULL;
+                m_d->vSpacer = nullptr;
             }
             return;
         }
     }
-    if( m_d->item != NULL ){
+    if( m_d->item != nullptr ){
         m_d->item->removeMeasuresModel();
     }
     m_d->ui->billItemLinesGroupBox->setVisible( false );
-    m_d->ui->billItemLinesTableView->setModel( NULL );
-    if( m_d->vSpacer == NULL ){
+    m_d->ui->billItemLinesTableView->setModel( nullptr );
+    if( m_d->vSpacer == nullptr ){
         m_d->vSpacer = new QSpacerItem(0,0, QSizePolicy::Minimum, QSizePolicy::Expanding);
         m_d->ui->dataTabLayout->addItem( m_d->vSpacer, 6, 0, 1, 3 );
     }
@@ -277,7 +277,7 @@ void BillItemGUI::associateLinesModel(bool ass) {
 }
 
 void BillItemGUI::addMeasureLines() {
-    if( m_d->item != NULL ){
+    if( m_d->item != nullptr ){
         if( m_d->item->measuresModel() ){
             QModelIndexList rowListSelected = m_d->ui->billItemLinesTableView->selectionModel()->selectedIndexes();
             QList<int> rowList;
@@ -286,7 +286,7 @@ void BillItemGUI::addMeasureLines() {
                     rowList.append( rowListSelected.at(i).row() );
                 }
             }
-            qSort( rowList.begin(), rowList.end() );
+            std::sort( rowList.begin(), rowList.end() );
 
             if( rowList.size() > 0 ){
                 m_d->item->measuresModel()->insertRows( rowList.last()+1, rowList.size());
@@ -298,7 +298,7 @@ void BillItemGUI::addMeasureLines() {
 }
 
 void BillItemGUI::delMeasureLines() {
-    if( m_d->item != NULL ){
+    if( m_d->item != nullptr ){
         if( m_d->item->measuresModel() ){
             QModelIndexList rowListSelected = m_d->ui->billItemLinesTableView->selectionModel()->selectedRows();
             if( !rowListSelected.isEmpty() ){
@@ -308,7 +308,7 @@ void BillItemGUI::delMeasureLines() {
                         rowList.append( rowListSelected.at(i).row() );
                     }
                 }
-                qSort( rowList.begin(), rowList.end() );
+                std::sort( rowList.begin(), rowList.end() );
                 m_d->item->measuresModel()->removeRows( rowList.first(), rowList.size() );
             }
         }
@@ -316,7 +316,7 @@ void BillItemGUI::delMeasureLines() {
 }
 
 void BillItemGUI::importBillItemMeasuresTXT() {
-    if( m_d->item != NULL ){
+    if( m_d->item != nullptr ){
         if( m_d->item->measuresModel() ){
             QModelIndexList rowListSelected = m_d->ui->billItemLinesTableView->selectionModel()->selectedRows();
             QList<int> rowList;
@@ -325,7 +325,7 @@ void BillItemGUI::importBillItemMeasuresTXT() {
                     rowList.append( rowListSelected.at(i).row() );
                 }
             }
-            qSort( rowList.begin(), rowList.end() );
+            std::sort( rowList.begin(), rowList.end() );
 
             int position = m_d->item->measuresModel()->rowCount();
             if( rowList.size() > 0 ){
@@ -338,12 +338,12 @@ void BillItemGUI::importBillItemMeasuresTXT() {
     }
 }
 
-void BillItemGUI::setBillItemNULL() {
-    setBillItem( NULL );
+void BillItemGUI::setBillItemnullptr() {
+    setBillItem( nullptr );
 }
 
 void BillItemGUI::addAttribute(){
-    if( m_d->itemAttributeModel != NULL ){
+    if( m_d->itemAttributeModel != nullptr ){
         if( m_d->ui->attributeTableView->selectionModel() ){
             int count = 1;
             QModelIndexList selectedRows = m_d->ui->attributeTableView->selectionModel()->selectedRows();
@@ -361,7 +361,7 @@ void BillItemGUI::addAttribute(){
 }
 
 void BillItemGUI::removeAttribute(){
-    if( m_d->itemAttributeModel != NULL ){
+    if( m_d->itemAttributeModel != nullptr ){
         if( m_d->ui->attributeTableView->selectionModel() ){
             QModelIndexList selectedRows = m_d->ui->attributeTableView->selectionModel()->selectedRows();
             int count = selectedRows.size();
@@ -414,7 +414,7 @@ void BillItemGUI::updatePriceAmountNamesValues(){
         lEdit = new QLineEdit();
         lEdit->setReadOnly( true );
         lEdit->setAlignment( Qt::AlignRight );
-        if( m_d->item != NULL ){
+        if( m_d->item != nullptr ){
             lEdit->setText( m_d->item->amountStr(i) );
         }
         m_d->ui->amountsDataLayout->addWidget( label, i, 0 );
@@ -432,7 +432,7 @@ void BillItemGUI::updateAmountValue(int priceField, const QString & newVal){
 
 void BillItemGUI::updateAmountValues(){
     for( int i = 0; i < m_d->amountDataFieldLEdit.size(); ++i){
-        if( (i < m_d->priceFieldModel->fieldCount()) && ( m_d->item != NULL ) ){
+        if( (i < m_d->priceFieldModel->fieldCount()) && ( m_d->item != nullptr ) ){
             m_d->amountDataFieldLEdit.at(i)->setText( m_d->item->amountStr(i) );
         } else {
             m_d->amountDataFieldLEdit.at(i)->clear();
@@ -452,8 +452,8 @@ void BillItemGUI::updatePriceValue( int priceField, int priceCol, const QString 
 
 void BillItemGUI::updatePriceValues( int priceCol ){
     for( int i = 0; i < m_d->priceDataFieldLEdit.size(); ++i){
-        if( (i < m_d->priceFieldModel->fieldCount()) && ( m_d->item != NULL ) ){
-            if( m_d->item->priceItem() != NULL ){
+        if( (i < m_d->priceFieldModel->fieldCount()) && ( m_d->item != nullptr ) ){
+            if( m_d->item->priceItem() != nullptr ){
                 m_d->priceDataFieldLEdit.at(i)->setText( m_d->item->priceItem()->valueStr(i, priceCol) );
                 continue;
             }

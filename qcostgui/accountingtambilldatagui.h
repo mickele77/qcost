@@ -34,7 +34,7 @@ public:
     void setAccountingTAMBill( AccountingTAMBill * b);
 
 private slots:
-    void setAccountingNULL();
+    void setAccountingnullptr();
 
     // aggiorna solo l'importo di un campo prezzo
     void updateAmountValue(int priceField, const QString &newVal);

@@ -23,7 +23,7 @@ public:
         accFormulaFromProj(false){
     }
     QString	toString(double i, char f = 'g', int prec = 6) const{
-        if( parser != NULL ){
+        if( parser != nullptr ){
             return parser->toString( i, f, prec );
         } else {
             return QString::number( i, f, prec );
@@ -105,7 +105,7 @@ void AccountingLSMeasure::updateProjQuantity(){
 
 double AccountingLSMeasure::projQuantity() const{
     double ret = 0.0;
-    if( m_d->unitMeasure != NULL ){
+    if( m_d->unitMeasure != nullptr ){
         ret = m_d->unitMeasure->applyPrecision( m_d->projQuantity );
     } else {
         ret = m_d->projQuantity;
@@ -119,7 +119,7 @@ QString AccountingLSMeasure::projQuantityStr() const{
     if( realFormula.isEmpty() ){
         return QString();
     }
-    if( m_d->unitMeasure != NULL ){
+    if( m_d->unitMeasure != nullptr ){
         return m_d->toString( projQuantity(), 'f', m_d->unitMeasure->precision() ) ;
     } else {
         return m_d->toString( projQuantity(), 'f', 6 ) ;
@@ -150,7 +150,7 @@ void AccountingLSMeasure::updateAccQuantity(){
 
 double AccountingLSMeasure::accQuantity() const{
     double ret = 0.0;
-    if( m_d->unitMeasure != NULL ){
+    if( m_d->unitMeasure != nullptr ){
         ret = m_d->unitMeasure->applyPrecision( m_d->accQuantity );
     } else {
         ret = m_d->accQuantity;
@@ -164,7 +164,7 @@ QString AccountingLSMeasure::accQuantityStr() const{
     if( realFormula.isEmpty() ){
         return QString();
     }
-    if( m_d->unitMeasure != NULL ){
+    if( m_d->unitMeasure != nullptr ){
         return m_d->toString( accQuantity(), 'f', m_d->unitMeasure->precision() ) ;
     } else {
         return m_d->toString( accQuantity(), 'f', 6 ) ;
@@ -190,7 +190,7 @@ QDate AccountingLSMeasure::accDate() const {
 }
 
 QString AccountingLSMeasure::accDateStr() const {
-    if( m_d->parser != NULL ){
+    if( m_d->parser != nullptr ){
         return m_d->parser->toString( m_d->accDate, QLocale::NarrowFormat );
     }
     return m_d->accDate.toString();

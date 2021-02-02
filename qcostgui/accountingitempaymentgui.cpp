@@ -56,7 +56,7 @@ AccountingItemPaymentGUI::~AccountingItemPaymentGUI() {
 void AccountingItemPaymentGUI::setAccountingItem(AccountingTAMBillItem *b) {
     if( m_d->TAMBillItem != b || m_d->billItem != nullptr ){
         if( m_d->TAMBillItem != nullptr ){
-            disconnect( m_d->TAMBillItem, &AccountingTAMBillItem::aboutToBeDeleted, this, &AccountingItemPaymentGUI::setAccountingItemNULL );
+            disconnect( m_d->TAMBillItem, &AccountingTAMBillItem::aboutToBeDeleted, this, &AccountingItemPaymentGUI::setAccountingItemnullptr );
 
             m_d->ui->beginDateLineEdit->clear();
             disconnect( m_d->TAMBillItem, &AccountingTAMBillItem::startDateChanged, this, &AccountingItemPaymentGUI::setDateBegin );
@@ -71,7 +71,7 @@ void AccountingItemPaymentGUI::setAccountingItem(AccountingTAMBillItem *b) {
             disconnect( m_d->TAMBillItem, &AccountingTAMBillItem::totalAmountChanged, m_d->ui->totalAmountLineEdit, &QLineEdit::setText );
         }
         if( m_d->billItem != nullptr ){
-            disconnect( m_d->billItem, &AccountingBillItem::aboutToBeDeleted, this, &AccountingItemPaymentGUI::setAccountingItemNULL );
+            disconnect( m_d->billItem, &AccountingBillItem::aboutToBeDeleted, this, &AccountingItemPaymentGUI::setAccountingItemnullptr );
 
             m_d->ui->beginDateLineEdit->clear();
             disconnect( m_d->billItem, &AccountingBillItem::dateBeginChanged, this, &AccountingItemPaymentGUI::setDateBegin );
@@ -96,7 +96,7 @@ void AccountingItemPaymentGUI::setAccountingItem(AccountingTAMBillItem *b) {
         m_d->itemAttributeModel->setItem( b );
 
         if( m_d->TAMBillItem != nullptr ){
-            connect( m_d->TAMBillItem, &AccountingTAMBillItem::aboutToBeDeleted, this, &AccountingItemPaymentGUI::setAccountingItemNULL );
+            connect( m_d->TAMBillItem, &AccountingTAMBillItem::aboutToBeDeleted, this, &AccountingItemPaymentGUI::setAccountingItemnullptr );
 
             m_d->ui->beginDateLineEdit->setText( m_d->TAMBillItem->startDateStr() );
             connect( m_d->TAMBillItem, &AccountingTAMBillItem::startDateChanged, this, &AccountingItemPaymentGUI::setDateBegin );
@@ -116,7 +116,7 @@ void AccountingItemPaymentGUI::setAccountingItem(AccountingTAMBillItem *b) {
 void AccountingItemPaymentGUI::setAccountingItem(AccountingBillItem *b) {
     if( m_d->billItem != b || m_d->TAMBillItem != nullptr ){
         if( m_d->TAMBillItem != nullptr ){
-            disconnect( m_d->TAMBillItem, &AccountingTAMBillItem::aboutToBeDeleted, this, &AccountingItemPaymentGUI::setAccountingItemNULL );
+            disconnect( m_d->TAMBillItem, &AccountingTAMBillItem::aboutToBeDeleted, this, &AccountingItemPaymentGUI::setAccountingItemnullptr );
 
             m_d->ui->beginDateLineEdit->clear();
             disconnect( m_d->TAMBillItem, &AccountingTAMBillItem::startDateChanged, this, &AccountingItemPaymentGUI::setDateBegin );
@@ -131,7 +131,7 @@ void AccountingItemPaymentGUI::setAccountingItem(AccountingBillItem *b) {
             disconnect( m_d->TAMBillItem, &AccountingTAMBillItem::totalAmountChanged, m_d->ui->totalAmountLineEdit, &QLineEdit::setText );
         }
         if( m_d->billItem != nullptr ){
-            disconnect( m_d->billItem, &AccountingBillItem::aboutToBeDeleted, this, &AccountingItemPaymentGUI::setAccountingItemNULL );
+            disconnect( m_d->billItem, &AccountingBillItem::aboutToBeDeleted, this, &AccountingItemPaymentGUI::setAccountingItemnullptr );
 
             m_d->ui->beginDateLineEdit->clear();
             disconnect( m_d->billItem, &AccountingBillItem::dateBeginChanged, this, &AccountingItemPaymentGUI::setDateBegin );
@@ -156,7 +156,7 @@ void AccountingItemPaymentGUI::setAccountingItem(AccountingBillItem *b) {
         m_d->itemAttributeModel->setItem( b );
 
         if( m_d->billItem != nullptr ){
-            connect( m_d->billItem, &AccountingBillItem::aboutToBeDeleted, this, &AccountingItemPaymentGUI::setAccountingItemNULL );
+            connect( m_d->billItem, &AccountingBillItem::aboutToBeDeleted, this, &AccountingItemPaymentGUI::setAccountingItemnullptr );
 
             m_d->ui->beginDateLineEdit->setText( m_d->billItem->dateBeginStr() );
             connect( m_d->billItem, &AccountingBillItem::dateBeginChanged, this, &AccountingItemPaymentGUI::setDateBegin );
@@ -173,7 +173,7 @@ void AccountingItemPaymentGUI::setAccountingItem(AccountingBillItem *b) {
     }
 }
 
-void AccountingItemPaymentGUI::setAccountingItemNULL() {
+void AccountingItemPaymentGUI::setAccountingItemnullptr() {
     setAccountingItem( static_cast<AccountingBillItem *> ( nullptr ) );
     setAccountingItem( static_cast<AccountingBillItem *> ( nullptr ) );
 }
@@ -218,11 +218,11 @@ void AccountingItemPaymentGUI::setAccountingTAMBill(AccountingTAMBill *b) {
     if( m_d->TAMBill != b ){
         if( m_d->TAMBill != nullptr ){
             m_d->itemAttributeModel->setAttributeModel( nullptr );
-            disconnect( m_d->TAMBill, &AccountingTAMBill::aboutToBeDeleted, this, &AccountingItemPaymentGUI::setAccountingNULL );
+            disconnect( m_d->TAMBill, &AccountingTAMBill::aboutToBeDeleted, this, &AccountingItemPaymentGUI::setAccountingnullptr );
         }
         if( m_d->bill != nullptr ){
             m_d->itemAttributeModel->setAttributeModel( nullptr );
-            disconnect( m_d->bill, &AccountingBill::aboutToBeDeleted, this, &AccountingItemPaymentGUI::setAccountingNULL );
+            disconnect( m_d->bill, &AccountingBill::aboutToBeDeleted, this, &AccountingItemPaymentGUI::setAccountingnullptr );
         }
 
         m_d->bill = nullptr;
@@ -230,11 +230,11 @@ void AccountingItemPaymentGUI::setAccountingTAMBill(AccountingTAMBill *b) {
 
         if( m_d->TAMBill != nullptr ){
             m_d->itemAttributeModel->setAttributeModel( m_d->TAMBill->attributesModel() );
-            connect( m_d->TAMBill, &AccountingTAMBill::aboutToBeDeleted, this, &AccountingItemPaymentGUI::setAccountingNULL );
+            connect( m_d->TAMBill, &AccountingTAMBill::aboutToBeDeleted, this, &AccountingItemPaymentGUI::setAccountingnullptr );
         }
 
         // quando si cambia computo corrente la scheda della riga si azzera
-        setAccountingItemNULL();
+        setAccountingItemnullptr();
     }
 }
 
@@ -242,11 +242,11 @@ void AccountingItemPaymentGUI::setAccountingBill(AccountingBill *b) {
     if( m_d->bill != b ){
         if( m_d->TAMBill != nullptr ){
             m_d->itemAttributeModel->setAttributeModel( nullptr );
-            disconnect( m_d->TAMBill, &AccountingTAMBill::aboutToBeDeleted, this, &AccountingItemPaymentGUI::setAccountingNULL );
+            disconnect( m_d->TAMBill, &AccountingTAMBill::aboutToBeDeleted, this, &AccountingItemPaymentGUI::setAccountingnullptr );
         }
         if( m_d->bill != nullptr ){
             m_d->itemAttributeModel->setAttributeModel( nullptr );
-            disconnect( m_d->bill, &AccountingBill::aboutToBeDeleted, this, &AccountingItemPaymentGUI::setAccountingNULL );
+            disconnect( m_d->bill, &AccountingBill::aboutToBeDeleted, this, &AccountingItemPaymentGUI::setAccountingnullptr );
         }
 
         m_d->bill = b;
@@ -254,15 +254,15 @@ void AccountingItemPaymentGUI::setAccountingBill(AccountingBill *b) {
 
         if( m_d->bill != nullptr ){
             m_d->itemAttributeModel->setAttributeModel( m_d->bill->attributesModel() );
-            connect( m_d->bill, &AccountingBill::aboutToBeDeleted, this, &AccountingItemPaymentGUI::setAccountingNULL );
+            connect( m_d->bill, &AccountingBill::aboutToBeDeleted, this, &AccountingItemPaymentGUI::setAccountingnullptr );
         }
 
         // quando si cambia computo corrente la scheda della riga si azzera
-        setAccountingItemNULL();
+        setAccountingItemnullptr();
     }
 }
 
-void AccountingItemPaymentGUI::setAccountingNULL() {
+void AccountingItemPaymentGUI::setAccountingnullptr() {
     setAccountingTAMBill(nullptr);
     setAccountingBill(nullptr);
 }

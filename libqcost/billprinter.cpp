@@ -84,7 +84,7 @@ bool BillPrinter::printAttributeODT( BillPrinter::PrintBillItemsOption prItemsOp
                                      double paperHeight,
                                      Qt::Orientation paperOrientation,
                                      bool groupPrAm) const {
-    if( m_d->bill != NULL ){
+    if( m_d->bill != nullptr ){
         if( paperOrientation == Qt::Horizontal ){
             if( paperHeight > paperWidth ){
                 double com = paperHeight;
@@ -124,9 +124,9 @@ bool BillPrinter::printAttributeODT( BillPrinter::PrintBillItemsOption prItemsOp
         cursor.setBlockCharFormat( headerBlockCharFormat );
 
         if( fieldsToPrint.size() > 0 ){
-            cursor.insertText(QObject::trUtf8("Computo Metrico Estimativo") );
+            cursor.insertText(QObject::tr("Computo Metrico Estimativo") );
         } else {
-            cursor.insertText(QObject::trUtf8("Computo Metrico") );
+            cursor.insertText(QObject::tr("Computo Metrico") );
         }
 
         cursor.insertBlock( parBlockFormat );
@@ -214,7 +214,7 @@ bool BillPrinter::printBillODT( PrintBillItemsOption prItemsOption,
                                 double paperWidth, double paperHeight,
                                 Qt::Orientation paperOrientation,
                                 bool groupPrAm ) const {
-    if( m_d->bill != NULL ){
+    if( m_d->bill != nullptr ){
         if( paperOrientation == Qt::Horizontal ){
             if( paperHeight > paperWidth ){
                 double com = paperHeight;
@@ -254,9 +254,9 @@ bool BillPrinter::printBillODT( PrintBillItemsOption prItemsOption,
         cursor.setBlockCharFormat( headerBlockCharFormat );
 
         if( fieldsToPrint.size() > 0 ){
-            cursor.insertText(QObject::trUtf8("Computo Metrico Estimativo") );
+            cursor.insertText(QObject::tr("Computo Metrico Estimativo") );
         } else {
-            cursor.insertText(QObject::trUtf8("Computo Metrico") );
+            cursor.insertText(QObject::tr("Computo Metrico") );
         }
 
         cursor.insertBlock( parBlockFormat );
@@ -360,7 +360,7 @@ bool BillPrinter::printSummaryODT( PrintBillItemsOption prBillItemsOption,
                                    Qt::Orientation paperOrientation,
                                    bool groupPrAm,
                                    bool writeDetails ) const {
-    if( m_d->bill != NULL ){
+    if( m_d->bill != nullptr ){
         if( paperOrientation == Qt::Horizontal ){
             if( paperHeight > paperWidth ){
                 double com = paperHeight;
@@ -400,9 +400,9 @@ bool BillPrinter::printSummaryODT( PrintBillItemsOption prBillItemsOption,
         cursor.setBlockCharFormat( headerBlockCharFormat );
 
         if( fieldsToPrint.size() > 0 ){
-            cursor.insertText(QObject::trUtf8("Sommario Computo Metrico Estimativo") );
+            cursor.insertText(QObject::tr("Sommario Computo Metrico Estimativo") );
         } else {
-            cursor.insertText(QObject::trUtf8("Sommario Computo Metrico") );
+            cursor.insertText(QObject::tr("Sommario Computo Metrico") );
         }
 
         cursor.insertBlock( parBlockFormat );

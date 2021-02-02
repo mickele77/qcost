@@ -18,7 +18,7 @@ class AccountingPriceFieldModel;
 class AccountingBillItemPrivate{
 public:
     AccountingBillItemPrivate( AccountingBillItem * parent, AccountingBillItem::ItemType iType,
-                               PriceFieldModel * pfm, MathParser * p = NULL, VarsModel * vModel = NULL );
+                               PriceFieldModel * pfm, MathParser * p = nullptr, VarsModel * vModel = nullptr );
     ~AccountingBillItemPrivate();
     QString	toString(double i, char f = 'g', int prec = 6) const;
     QString percentageToString( double v ) const;

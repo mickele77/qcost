@@ -63,7 +63,7 @@ void AccountingItemTAMGUI::setAccountingItem(AccountingBillItem *b) {
             disconnect( m_d->item, &AccountingBillItem::dateBeginChanged, this, &AccountingItemTAMGUI::updateTAMBillComboBox );
             disconnect( m_d->item, &AccountingBillItem::dateEndChanged, this, &AccountingItemTAMGUI::updateTAMBillComboBox );
 
-            disconnect( m_d->item, &AccountingBillItem::aboutToBeDeleted, this, &AccountingItemTAMGUI::setAccountingItemNULL );
+            disconnect( m_d->item, &AccountingBillItem::aboutToBeDeleted, this, &AccountingItemTAMGUI::setAccountingItemnullptr );
 
             disconnect( m_d->item, &AccountingBillItem::totalAmountToDiscountChanged, m_d->ui->totalAmountToDiscountLineEdit, &QLineEdit::setText );
             disconnect( m_d->item, &AccountingBillItem::amountNotToDiscountChanged, m_d->ui->amountNotToDiscountLineEdit, &QLineEdit::setText );
@@ -92,7 +92,7 @@ void AccountingItemTAMGUI::setAccountingItem(AccountingBillItem *b) {
             connect( m_d->item, &AccountingBillItem::dateBeginChanged, this, &AccountingItemTAMGUI::updateTAMBillComboBox );
             connect( m_d->item, &AccountingBillItem::dateEndChanged, this, &AccountingItemTAMGUI::updateTAMBillComboBox );
 
-            connect( m_d->item, &AccountingBillItem::aboutToBeDeleted, this, &AccountingItemTAMGUI::setAccountingItemNULL );
+            connect( m_d->item, &AccountingBillItem::aboutToBeDeleted, this, &AccountingItemTAMGUI::setAccountingItemnullptr );
 
             m_d->ui->totalAmountToDiscountLineEdit->setText( m_d->item->totalAmountToDiscountStr() );
             connect( m_d->item, &AccountingBillItem::totalAmountToDiscountChanged, m_d->ui->totalAmountToDiscountLineEdit, &QLineEdit::setText );
@@ -104,7 +104,7 @@ void AccountingItemTAMGUI::setAccountingItem(AccountingBillItem *b) {
     }
 }
 
-void AccountingItemTAMGUI::setAccountingItemNULL() {
+void AccountingItemTAMGUI::setAccountingItemnullptr() {
     setAccountingItem( nullptr );
 }
 
@@ -147,22 +147,22 @@ void AccountingItemTAMGUI::removeAttribute(){
 void AccountingItemTAMGUI::setAccountingBill(AccountingBill *b) {
     if( m_d->bill != nullptr ){
         m_d->itemAttributeModel->setAttributeModel( nullptr );
-        disconnect( m_d->bill, &AccountingBill::aboutToBeDeleted, this, &AccountingItemTAMGUI::setAccountingNULL );
+        disconnect( m_d->bill, &AccountingBill::aboutToBeDeleted, this, &AccountingItemTAMGUI::setAccountingnullptr );
     }
 
     m_d->bill = b;
 
     if( m_d->bill != nullptr ){
         m_d->itemAttributeModel->setAttributeModel( m_d->bill->attributesModel() );
-        connect( m_d->bill, &AccountingBill::aboutToBeDeleted, this, &AccountingItemTAMGUI::setAccountingNULL );
+        connect( m_d->bill, &AccountingBill::aboutToBeDeleted, this, &AccountingItemTAMGUI::setAccountingnullptr );
     }
 
     // quando si cambia la scheda di contabilita' corrente la scheda della riga si azzera
-    setAccountingItemNULL();
+    setAccountingItemnullptr();
 }
 
-void AccountingItemTAMGUI::setAccountingNULL() {
-    setAccountingBill(NULL);
+void AccountingItemTAMGUI::setAccountingnullptr() {
+    setAccountingBill(nullptr);
 }
 
 void AccountingItemTAMGUI::updateTAMBillComboBox() {
@@ -170,7 +170,7 @@ void AccountingItemTAMGUI::updateTAMBillComboBox() {
 
     m_d->ui->tamBillComboBox->clear();
     int currIndex = 0;
-    QVariant v = qVariantFromValue((void *) NULL);
+    QVariant v = qVariantFromValue((void *) nullptr);
     m_d->ui->tamBillComboBox->insertItem( 0, "", v);
     QList<AccountingTAMBillItem *> bills = m_d->tamBill->bills();
     for( int i=0; i < bills.size(); ++i ){
@@ -191,7 +191,7 @@ void AccountingItemTAMGUI::updateTAMBillComboBox() {
 void AccountingItemTAMGUI::setTAMBill() {
     if( m_d->item != nullptr ){
         QVariant v = m_d->ui->tamBillComboBox->currentData();
-        AccountingTAMBillItem * newTAMBillItem = NULL;
+        AccountingTAMBillItem * newTAMBillItem = nullptr;
         if( v.isValid() ){
             newTAMBillItem = (AccountingTAMBillItem *) v.value<void *>();
         }

@@ -45,7 +45,7 @@ QWidget *PriceListDelegate::createEditor(QWidget *parent, const QStyleOptionView
         return QStyledItemDelegate::createEditor(parent, option, index);
     } else {
         QComboBox *cb = new QComboBox(parent);
-        cb->addItem( QString(), qVariantFromValue( (void *) NULL ) );
+        cb->addItem( QString(), qVariantFromValue( (void *) nullptr ) );
         for(int i=0; i < m_d->unitMeasureModel->size(); ++i ){
             UnitMeasure * ump = m_d->unitMeasureModel->unitMeasure(i);
             QVariant umpVar = qVariantFromValue( (void *) ump );

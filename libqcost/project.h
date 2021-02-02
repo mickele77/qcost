@@ -46,7 +46,7 @@ public:
         ProjectHumanNetNoDiscount
     };
 
-    explicit Project( MathParser * p = NULL, QObject *parent = 0);
+    explicit Project( MathParser * p = nullptr, QObject *parent = 0);
     
     ~Project();
 

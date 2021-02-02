@@ -9,7 +9,7 @@ class PriceListDBViewerPrivate{
 public:
     PriceListDBViewerPrivate(MathParser * p, QWidget *parent):
         mainLayout( new QGridLayout(parent)),
-        dbWidget( new PriceListDBWidget( NULL, NULL, p, "viewerConnection", parent )),
+        dbWidget( new PriceListDBWidget( nullptr, nullptr, p, "viewerConnection", parent )),
         buttonBox( new QDialogButtonBox(QDialogButtonBox::Ok) ) {
         mainLayout->addWidget( dbWidget, 0, 0);
         mainLayout->addWidget( buttonBox, 1, 0);

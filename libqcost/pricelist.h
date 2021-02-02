@@ -45,7 +45,7 @@ class EXPORT_QCOST_LIB_OPT PriceList : public QAbstractItemModel, public Project
 public:
     friend class Project;
 
-    explicit PriceList(const QString &n, PriceFieldModel * priceFields, ProjectItem *parent = NULL, MathParser *p = NULL);
+    explicit PriceList(const QString &n, PriceFieldModel * priceFields, ProjectItem *parent = nullptr, MathParser *p = nullptr);
 
     virtual ~PriceList();
 

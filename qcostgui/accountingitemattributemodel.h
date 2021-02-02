@@ -52,8 +52,8 @@ public:
     void setItem(AccountingTAMBillItem *item);
     void setItem(AccountingLSBillItem *item);
 private slots:
-    void setAttributeModelNULL();
-    void setItemNULL();
+    void setAttributeModelnullptr();
+    void setItemnullptr();
 private:
     AccountingItemAttributeModelModelPrivate * m_d;
 };

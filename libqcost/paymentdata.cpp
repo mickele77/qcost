@@ -25,7 +25,7 @@ public:
         totalAmount(0.0){
     }
     QString	toString(double i, char f, int prec ) const{
-        if( parser != NULL ){
+        if( parser != nullptr ){
             return parser->toString( i, f, prec );
         } else {
             return QString::number( i, f, prec );
@@ -84,11 +84,11 @@ PaymentData *PaymentData::child(int number) {
     if( number >= 0 && number < m_d->childrenContainer.size() ){
         return m_d->childrenContainer[number];
     }
-    return NULL;
+    return nullptr;
 }
 
 int PaymentData::childNumber() const {
-    if( m_d->parentData != NULL ){
+    if( m_d->parentData != nullptr ){
         return m_d->parentData->m_d->childrenContainer.indexOf( const_cast<PaymentData *>(this) );
     }
     return 0;
@@ -96,15 +96,15 @@ int PaymentData::childNumber() const {
 
 QString PaymentData::name() {
     if( m_d->dataType == Payment ){
-        return trUtf8("S.A.L. N. %1 (%2-%3)").arg( QString::number(childNumber()+1),
+        return tr("S.A.L. N. %1 (%2-%3)").arg( QString::number(childNumber()+1),
                                                    m_d->parser->toString( dateBegin() ),
                                                    m_d->parser->toString( dateEnd() ) );
     } else if( m_d->dataType == PPU ){
-        return trUtf8("Opere a misura");
+        return tr("Opere a misura");
     } else if( m_d->dataType == LumpSum ){
-        return trUtf8("Opere a corpo");
+        return tr("Opere a corpo");
     } else if( m_d->dataType == TimeAndMaterials ){
-        return trUtf8("Opere in economia");
+        return tr("Opere in economia");
     }
     return QString();
 }
@@ -137,14 +137,14 @@ void PaymentData::updateAmounts() {
 }
 
 QDate PaymentData::dateBegin() const {
-    if( m_d->associatedPayment != NULL ){
+    if( m_d->associatedPayment != nullptr ){
         return m_d->associatedPayment->dateBegin();
     }
     return QDate::currentDate();
 }
 
 QDate PaymentData::dateEnd() const {
-    if( m_d->associatedPayment != NULL ){
+    if( m_d->associatedPayment != nullptr ){
         return m_d->associatedPayment->dateEnd();
     }
     return QDate::currentDate();
@@ -165,7 +165,7 @@ void PaymentData::setAssociatedPayment(AccountingBillItem *newPayment) {
 void PaymentData::removeBillItem() {
     AccountingBillItem * billItem = dynamic_cast<AccountingBillItem *>(sender());
     if( billItem == m_d->associatedPayment ){
-        m_d->associatedPayment = NULL;
+        m_d->associatedPayment = nullptr;
         updateAmounts();
     }
 }

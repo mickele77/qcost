@@ -17,7 +17,7 @@ class EXPORT_QCOST_LIB_OPT AccountingTAMMeasure : public QObject
 {
     Q_OBJECT
 public:
-    explicit AccountingTAMMeasure( MathParser *p = NULL, UnitMeasure * ump = NULL);
+    explicit AccountingTAMMeasure( MathParser *p = nullptr, UnitMeasure * ump = nullptr);
     ~AccountingTAMMeasure();
 
     AccountingTAMMeasure &operator =(const AccountingTAMMeasure &cp);

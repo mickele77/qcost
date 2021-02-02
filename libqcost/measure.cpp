@@ -17,7 +17,7 @@ public:
         parser( p ),
         unitMeasure( ump ),
         billItem(bItem),
-        accountingBillItem(NULL),
+        accountingBillItem(nullptr),
         comment(""),
         formula(""),
         quantity(0.0){
@@ -25,14 +25,14 @@ public:
     MeasurePrivate( AccountingBillItem * accBItem, MathParser * p, UnitMeasure * ump ):
         parser( p ),
         unitMeasure( ump ),
-        billItem(NULL),
+        billItem(nullptr),
         accountingBillItem(accBItem),
         comment(""),
         formula(""),
         quantity(0.0){
     }
     QString	toString(double i, char f = 'g', int prec = 6) const{
-        if( parser != NULL ){
+        if( parser != nullptr ){
             return parser->toString( i, f, prec );
         } else {
             return QString::number( i, f, prec );
@@ -99,9 +99,9 @@ Measure &Measure::operator=(const Measure &cp) {
     if( &cp != this ){
         setUnitMeasure( cp.m_d->unitMeasure );
         setComment( cp.m_d->comment );
-        if( (m_d->billItem != NULL) && (m_d->billItem == cp.m_d->billItem) ){
+        if( (m_d->billItem != nullptr) && (m_d->billItem == cp.m_d->billItem) ){
             setFormula( cp.m_d->formula, true );
-        } else if( (m_d->accountingBillItem != NULL) && (m_d->accountingBillItem == cp.m_d->accountingBillItem) ){
+        } else if( (m_d->accountingBillItem != nullptr) && (m_d->accountingBillItem == cp.m_d->accountingBillItem) ){
             setFormula( cp.m_d->formula, true );
         } else {
             setFormula( cp.formula(), false );
@@ -129,7 +129,7 @@ void Measure::setUnitMeasure(UnitMeasure *ump) {
 QString Measure::formula() const {
     QString displayedForm = m_d->formula;
 
-    if( m_d->billItem != NULL ){
+    if( m_d->billItem != nullptr ){
         QList<QChar> matchStr;
         matchStr << '[' << ']' << '{' << '}';
         QStringList formSplitted = MeasurePrivate::splitQString( displayedForm,  matchStr );
@@ -143,7 +143,7 @@ QString Measure::formula() const {
                         uint connItemId = formSplitted.at(i+1).toUInt(&ok);
                         if( ok ){
                             BillItem * connItem = m_d->billItem->findItemFromId( connItemId );
-                            if( connItem != NULL ){
+                            if( connItem != nullptr ){
                                 signOk = true;
                                 displayedForm += "[" + connItem->progCode() + "]";
                                 i = i+2;
@@ -168,7 +168,7 @@ QString Measure::formula() const {
                                     int connPriceDataSet = intStrSplit.at(1).toInt(&ok);
                                     if( ok ){
                                         BillItem * connItem = m_d->billItem->findItemFromId( connItemId );
-                                        if( connItem != NULL ){
+                                        if( connItem != nullptr ){
                                             signOk = true;
                                             displayedForm += "{" + connItem->progCode() + ":" + QString::number(connPriceDataSet) + "}";
                                             i = i+2;
@@ -181,7 +181,7 @@ QString Measure::formula() const {
                             uint connItemId = intStr.toUInt(&ok);
                             if( ok ){
                                 BillItem * connItem = m_d->billItem->findItemFromId( connItemId );
-                                if( connItem != NULL ){
+                                if( connItem != nullptr ){
                                     signOk = true;
                                     displayedForm += "{" + connItem->progCode() + "}";
                                     i = i+2;
@@ -197,7 +197,7 @@ QString Measure::formula() const {
                 displayedForm += formSplitted.at(i);
             }
         }
-    } else if( m_d->accountingBillItem != NULL ){
+    } else if( m_d->accountingBillItem != nullptr ){
         QList<QChar> matchStr;
         matchStr << '[' << ']' << '{' << '}';
         QStringList formSplitted = MeasurePrivate::splitQString( displayedForm,  matchStr );
@@ -211,7 +211,7 @@ QString Measure::formula() const {
                         uint connItemId = formSplitted.at(i+1).toUInt(&ok);
                         if( ok ){
                             AccountingBillItem * connItem = m_d->accountingBillItem->findItemFromId( connItemId );
-                            if( connItem != NULL ){
+                            if( connItem != nullptr ){
                                 signOk = true;
                                 displayedForm += "[" + connItem->fullProgCode() + "]";
                                 i = i+2;
@@ -236,7 +236,7 @@ QString Measure::formula() const {
                                     int connPriceDataSet = intStrSplit.at(1).toInt(&ok);
                                     if( ok ){
                                         AccountingBillItem * connItem = m_d->accountingBillItem->findItemFromId( connItemId );
-                                        if( connItem != NULL ){
+                                        if( connItem != nullptr ){
                                             signOk = true;
                                             displayedForm += "{" + connItem->fullProgCode() + ":" + QString::number(connPriceDataSet) + "}";
                                             i = i+2;
@@ -249,7 +249,7 @@ QString Measure::formula() const {
                             uint connItemId = intStr.toUInt(&ok);
                             if( ok ){
                                 AccountingBillItem * connItem = m_d->accountingBillItem->findItemFromId( connItemId );
-                                if( connItem != NULL ){
+                                if( connItem != nullptr ){
                                     signOk = true;
                                     displayedForm += "{" + connItem->fullProgCode() + "}";
                                     i = i+2;
@@ -273,7 +273,7 @@ void Measure::setFormula( const QString & newFormulaInput, bool connItemFromId )
     // il valore della nuova formula che verrà memorizzato
     QString newFormula;
 
-    if( m_d->billItem != NULL ){
+    if( m_d->billItem != nullptr ){
         // azzera l'elenco dei BillItem connessi
         for( QList< QPair<BillItem *, int> >::iterator it = m_d->connectedBillItems.begin(); it != m_d->connectedBillItems.end(); ++it ){
             if( it->second > -2 ){
@@ -293,7 +293,7 @@ void Measure::setFormula( const QString & newFormulaInput, bool connItemFromId )
             if( formSplitted.at(i) == "[" ){
                 if( (i+2) < formSplitted.size() ){
                     if( formSplitted.at(i+2) == "]"  ){
-                        BillItem * connItem = NULL;
+                        BillItem * connItem = nullptr;
                         if( connItemFromId ){
                             bool uintOk = false;
                             uint connItemId = formSplitted.at(i+1).toUInt( &uintOk );
@@ -303,7 +303,7 @@ void Measure::setFormula( const QString & newFormulaInput, bool connItemFromId )
                         } else {
                             connItem = m_d->billItem->findItemFromProgCode( formSplitted.at(i+1) );
                         }
-                        if( connItem != NULL ){
+                        if( connItem != nullptr ){
                             setFormulaOk = true;
                             m_d->connectedBillItems << qMakePair(connItem, -2);
                             newFormula += "[" + QString::number(connItem->id()) + "]";
@@ -323,7 +323,7 @@ void Measure::setFormula( const QString & newFormulaInput, bool connItemFromId )
                     if( formSplitted.at(i+2) == "}"  ){
                         QStringList formSplittedAmounts = formSplitted.at(i+1).split(":");
                         if( formSplittedAmounts.size() > 1 ){
-                            BillItem * connItem = NULL;
+                            BillItem * connItem = nullptr;
                             if( connItemFromId ){
                                 bool uintOk = false;
                                 uint connItemId = formSplittedAmounts.at(0).toUInt( &uintOk );
@@ -335,7 +335,7 @@ void Measure::setFormula( const QString & newFormulaInput, bool connItemFromId )
                             }
                             bool intOk = false;
                             int connPriceDataSet = formSplittedAmounts.at(1).toInt( &intOk);
-                            if( connItem != NULL && intOk ){
+                            if( connItem != nullptr && intOk ){
                                 setFormulaOk = true;
                                 m_d->connectedBillItems << qMakePair(connItem, connPriceDataSet);
                                 newFormula += "{" + QString::number(connItem->id()) + ":" + QString::number(connPriceDataSet) + "}";
@@ -345,7 +345,7 @@ void Measure::setFormula( const QString & newFormulaInput, bool connItemFromId )
                                 setFormulaOk = false;
                             }
                         } else {
-                            BillItem * connItem = NULL;
+                            BillItem * connItem = nullptr;
                             if( connItemFromId ){
                                 bool uintOk = false;
                                 uint connItemId = formSplitted.at(i+1).toUInt( &uintOk );
@@ -355,7 +355,7 @@ void Measure::setFormula( const QString & newFormulaInput, bool connItemFromId )
                             } else {
                                 connItem = m_d->billItem->findItemFromProgCode( formSplitted.at(i+1) );
                             }
-                            if( connItem != NULL ){
+                            if( connItem != nullptr ){
                                 setFormulaOk = true;
                                 m_d->connectedBillItems << qMakePair(connItem, -1);
                                 newFormula += "{" + QString::number(connItem->id()) + "}";
@@ -379,7 +379,7 @@ void Measure::setFormula( const QString & newFormulaInput, bool connItemFromId )
                 break;
             }
         }
-    } else if( m_d->accountingBillItem != NULL ){
+    } else if( m_d->accountingBillItem != nullptr ){
         // azzera l'elenco degli oggetti AccountingBillItem connessi
         for( QList< QPair<AccountingBillItem *, int> >::iterator it = m_d->connectedAccBillItems.begin(); it != m_d->connectedAccBillItems.end(); ++it ){
             if( it->second > -2 ){
@@ -400,7 +400,7 @@ void Measure::setFormula( const QString & newFormulaInput, bool connItemFromId )
             if( formSplitted.at(i) == "[" ){
                 if( (i+2) < formSplitted.size() ){
                     if( formSplitted.at(i+2) == "]"  ){
-                        AccountingBillItem * connItem = NULL;
+                        AccountingBillItem * connItem = nullptr;
                         if( connItemFromId ){
                             bool uintOk = false;
                             uint connItemId = formSplitted.at(i+1).toUInt( &uintOk );
@@ -410,7 +410,7 @@ void Measure::setFormula( const QString & newFormulaInput, bool connItemFromId )
                         } else {
                             connItem = m_d->accountingBillItem->findItemFromProgCode( formSplitted.at(i+1) );
                         }
-                        if( connItem != NULL ){
+                        if( connItem != nullptr ){
                             setFormulaOk = true;
                             m_d->connectedAccBillItems << qMakePair(connItem, -2);
                             newFormula += "[" + QString::number(connItem->id()) + "]";
@@ -430,7 +430,7 @@ void Measure::setFormula( const QString & newFormulaInput, bool connItemFromId )
                     if( formSplitted.at(i+2) == "}"  ){
                         QStringList formSplittedAmounts = formSplitted.at(i+1).split(":");
                         if( formSplittedAmounts.size() > 1 ){
-                            AccountingBillItem * connItem = NULL;
+                            AccountingBillItem * connItem = nullptr;
                             if( connItemFromId ){
                                 bool uintOk = false;
                                 uint connItemId = formSplittedAmounts.at(0).toUInt( &uintOk );
@@ -442,7 +442,7 @@ void Measure::setFormula( const QString & newFormulaInput, bool connItemFromId )
                             }
                             bool intOk = false;
                             int connPriceDataSet = formSplittedAmounts.at(1).toInt( &intOk);
-                            if( connItem != NULL && intOk ){
+                            if( connItem != nullptr && intOk ){
                                 setFormulaOk = true;
                                 m_d->connectedAccBillItems << qMakePair(connItem, connPriceDataSet);
                                 newFormula += "{" + QString::number(connItem->id()) + ":" + QString::number(connPriceDataSet) + "}";
@@ -453,7 +453,7 @@ void Measure::setFormula( const QString & newFormulaInput, bool connItemFromId )
                                 setFormulaOk = false;
                             }
                         } else {
-                            AccountingBillItem * connItem = NULL;
+                            AccountingBillItem * connItem = nullptr;
                             if( connItemFromId ){
                                 bool uintOk = false;
                                 uint connItemId = formSplitted.at(i+1).toUInt( &uintOk );
@@ -463,7 +463,7 @@ void Measure::setFormula( const QString & newFormulaInput, bool connItemFromId )
                             } else {
                                 connItem = m_d->accountingBillItem->findItemFromProgCode( formSplitted.at(i+1) );
                             }
-                            if( connItem != NULL ){
+                            if( connItem != nullptr ){
                                 setFormulaOk = true;
                                 m_d->connectedAccBillItems << qMakePair(connItem, -2);
                                 newFormula += "{" + QString::number(connItem->id()) + "}";
@@ -500,7 +500,7 @@ void Measure::setFormula( const QString & newFormulaInput, bool connItemFromId )
 
 QString Measure::effectiveFormula() const{
     QString effFormula;
-    if( m_d->billItem != NULL ){
+    if( m_d->billItem != nullptr ){
         QList<QChar> matchStr;
         matchStr << '[' << ']' << '{' << '}';
         QStringList formSplitted = MeasurePrivate::splitQString( m_d->formula,  matchStr );
@@ -513,7 +513,7 @@ QString Measure::effectiveFormula() const{
                         uint connItemId = formSplitted.at(i+1).toUInt(&uintOk );
                         if( uintOk ){
                             BillItem * connItem = m_d->billItem->findItemFromId( connItemId );
-                            if( connItem != NULL ){
+                            if( connItem != nullptr ){
                                 effFormula += connItem->quantityStr();
                                 effectiveFormulaOk = true;
                                 i = i+2;
@@ -536,7 +536,7 @@ QString Measure::effectiveFormula() const{
                                 BillItem * connItem = m_d->billItem->findItemFromId( connItemId );
                                 bool intOk = false;
                                 int connPriceDataSet = formSplittedAmounts.at(1).toInt(&intOk ) - 1;
-                                if( connItem != NULL && intOk ){
+                                if( connItem != nullptr && intOk ){
                                     effFormula += connItem->amountStr( connPriceDataSet );
                                     effectiveFormulaOk = true;
                                     i = i+2;
@@ -547,7 +547,7 @@ QString Measure::effectiveFormula() const{
                             uint connItemId = formSplitted.at(i+1).toUInt(&uintOk );
                             if( uintOk ){
                                 BillItem * connItem = m_d->billItem->findItemFromId( connItemId );
-                                if( connItem != NULL ){
+                                if( connItem != nullptr ){
                                     effFormula += connItem->amountStr( m_d->billItem->currentPriceDataSet() );
                                     effectiveFormulaOk = true;
                                     i = i+2;
@@ -563,10 +563,10 @@ QString Measure::effectiveFormula() const{
                 effFormula += formSplitted.at(i);
             }
         }
-        if( m_d->billItem->varsModel() != NULL ){
+        if( m_d->billItem->varsModel() != nullptr ){
             effFormula = m_d->billItem->varsModel()->replaceVars( effFormula );
         }
-    } else if( m_d->accountingBillItem != NULL ){
+    } else if( m_d->accountingBillItem != nullptr ){
         QList<QChar> matchStr;
         matchStr << '[' << ']' << '{' << '}';
         QStringList formSplitted = MeasurePrivate::splitQString( m_d->formula,  matchStr );
@@ -579,7 +579,7 @@ QString Measure::effectiveFormula() const{
                         uint connItemId = formSplitted.at(i+1).toUInt(&uintOk );
                         if( uintOk ){
                             AccountingBillItem * connItem = m_d->accountingBillItem->findItemFromId( connItemId );
-                            if( connItem != NULL ){
+                            if( connItem != nullptr ){
                                 effFormula += connItem->quantityStr();
                                 effectiveFormulaOk = true;
                                 i = i+2;
@@ -602,7 +602,7 @@ QString Measure::effectiveFormula() const{
                                 AccountingBillItem * connItem = m_d->accountingBillItem->findItemFromId( connItemId );
                                 bool intOk = false;
                                 int connPriceDataSet = formSplittedAmounts.at(1).toInt(&intOk ) - 1;
-                                if( connItem != NULL && intOk ){
+                                if( connItem != nullptr && intOk ){
                                     if( connPriceDataSet == 0 ){
                                         effFormula += connItem->totalAmountToDiscountStr();
                                     } else if( connPriceDataSet == 1 ){
@@ -619,7 +619,7 @@ QString Measure::effectiveFormula() const{
                             uint connItemId = formSplitted.at(i+1).toUInt(&uintOk );
                             if( uintOk ){
                                 AccountingBillItem * connItem = m_d->accountingBillItem->findItemFromId( connItemId );
-                                if( connItem != NULL ){
+                                if( connItem != nullptr ){
                                     effFormula += connItem->totalAmountToDiscountStr();
                                     effectiveFormulaOk = true;
                                     i = i+2;
@@ -635,7 +635,7 @@ QString Measure::effectiveFormula() const{
                 effFormula += formSplitted.at(i);
             }
         }
-        if( m_d->accountingBillItem->varsModel() != NULL ){
+        if( m_d->accountingBillItem->varsModel() != nullptr ){
             effFormula = m_d->accountingBillItem->varsModel()->replaceVars( effFormula );
         }
     }
@@ -656,7 +656,7 @@ void Measure::updateQuantity(){
 
 double Measure::quantity() const{
     double ret = 0.0;
-    if( m_d->unitMeasure != NULL ){
+    if( m_d->unitMeasure != nullptr ){
         ret = m_d->unitMeasure->applyPrecision( m_d->quantity );
     } else {
         ret = m_d->quantity;
@@ -670,7 +670,7 @@ QString Measure::quantityStr() const{
     if( realFormula.isEmpty() ){
         return QString();
     }
-    if( m_d->unitMeasure != NULL ){
+    if( m_d->unitMeasure != nullptr ){
         return m_d->toString( quantity(), 'f', m_d->unitMeasure->precision() ) ;
     } else {
         return m_d->toString( quantity(), 'f', 6 ) ;

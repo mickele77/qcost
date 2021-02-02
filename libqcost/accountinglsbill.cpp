@@ -38,7 +38,7 @@
 class AccountingLSBillPrivate{
 public:
     AccountingLSBillPrivate( const QString &c, const QString &n,
-                             PriceFieldModel * pfm, AttributesModel * attrsModel, MathParser * prs = NULL ):
+                             PriceFieldModel * pfm, AttributesModel * attrsModel, MathParser * prs = nullptr ):
         id(0),
         code( c ),
         name( n ),
@@ -48,8 +48,8 @@ public:
         attributesModel(attrsModel),
         varsModel( new VarsModel(prs) ),
         parser(prs),
-        rootItem(new AccountingLSBillItem( NULL, NULL, pfm, parser )),
-        priceList( NULL ),
+        rootItem(new AccountingLSBillItem( nullptr, nullptr, pfm, parser )),
+        priceList( nullptr ),
         priceListIdTmp(0){
     }
     ~AccountingLSBillPrivate(){
@@ -57,10 +57,10 @@ public:
     }
 
     static void setPriceItemParents( PriceList *pl, PriceItem * basePriceItem, PriceItem * newPriceItem ){
-        if( basePriceItem->parentItem() != NULL ){
-            if( basePriceItem->parentItem()->parentItem() != NULL ){
+        if( basePriceItem->parentItem() != nullptr ){
+            if( basePriceItem->parentItem()->parentItem() != nullptr ){
                 PriceItem * newPriceItemParent = pl->priceItemCode( basePriceItem->parentItem()->code() );
-                if( newPriceItemParent == NULL ){
+                if( newPriceItemParent == nullptr ){
                     newPriceItemParent = pl->appendPriceItem();
                     *newPriceItemParent = *(basePriceItem->parentItem());
                 }
@@ -182,7 +182,7 @@ double AccountingLSBill::PPUTotalToDiscount() const {
 }
 
 QString AccountingLSBill::PPUTotalToDiscountStr() const {
-    if( m_d->parser != NULL ){
+    if( m_d->parser != nullptr ){
         return m_d->parser->toString( m_d->PPUTotalToDiscount, 'f', m_d->amountPrecision );
     }
     return QString::number( m_d->PPUTotalToDiscount, 'f', m_d->amountPrecision );
@@ -193,7 +193,7 @@ double AccountingLSBill::PPUNotToDiscount() const {
 }
 
 QString AccountingLSBill::PPUNotToDiscountStr() const {
-    if( m_d->parser != NULL ){
+    if( m_d->parser != nullptr ){
         return m_d->parser->toString( m_d->PPUNotToDiscount, 'f', m_d->amountPrecision );
     }
     return QString::number( m_d->PPUNotToDiscount, 'f', m_d->amountPrecision );
@@ -208,7 +208,7 @@ void AccountingLSBill::setDescription(const QString &value) {
 
 void AccountingLSBill::setPPUTotalToDiscount(const QString &newValue) {
     double v = 0.0;
-    if( m_d->parser != NULL ){
+    if( m_d->parser != nullptr ){
         v = m_d->parser->evaluate( newValue );
     } else {
         v = newValue.toDouble();
@@ -221,7 +221,7 @@ void AccountingLSBill::setPPUTotalToDiscount(const QString &newValue) {
 
 void AccountingLSBill::setPPUNotToDiscount(const QString &newValue) {
     double v = 0.0;
-    if( m_d->parser != NULL ){
+    if( m_d->parser != nullptr ){
         v = m_d->parser->evaluate( newValue );
     } else {
         v = newValue.toDouble();
@@ -240,7 +240,7 @@ void AccountingLSBill::setPriceDataSet(int v) {
 }
 
 ProjectItem *AccountingLSBill::child(int /*number*/) {
-    return NULL;
+    return nullptr;
 }
 
 int AccountingLSBill::childCount() const {
@@ -289,15 +289,15 @@ bool AccountingLSBill::setData(const QVariant &value) {
 void AccountingLSBill::setPriceList(PriceList *pl, AccountingLSBill::SetPriceListMode plMode) {
     if( pl != m_d->priceList ){
         if( plMode != None ){
-            if( m_d->priceList != NULL ){
+            if( m_d->priceList != nullptr ){
                 if( plMode == SearchAndAdd ){
                     // cerca in base al codice e aggiunge se manca
                     QList<AccountingLSBillItem *> allItems = m_d->rootItem->allChildren();
                     for(QList<AccountingLSBillItem *>::iterator i = allItems.begin(); i != allItems.end(); ++i ){
-                        PriceItem * newPriceItem = NULL;
-                        if( (*i)->priceItem()!= NULL ){
+                        PriceItem * newPriceItem = nullptr;
+                        if( (*i)->priceItem()!= nullptr ){
                             newPriceItem = pl->priceItemCode( (*i)->priceItem()->code() );
-                            if( newPriceItem == NULL ){
+                            if( newPriceItem == nullptr ){
                                 newPriceItem = pl->appendPriceItem();
                                 AccountingLSBillPrivate::setPriceItemParents( pl, (*i)->priceItem(), newPriceItem );
                                 *newPriceItem = *((*i)->priceItem());
@@ -309,8 +309,8 @@ void AccountingLSBill::setPriceList(PriceList *pl, AccountingLSBill::SetPriceLis
                     // aggiunge sempre e comunque
                     QList<AccountingLSBillItem *> allItems = m_d->rootItem->allChildren();
                     for(QList<AccountingLSBillItem *>::iterator i = allItems.begin(); i != allItems.end(); ++i ){
-                        PriceItem * newPriceItem = NULL;
-                        if( (*i)->priceItem()!= NULL ){
+                        PriceItem * newPriceItem = nullptr;
+                        if( (*i)->priceItem()!= nullptr ){
                             newPriceItem = pl->appendPriceItem();
                             AccountingLSBillPrivate::setPriceItemParents( pl, (*i)->priceItem(), newPriceItem );
                             *newPriceItem = *((*i)->priceItem());
@@ -323,17 +323,17 @@ void AccountingLSBill::setPriceList(PriceList *pl, AccountingLSBill::SetPriceLis
                     for(QList<AccountingLSBillItem *>::iterator i = allItems.begin(); i != allItems.end(); ++i ){
                         (*i)->setPriceItem( pl->priceItemCode( (*i)->priceItem()->code() ) );
                     }
-                } else if( plMode == NULLPriceItem ){
-                    // annulla
+                } else if( plMode == nullptrPriceItem ){
+                    // annullptra
                     QList<AccountingLSBillItem *> allItems = m_d->rootItem->allChildren();
                     for(QList<AccountingLSBillItem *>::iterator i = allItems.begin(); i != allItems.end(); ++i ){
-                        (*i)->setPriceItem( NULL );
+                        (*i)->setPriceItem( nullptr );
                     }
                 } else if( plMode == ResetBill ){
                     // resetta il computo
                     removeItems( 0, m_d->rootItem->childrenCount() );
                 }
-                if( pl == NULL ){
+                if( pl == nullptr ){
                     m_d->rootItem->setCurrentPriceDataSet( 0 );
                 } else {
                     if( m_d->rootItem->currentPriceDataSet() > pl->priceDataSetCount() ){
@@ -501,10 +501,10 @@ QModelIndex AccountingLSBill::index(int row, int column, const QModelIndex &pare
 }
 
 QModelIndex AccountingLSBill::index(AccountingLSBillItem *item, int column) const {
-    if (item == NULL )
+    if (item == nullptr )
         return QModelIndex();
 
-    if( item->parent() == NULL ){
+    if( item->parent() == nullptr ){
         return QModelIndex();
     } else {
         return createIndex(item->childNumber(), column, item);
@@ -705,7 +705,7 @@ void AccountingLSBill::writeODTAttributeBillOnTable(QTextCursor *cursor,
 }
 
 void AccountingLSBill::activateAttributeModel() {
-    if( m_d->attributesModel != NULL ){
+    if( m_d->attributesModel != nullptr ){
         m_d->attributesModel->setBill( this );
     }
 }

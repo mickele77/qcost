@@ -19,7 +19,7 @@ public:
         formula << QString();
     }
     QString	toString(double i, char f = 'g', int prec = 6) const{
-        if( parser != NULL ){
+        if( parser != nullptr ){
             return parser->toString( i, f, prec );
         } else {
             return QString::number( i, f, prec );
@@ -103,7 +103,7 @@ void AccountingTAMMeasure::updateQuantity(){
 
 double AccountingTAMMeasure::quantity() const{
     double ret = 0.0;
-    if( m_d->unitMeasure != NULL ){
+    if( m_d->unitMeasure != nullptr ){
         ret = m_d->unitMeasure->applyPrecision( m_d->quantity );
     } else {
         ret = m_d->quantity;
@@ -112,7 +112,7 @@ double AccountingTAMMeasure::quantity() const{
 }
 
 QString AccountingTAMMeasure::quantityStr() const{
-    if( m_d->unitMeasure != NULL ){
+    if( m_d->unitMeasure != nullptr ){
         return m_d->toString( quantity(), 'f', m_d->unitMeasure->precision() ) ;
     } else {
         return m_d->toString( quantity(), 'f', 6 ) ;

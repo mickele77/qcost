@@ -108,7 +108,7 @@ QVariant BillAttributeSelectModel::headerData(int section, Qt::Orientation orien
 
     if (orientation == Qt::Horizontal) {
         if( section == 0 ) {
-            return trUtf8("Etichetta");
+            return tr("Etichetta");
         }
     } else if( orientation == Qt::Vertical ){
         return QVariant( section + 1 );

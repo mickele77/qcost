@@ -9,7 +9,7 @@ class PriceItemDataSetViewModel;
 class PriceDataTableDelegate : public QStyledItemDelegate {
     Q_OBJECT
 public:
-    explicit PriceDataTableDelegate(PriceItemDataSetViewModel *dModel = NULL, QObject *parent = 0);
+    explicit PriceDataTableDelegate(PriceItemDataSetViewModel *dModel = nullptr, QObject *parent = 0);
     ~PriceDataTableDelegate();
 
     void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;

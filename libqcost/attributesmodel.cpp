@@ -35,47 +35,47 @@
 class AttributesModelPrivate{
 public:
     AttributesModelPrivate(Bill * b, MathParser *prs, PriceFieldModel * pfm):
-        accountingLSBills(NULL),
-        accountingLSBill(NULL),
-        accountingTAMBill(NULL),
-        accountingBill(NULL),
+        accountingLSBills(nullptr),
+        accountingLSBill(nullptr),
+        accountingTAMBill(nullptr),
+        accountingBill(nullptr),
         bill(b),
         parser(prs),
         priceFieldModel(pfm) {
     }
     AttributesModelPrivate(AccountingBill * b, MathParser *prs, PriceFieldModel * pfm):
-        accountingLSBills(NULL),
-        accountingLSBill(NULL),
-        accountingTAMBill(NULL),
+        accountingLSBills(nullptr),
+        accountingLSBill(nullptr),
+        accountingTAMBill(nullptr),
         accountingBill(b),
-        bill(NULL),
+        bill(nullptr),
         parser(prs),
         priceFieldModel(pfm) {
     }
     AttributesModelPrivate(AccountingTAMBill * b, MathParser *prs, PriceFieldModel * pfm):
-        accountingLSBills(NULL),
-        accountingLSBill(NULL),
+        accountingLSBills(nullptr),
+        accountingLSBill(nullptr),
         accountingTAMBill(b),
-        accountingBill(NULL),
-        bill(NULL),
+        accountingBill(nullptr),
+        bill(nullptr),
         parser(prs),
         priceFieldModel(pfm) {
     }
     AttributesModelPrivate(AccountingLSBill * b, MathParser *prs, PriceFieldModel * pfm):
-        accountingLSBills(NULL),
+        accountingLSBills(nullptr),
         accountingLSBill(b),
-        accountingTAMBill(NULL),
-        accountingBill(NULL),
-        bill(NULL),
+        accountingTAMBill(nullptr),
+        accountingBill(nullptr),
+        bill(nullptr),
         parser(prs),
         priceFieldModel(pfm) {
     }
     AttributesModelPrivate(AccountingLSBills * b, MathParser *prs, PriceFieldModel * pfm):
         accountingLSBills(b),
-        accountingLSBill(NULL),
-        accountingTAMBill(NULL),
-        accountingBill(NULL),
-        bill(NULL),
+        accountingLSBill(nullptr),
+        accountingTAMBill(nullptr),
+        accountingBill(nullptr),
+        bill(nullptr),
         parser(prs),
         priceFieldModel(pfm) {
     }
@@ -97,7 +97,7 @@ public:
                 return *i;
             }
         }
-        return NULL;
+        return nullptr;
     }
     QList<Attribute *> attributesContainer;
     AccountingLSBills * accountingLSBills;
@@ -156,69 +156,69 @@ AttributesModel &AttributesModel::operator=(const AttributesModel &cp) {
 }
 
 void AttributesModel::insertStandardAttributes() {
-    if( m_d->bill != NULL ){
+    if( m_d->bill != nullptr ){
         if( insertRows( 0, 2) ){
-            setData( createIndex(0,0), QVariant( trUtf8("Sogg.ribasso")) );
-            setData( createIndex(1,0), QVariant( trUtf8("Non sogg.ribasso")) );
+            setData( createIndex(0,0), QVariant( tr("Sogg.ribasso")) );
+            setData( createIndex(1,0), QVariant( tr("Non sogg.ribasso")) );
         }
     }
 }
 
 void AttributesModel::setBill( Bill * b ) {
-    if( m_d->bill != NULL ){
+    if( m_d->bill != nullptr ){
         beginResetModel();
         m_d->bill = b;
-        m_d->accountingBill = NULL;
-        m_d->accountingTAMBill = NULL;
-        m_d->accountingLSBill = NULL;
-        m_d->accountingLSBills = NULL;
+        m_d->accountingBill = nullptr;
+        m_d->accountingTAMBill = nullptr;
+        m_d->accountingLSBill = nullptr;
+        m_d->accountingLSBills = nullptr;
         endResetModel();
     }
 }
 
 void AttributesModel::setBill( AccountingBill * b ) {
-    if( m_d->accountingBill != NULL ){
+    if( m_d->accountingBill != nullptr ){
         beginResetModel();
-        m_d->bill = NULL;
+        m_d->bill = nullptr;
         m_d->accountingBill = b;
-        m_d->accountingTAMBill = NULL;
-        m_d->accountingLSBill = NULL;
-        m_d->accountingLSBills = NULL;
+        m_d->accountingTAMBill = nullptr;
+        m_d->accountingLSBill = nullptr;
+        m_d->accountingLSBills = nullptr;
         endResetModel();
     }
 }
 
 void AttributesModel::setBill( AccountingTAMBill * b ) {
-    if( m_d->accountingLSBill != NULL ){
+    if( m_d->accountingLSBill != nullptr ){
         beginResetModel();
-        m_d->bill = NULL;
-        m_d->accountingBill = NULL;
+        m_d->bill = nullptr;
+        m_d->accountingBill = nullptr;
         m_d->accountingTAMBill = b;
-        m_d->accountingLSBill = NULL;
-        m_d->accountingLSBills = NULL;
+        m_d->accountingLSBill = nullptr;
+        m_d->accountingLSBills = nullptr;
         endResetModel();
     }
 }
 
 void AttributesModel::setBill( AccountingLSBill * b ) {
-    if( m_d->accountingLSBill != NULL ){
+    if( m_d->accountingLSBill != nullptr ){
         beginResetModel();
-        m_d->bill = NULL;
-        m_d->accountingBill = NULL;
-        m_d->accountingTAMBill = NULL;
+        m_d->bill = nullptr;
+        m_d->accountingBill = nullptr;
+        m_d->accountingTAMBill = nullptr;
         m_d->accountingLSBill = b;
-        m_d->accountingLSBills = NULL;
+        m_d->accountingLSBills = nullptr;
         endResetModel();
     }
 }
 
 void AttributesModel::setBill( AccountingLSBills * b ) {
-    if( m_d->accountingLSBill != NULL ){
+    if( m_d->accountingLSBill != nullptr ){
         beginResetModel();
-        m_d->bill = NULL;
-        m_d->accountingBill = NULL;
-        m_d->accountingTAMBill = NULL;
-        m_d->accountingLSBill = NULL;
+        m_d->bill = nullptr;
+        m_d->accountingBill = nullptr;
+        m_d->accountingTAMBill = nullptr;
+        m_d->accountingLSBill = nullptr;
         m_d->accountingLSBills = b;
         endResetModel();
     }
@@ -235,19 +235,19 @@ int AttributesModel::rowCount(const QModelIndex &parent) const {
 
 int AttributesModel::columnCount(const QModelIndex &parent) const {
     Q_UNUSED( parent );
-    if( m_d->bill != NULL ){
-        if( m_d->priceFieldModel != NULL ){
+    if( m_d->bill != nullptr ){
+        if( m_d->priceFieldModel != nullptr ){
             return m_d->priceFieldModel->fieldCount()+1;
         } else {
             return 2;
         }
-    } else if( m_d->accountingBill != NULL ){
+    } else if( m_d->accountingBill != nullptr ){
         return 4;
-    } else if( m_d->accountingTAMBill != NULL ){
+    } else if( m_d->accountingTAMBill != nullptr ){
         return 4;
-    } else if( m_d->accountingLSBill != NULL ){
+    } else if( m_d->accountingLSBill != nullptr ){
         return 3;
-    } else if( m_d->accountingLSBills != NULL ){
+    } else if( m_d->accountingLSBills != nullptr ){
         return 3;
     } else {
         return 1;
@@ -286,9 +286,9 @@ QVariant AttributesModel::data(const QModelIndex &index, int role) const {
             return QVariant( m_d->attributesContainer.at(index.row())->name() );
         }
         if( index.column() < m_d->priceFieldModel->fieldCount() + 1 ){
-            if( m_d->bill != NULL ){
+            if( m_d->bill != nullptr ){
                 return QVariant( m_d->bill->amountAttributeStr( m_d->attributesContainer.at(index.row()), index.column() - 1) );
-            } else if( m_d->accountingBill != NULL ){
+            } else if( m_d->accountingBill != nullptr ){
                 if( index.column() == 1 ){
                     return QVariant( m_d->accountingBill->totalAmountToDiscountAttributeStr( m_d->attributesContainer.at(index.row()) ) );
                 } else if( index.column() == 2 ){
@@ -296,7 +296,7 @@ QVariant AttributesModel::data(const QModelIndex &index, int role) const {
                 } else if( index.column() == 3 ){
                     return QVariant( m_d->accountingBill->totalAmountAttributeStr( m_d->attributesContainer.at(index.row()) ) );
                 }
-            } else if( m_d->accountingTAMBill != NULL ){
+            } else if( m_d->accountingTAMBill != nullptr ){
                 if( index.column() == 1 ){
                     return QVariant( m_d->accountingTAMBill->totalAmountToDiscountAttributeStr( m_d->attributesContainer.at(index.row()) ) );
                 } else if( index.column() == 2 ){
@@ -304,13 +304,13 @@ QVariant AttributesModel::data(const QModelIndex &index, int role) const {
                 } else if( index.column() == 3 ){
                     return QVariant( m_d->accountingTAMBill->totalAmountAttributeStr( m_d->attributesContainer.at(index.row()) ) );
                 }
-            } else if( m_d->accountingLSBill != NULL ){
+            } else if( m_d->accountingLSBill != nullptr ){
                 if( index.column() == 1 ){
                     return QVariant( m_d->accountingLSBill->PPUTotalToDiscountStr( m_d->attributesContainer.at(index.row()) ) );
                 } else if( index.column() == 2 ){
                     return QVariant( m_d->accountingLSBill->accAmountAttributeStr( m_d->attributesContainer.at(index.row()) ) );
                 }
-            } else if( m_d->accountingLSBills != NULL ){
+            } else if( m_d->accountingLSBills != nullptr ){
                 if( index.column() == 1 ){
                     return QVariant( m_d->accountingLSBills->projAmountAttributeStr( m_d->attributesContainer.at(index.row()) ) );
                 } else if( index.column() == 2 ){
@@ -339,31 +339,31 @@ QVariant AttributesModel::headerData(int section, Qt::Orientation orientation, i
 
     if (orientation == Qt::Horizontal) {
         if( section == 0 ) {
-            return trUtf8("Nome");
+            return tr("Nome");
         }
-        if( m_d->bill != NULL ){
+        if( m_d->bill != nullptr ){
             if( section < m_d->priceFieldModel->fieldCount() + 1 ){
                 return QVariant( m_d->priceFieldModel->amountName(section - 1) );
             }
-        } else if( (m_d->accountingBill != NULL) || (m_d->accountingTAMBill != NULL) ){
+        } else if( (m_d->accountingBill != nullptr) || (m_d->accountingTAMBill != nullptr) ){
             switch( section ){
             case 1: {
-                return QVariant( trUtf8("Importo lordo"));
+                return QVariant( tr("Importo lordo"));
                 break; }
             case 2: {
-                return QVariant( trUtf8("Importo non ribassabile"));
+                return QVariant( tr("Importo non ribassabile"));
                 break; }
             case 3: {
-                return QVariant( trUtf8("Importo"));
+                return QVariant( tr("Importo"));
                 break; }
             }
-        } else if( (m_d->accountingLSBill != NULL) || (m_d->accountingLSBills != NULL) ){
+        } else if( (m_d->accountingLSBill != nullptr) || (m_d->accountingLSBills != nullptr) ){
             switch( section ){
             case 1: {
-                return QVariant( trUtf8("Importo complessivo"));
+                return QVariant( tr("Importo complessivo"));
                 break; }
             case 2: {
-                return QVariant( trUtf8("Importo contabilizzato"));
+                return QVariant( tr("Importo contabilizzato"));
                 break; }
             }
         }
@@ -386,7 +386,7 @@ bool AttributesModel::insertRows(int row, int count){
     beginInsertRows(QModelIndex(), row, row+count-1 );
     for(int i=0; i < count; ++i){
         Attribute * attr = new Attribute( m_d->parser, m_d->priceFieldModel );
-        while( attributeId(attr->id()) != NULL ){
+        while( attributeId(attr->id()) != nullptr ){
             attr->nextId();
         }
         m_d->insert( row, attr );
@@ -424,7 +424,7 @@ Attribute *AttributesModel::attribute(int i) {
     if( i >= 0 && i < m_d->attributesContainer.size()){
         return m_d->attributesContainer.value(i);
     }
-    return NULL;
+    return nullptr;
 }
 
 Attribute *AttributesModel::attributeId(unsigned int id) {
@@ -433,7 +433,7 @@ Attribute *AttributesModel::attributeId(unsigned int id) {
             return (*i);
         }
     }
-    return NULL;
+    return nullptr;
 }
 
 void AttributesModel::writeXml10(QXmlStreamWriter *writer) const {

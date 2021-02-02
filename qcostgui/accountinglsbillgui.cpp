@@ -65,10 +65,10 @@ public:
                                 QString * EPAFileName,
                                 MathParser * prs, Project * prj,
                                 QString * wpf, QWidget *parent ):
-        item( NULL ),
-        bill ( NULL ),
+        item( nullptr ),
+        bill ( nullptr ),
         project(prj),
-        itemEditingPrice(NULL),
+        itemEditingPrice(nullptr),
         accountingDataGUI( new AccountingLSBillDataGUI( parent ) ),
         accountingPriceDataGUI( new AccountingLSBillPriceDataGUI( prj, parent ) ),
         attributesGUI( new AttributesGUI(prj->priceFieldModel(), prs, wpf, parent )),
@@ -104,10 +104,10 @@ AccountingLSBillGUI::AccountingLSBillGUI(QMap<PriceListDBWidget::ImportOptions, 
     QTabWidget(parent),
     m_d( new AccountingLSBillGUIPrivate( EPAImpOptions, EPAFileName, prs, p, wordProcessorFile, this ) ){
 
-    addTab( m_d->accountingDataGUI, trUtf8("Dati generali"));
-    addTab( m_d->accountingPriceDataGUI, trUtf8("Costi Unitari"));
-    addTab( m_d->attributesGUI, trUtf8("Etichette"));
-    addTab( m_d->mainSplitter, trUtf8("Misure"));
+    addTab( m_d->accountingDataGUI, tr("Dati generali"));
+    addTab( m_d->accountingPriceDataGUI, tr("Costi Unitari"));
+    addTab( m_d->attributesGUI, tr("Etichette"));
+    addTab( m_d->mainSplitter, tr("Misure"));
 
     setCurrentIndex( count()-1 );
 
@@ -132,24 +132,24 @@ void AccountingLSBillGUI::setBill( AccountingLSBill * b ){
 }
 
 void AccountingLSBillGUI::setBillItem( AccountingLSBillItem *newItem ) {
-    if( m_d->item != NULL ){
+    if( m_d->item != nullptr ){
         disconnect( m_d->item, static_cast<void(AccountingLSBillItem::*)(bool)>(&AccountingLSBillItem::hasChildrenChanged), this, &AccountingLSBillGUI::updateItemGUI );
-        disconnect( m_d->item, &AccountingLSBillItem::aboutToBeDeleted, this, &AccountingLSBillGUI::setBillItemNULL );
+        disconnect( m_d->item, &AccountingLSBillItem::aboutToBeDeleted, this, &AccountingLSBillGUI::setBillItemnullptr );
     }
     m_d->item = newItem;
-    if( m_d->item != NULL ){
+    if( m_d->item != nullptr ){
         connect( m_d->item, static_cast<void(AccountingLSBillItem::*)(bool)>(&AccountingLSBillItem::hasChildrenChanged), this, &AccountingLSBillGUI::updateItemGUI );
-        connect( m_d->item, &AccountingLSBillItem::aboutToBeDeleted, this, &AccountingLSBillGUI::setBillItemNULL );
+        connect( m_d->item, &AccountingLSBillItem::aboutToBeDeleted, this, &AccountingLSBillGUI::setBillItemnullptr );
     }
     updateItemGUI();
 }
 
-void AccountingLSBillGUI::setBillItemNULL() {
-    setBillItem( NULL );
+void AccountingLSBillGUI::setBillItemnullptr() {
+    setBillItem( nullptr );
 }
 
 void AccountingLSBillGUI::updateItemGUI() {
-    if( m_d->item != NULL ){
+    if( m_d->item != nullptr ){
         if( m_d->item->hasChildren() ){
             m_d->itemTitleGUI->setBillItem( m_d->item );
             m_d->itemTitleGUI->show();
@@ -161,18 +161,18 @@ void AccountingLSBillGUI::updateItemGUI() {
             m_d->itemGUI->show();
 
             m_d->itemTitleGUI->hide();
-            m_d->itemTitleGUI->setBillItemNULL();
+            m_d->itemTitleGUI->setBillItemnullptr();
         }
         return;
     }
 
     m_d->itemGUI->hide();
     m_d->itemGUI->clear();
-    m_d->itemGUI->setBillNULL();
+    m_d->itemGUI->setBillnullptr();
 
     m_d->itemTitleGUI->hide();
-    m_d->itemTitleGUI->setBillItemNULL();
-    m_d->itemTitleGUI->setBillNULL();
+    m_d->itemTitleGUI->setBillItemnullptr();
+    m_d->itemTitleGUI->setBillnullptr();
 }
 
 void AccountingLSBillGUI::showEvent(QShowEvent * event ) {

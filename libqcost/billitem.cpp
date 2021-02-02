@@ -44,21 +44,21 @@
 
 class BillItemPrivate{
 public:
-    BillItemPrivate( BillItem * parent, PriceFieldModel * pfm, MathParser * p = NULL, VarsModel *vModel = NULL ):
+    BillItemPrivate( BillItem * parent, PriceFieldModel * pfm, MathParser * p = nullptr, VarsModel *vModel = nullptr ):
         parentItem(parent),
-        measuresModel( NULL ),
+        measuresModel( nullptr ),
         parser(p),
         priceFieldModel(pfm),
         varsModel( vModel ),
-        name(QObject::trUtf8("Titolo")),
-        priceItem( NULL ),
+        name(QObject::tr("Titolo")),
+        priceItem( nullptr ),
         currentPriceDataSet(0),
         quantity(0.0),
         recaculateOverheadsProfits(false),
-        overheads(0.13),
+        overheads(0.15),
         profits(0.10),
         colCount(firstPriceFieldCol+2*pfm->fieldCount()){
-        if( parent != NULL ){
+        if( parent != nullptr ){
             id = 1;
         } else {
             id = 0;
@@ -80,7 +80,7 @@ public:
     }
 
     QString	toString(double i, char f = 'g', int prec = 6) const{
-        if( parser != NULL ){
+        if( parser != nullptr ){
             return parser->toString( i, f, prec );
         } else {
             return QString::number( i, f, prec );
@@ -88,7 +88,7 @@ public:
     }
 
     double	toDouble( const QString & str ) const{
-        if( parser == NULL ){
+        if( parser == nullptr ){
             return str.toDouble();
         } else {
             return parser->evaluate( str );
@@ -138,7 +138,7 @@ public:
     void writeDescriptionCell( PriceItem * priceItemToPrint, QTextCursor *cursor, QTextTable * table, const QTextTableCellFormat &centralFormat,
                                const QTextBlockFormat & txtBlockFormat, const QTextCharFormat & txtCharFormat, const QTextCharFormat & txtBoldCharFormat,
                                BillPrinter::PrintBillItemsOption prItemsOption ){
-        if( priceItemToPrint != NULL ){
+        if( priceItemToPrint != nullptr ){
             if( prItemsOption == BillPrinter::PrintShortDesc ){
                 writeCell( cursor, table, centralFormat, txtBlockFormat, priceItemToPrint->shortDescriptionFull() );
             } else if( prItemsOption == BillPrinter::PrintLongDesc ){
@@ -237,7 +237,7 @@ BillItem::BillItem( PriceItem * p, BillItem *parentItem, PriceFieldModel * pfm, 
     connect( this, &BillItem::currentPriceDataSetChanged, this, &BillItem::emitPriceDataUpdated );
     connect( this, &BillItem::currentPriceDataSetChanged, this, &BillItem::updateAmounts );
 
-    if( parentItem != NULL ){
+    if( parentItem != nullptr ){
         connect( parentItem, &BillItem::attributesChanged, this, &BillItem::attributesChanged );
     }
 
@@ -270,7 +270,7 @@ BillItem &BillItem::operator=(const BillItem &cp) {
         setQuantity( cp.m_d->quantity );
         setName( cp.m_d->name );
 
-        if( cp.m_d->measuresModel != NULL ){
+        if( cp.m_d->measuresModel != nullptr ){
             generateMeasuresModel();
             *(m_d->measuresModel) = *(cp.m_d->measuresModel);
         }
@@ -315,12 +315,12 @@ BillItem *BillItem::parent() {
 
 void BillItem::setParent(BillItem * newParent, int position ) {
     if( m_d->parentItem != newParent ){
-        if( m_d->parentItem != NULL ){
+        if( m_d->parentItem != nullptr ){
             m_d->parentItem->removeChild( childNumber() );
             disconnect( m_d->parentItem, &BillItem::attributesChanged, this, &BillItem::attributesChanged );
         }
         m_d->parentItem = newParent;
-        if( newParent != NULL ){
+        if( newParent != nullptr ){
             newParent->addChild( this, position);
             connect( m_d->parentItem, &BillItem::attributesChanged, this, &BillItem::attributesChanged );
         }
@@ -337,8 +337,8 @@ void BillItem::setParent(BillItem * newParent, int position ) {
 }
 
 void BillItem::addChild(BillItem * newChild, int position ) {
-    if( m_d->priceItem != NULL ){
-        m_d->priceItem = NULL;
+    if( m_d->priceItem != nullptr ){
+        m_d->priceItem = nullptr;
     }
     m_d->childrenContainer.insert( position, newChild );
     connect( newChild, static_cast<void(BillItem::*)(BillItem*,int)> (&BillItem::dataChanged), this, static_cast<void(BillItem::*)(BillItem*,int)> (&BillItem::dataChanged) );
@@ -357,21 +357,21 @@ BillItem *BillItem::itemFromId( unsigned int itemId ) {
     } else {
         for( QList<BillItem *>::iterator i = m_d->childrenContainer.begin(); i != m_d->childrenContainer.end(); ++i ){
             BillItem * childItems = (*i)->itemFromId(itemId);
-            if( childItems != NULL ) {
+            if( childItems != nullptr ) {
                 return childItems;
             }
         }
     }
-    return NULL;
+    return nullptr;
 }
 
 BillItem *BillItem::findItemFromId( unsigned int itemId ) {
-    if( m_d->parentItem == NULL ){
+    if( m_d->parentItem == nullptr ){
         return itemFromId(itemId );
     } else {
         return m_d->parentItem->findItemFromId(itemId);
     }
-    return NULL;
+    return nullptr;
 }
 
 BillItem *BillItem::itemFromProgCode( const QString & pCode) {
@@ -380,21 +380,21 @@ BillItem *BillItem::itemFromProgCode( const QString & pCode) {
     } else {
         for( QList<BillItem *>::iterator i = m_d->childrenContainer.begin(); i != m_d->childrenContainer.end(); ++i ){
             BillItem * childItems = (*i)->itemFromProgCode(pCode);
-            if( childItems != NULL ) {
+            if( childItems != nullptr ) {
                 return childItems;
             }
         }
     }
-    return NULL;
+    return nullptr;
 }
 
 BillItem *BillItem::findItemFromProgCode( const QString & pCode ) {
-    if( m_d->parentItem == NULL ){
+    if( m_d->parentItem == nullptr ){
         return itemFromProgCode(pCode);
     } else {
         return m_d->parentItem->findItemFromProgCode(pCode);
     }
-    return NULL;
+    return nullptr;
 }
 
 BillItem *BillItem::childItem(int number) {
@@ -406,7 +406,7 @@ void BillItem::setId( unsigned int ii ) {
 }
 
 VarsModel *BillItem::varsModel() {
-    if( m_d->parentItem == NULL ){
+    if( m_d->parentItem == nullptr ){
         return m_d->varsModel;
     } else {
         return m_d->parentItem->varsModel();
@@ -414,7 +414,7 @@ VarsModel *BillItem::varsModel() {
 }
 
 const BillItem *BillItem::rootItem() const {
-    if( m_d->parentItem == NULL ){
+    if( m_d->parentItem == nullptr ){
         return this;
     } else {
         return m_d->parentItem->rootItem();
@@ -426,7 +426,7 @@ unsigned int BillItem::id() {
 }
 
 QString BillItem::progCode() const {
-    if( m_d->parentItem == NULL ){
+    if( m_d->parentItem == nullptr ){
         return QString();
     } else {
         if( m_d->parentItem->progCode().isEmpty() ){
@@ -451,8 +451,8 @@ double BillItem::quantity() const {
 
 QString BillItem::quantityStr() const {
     int prec = 2;
-    if( m_d->priceItem != NULL ){
-        if( m_d->priceItem->unitMeasure() != NULL ){
+    if( m_d->priceItem != nullptr ){
+        if( m_d->priceItem->unitMeasure() != nullptr ){
             prec = m_d->priceItem->unitMeasure()->precision();
         }
     }
@@ -520,14 +520,14 @@ QString BillItem::amountProfitsStr(int field) const {
 }
 
 bool BillItem::recalculateOverheadsProfits() const {
-    if( m_d->parentItem != NULL ) {
+    if( m_d->parentItem != nullptr ) {
         return m_d->parentItem->recalculateOverheadsProfits();
     }
     return m_d->recaculateOverheadsProfits;
 }
 
 void BillItem::setRecalculateOverheadsProfits(bool newVal) {
-    if( m_d->parentItem != NULL ) {
+    if( m_d->parentItem != nullptr ) {
         m_d->parentItem->setRecalculateOverheadsProfits(newVal);
     } else {
         if( m_d->recaculateOverheadsProfits != newVal ) {
@@ -538,7 +538,7 @@ void BillItem::setRecalculateOverheadsProfits(bool newVal) {
 }
 
 double BillItem::overheads() const {
-    if( m_d->parentItem == NULL ) {
+    if( m_d->parentItem == nullptr ) {
         return m_d->overheads;
     } else {
         return m_d->parentItem->overheads();
@@ -550,7 +550,7 @@ QString BillItem::overheadsStr() const {
 }
 
 void BillItem::setOverheads( double newVal) {
-    if( m_d->parentItem == NULL ) {
+    if( m_d->parentItem == nullptr ) {
         if (m_d->overheads != newVal) {
             m_d->overheads = newVal;
             emit overheadsChanged( overheadsStr() );
@@ -570,7 +570,7 @@ void BillItem::setOverheads(const QString &newVal) {
 }
 
 double BillItem::profits() const {
-    if( m_d->parentItem == NULL ) {
+    if( m_d->parentItem == nullptr ) {
         return m_d->profits;
     } else {
         return m_d->parentItem->profits();
@@ -582,7 +582,7 @@ QString BillItem::profitsStr() const {
 }
 
 void BillItem::setProfits(double newVal) {
-    if( m_d->parentItem == NULL ) {
+    if( m_d->parentItem == nullptr ) {
         if (m_d->profits != newVal) {
             m_d->profits = newVal;
             emit profitsChanged( profitsStr() );
@@ -603,7 +603,7 @@ void BillItem::setProfits(const QString &newVal) {
 
 void BillItem::setPriceItem(PriceItem * p) {
     if( m_d->priceItem != p ){
-        if( m_d->priceItem != NULL ) {
+        if( m_d->priceItem != nullptr ) {
             disconnect( m_d->priceItem, &PriceItem::codeFullChanged, this, &BillItem::emitPriceDataUpdated );
             disconnect( m_d->priceItem, &PriceItem::shortDescriptionFullChanged, this, &BillItem::emitPriceDataUpdated );
             disconnect( m_d->priceItem, &PriceItem::unitMeasureChanged, this, &BillItem::emitPriceDataUpdated );
@@ -615,7 +615,7 @@ void BillItem::setPriceItem(PriceItem * p) {
 
         emit priceItemChanged( oldPriceItem, p );
 
-        if( m_d->priceItem != NULL ){
+        if( m_d->priceItem != nullptr ){
             connect( m_d->priceItem, &PriceItem::codeFullChanged, this, &BillItem::emitPriceDataUpdated );
             connect( m_d->priceItem, &PriceItem::shortDescriptionFullChanged, this, &BillItem::emitPriceDataUpdated );
             connect( m_d->priceItem, &PriceItem::unitMeasureChanged, this, &BillItem::emitPriceDataUpdated );
@@ -628,7 +628,7 @@ void BillItem::setPriceItem(PriceItem * p) {
             emit dataChanged( this, m_d->firstPriceFieldCol + 2 * i );
         }
 
-        if( m_d->measuresModel != NULL ){
+        if( m_d->measuresModel != nullptr ){
             m_d->measuresModel->setUnitMeasure( m_d->priceItem->unitMeasure() );
         }
 
@@ -637,7 +637,7 @@ void BillItem::setPriceItem(PriceItem * p) {
 }
 
 void BillItem::setQuantity(double v) {
-    if( m_d->measuresModel == NULL ){
+    if( m_d->measuresModel == nullptr ){
         setQuantityPrivate( v );
     }
 }
@@ -667,14 +667,14 @@ QVariant BillItem::data(int col, int role) const {
 
     if( col == m_d->progNumberCol ){
         if( role == Qt::TextAlignmentRole ){
-            if( m_d->parentItem == NULL ){
+            if( m_d->parentItem == nullptr ){
                 return Qt::AlignHCenter + Qt::AlignVCenter;;
             } else {
                 return Qt::AlignLeft + Qt::AlignVCenter;;
             }
         } else { // role == Qt::DisplayRole || role == Qt::EditRole
-            if( m_d->parentItem == NULL ){
-                return QVariant( trUtf8("N.") );
+            if( m_d->parentItem == nullptr ){
+                return QVariant( tr("N.") );
             } else {
                 return QVariant( progCode() );
             }
@@ -683,8 +683,8 @@ QVariant BillItem::data(int col, int role) const {
         if( role == Qt::TextAlignmentRole ){
             return Qt::AlignLeft + Qt::AlignVCenter;;
         } else { // role == Qt::DisplayRole || role == Qt::EditRole
-            if( m_d->parentItem == NULL ){
-                return QVariant( trUtf8("Codice") );
+            if( m_d->parentItem == nullptr ){
+                return QVariant( tr("Codice") );
             } else {
                 if( hasChildren() ){
                     return QVariant();
@@ -699,12 +699,12 @@ QVariant BillItem::data(int col, int role) const {
         if( role == Qt::TextAlignmentRole ){
             return Qt::AlignLeft + Qt::AlignVCenter;
         } else { // role == Qt::DisplayRole || role == Qt::EditRole
-            if( m_d->parentItem == NULL ){
-                return QVariant(QObject::trUtf8("Descrizione") );
+            if( m_d->parentItem == nullptr ){
+                return QVariant(QObject::tr("Descrizione") );
             } else {
                 if( hasChildren() ){
                     return QVariant( m_d->name );
-                } else if( m_d->priceItem != NULL ){
+                } else if( m_d->priceItem != nullptr ){
                     return QVariant(m_d->priceItem->shortDescriptionFull());
                 } else {
                     return QVariant("---");
@@ -715,12 +715,12 @@ QVariant BillItem::data(int col, int role) const {
         if( role == Qt::TextAlignmentRole ){
             return Qt::AlignHCenter + Qt::AlignVCenter;
         } else { // role == Qt::DisplayRole || role == Qt::EditRole
-            if( m_d->parentItem == NULL ){
-                return QVariant( trUtf8("UdM") );
+            if( m_d->parentItem == nullptr ){
+                return QVariant( tr("UdM") );
             } else if( hasChildren() ){
                 return QVariant();
             } if( m_d->priceItem ){
-                if( m_d->priceItem->unitMeasure() != NULL ){
+                if( m_d->priceItem->unitMeasure() != nullptr ){
                     return QVariant(m_d->priceItem->unitMeasure()->tag() );
                 } else {
                     return QVariant( "---" );
@@ -729,14 +729,14 @@ QVariant BillItem::data(int col, int role) const {
         }
     } else if( col == m_d->quantityCol ){
         if( role == Qt::TextAlignmentRole ){
-            if( m_d->parentItem == NULL ){
+            if( m_d->parentItem == nullptr ){
                 return Qt::AlignHCenter + Qt::AlignVCenter;
             } else {
                 return Qt::AlignRight + Qt::AlignVCenter;
             }
         } else { // role == Qt::DisplayRole || role == Qt::EditRole
-            if( m_d->parentItem == NULL ){
-                return QVariant( trUtf8("Quantità") );
+            if( m_d->parentItem == nullptr ){
+                return QVariant( tr("Quantità") );
             }
             if( hasChildren() ){
                 return QVariant();
@@ -746,7 +746,7 @@ QVariant BillItem::data(int col, int role) const {
         }
     } else {
         if( role == Qt::TextAlignmentRole ){
-            if( m_d->parentItem == NULL ){
+            if( m_d->parentItem == nullptr ){
                 return Qt::AlignHCenter + Qt::AlignVCenter;
             } else {
                 return Qt::AlignRight + Qt::AlignVCenter;
@@ -755,7 +755,7 @@ QVariant BillItem::data(int col, int role) const {
             int pf = (col-m_d->firstPriceFieldCol) / 2;
             if( ((col - m_d->firstPriceFieldCol) % 2) == 0 ){
                 // colonna prezzo
-                if( m_d->parentItem == NULL ){
+                if( m_d->parentItem == nullptr ){
                     if( pf < m_d->priceFieldModel->fieldCount() ){
                         return QVariant( m_d->priceFieldModel->priceName(pf) );
                     }
@@ -763,7 +763,7 @@ QVariant BillItem::data(int col, int role) const {
                     if( hasChildren() ){
                         return QVariant();
                     } else if( pf < m_d->priceFieldModel->fieldCount() ){
-                        if( m_d->priceItem != NULL ){
+                        if( m_d->priceItem != nullptr ){
                             return QVariant( m_d->priceItem->valueStr(pf, m_d->currentPriceDataSet ) );
                         } else {
                             return QVariant( 0.0 );
@@ -772,7 +772,7 @@ QVariant BillItem::data(int col, int role) const {
                 }
             } else {
                 // colonna importo
-                if( m_d->parentItem == NULL ){
+                if( m_d->parentItem == nullptr ){
                     if( pf < m_d->priceFieldModel->fieldCount() ){
                         return QVariant( m_d->priceFieldModel->amountName(pf) );
                     }
@@ -841,7 +841,7 @@ void BillItem::emitPriceDataUpdated() {
 }
 
 void BillItem::setUnitMeasure(UnitMeasure *ump) {
-    if( m_d->measuresModel != NULL ){
+    if( m_d->measuresModel != nullptr ){
         m_d->measuresModel->setUnitMeasure( ump );
     }
 }
@@ -922,7 +922,7 @@ void BillItem::updateAmount( int pf ) {
                     v += (*iter)->amount(pf);
                 }
             }
-        } else if( m_d->priceItem != NULL ){ // !hasChildren() && m_d->priceFieldModel->applyFormula(pf) != PriceFieldModel::ToPriceAndBillItems
+        } else if( m_d->priceItem != nullptr ){ // !hasChildren() && m_d->priceFieldModel->applyFormula(pf) != PriceFieldModel::ToPriceAndBillItems
             double effQuantity = m_d->quantity;
             if( m_d->priceFieldModel->multiplyBy(pf) > -1 ) {
                 effQuantity = amount(pf);
@@ -979,13 +979,13 @@ bool BillItem::isUsingPriceItem(PriceItem *p) const {
             }
         }
         if( m_d->priceItem == p ){
-            m_d->priceItem = NULL;
+            m_d->priceItem = nullptr;
         }
     } else {
         if( m_d->priceItem == p ){
             return true;
         }
-        if( m_d->priceItem != NULL ) {
+        if( m_d->priceItem != nullptr ) {
             if( m_d->priceItem->isDescendant(p) ) {
                 return true;
             }
@@ -1026,7 +1026,7 @@ TreeItem *BillItem::child(int number) {
     if( number >= 0 && number < m_d->childrenContainer.size() ){
         return m_d->childrenContainer[number];
     }
-    return NULL;
+    return nullptr;
 }
 
 int BillItem::childrenCount() const {
@@ -1068,7 +1068,7 @@ bool BillItem::insertChildren(PriceItem * p, int position, int count ){
 
     for (int row = 0; row < count; ++row) {
         BillItem *item = new BillItem( p, this, m_d->priceFieldModel, m_d->parser );
-        while( findItemFromId( item->id() ) != NULL ){
+        while( findItemFromId( item->id() ) != nullptr ){
             item->setId( item->id() + 1 );
         }
         m_d->childrenContainer.insert(position, item);
@@ -1090,7 +1090,7 @@ bool BillItem::insertChildren(PriceItem * p, int position, int count ){
 }
 
 bool BillItem::insertChildren(int position, int count) {
-    return insertChildren( NULL, position, count );
+    return insertChildren( nullptr, position, count );
 }
 
 bool BillItem::appendChildren(int count) {
@@ -1143,9 +1143,9 @@ MeasuresModel *BillItem::measuresModel() {
 }
 
 MeasuresModel *BillItem::generateMeasuresModel() {
-    if( m_d->measuresModel == NULL ){
-        UnitMeasure * ump = NULL;
-        if( m_d->priceItem != NULL ){
+    if( m_d->measuresModel == nullptr ){
+        UnitMeasure * ump = nullptr;
+        if( m_d->priceItem != nullptr ){
             ump = m_d->priceItem->unitMeasure();
         }
         m_d->measuresModel = new MeasuresModel( this, m_d->parser, ump );
@@ -1158,11 +1158,11 @@ MeasuresModel *BillItem::generateMeasuresModel() {
 }
 
 void BillItem::removeMeasuresModel() {
-    if( m_d->measuresModel != NULL ){
+    if( m_d->measuresModel != nullptr ){
         disconnect( m_d->measuresModel, &MeasuresModel::quantityChanged, this, &BillItem::setQuantityPrivate );
         disconnect( m_d->measuresModel, &MeasuresModel::modelChanged, this, &BillItem::itemChanged );
         delete m_d->measuresModel;
-        m_d->measuresModel = NULL;
+        m_d->measuresModel = nullptr;
         updateAmounts();
     }
 }
@@ -1195,7 +1195,7 @@ Qt::ItemFlags BillItem::flags(int column) const {
         }
     } else {
         if( column == m_d->quantityCol ){
-            if( m_d->measuresModel == NULL ){
+            if( m_d->measuresModel == nullptr ){
                 return Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemIsEditable;
             } else {
                 return Qt::ItemIsSelectable | Qt::ItemIsEnabled;
@@ -1206,7 +1206,7 @@ Qt::ItemFlags BillItem::flags(int column) const {
 }
 
 void BillItem::writeXml10(QXmlStreamWriter *writer) const {
-    if( m_d->parentItem != NULL ){
+    if( m_d->parentItem != nullptr ){
         // se non e' l'elemento root
         writer->writeStartElement( "BillItem" );
         writer->writeAttribute( "id", QString::number(m_d->id) );
@@ -1229,7 +1229,7 @@ void BillItem::writeXml10(QXmlStreamWriter *writer) const {
                 (*i)->writeXml10( writer );
             }
         } else {
-            if( m_d->priceItem != NULL ){
+            if( m_d->priceItem != nullptr ){
                 writer->writeAttribute( "priceItem", QString::number( m_d->priceItem->id() ) );
             }
             writer->writeAttribute( "quantity", QString::number( m_d->quantity ) );
@@ -1250,7 +1250,7 @@ void BillItem::writeXml10(QXmlStreamWriter *writer) const {
 }
 
 void BillItem::readXml10(QXmlStreamReader *reader, PriceList * priceList, AttributesModel *billAttrModel ) {
-    if( m_d->parentItem != NULL ){
+    if( m_d->parentItem != nullptr ){
         if(reader->isStartElement() && reader->name().toString().toUpper() == "BILLITEM"){
             loadXml10( reader->attributes(), priceList, billAttrModel );
         }
@@ -1275,7 +1275,7 @@ void BillItem::readXml10(QXmlStreamReader *reader, PriceList * priceList, Attrib
 }
 
 void BillItem::readXmlTmp10(QXmlStreamReader *reader) {
-    if( m_d->parentItem != NULL ){
+    if( m_d->parentItem != nullptr ){
         if(reader->isStartElement() && reader->name().toString().toUpper() == "BILLITEM"){
             loadFromXmlTmp10( reader->attributes() );
         }
@@ -1344,7 +1344,7 @@ void BillItem::loadTmpData10( PriceList *priceList, AttributesModel * billAttrMo
 }
 
 void BillItem::writeXml20(QXmlStreamWriter *writer) const {
-    if( m_d->parentItem != NULL ){
+    if( m_d->parentItem != nullptr ){
         // se non e' l'elemento root
         writer->writeStartElement( "BillItem" );
         writer->writeAttribute( "id", QString::number(m_d->id) );
@@ -1367,7 +1367,7 @@ void BillItem::writeXml20(QXmlStreamWriter *writer) const {
                 (*i)->writeXml20( writer );
             }
         } else {
-            if( m_d->priceItem != NULL ){
+            if( m_d->priceItem != nullptr ){
                 writer->writeAttribute( "priceItem", QString::number( m_d->priceItem->id() ) );
             }
             writer->writeAttribute( "quantity", QString::number( m_d->quantity ) );
@@ -1388,7 +1388,7 @@ void BillItem::writeXml20(QXmlStreamWriter *writer) const {
 }
 
 void BillItem::readXmlTmp20(QXmlStreamReader *reader) {
-    if( m_d->parentItem != NULL ){
+    if( m_d->parentItem != nullptr ){
         if(reader->isStartElement() && reader->name().toString().toUpper() == "BILLITEM"){
             m_d->tmpAttributes.clear();
             m_d->tmpAttributes = reader->attributes();
@@ -1445,7 +1445,7 @@ void BillItem::readFromXmlTmp20( PriceList *priceList, AttributesModel * billAtt
     if( !m_d->tmpAttributes.isEmpty() ){
         loadXml20(m_d->tmpAttributes, priceList, billAttrModel );
         m_d->tmpAttributes.clear();
-        if( m_d->measuresModel != NULL ){
+        if( m_d->measuresModel != nullptr ){
             m_d->measuresModel->readFromXmlTmp20();
         }
     }
@@ -1526,7 +1526,7 @@ QString BillItem::amountAttributeStr(Attribute *attr, int field ) {
     int prec = m_d->priceFieldModel->precision( field );
     QString ret;
     double v = amountAttribute( attr, field );
-    if( m_d->parser == NULL ){
+    if( m_d->parser == nullptr ){
         ret = QString::number(v, 'f', prec );
     } else {
         ret = m_d->parser->toString( v, 'f', prec );
@@ -1536,7 +1536,7 @@ QString BillItem::amountAttributeStr(Attribute *attr, int field ) {
 
 QList<Attribute *> BillItem::inheritedAttributes(){
     QList<Attribute *> ret;
-    if( m_d->parentItem != NULL ){
+    if( m_d->parentItem != nullptr ){
         ret.append( m_d->parentItem->inheritedAttributes() );
     }
     for( QList<Attribute *>::iterator i = m_d->attributes.begin(); i != m_d->attributes.end(); ++i ){
@@ -1555,7 +1555,7 @@ bool BillItem::containsAttribute(Attribute *attr) {
 }
 
 bool BillItem::containsAttributeInherited(Attribute *attr) {
-    if( m_d->parentItem != NULL ){
+    if( m_d->parentItem != nullptr ){
         if( m_d->parentItem->containsAttributeDirect( attr ) ){
             return true;
         } else {
@@ -1570,7 +1570,7 @@ bool BillItem::containsAttributeDirect(Attribute *attr) {
 }
 
 bool BillItem::isDescending(BillItem *ancestor) {
-    if( m_d->parentItem == NULL ){
+    if( m_d->parentItem == nullptr ){
         return (m_d->parentItem == ancestor);
     } else {
         if( m_d->parentItem == ancestor ){
@@ -1594,7 +1594,7 @@ void BillItem::insertField(int pf){
     double amountNetVal = 0.0;
     double amountOverheadsVal = 0.0;
     double amountProfitsVal = 0.0;
-    if( m_d->priceItem != NULL ){
+    if( m_d->priceItem != nullptr ){
         amountNetVal = UnitMeasure::applyPrecision( m_d->quantity * m_d->priceItem->valueNet( pf, m_d->currentPriceDataSet ), m_d->priceFieldModel->effectivePrecision(pf) );
         amountOverheadsVal = UnitMeasure::applyPrecision( overheads() * amountNetVal, m_d->priceFieldModel->effectivePrecision(pf) );
         amountProfitsVal = UnitMeasure::applyPrecision( profits() * (amountNetVal+amountOverheadsVal), m_d->priceFieldModel->effectivePrecision(pf) );
@@ -1747,16 +1747,16 @@ void BillItem::writeODTBillOnTable(QTextCursor *cursor,
     // puntatore alla tabella (comodita')
     QTextTable *table = cursor->currentTable();
 
-    if( m_d->parentItem == NULL ){
+    if( m_d->parentItem == nullptr ){
         // *** Riga di intestazione ***
-        BillItemPrivate::writeCell( cursor, table, leftHeaderFormat, headerBlockFormat, trUtf8("N."), false);
-        BillItemPrivate::writeCell( cursor, table, centralHeaderFormat, headerBlockFormat, trUtf8("Art.Elenco") );
-        BillItemPrivate::writeCell( cursor, table, centralHeaderFormat, headerBlockFormat, trUtf8("Indicazione dei lavori"));
-        BillItemPrivate::writeCell( cursor, table, centralHeaderFormat, headerBlockFormat, trUtf8("Unità di Misura"));
+        BillItemPrivate::writeCell( cursor, table, leftHeaderFormat, headerBlockFormat, tr("N."), false);
+        BillItemPrivate::writeCell( cursor, table, centralHeaderFormat, headerBlockFormat, tr("Art.Elenco") );
+        BillItemPrivate::writeCell( cursor, table, centralHeaderFormat, headerBlockFormat, tr("Indicazione dei lavori"));
+        BillItemPrivate::writeCell( cursor, table, centralHeaderFormat, headerBlockFormat, tr("Unità di Misura"));
         if( fieldsToPrint.size() == 0 ){
-            BillItemPrivate::writeCell( cursor, table, rightHeaderFormat, headerBlockFormat, trUtf8("Quantità"));
+            BillItemPrivate::writeCell( cursor, table, rightHeaderFormat, headerBlockFormat, tr("Quantità"));
         } else { // fieldsToPrint.size() > 0
-            BillItemPrivate::writeCell( cursor, table, centralHeaderFormat, headerBlockFormat, trUtf8("Quantità"));
+            BillItemPrivate::writeCell( cursor, table, centralHeaderFormat, headerBlockFormat, tr("Quantità"));
         }
 
         if( groupPrAm  ){
@@ -1806,7 +1806,7 @@ void BillItem::writeODTBillOnTable(QTextCursor *cursor,
                 writeODTBillTotalLine( fieldsToPrint, groupPrAm, cursor, table,
                                        tagBlockFormat, txtBlockFormat, numBlockFormat,
                                        leftSubTitleFormat, centralSubTitleFormat, rightSubTitleFormat,
-                                       trUtf8("Totale"), umTag, amountsToPrint );
+                                       tr("Totale"), umTag, amountsToPrint );
                 amountsToPrint.clear();
                 for( int i=0; i < fieldsToPrint.size(); i++ ){
                     amountsToPrint << amountOverheadsStr( i );
@@ -1814,7 +1814,7 @@ void BillItem::writeODTBillOnTable(QTextCursor *cursor,
                 writeODTBillTotalLine( fieldsToPrint, groupPrAm, cursor, table,
                                        tagBlockFormat, txtBlockFormat, numBlockFormat,
                                        leftSubTitleFormat, centralSubTitleFormat, rightSubTitleFormat,
-                                       trUtf8("Spese generali"), umTag, amountsToPrint );
+                                       tr("Spese generali"), umTag, amountsToPrint );
                 amountsToPrint.clear();
                 for( int i=0; i < fieldsToPrint.size(); i++ ){
                     amountsToPrint << amountProfitsStr( i );
@@ -1822,7 +1822,7 @@ void BillItem::writeODTBillOnTable(QTextCursor *cursor,
                 writeODTBillTotalLine( fieldsToPrint, groupPrAm, cursor, table,
                                        tagBlockFormat, txtBlockFormat, numBlockFormat,
                                        leftSubTitleFormat, centralSubTitleFormat, rightSubTitleFormat,
-                                       trUtf8("Utili di impresa"), umTag, amountsToPrint );
+                                       tr("Utili di impresa"), umTag, amountsToPrint );
                 // riga vuota
                 BillItemPrivate::insertEmptyRow( colCount, cursor, leftFormat, centralFormat, rightFormat );
 
@@ -1833,7 +1833,7 @@ void BillItem::writeODTBillOnTable(QTextCursor *cursor,
                 writeODTBillTotalLine( fieldsToPrint, groupPrAm, cursor, table,
                                        tagBlockFormat, txtBlockFormat, numBlockFormat,
                                        leftTitleFormat, centralTitleFormat, rightTitleFormat,
-                                       trUtf8("Totale complessivo"), umTag, amountsToPrint );
+                                       tr("Totale complessivo"), umTag, amountsToPrint );
 
             }
         } else {
@@ -1849,7 +1849,7 @@ void BillItem::writeODTBillOnTable(QTextCursor *cursor,
                 writeODTBillTotalLine( fieldsToPrint, groupPrAm, cursor, table,
                                        tagBlockFormat, txtBlockFormat, numBlockFormat,
                                        leftTitleFormat, centralTitleFormat, rightTitleFormat,
-                                       trUtf8("Totale complessivo"), umTag, amountsToPrint );
+                                       tr("Totale complessivo"), umTag, amountsToPrint );
             }
         }
 
@@ -1904,7 +1904,7 @@ void BillItem::writeODTBillOnTable(QTextCursor *cursor,
 
                 BillItemPrivate::writeCell( cursor, table, leftSubTitleFormat, tagBlockFormat );
                 BillItemPrivate::writeCell( cursor, table, centralSubTitleFormat, txtBlockFormat );
-                BillItemPrivate::writeCell( cursor, table, centralSubTitleFormat, txtBlockFormat, trUtf8("Totale %1").arg( m_d->name ) );
+                BillItemPrivate::writeCell( cursor, table, centralSubTitleFormat, txtBlockFormat, tr("Totale %1").arg( m_d->name ) );
                 BillItemPrivate::writeCell( cursor, table, centralSubTitleFormat, tagBlockFormat );
                 if( fieldsToPrint.size() == 0 ){
                     BillItemPrivate::writeCell( cursor, table, rightSubTitleFormat, numBlockFormat );
@@ -2087,13 +2087,13 @@ void BillItem::writeODTSummaryOnTable( QTextCursor *cursor,
     QTextTable *table = cursor->currentTable();
 
     // *** Intestazione tabella ***
-    BillItemPrivate::writeCell( cursor, table, leftHeaderFormat, headerBlockFormat, trUtf8("Codice"), false );
-    BillItemPrivate::writeCell( cursor, table, centralHeaderFormat, headerBlockFormat, trUtf8("Denominazione"));
-    BillItemPrivate::writeCell( cursor, table, centralHeaderFormat, headerBlockFormat, trUtf8("Unità di Misura"));
+    BillItemPrivate::writeCell( cursor, table, leftHeaderFormat, headerBlockFormat, tr("Codice"), false );
+    BillItemPrivate::writeCell( cursor, table, centralHeaderFormat, headerBlockFormat, tr("Denominazione"));
+    BillItemPrivate::writeCell( cursor, table, centralHeaderFormat, headerBlockFormat, tr("Unità di Misura"));
     if( fieldsToPrint.size() == 0 ){
-        BillItemPrivate::writeCell( cursor, table, rightHeaderFormat, headerBlockFormat, trUtf8("Quantità"));
+        BillItemPrivate::writeCell( cursor, table, rightHeaderFormat, headerBlockFormat, tr("Quantità"));
     } else { // fieldsToPrint.size() > 0
-        BillItemPrivate::writeCell( cursor, table, centralHeaderFormat, headerBlockFormat, trUtf8("Quantità"));
+        BillItemPrivate::writeCell( cursor, table, centralHeaderFormat, headerBlockFormat, tr("Quantità"));
     }
     if( groupPrAm  ){
         for( int i=0; i < fieldsToPrint.size(); ++i ){
@@ -2126,7 +2126,7 @@ void BillItem::writeODTSummaryOnTable( QTextCursor *cursor,
     for( QList<PriceItem *>::iterator i = usedPItems.begin(); i != usedPItems.end(); ++i){
         table->appendRows(1);
         cursor->movePosition(QTextCursor::PreviousRow );
-        if( (*i) != NULL ){
+        if( (*i) != nullptr ){
             BillItemPrivate::writeCell( cursor, table, leftFormat, txtBlockFormat, (*i)->codeFull() );
             m_d->writeDescriptionCell( (*i), cursor, table, centralFormat, txtBlockFormat, txtCharFormat, txtBoldCharFormat, prItemsOption );
         } else {
@@ -2136,8 +2136,8 @@ void BillItem::writeODTSummaryOnTable( QTextCursor *cursor,
 
         QString unitMeasureTag;
         int unitMeasurePrec = 3;
-        if( (*i) != NULL ){
-            if( (*i)->unitMeasure() != NULL ){
+        if( (*i) != nullptr ){
+            if( (*i)->unitMeasure() != nullptr ){
                 unitMeasureTag = (*i)->unitMeasure()->tag();
                 unitMeasurePrec = (*i)->unitMeasure()->precision();
             }
@@ -2188,7 +2188,7 @@ void BillItem::writeODTSummaryOnTable( QTextCursor *cursor,
 
         if( groupPrAm ){
             for( int j=0; j < fieldsToPrint.size(); ++j ){
-                if( (*i) != NULL ){
+                if( (*i) != nullptr ){
                     BillItemPrivate::writeCell( cursor, table, centralFormat, numBlockFormat, (*i)->valueStr(j, currentPriceDataSet() ) );
                 } else {
                     BillItemPrivate::writeCell( cursor, table, centralFormat, numBlockFormat );
@@ -2204,14 +2204,14 @@ void BillItem::writeODTSummaryOnTable( QTextCursor *cursor,
         } else {
             for( int j=0; j < fieldsToPrint.size(); ++j ){
                 if( j == fieldsToPrint.size() - 1 ){
-                    if( (*i)!= NULL ){
+                    if( (*i)!= nullptr ){
                         BillItemPrivate::writeCell( cursor, table, centralFormat, numBlockFormat, (*i)->valueStr(j, currentPriceDataSet() ) );
                     } else {
                         BillItemPrivate::writeCell( cursor, table, centralFormat, numBlockFormat );
                     }
                     BillItemPrivate::writeCell( cursor, table, rightFormat, numBlockFormat, m_d->toString( fieldsAmount.at(j), 'f', m_d->priceFieldModel->precision( fieldsToPrint.at(j) ) ) );
                 } else {
-                    if( (*i)!= NULL ){
+                    if( (*i)!= nullptr ){
                         BillItemPrivate::writeCell( cursor, table, centralFormat, numBlockFormat, (*i)->valueStr(j, currentPriceDataSet() ) );
                     } else {
                         BillItemPrivate::writeCell( cursor, table, centralFormat, numBlockFormat );
@@ -2235,7 +2235,7 @@ void BillItem::writeODTSummaryOnTable( QTextCursor *cursor,
         // codice
         BillItemPrivate::writeCell( cursor, table, leftTitleFormat, txtBlockFormat );
         // descrizione
-        BillItemPrivate::writeCell( cursor, table, centralTitleFormat, txtBlockFormat, trUtf8("Totale complessivo") );
+        BillItemPrivate::writeCell( cursor, table, centralTitleFormat, txtBlockFormat, tr("Totale complessivo") );
         // Udm
         BillItemPrivate::writeCell( cursor, table, centralTitleFormat, tagBlockFormat );
         // quantita'
@@ -2294,8 +2294,8 @@ void BillItem::writeODTSummaryLine(PriceItem * priceItem,
                 BillItemPrivate::writeCell( cursor, table, centralFormat, txtBlockFormat, progCode() );
 
                 QString unitMeasureTag;
-                if( m_d->priceItem != NULL ){
-                    if( m_d->priceItem->unitMeasure() != NULL ){
+                if( m_d->priceItem != nullptr ){
+                    if( m_d->priceItem->unitMeasure() != nullptr ){
                         unitMeasureTag = m_d->priceItem->unitMeasure()->tag();
                     }
                 }
@@ -2442,13 +2442,13 @@ void BillItem::writeODTAttributeBillOnTable(QTextCursor *cursor,
     QTextTable *table = cursor->currentTable();
 
     // *** Intestazione tabella ***
-    BillItemPrivate::writeCell( cursor, table, leftHeaderFormat, headerBlockFormat, trUtf8("Codice"), false );
-    BillItemPrivate::writeCell( cursor, table, centralHeaderFormat, headerBlockFormat, trUtf8("Denominazione"));
-    BillItemPrivate::writeCell( cursor, table, centralHeaderFormat, headerBlockFormat, trUtf8("Unità di Misura"));
+    BillItemPrivate::writeCell( cursor, table, leftHeaderFormat, headerBlockFormat, tr("Codice"), false );
+    BillItemPrivate::writeCell( cursor, table, centralHeaderFormat, headerBlockFormat, tr("Denominazione"));
+    BillItemPrivate::writeCell( cursor, table, centralHeaderFormat, headerBlockFormat, tr("Unità di Misura"));
     if( fieldsToPrint.size() == 0 ){
-        BillItemPrivate::writeCell( cursor, table, rightHeaderFormat, headerBlockFormat, trUtf8("Quantità"));
+        BillItemPrivate::writeCell( cursor, table, rightHeaderFormat, headerBlockFormat, tr("Quantità"));
     } else { // fieldsToPrint.size() > 0
-        BillItemPrivate::writeCell( cursor, table, centralHeaderFormat, headerBlockFormat, trUtf8("Quantità"));
+        BillItemPrivate::writeCell( cursor, table, centralHeaderFormat, headerBlockFormat, tr("Quantità"));
     }
     if( groupPrAm  ){
         for( int i=0; i < fieldsToPrint.size(); ++i ){
@@ -2520,7 +2520,7 @@ void BillItem::writeODTAttributeBillOnTable(QTextCursor *cursor,
             cursor->movePosition(QTextCursor::PreviousRow );
 
             BillItemPrivate::writeCell( cursor, table, leftTitleFormat, txtBlockFormat );
-            BillItemPrivate::writeCell( cursor, table, centralTitleFormat, txtBlockFormat , trUtf8("Totale %1").arg((*i)->name()) );
+            BillItemPrivate::writeCell( cursor, table, centralTitleFormat, txtBlockFormat , tr("Totale %1").arg((*i)->name()) );
             BillItemPrivate::writeCell( cursor, table, centralTitleFormat, tagBlockFormat );
             if( fieldsToPrint.size() == 0 ){
                 BillItemPrivate::writeCell( cursor, table, rightTitleFormat, numBlockFormat );
@@ -2550,7 +2550,7 @@ void BillItem::writeODTAttributeBillOnTable(QTextCursor *cursor,
         cursor->movePosition(QTextCursor::NextCell);
 
         BillItemPrivate::writeCell( cursor, table, leftHeaderFormat, headerBlockFormat );
-        QString title(trUtf8("Unione"));
+        QString title(tr("Unione"));
         for( QList<Attribute *>::const_iterator i = attrsToPrint.begin(); i != attrsToPrint.end(); ++i){
             title = QString("%1 %2").arg(title, (*i)->name() );
         }
@@ -2601,7 +2601,7 @@ void BillItem::writeODTAttributeBillOnTable(QTextCursor *cursor,
         cursor->movePosition(QTextCursor::NextCell);
 
         BillItemPrivate::writeCell( cursor, table, leftHeaderFormat, headerBlockFormat );
-        QString title(trUtf8("Intersezione"));
+        QString title(tr("Intersezione"));
         for( QList<Attribute *>::const_iterator i = attrsToPrint.begin(); i != attrsToPrint.end(); ++i){
             title = QString("%1 %2").arg(title, (*i)->name() );
         }
@@ -2909,7 +2909,7 @@ void BillItem::writeODTBillLine(BillPrinter::PrintBillItemsOption prItemsOption,
         BillItemPrivate::writeCell( cursor, table, centralFormat, txtBlockFormat );
     }
 
-    if( m_d->measuresModel != NULL ){
+    if( m_d->measuresModel != nullptr ){
         // celle vuote
         // tag unita misura
         BillItemPrivate::writeCell( cursor, table, centralFormat, tagBlockFormat );
@@ -2961,13 +2961,13 @@ void BillItem::writeODTBillLine(BillPrinter::PrintBillItemsOption prItemsOption,
 
             // formula senza spazi bianchi
             QString realFormula;
-            if( measure != NULL ){
+            if( measure != nullptr ){
                 realFormula = measure->formula();
                 realFormula.remove(" ");
             }
 
             // misure
-            if( measure != NULL ){
+            if( measure != nullptr ){
                 if( realFormula.isEmpty() ){
                     BillItemPrivate::writeCell( cursor, table, centralFormat, txtBlockFormat, measure->comment() );
                 } else {
@@ -2977,7 +2977,7 @@ void BillItem::writeODTBillLine(BillPrinter::PrintBillItemsOption prItemsOption,
                 BillItemPrivate::writeCell( cursor, table, centralFormat, txtBlockFormat);
             }
 
-            if( realFormula.isEmpty() || measure == NULL ){
+            if( realFormula.isEmpty() || measure == nullptr ){
                 // unita di misura
                 BillItemPrivate::writeCell( cursor, table, centralFormat, tagBlockFormat );
 
@@ -3043,9 +3043,9 @@ void BillItem::writeODTBillLine(BillPrinter::PrintBillItemsOption prItemsOption,
                 if( m_d->priceFieldModel->applyFormula(fieldsToPrint.at(i)) != PriceFieldModel::ToBillItems ) {
                     QString priceValueStr;
                     if( printValNet ) {
-                        priceValueStr = m_d->priceItem == NULL ? "" : m_d->priceItem->valueNetStr( fieldsToPrint.at(i), currentPriceDataSet() );
+                        priceValueStr = m_d->priceItem == nullptr ? "" : m_d->priceItem->valueNetStr( fieldsToPrint.at(i), currentPriceDataSet() );
                     } else {
-                        priceValueStr = m_d->priceItem == NULL ? "" : m_d->priceItem->valueStr( fieldsToPrint.at(i), currentPriceDataSet() );
+                        priceValueStr = m_d->priceItem == nullptr ? "" : m_d->priceItem->valueStr( fieldsToPrint.at(i), currentPriceDataSet() );
                     }
                     BillItemPrivate::writeCell( cursor, table, centralFormat, numBlockFormat, priceValueStr );
                 }
@@ -3067,10 +3067,10 @@ void BillItem::writeODTBillLine(BillPrinter::PrintBillItemsOption prItemsOption,
             for( int i=0; i < fieldsToPrint.size(); ++i ){
                 QString priceValueStr, amountValueStr;
                 if( printValNet ) {
-                    priceValueStr = m_d->priceItem == NULL ? "" : m_d->priceItem->valueNetStr( fieldsToPrint.at(i), currentPriceDataSet() );
+                    priceValueStr = m_d->priceItem == nullptr ? "" : m_d->priceItem->valueNetStr( fieldsToPrint.at(i), currentPriceDataSet() );
                     amountValueStr = amountNetStr(fieldsToPrint.at(i)) ;
                 } else {
-                    priceValueStr = m_d->priceItem == NULL ? "" : m_d->priceItem->valueStr( fieldsToPrint.at(i), currentPriceDataSet() );
+                    priceValueStr = m_d->priceItem == nullptr ? "" : m_d->priceItem->valueStr( fieldsToPrint.at(i), currentPriceDataSet() );
                     amountValueStr = amountStr(fieldsToPrint.at(i));
                 }
                 if( m_d->priceFieldModel->applyFormula(fieldsToPrint.at(i)) != PriceFieldModel::ToBillItems ) {
@@ -3083,7 +3083,7 @@ void BillItem::writeODTBillLine(BillPrinter::PrintBillItemsOption prItemsOption,
                 }
             }
         }
-    } else { // m_d->linesModel == NULL
+    } else { // m_d->linesModel == nullptr
         QString unitMeasureTag;
         if( m_d->priceItem ){
             if( m_d->priceItem->unitMeasure()){
@@ -3103,9 +3103,9 @@ void BillItem::writeODTBillLine(BillPrinter::PrintBillItemsOption prItemsOption,
                 if( m_d->priceFieldModel->applyFormula(fieldsToPrint.at(i)) != PriceFieldModel::ToBillItems ) {
                     QString priceValueStr;
                     if( printValNet ) {
-                        priceValueStr = m_d->priceItem == NULL ? "" : m_d->priceItem->valueNetStr( fieldsToPrint.at(i), currentPriceDataSet() );
+                        priceValueStr = m_d->priceItem == nullptr ? "" : m_d->priceItem->valueNetStr( fieldsToPrint.at(i), currentPriceDataSet() );
                     } else {
-                        priceValueStr = m_d->priceItem == NULL ? "" : m_d->priceItem->valueStr( fieldsToPrint.at(i), currentPriceDataSet() );
+                        priceValueStr = m_d->priceItem == nullptr ? "" : m_d->priceItem->valueStr( fieldsToPrint.at(i), currentPriceDataSet() );
                     }
                     BillItemPrivate::writeCell( cursor, table, centralFormat, numBlockFormat, priceValueStr );
                 }
@@ -3127,10 +3127,10 @@ void BillItem::writeODTBillLine(BillPrinter::PrintBillItemsOption prItemsOption,
             for( int i=0; i < fieldsToPrint.size(); ++i ){
                 QString priceValueStr, amountValueStr;
                 if( printValNet ) {
-                    priceValueStr = m_d->priceItem == NULL ? "" : m_d->priceItem->valueNetStr( fieldsToPrint.at(i), currentPriceDataSet() );
+                    priceValueStr = m_d->priceItem == nullptr ? "" : m_d->priceItem->valueNetStr( fieldsToPrint.at(i), currentPriceDataSet() );
                     amountValueStr = amountNetStr(fieldsToPrint.at(i));
                 } else {
-                    priceValueStr = m_d->priceItem == NULL ? "" : m_d->priceItem->valueStr( fieldsToPrint.at(i), currentPriceDataSet() );
+                    priceValueStr = m_d->priceItem == nullptr ? "" : m_d->priceItem->valueStr( fieldsToPrint.at(i), currentPriceDataSet() );
                     amountValueStr = amountStr(fieldsToPrint.at(i));
                 }
                 if( m_d->priceFieldModel->applyFormula(fieldsToPrint.at(i)) != PriceFieldModel::ToBillItems ) {
@@ -3144,7 +3144,7 @@ void BillItem::writeODTBillLine(BillPrinter::PrintBillItemsOption prItemsOption,
             }
         }
     }
-    if( m_d->parentItem->m_d->parentItem == NULL ){
+    if( m_d->parentItem->m_d->parentItem == nullptr ){
         BillItemPrivate::insertEmptyRow( colCount, cursor, leftFormat, centralFormat, rightFormat );
     }
 }
