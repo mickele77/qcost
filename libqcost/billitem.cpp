@@ -958,7 +958,7 @@ void BillItem::updateAmount( int pf ) {
         }
         if( v != m_d->amount.at(pf) ){
             m_d->amount[pf] = v;
-            emit amountChanged( pf, m_d->toString( v, 'f', 2 ) );
+            emit amountChanged( pf, amountStr( pf ) );
             emit amountChanged( pf, v );
             emit dataChanged( this, m_d->firstPriceFieldCol + (2*pf+1)  );
         }
