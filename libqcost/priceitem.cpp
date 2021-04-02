@@ -920,10 +920,10 @@ void PriceItem::setInheritLongDescFromParent( bool v ) {
 
 bool PriceItem::sortByCode() {
     bool changed = false;
-    for( int i = 0; i != m_d->childrenContainer.size(); ++i ){
-        for( int j = i+1; j != m_d->childrenContainer.size(); ++j ){
+    for( int i = 0; i < m_d->childrenContainer.size(); ++i ){
+        for( int j = i+1; j < m_d->childrenContainer.size(); ++j ){
             if( m_d->childrenContainer.at(i)->code() > m_d->childrenContainer.at(j)->code() ){
-                m_d->childrenContainer.swap( i, j );
+                m_d->childrenContainer.swapItemsAt( i, j );
                 if( !changed ){
                     changed = true;
                 }
@@ -936,10 +936,10 @@ bool PriceItem::sortByCode() {
 
 bool PriceItem::sortByCodeInv() {
     bool changed = false;
-    for( int i = 0; i != m_d->childrenContainer.size(); ++i ){
-        for( int j = i+1; j != m_d->childrenContainer.size(); ++j ){
+    for( int i = 0; i < m_d->childrenContainer.size(); ++i ){
+        for( int j = i+1; j < m_d->childrenContainer.size(); ++j ){
             if( m_d->childrenContainer.at(i)->code() < m_d->childrenContainer.at(j)->code() ){
-                m_d->childrenContainer.swap( i, j );
+                m_d->childrenContainer.swapItemsAt( i, j );
                 if( !changed ){
                     changed = true;
                 }

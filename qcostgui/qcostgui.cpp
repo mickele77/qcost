@@ -67,6 +67,7 @@
 #include <QXmlStreamReader>
 #include <QClipboard>
 #include <QProcess>
+#include <QStandardPaths>
 #include <QSettings>
 
 class QCostGUIPrivate{
@@ -480,8 +481,12 @@ void QCostGUI::newProject() {
 
 void QCostGUI::openFile() {
     if (okToContinue()) {
+        QString curDir = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation);
+        if( m_d->currentFile.exists()) {
+            curDir = QFileInfo( m_d->currentFile ).absoluteFilePath();
+        }
         QString fileName = QFileDialog::getOpenFileName( this,
-                                                         tr("Apri il progetto"), ".",
+                                                         tr("Apri il progetto"), curDir,
                                                          tr("File progetto QCost (*.qct)"));
         setCurrentFile( fileName, true );
     }

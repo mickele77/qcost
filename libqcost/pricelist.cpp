@@ -353,15 +353,19 @@ void PriceList::setDescription(const QString &value) {
 }
 
 void PriceList::sortByCode() {
+    beginResetModel();
     if( m_d->rootItem->sortByCode() ) {
         emit modelChanged();
     }
+    endResetModel();
 }
 
 void PriceList::sortByCodeInv() {
+    beginResetModel();
     if( m_d->rootItem->sortByCodeInv() ) {
         emit modelChanged();
     }
+    endResetModel();
 }
 
 void PriceList::updateValueTotal(PriceItem * item, int column) {
