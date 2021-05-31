@@ -21,10 +21,12 @@
 
 #include "priceitemgui.h"
 #include "importbillitemmeasurestxt.h"
+#include "importbillitemmeasuresclipboard.h"
 
 #include "project.h"
 #include "bill.h"
 #include "measuresmodel.h"
+#include "measure.h"
 #include "billitemattributemodel.h"
 #include "billitem.h"
 #include "priceitem.h"
@@ -85,6 +87,7 @@ BillItemGUI::BillItemGUI( QMap<PriceListDBWidget::ImportOptions, bool> * EPAImpO
     connect( m_d->ui->addBillItemLinePushButton, &QPushButton::clicked, this, &BillItemGUI::addMeasureLines );
     connect( m_d->ui->delBillItemLinePushButton, &QPushButton::clicked, this, &BillItemGUI::delMeasureLines );
     connect( m_d->ui->importBillItemMeasuresTXTPushButton, &QPushButton::clicked, this, &BillItemGUI::importBillItemMeasuresTXT );
+    connect( m_d->ui->importBillItemMeasuresClipboardPushButton, &QPushButton::clicked, this, &BillItemGUI::importBillItemMeasuresClipboard );
 
     connect( m_d->ui->addAttributePushButton, &QPushButton::clicked, this, &BillItemGUI::addAttribute );
     connect( m_d->ui->removeAttributePushButton, &QPushButton::clicked, this, &BillItemGUI::removeAttribute );
@@ -333,6 +336,29 @@ void BillItemGUI::importBillItemMeasuresTXT() {
             }
 
             ImportBillItemMeasuresTXT dialog( m_d->item->measuresModel(), position, m_d->parser, this );
+            dialog.exec();
+        }
+    }
+}
+
+void BillItemGUI::importBillItemMeasuresClipboard() {
+    if( m_d->item != nullptr ){
+        if( m_d->item->measuresModel() ){
+            QModelIndexList rowListSelected = m_d->ui->billItemLinesTableView->selectionModel()->selectedRows();
+            QList<int> rowList;
+            for( int i=0; i < rowListSelected.size(); i++ ){
+                if( !rowList.contains(rowListSelected.at(i).row()) ){
+                    rowList.append( rowListSelected.at(i).row() );
+                }
+            }
+            std::sort( rowList.begin(), rowList.end() );
+
+            int position = m_d->item->measuresModel()->rowCount();
+            if( rowList.size() > 0 ){
+                position = rowList.last()+1;
+            }
+
+            ImportBillItemMeasuresClipboard dialog( m_d->item->measuresModel(), position, m_d->parser, this );
             dialog.exec();
         }
     }

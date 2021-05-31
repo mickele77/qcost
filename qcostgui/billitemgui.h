@@ -57,7 +57,7 @@ private slots:
     void addMeasureLines();
     void delMeasureLines();
     void importBillItemMeasuresTXT();
-
+    void importBillItemMeasuresClipboard();
 
     void setQuantityLE();
 

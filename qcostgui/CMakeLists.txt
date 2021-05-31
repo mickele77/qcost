@@ -39,6 +39,7 @@ set( SRC
     priceitemdatasetviewmodel.cpp
     settingsdialog.cpp
     importbillitemmeasurestxt.cpp
+    importbillitemmeasuresclipboard.cpp
     accountingtreegui.cpp
     accountingsetpricelistmodegui.cpp
     accountingitemattributemodel.cpp
@@ -107,6 +108,7 @@ set( HDR
     priceitemdatasetviewmodel.h
     settingsdialog.h
     importbillitemmeasurestxt.h
+    importbillitemmeasuresclipboard.h
     accountingtreegui.h
     accountingsetpricelistmodegui.h
     accountingitemattributemodel.h
@@ -177,6 +179,7 @@ set ( FRM
     accountinglstreegui.ui
     accountinglsbillitemtitlegui.ui
     importlsitemmeasurestxt.ui
+    importbillitemmeasuresclipboard.ui
     accountingitempaymentgui.ui
     accountingbillprintergui.ui
     accountingtambillprintergui.ui

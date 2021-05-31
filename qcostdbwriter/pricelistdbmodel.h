@@ -32,7 +32,7 @@ class PriceListDBModel : public QAbstractItemModel {
     Q_OBJECT
 public:
     enum PriceColType{
-        nullptrCol,
+        nullCol,
         codeCol,
         shortDescCol,
         longDescCol,

@@ -81,7 +81,7 @@ QCostDBWriterGUI::QCostDBWriterGUI(QWidget *parent) :
 
     setWindowTitle(tr("%1[*] - %2").arg(trUtf8("Senza titolo"))
                    .arg(trUtf8("QCostDBWriter")));
-    connect( m_d->model, SIGNAL(modelChanged(bool)), this, SLOT(setModified(bool)) );
+    connect( m_d->model, &PriceListDBModel::modelChanged, this, &QCostDBWriterGUI::setModified );
     setModified( false );
 }
 
@@ -90,19 +90,19 @@ void QCostDBWriterGUI::createActions(){
     m_d->newFileAct->setShortcut(tr("Ctrl+N"));
     m_d->newFileAct->setStatusTip(tr("Crea un nuovo progetto"));
     m_d->newFileAct->setIcon( QIcon(":/icons/document-new.svg"));
-    connect(m_d->newFileAct, SIGNAL(triggered()), this, SLOT(newFile()) );
+    connect(m_d->newFileAct, &QAction::triggered, this, &QCostDBWriterGUI::newFile );
 
     m_d->openFileAct = new QAction(tr("&Apri"), this);
     m_d->openFileAct->setShortcut(tr("Ctrl+A"));
     m_d->openFileAct->setStatusTip(tr("Apre un file esistente"));
     m_d->openFileAct->setIcon( QIcon(":/icons/document-open.svg"));
-    connect(m_d->openFileAct, SIGNAL(triggered()), this, SLOT(openFile()));
+    connect(m_d->openFileAct, &QAction::triggered, this, &QCostDBWriterGUI::openFile );
 
     m_d->importFromDBFileAct = new QAction(tr("Importa da EP&A"), this);
     m_d->importFromDBFileAct->setShortcut(tr("Ctrl+A"));
     m_d->importFromDBFileAct->setStatusTip(tr("Importa un Elenco Prezzi Archivio"));
     m_d->importFromDBFileAct->setIcon( QIcon(":/icons/document-import-db.svg"));
-    connect(m_d->importFromDBFileAct, SIGNAL(triggered()), this, SLOT(importFromDB()));
+    connect(m_d->importFromDBFileAct, &QAction::triggered, this, &QCostDBWriterGUI::importFromDB );
 
     m_d->importFromTXTFileAct = new QAction(tr("Importa da &TXT"), this);
     m_d->importFromTXTFileAct->setShortcut(tr("Ctrl+T"));
@@ -159,13 +159,13 @@ void QCostDBWriterGUI::createMenus(){
     m_d->fileMenu->addSeparator();
     m_d->fileMenu->addAction( m_d->exitAct );
 
-    m_d->helpMenu = menuBar()->addMenu(trUtf8("&Aiuto"));
+    m_d->helpMenu = menuBar()->addMenu(tr("&Aiuto"));
     m_d->helpMenu->addAction( m_d->aboutQtAct );
     m_d->helpMenu->addAction( m_d->aboutAct );
 }
 
 void QCostDBWriterGUI::createToolBars(){
-    m_d->fileToolBar = new QToolBar(trUtf8("File"), this );
+    m_d->fileToolBar = new QToolBar(tr("File"), this );
     m_d->fileToolBar->addAction( m_d->newFileAct );
     m_d->fileToolBar->addAction( m_d->openFileAct );
     m_d->fileToolBar->addAction( m_d->saveAct );
@@ -178,7 +178,7 @@ void QCostDBWriterGUI::createToolBars(){
 
 bool QCostDBWriterGUI::setCurrentFile(const QString &fileName, bool openExistent ) {
     if( fileName.isEmpty() ){
-        QString shownName = trUtf8("Senza titolo");
+        QString shownName = tr("Senza titolo");
         setWindowTitle(tr("%1[*] - %2").arg(shownName)
                        .arg(tr("QCostDB")));
         setModified( false );

@@ -749,6 +749,7 @@ bool PriceListDBModel::saveCurrentFile() {
             m_d->db.exec( queryStr );
         }
         m_d->pendingTransactions.clear();
+        emit  modelChanged( false );
 
         return true;
     }
