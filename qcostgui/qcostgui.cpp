@@ -211,20 +211,25 @@ QCostGUI::~QCostGUI() {
 }
 
 void QCostGUI::loadSettings() {
+    qDebug("load");
 #ifdef _WIN32
     if( QFileInfo(m_d->settingsFile).exists() ){
         QSettings settings( m_d->settingsFile, QSettings::IniFormat );
-        m_d->sWordProcessorFile = settings.value("wordProcessorFile", "").toString();
-        restoreGeometry(settings.value("geometry").toByteArray());
-    }
 #else
     QSettings settings(QSettings::NativeFormat, QSettings::UserScope, "QCost" );
-    m_d->sWordProcessorFile = settings.value("wordProcessorFile", "").toString();
-    restoreGeometry(settings.value("geometry").toByteArray());
+#endif
+        m_d->sWordProcessorFile = settings.value("wordProcessorFile", "").toString();
+        QString ds = settings.value("decimalSeparator", "").toString();
+        QString ts = settings.value("thousandSeparator", "").toString();
+        m_d->parser.setSeparators( ds.at(0), ts.at(0) );
+        restoreGeometry( settings.value("geometry").toByteArray());
+#ifdef _WIN32
+    }
 #endif
 }
 
 void QCostGUI::saveSettings() {
+    qDebug("save");
 #ifdef _WIN32
     QSettings settings( m_d->settingsFile, QSettings::IniFormat );
 #else
@@ -233,6 +238,8 @@ void QCostGUI::saveSettings() {
 
     settings.setValue("geometry", saveGeometry());
     settings.setValue("wordProcessorFile", m_d->sWordProcessorFile);
+    settings.setValue("decimalSeparator", QVariant(m_d->parser.decimalSeparator()) );
+    settings.setValue("thousandSeparator", QVariant(m_d->parser.thousandSeparator() ));
 }
 
 void QCostGUI::setCurrentItem(ProjectItem *item) {
@@ -446,7 +453,7 @@ bool QCostGUI::okToContinue() {
     if (isWindowModified()) {
         int r = QMessageBox::warning(this, tr("QCost"),
                                      tr("Il progetto è stato modificato.\n"
-                                            "Vuoi salvare i cambiamenti?"),
+                                        "Vuoi salvare i cambiamenti?"),
                                      QMessageBox::Yes | QMessageBox::No
                                      | QMessageBox::Cancel);
         if (r == QMessageBox::Yes) {
@@ -821,7 +828,7 @@ void QCostGUI::viewPLDB(){
 }
 
 void QCostGUI::setOptions(){
-    SettingsDialog settingsDialog( &(m_d->sWordProcessorFile), this );
+    SettingsDialog settingsDialog( &(m_d->sWordProcessorFile), &(m_d->parser), this );
     if( settingsDialog.exec() == QDialog::Accepted ){
         saveSettings();
     }
@@ -830,12 +837,12 @@ void QCostGUI::setOptions(){
 void QCostGUI::about() {
     QMessageBox::about(this, tr("Informazioni su QCost"),
                        tr("<h1>QCost</h1>"
-                              "<h2>v0.9.0</h2>"
-                              "<p>QCost è un software per la redazione di computi metrici estimativi e documenti contabili di cantiere."
-                              "<p>Questo programma è software libero; puoi ridistribuirlo e/o modificarlo nei termini della GNU General Public License così come pubblicata dalla Free Software Foundation; sia nei termini della versione 3 della licenza che (a tua scelta) nei termini di qualsiasi altra versione successiva."
-                              "<p>Questo programma è distribuito nella speranza che sia utile, ma SENZA ALCUNA GARANZIA; neanche l'implicita garanzia di COMMERCIABILITÀ o di IDONEITÀ AD UN PARTICOLARE IMPIEGO. Consulta la GNU General Public License per maggiori dettagli. "
-                              "<p>Con il programma dovresti aver ricevuto una copia della GNU General Public License; qualora non l'avessi ricevuta, contatta la Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA."
-                              "<p>Se incontri problemi nell'uso del programma, lascia un post nel <a href=\"http://ingegnerialibera.altervista.org/forum/viewforum.php?f=3\">forum di QCost</a>.<p>Il sito di riferimento è <a href=\"http://ingegnerialibera.altervista.org/wiki/doku.php/qcost:indice\">ingegnerialibera.altervista.org/wiki/doku.php/qcost:indice</a>." ) );
+                          "<h2>v0.9.0</h2>"
+                          "<p>QCost è un software per la redazione di computi metrici estimativi e documenti contabili di cantiere."
+                          "<p>Questo programma è software libero; puoi ridistribuirlo e/o modificarlo nei termini della GNU General Public License così come pubblicata dalla Free Software Foundation; sia nei termini della versione 3 della licenza che (a tua scelta) nei termini di qualsiasi altra versione successiva."
+                          "<p>Questo programma è distribuito nella speranza che sia utile, ma SENZA ALCUNA GARANZIA; neanche l'implicita garanzia di COMMERCIABILITÀ o di IDONEITÀ AD UN PARTICOLARE IMPIEGO. Consulta la GNU General Public License per maggiori dettagli. "
+                          "<p>Con il programma dovresti aver ricevuto una copia della GNU General Public License; qualora non l'avessi ricevuta, contatta la Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA."
+                          "<p>Se incontri problemi nell'uso del programma, lascia un post nel <a href=\"http://ingegnerialibera.altervista.org/forum/viewforum.php?f=3\">forum di QCost</a>.<p>Il sito di riferimento è <a href=\"http://ingegnerialibera.altervista.org/wiki/doku.php/qcost:indice\">ingegnerialibera.altervista.org/wiki/doku.php/qcost:indice</a>." ) );
 }
 
 void QCostGUI::setModified(bool v) {

@@ -6,64 +6,104 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>327</width>
-    <height>267</height>
+    <width>779</width>
+    <height>509</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Impostazioni</string>
   </property>
-  <layout class="QGridLayout" name="gridLayout_2">
-   <item row="0" column="0">
-    <widget class="QGroupBox" name="groupBox">
-     <property name="title">
-      <string>Applicazioni esterne</string>
-     </property>
-     <layout class="QGridLayout" name="gridLayout">
-      <item row="0" column="0">
-       <widget class="QLabel" name="wordProcessorFileLabel">
-        <property name="text">
-         <string>Word Processor per file ODT</string>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="1">
-       <widget class="QLineEdit" name="wordProcessorFileLineEdit"/>
-      </item>
-      <item row="0" column="2">
-       <widget class="QToolButton" name="wordProcessorSelectFileToolButton">
-        <property name="text">
-         <string>...</string>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </widget>
-   </item>
-   <item row="1" column="0">
-    <spacer name="verticalSpacer">
-     <property name="orientation">
-      <enum>Qt::Vertical</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>20</width>
-       <height>158</height>
-      </size>
-     </property>
-    </spacer>
-   </item>
-   <item row="2" column="0">
-    <widget class="QDialogButtonBox" name="buttonBox">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-     <property name="standardButtons">
-      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
-     </property>
-    </widget>
-   </item>
-  </layout>
+  <widget class="QGroupBox" name="groupBox">
+   <property name="geometry">
+    <rect>
+     <x>9</x>
+     <y>9</y>
+     <width>511</width>
+     <height>53</height>
+    </rect>
+   </property>
+   <property name="title">
+    <string>Applicazioni esterne</string>
+   </property>
+   <layout class="QGridLayout" name="gridLayout">
+    <item row="0" column="0">
+     <widget class="QLabel" name="wordProcessorFileLabel">
+      <property name="text">
+       <string>Word Processor per file ODT</string>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="1">
+     <widget class="QLineEdit" name="wordProcessorFileLineEdit"/>
+    </item>
+    <item row="0" column="2">
+     <widget class="QToolButton" name="wordProcessorSelectFileToolButton">
+      <property name="text">
+       <string>...</string>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QDialogButtonBox" name="buttonBox">
+   <property name="geometry">
+    <rect>
+     <x>360</x>
+     <y>470</y>
+     <width>156</width>
+     <height>23</height>
+    </rect>
+   </property>
+   <property name="orientation">
+    <enum>Qt::Horizontal</enum>
+   </property>
+   <property name="standardButtons">
+    <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+   </property>
+  </widget>
+  <widget class="QGroupBox" name="localGroupBox">
+   <property name="geometry">
+    <rect>
+     <x>9</x>
+     <y>68</y>
+     <width>257</width>
+     <height>79</height>
+    </rect>
+   </property>
+   <property name="title">
+    <string>Parametri locaizzazione</string>
+   </property>
+   <layout class="QGridLayout" name="gridLayout_2">
+    <item row="0" column="0">
+     <widget class="QLabel" name="thSeparatorLabel">
+      <property name="text">
+       <string>Separatore migliaia</string>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="0" colspan="2">
+     <widget class="QLabel" name="decSeparatorLabel">
+      <property name="text">
+       <string>Separatore decimale</string>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="2">
+     <widget class="QLineEdit" name="decSeparatorLEdit">
+      <property name="maxLength">
+       <number>1</number>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="2">
+     <widget class="QLineEdit" name="thSeparatorLEdit">
+      <property name="maxLength">
+       <number>1</number>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
  </widget>
  <resources/>
  <connections>

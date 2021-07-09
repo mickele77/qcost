@@ -75,7 +75,7 @@ public:
         functionsMap.insert( QString("TANH"), &tanh);
 
         // aggiungere qui altre funzioni
-    };
+    }
     QLocale locale;
     // separatore decimale
     QChar decimalSeparator;
@@ -196,8 +196,13 @@ public:
     double evaluate(const QString &exprInput, QString * errorMsg){
         QString expr = exprInput;
         expr.remove(" ");
+        expr = expr.toUpper();
         expr.remove(thousandSeparator);
+        expr.replace( decimalSeparator, ".");
+        return evaluateNoLocalSep( expr, errorMsg );
+    }
 
+    double evaluateNoLocalSep(const QString &expr, QString * errorMsg){
         if( expr.size() == 0 ){
             return 0.0;
         }
@@ -229,17 +234,15 @@ public:
                         return 0.0;
                     }
 
-                    double leftValue = evaluate( leftPart, errorMsg );
-                    double rightValue = evaluate( rightPart, errorMsg );
+                    double leftValue = evaluateNoLocalSep( leftPart, errorMsg );
+                    double rightValue = evaluateNoLocalSep( rightPart, errorMsg );
 
                     // Ora esegue il calcolo tra le due parti
                     switch( oper.toLatin1() ){
                     case '-':{
-                        return leftValue - rightValue;
-                        break; }
+                        return leftValue - rightValue; }
                     case '+':{
-                        return leftValue + rightValue;
-                        break; }
+                        return leftValue + rightValue; }
                     case '/':{
                         if( rightValue == 0.0 ){
                             if( errorMsg ){
@@ -247,17 +250,13 @@ public:
                             }
                             return 0.0;
                         }
-                        return leftValue / rightValue;
-                        break; }
+                        return leftValue / rightValue; }
                     case '*':{
-                        return leftValue * rightValue;
-                        break; }
+                        return leftValue * rightValue; }
                     case '^':{
-                        return pow( leftValue, rightValue );
-                        break; }
+                        return pow( leftValue, rightValue ); }
                     case 'E':{
-                        return leftValue * pow(10.0, rightValue );
-                        break; }
+                        return leftValue * pow(10.0, rightValue ); }
                     }
                 }
                 // cerca se c'è un altro operatore prima di oper
@@ -281,7 +280,7 @@ public:
             if( (pos+1) < expr.size() ){
                 argumentStr = expr.mid( pos+1, expr.size()-(pos+2));
             }
-            double argumentValue = evaluate(argumentStr, errorMsg);
+            double argumentValue = evaluateNoLocalSep(argumentStr, errorMsg);
 
             if( function.isEmpty() ){
                 return argumentValue;
@@ -300,7 +299,7 @@ public:
         // Se siamo arrivati fin qui la stringa è un numero: restituiamo il valore numerico
         if( isValue(expr) ){
             bool ok = false;
-            double ret = locale.toDouble( expr, &ok );
+            double ret = expr.toDouble( &ok );
             if( !ok ){
                 if( errorMsg ){
                     errorMsg->append( tr("Errore nella conversione del valore %1.").arg(expr));
@@ -323,14 +322,12 @@ public:
 };
 
 MathParser::MathParser( const QLocale & loc ):
+    QObject(),
     m_d( new MathParserPrivate( loc ) ){
 }
 
 double MathParser::evaluate(const QString &exprInput, QString *errorMsg) {
-    QString expr = exprInput;
-    expr = expr.remove(' ');
-    expr = expr.toUpper();
-    return m_d->evaluate( expr, errorMsg);
+    return m_d->evaluate( exprInput, errorMsg);
 }
 
 QDate MathParser::evaluateDate(const QString &date, QLocale::FormatType format) {
@@ -342,11 +339,43 @@ QString MathParser::toString(const QDate &date, QLocale::FormatType format) cons
 }
 
 QString MathParser::toString(double i, char f, int prec) const {
-    return m_d->locale.toString( i, f, prec);
+    QString string = QString::number( i, f, prec );
+    int dotIndex = string.indexOf( '.' );
+    string.replace('.', m_d->decimalSeparator );
+    if( dotIndex == -1 ) {
+        dotIndex = string.size();
+    }
+    for( int i = dotIndex - 3; i > 0; i-= 3 ){
+        string.insert( i, m_d->thousandSeparator );
+    }
+    return string;
+    // return m_d->locale.toString( i, f, prec);
 }
 
 QString MathParser::decimalSeparator() {
     return m_d->decimalSeparator;
+}
+
+QString MathParser::thousandSeparator() {
+    return m_d->thousandSeparator;
+}
+
+void MathParser::setSeparators(const QChar &newDecSep, const QChar &newThSep) {
+    if( newDecSep != newThSep ) {
+        QChar oldDecSep;
+        QChar oldThSep;
+        if( newDecSep != m_d->decimalSeparator ) {
+            oldDecSep = m_d->decimalSeparator;
+            m_d->decimalSeparator = newDecSep;
+        }
+        if( newThSep != m_d->thousandSeparator ) {
+            oldThSep = m_d->thousandSeparator;
+            m_d->thousandSeparator = newThSep;
+        }
+        if( !(oldDecSep.isNull()) || !(oldThSep.isNull()) ){
+            emit separatorsChanged( oldDecSep, newDecSep, oldThSep, newThSep );
+        }
+    }
 }
 
 QString MathParser::spellInt(QString numStr) {

@@ -27,8 +27,10 @@ class QDate;
 class MathParserPrivate;
 
 #include <QLocale>
+#include <QObject>
 
-class EXPORT_MATHPARSER_LIB_OPT MathParser{
+class EXPORT_MATHPARSER_LIB_OPT MathParser : public QObject {
+    Q_OBJECT
 public:
     MathParser( const QLocale & loc );
 
@@ -39,9 +41,15 @@ public:
     QString	toString( double i, char f = 'g', int prec = 6 ) const;
 
     QString decimalSeparator();
+    QString thousandSeparator();
+    void setSeparators( const QChar & newDecSep, const QChar & newThSep );
+
 
     QString spellInt(QString numStr );
     QString spellDouble(QString num);
+
+signals:
+    void separatorsChanged( QString oldDecSep, QString newDecSep, QString oldThSep, QString newThSep );
 
 private:
     MathParserPrivate * m_d;

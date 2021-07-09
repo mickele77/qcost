@@ -81,13 +81,13 @@ QStringList MeasurePrivate::splitQString( const QString & str, const QList<QChar
 
 
 Measure::Measure(BillItem * bItem , MathParser * p, UnitMeasure * ump) :
-    QObject(0),
+    QObject(nullptr),
     m_d( new MeasurePrivate( bItem, p, ump )){
     connect( m_d->billItem, &BillItem::currentPriceDataSetChanged, this, &Measure::updateQuantity);
 }
 
 Measure::Measure(AccountingBillItem *accBItem, MathParser *p, UnitMeasure *ump):
-    QObject(0),
+    QObject(nullptr),
     m_d( new MeasurePrivate( accBItem, p, ump )){
 }
 
