@@ -34,7 +34,7 @@ public:
     /** Imposta il valore della formula
      * @param connItemFromId se vero i valori tra parentesi [] sono gli id degli item connessi,
               altrimenti sono i progressiveCode */
-    void setFormula(const QString &newFormulaInput, bool connItemFromId = false );
+    void setFormula(const QString &newFormulaInput, bool connItemFromId = false, bool localDecimalSeparator = true );
     void setComment(const QString &nc);
     void setUnitMeasure( UnitMeasure * ump );
 

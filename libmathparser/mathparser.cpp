@@ -193,17 +193,23 @@ public:
         return true;
     }
 
+    // Prende come input la formula con separatore decimale definito da utente
+    double evaluateLocalSep(const QString &exprInput, QString * errorMsg){
+        QString expr = exprInput;
+        expr.remove(" ");
+        expr = expr.toUpper();
+        expr.remove( thousandSeparator );
+        expr.replace( decimalSeparator, ".");
+        return evaluate( expr, errorMsg );
+    }
+
+    // Prende come input la formula con separatore decimale "."
     double evaluate(const QString &exprInput, QString * errorMsg){
         QString expr = exprInput;
         expr.remove(" ");
         expr = expr.toUpper();
-        expr.remove(thousandSeparator);
-        expr.replace( decimalSeparator, ".");
-        return evaluateNoLocalSep( expr, errorMsg );
-    }
 
-    double evaluateNoLocalSep(const QString &expr, QString * errorMsg){
-        if( expr.size() == 0 ){
+        if( exprInput.size() == 0 ){
             return 0.0;
         }
 
@@ -212,14 +218,14 @@ public:
             QChar oper = operatorsChar.at(i);
 
             // cerca l'ultima occorrenza dell'operatore i-esimo
-            int pos = lastIndexOfOP( expr, oper, expr.size() - 1 );
+            int pos = lastIndexOfOP( exprInput, oper, exprInput.size() - 1 );
             while( pos > - 1 ){
-                if( isOperator(expr, oper, pos) ) {
+                if( isOperator(exprInput, oper, pos) ) {
                     // Divide l'espressione in due parti
-                    QString leftPart = expr.left( pos );
+                    QString leftPart = exprInput.left( pos );
                     QString rightPart;
-                    if( (pos+1) < expr.size() ){
-                        rightPart = expr.mid( pos+1 );
+                    if( (pos+1) < exprInput.size() ){
+                        rightPart = exprInput.mid( pos+1 );
                     }
                     if( leftPart.isEmpty() ){
                         if( errorMsg ){
@@ -234,8 +240,8 @@ public:
                         return 0.0;
                     }
 
-                    double leftValue = evaluateNoLocalSep( leftPart, errorMsg );
-                    double rightValue = evaluateNoLocalSep( rightPart, errorMsg );
+                    double leftValue = evaluate( leftPart, errorMsg );
+                    double rightValue = evaluate( rightPart, errorMsg );
 
                     // Ora esegue il calcolo tra le due parti
                     switch( oper.toLatin1() ){
@@ -261,26 +267,26 @@ public:
                 }
                 // cerca se c'è un altro operatore prima di oper
                 if( pos>-1 ){
-                    pos = lastIndexOfOP( expr, oper, pos-1 );
+                    pos = lastIndexOfOP( exprInput, oper, pos-1 );
                 }
             }
         }
 
         // controlla se l'espressione è una funzione, tipo "sin(2+3)"
-        int pos = expr.indexOf( '(' );
-        if( (pos > -1) && (expr.at(expr.size()-1)==')') ){
+        int pos = exprInput.indexOf( '(' );
+        if( (pos > -1) && (exprInput.at(exprInput.size()-1)==')') ){
             // estrae il nome della funzione
             QString function;
             if( pos > 0 ){
-                function = expr.left(pos);
+                function = exprInput.left(pos);
             }
 
             // estrae l'espressione tra parentesi e la calcola
             QString argumentStr;
-            if( (pos+1) < expr.size() ){
-                argumentStr = expr.mid( pos+1, expr.size()-(pos+2));
+            if( (pos+1) < exprInput.size() ){
+                argumentStr = exprInput.mid( pos+1, exprInput.size()-(pos+2));
             }
-            double argumentValue = evaluateNoLocalSep(argumentStr, errorMsg);
+            double argumentValue = evaluate(argumentStr, errorMsg);
 
             if( function.isEmpty() ){
                 return argumentValue;
@@ -297,25 +303,25 @@ public:
         }
 
         // Se siamo arrivati fin qui la stringa è un numero: restituiamo il valore numerico
-        if( isValue(expr) ){
+        if( isValue(exprInput) ){
             bool ok = false;
-            double ret = expr.toDouble( &ok );
+            double ret = exprInput.toDouble( &ok );
             if( !ok ){
                 if( errorMsg ){
-                    errorMsg->append( tr("Errore nella conversione del valore %1.").arg(expr));
+                    errorMsg->append( tr("Errore nella conversione del valore %1.").arg(exprInput));
                 }
             }
             return ret;
         }
 
         // controlla se il valore è una costante
-        if( constantsMap.contains(expr) ){
-            return constantsMap.value( expr );
+        if( constantsMap.contains(exprInput) ){
+            return constantsMap.value( exprInput );
         }
 
         // se siamo arrivati fin qui qualcosa è andata storto
         if( errorMsg ){
-            errorMsg->append( tr("Errore di sintassi nella parte %1.\n").arg(expr) );
+            errorMsg->append( tr("Errore di sintassi nella parte %1.\n").arg(exprInput) );
         }
         return 0.0;
     }

@@ -128,6 +128,7 @@ void Measure::setUnitMeasure(UnitMeasure *ump) {
 
 QString Measure::formula() const {
     QString displayedForm = m_d->formula;
+    displayedForm.replace( ".", m_d->parser->decimalSeparator() );
 
     if( m_d->billItem != nullptr ){
         QList<QChar> matchStr;
@@ -269,9 +270,11 @@ QString Measure::formula() const {
     return displayedForm;
 }
 
-void Measure::setFormula( const QString & newFormulaInput, bool connItemFromId ){
+void Measure::setFormula(const QString & newFormulaIn, bool connItemFromId , bool localDecimalSeparator){
     // il valore della nuova formula che verrà memorizzato
     QString newFormula;
+
+    QString newFormulaInput = newFormulaIn;
 
     if( m_d->billItem != nullptr ){
         // azzera l'elenco dei BillItem connessi
@@ -492,6 +495,11 @@ void Measure::setFormula( const QString & newFormulaInput, bool connItemFromId )
         newFormula = newFormulaInput;
     }
 
+    if( localDecimalSeparator ) {
+        newFormula.remove( m_d->parser->thousandSeparator() );
+        newFormula.replace( m_d->parser->decimalSeparator(), ".");
+    }
+
     if( newFormula != m_d->formula ){
         m_d->formula = newFormula;
         updateQuantity();
@@ -681,9 +689,6 @@ void Measure::writeXml10( QXmlStreamWriter * writer ) const {
     writer->writeStartElement( "BillItemMeasure" );
     writer->writeAttribute( "comment", m_d->comment );
     QString f = effectiveFormula();
-    if( m_d->parser->decimalSeparator() != "." ){
-        f.replace( m_d->parser->decimalSeparator(), ".");
-    }
     writer->writeAttribute( "formula", f );
     writer->writeEndElement();
 }
@@ -694,21 +699,14 @@ void Measure::loadFromXml10(const QXmlStreamAttributes &attrs) {
     }
     if( attrs.hasAttribute( "formula" ) ){
         QString f = attrs.value( "formula").toString();
-        if( m_d->parser->decimalSeparator() != "." ){
-            f.replace( ".", m_d->parser->decimalSeparator());
-        }
-        setFormula( f );
+        setFormula( f, false, false );
     }
 }
 
 void Measure::writeXml20( QXmlStreamWriter * writer ) const {
     writer->writeStartElement( "Measure" );
     writer->writeAttribute( "comment", comment() );
-    QString f = m_d->formula;
-    if( m_d->parser->decimalSeparator() != "." ){
-        f.replace( m_d->parser->decimalSeparator(), ".");
-    }
-    writer->writeAttribute( "formula", f );
+    writer->writeAttribute( "formula", m_d->formula );
     writer->writeEndElement();
 }
 
@@ -718,10 +716,7 @@ void Measure::loadFromXmlTmp20() {
     }
     if( m_d->tmpAttrs.hasAttribute( "formula" ) ){
         QString f = m_d->tmpAttrs.value( "formula").toString();
-        if( m_d->parser->decimalSeparator() != "." ){
-            f.replace( ".", m_d->parser->decimalSeparator());
-        }
-        setFormula( f, true );
+        setFormula( f, true, false );
     }
     m_d->tmpAttrs.clear();
 }
