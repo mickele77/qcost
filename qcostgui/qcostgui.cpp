@@ -211,7 +211,6 @@ QCostGUI::~QCostGUI() {
 }
 
 void QCostGUI::loadSettings() {
-    qDebug("load");
 #ifdef _WIN32
     if( QFileInfo(m_d->settingsFile).exists() ){
         QSettings settings( m_d->settingsFile, QSettings::IniFormat );
@@ -229,7 +228,6 @@ void QCostGUI::loadSettings() {
 }
 
 void QCostGUI::saveSettings() {
-    qDebug("save");
 #ifdef _WIN32
     QSettings settings( m_d->settingsFile, QSettings::IniFormat );
 #else

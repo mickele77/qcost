@@ -333,7 +333,7 @@ MathParser::MathParser( const QLocale & loc ):
 }
 
 double MathParser::evaluate(const QString &exprInput, QString *errorMsg) {
-    return m_d->evaluate( exprInput, errorMsg);
+    return m_d->evaluateLocalSep( exprInput, errorMsg);
 }
 
 QDate MathParser::evaluateDate(const QString &date, QLocale::FormatType format) {
