@@ -217,13 +217,15 @@ void QCostGUI::loadSettings() {
 #else
     QSettings settings(QSettings::NativeFormat, QSettings::UserScope, "QCost" );
 #endif
-        m_d->sWordProcessorFile = settings.value("wordProcessorFile", "").toString();
-        QString ds = settings.value("decimalSeparator", "").toString();
-        QString ts = settings.value("thousandSeparator", "").toString();
+    m_d->sWordProcessorFile = settings.value("wordProcessorFile", "").toString();
+    QString ds = settings.value("decimalSeparator", "").toString();
+    QString ts = settings.value("thousandSeparator", "").toString();
+    if( ! (ds.isEmpty() || ts.isEmpty() ) ) {
         m_d->parser.setSeparators( ds.at(0), ts.at(0) );
-        restoreGeometry( settings.value("geometry").toByteArray());
-#ifdef _WIN32
     }
+    restoreGeometry( settings.value("geometry").toByteArray());
+#ifdef _WIN32
+}
 #endif
 }
 

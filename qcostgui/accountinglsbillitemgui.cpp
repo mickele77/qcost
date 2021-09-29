@@ -240,7 +240,7 @@ void AccountingLSBillItemGUI::addMeasureLines() {
                     rowList.append( rowListSelected.at(i).row() );
                 }
             }
-            qSort( rowList.begin(), rowList.end() );
+            std::sort( rowList.begin(), rowList.end() );
 
             if( rowList.size() > 0 ){
                 m_d->item->measuresModel()->insertRows( rowList.last()+1, rowList.size());
@@ -262,7 +262,7 @@ void AccountingLSBillItemGUI::delMeasureLines() {
                         rowList.append( rowListSelected.at(i).row() );
                     }
                 }
-                qSort( rowList.begin(), rowList.end() );
+                std::sort( rowList.begin(), rowList.end() );
                 m_d->item->measuresModel()->removeRows( rowList.first(), rowList.size() );
             }
         }
@@ -279,7 +279,7 @@ void AccountingLSBillItemGUI::importMeasuresTXT() {
                     rowList.append( rowListSelected.at(i).row() );
                 }
             }
-            qSort( rowList.begin(), rowList.end() );
+            std::sort( rowList.begin(), rowList.end() );
 
             int position = m_d->item->measuresModel()->rowCount();
             if( rowList.size() > 0 ){

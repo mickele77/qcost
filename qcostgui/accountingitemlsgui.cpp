@@ -179,11 +179,11 @@ void AccountingItemLSGUI::updateLumpSumsComboBox() {
 
     m_d->ui->lumpSumsComboBox->clear();
     int currIndex = 0;
-    QVariant v = qVariantFromValue((void *) nullptr);
+    QVariant v = QVariant::fromValue((void *) nullptr);
     m_d->ui->lumpSumsComboBox->insertItem( 0, "", v);
     for( int i=0; i < m_d->lsBills->billCount(); ++i ){
         AccountingLSBill * b = m_d->lsBills->bill(i);
-        v = qVariantFromValue((void *) b );
+        v = QVariant::fromValue((void *) b );
         m_d->ui->lumpSumsComboBox->insertItem( (i+1), b->name(), v );
         if( m_d->item != nullptr ){
             if( m_d->item->lsBill() == b ){

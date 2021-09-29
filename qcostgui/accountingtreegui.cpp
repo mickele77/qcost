@@ -813,25 +813,25 @@ void AccountingTreeGUI::showEvent(QShowEvent *event) {
 
 void AccountingTreeGUI::populatePriceListComboBox(){
     m_d->ui->priceListComboBox->clear();
-    m_d->ui->priceListComboBox->addItem( QString("---"), qVariantFromValue((void *) nullptr ));
+    m_d->ui->priceListComboBox->addItem( QString("---"), QVariant::fromValue((void *) nullptr ));
     for( int i=0; i < m_d->project->priceListCount(); ++i){
         QString n;
         if( m_d->project->priceList(i) ){
             n =  m_d->project->priceList(i)->name();
         }
-        m_d->ui->priceListComboBox->addItem( n, qVariantFromValue((void *) m_d->project->priceList(i) ));
+        m_d->ui->priceListComboBox->addItem( n, QVariant::fromValue((void *) m_d->project->priceList(i) ));
     }
 }
 
 void AccountingTreeGUI::setPriceListComboBox() {
     if( m_d->accountingBill != nullptr ){
-        int i = m_d->ui->priceListComboBox->findData( qVariantFromValue((void *) m_d->accountingBill->priceList() ));
+        int i = m_d->ui->priceListComboBox->findData( QVariant::fromValue((void *) m_d->accountingBill->priceList() ));
         if( i < 0 ){
             i = 0;
         }
         m_d->ui->priceListComboBox->setCurrentIndex( i );
     } else if( m_d->accountingTAMBill != nullptr ){
-        int i = m_d->ui->priceListComboBox->findData( qVariantFromValue((void *) m_d->accountingTAMBill->priceList() ));
+        int i = m_d->ui->priceListComboBox->findData( QVariant::fromValue((void *) m_d->accountingTAMBill->priceList() ));
         if( i < 0 ){
             i = 0;
         }
@@ -880,7 +880,7 @@ void AccountingTreeGUI::addItems(){
                 for( int i=0; i < (rowList.size()-1); ++i){
                     for( int j=i+1; j < rowList.size(); ++j){
                         if( rowList.at(j).row() < rowList.at(i).row() ){
-                            rowList.swap( i, j );
+                            rowList.swapItemsAt( i, j );
                         }
                     }
                 }
@@ -969,7 +969,7 @@ void AccountingTreeGUI::addItems(){
                 for( int i=0; i < (rowList.size()-1); ++i){
                     for( int j=i+1; j < rowList.size(); ++j){
                         if( rowList.at(j).row() < rowList.at(i).row() ){
-                            rowList.swap( i, j );
+                            rowList.swapItemsAt( i, j );
                         }
                     }
                 }

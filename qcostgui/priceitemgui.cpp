@@ -522,13 +522,13 @@ void PriceItemGUI::updateUnitMeasureComboBox() {
         disconnect( m_d->ui->unitMeasureComboBox, static_cast<void(QComboBox::*)( int )>(&QComboBox::currentIndexChanged), this, &PriceItemGUI::setUnitMeasure );
     }
     m_d->ui->unitMeasureComboBox->clear();
-    m_d->ui->unitMeasureComboBox->addItem( QString("---"), qVariantFromValue((void *) nullptr ));
+    m_d->ui->unitMeasureComboBox->addItem( QString("---"), QVariant::fromValue((void *) nullptr ));
     for( int i=0; i<m_d->unitMeasureModel->size(); ++i){
-        m_d->ui->unitMeasureComboBox->addItem( m_d->unitMeasureModel->unitMeasure(i)->tag(), qVariantFromValue((void *) m_d->unitMeasureModel->unitMeasure(i) ));
+        m_d->ui->unitMeasureComboBox->addItem( m_d->unitMeasureModel->unitMeasure(i)->tag(), QVariant::fromValue((void *) m_d->unitMeasureModel->unitMeasure(i) ));
     }
 
     if( m_d->priceItem != nullptr ){
-        int i = m_d->ui->unitMeasureComboBox->findData( qVariantFromValue((void *) m_d->priceItem->unitMeasure() ));
+        int i = m_d->ui->unitMeasureComboBox->findData( QVariant::fromValue((void *) m_d->priceItem->unitMeasure() ));
         if( i < 0 ){
             i = 0;
         }
@@ -543,7 +543,7 @@ void PriceItemGUI::setPriceItemnullptr() {
 
 void PriceItemGUI::setItemUnitMeasureFromComboBox() {
     if( m_d->priceItem ){
-        int i = m_d->ui->unitMeasureComboBox->findData( qVariantFromValue((void *) m_d->priceItem->unitMeasure() ));
+        int i = m_d->ui->unitMeasureComboBox->findData( QVariant::fromValue((void *) m_d->priceItem->unitMeasure() ));
         if( i < 0 ){
             i = 0;
         }
@@ -552,7 +552,7 @@ void PriceItemGUI::setItemUnitMeasureFromComboBox() {
 }
 
 void PriceItemGUI::setItemUnitMeasureFromComboBox( UnitMeasure * ump ) {
-    int i = m_d->ui->unitMeasureComboBox->findData( qVariantFromValue((void *) ump ) );
+    int i = m_d->ui->unitMeasureComboBox->findData( QVariant::fromValue((void *) ump ) );
     if( i < 0 ){
         i = 0;
     }

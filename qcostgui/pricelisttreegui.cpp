@@ -187,7 +187,7 @@ void PriceListTreeGUI::addItems(){
                 for( int i=0; i < (rowList.size()-1); ++i){
                     for( int j=i+1; j < rowList.size(); ++j){
                         if( rowList.at(j).row() < rowList.at(i).row() ){
-                            rowList.swap( i, j );
+                            rowList.swapItemsAt( i, j );
                         }
                     }
                 }

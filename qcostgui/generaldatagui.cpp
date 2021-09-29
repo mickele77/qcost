@@ -84,7 +84,7 @@ void GeneralDataGUI::insertUnitMeasure(){
                 listRows.append( listIndexs.at(i).row() );
             }
         }
-        qSort( listRows );
+        std::sort(listRows.begin(), listRows.end() );
         if( listRows.size() > 0 ){
             m_d->project->unitMeasureModel()->insert( listRows.last()+1, listRows.size() );
         } else {
@@ -111,7 +111,7 @@ void GeneralDataGUI::insertPriceField(){
                 listRows.append( listIndexs.at(i).row() );
             }
         }
-        qSort( listRows );
+        std::sort( listRows.begin(), listRows.end() );
         if( listRows.size() > 0 ){
             m_d->project->priceFieldModel()->insertRows( listRows.last()+1, listRows.size() );
         } else {

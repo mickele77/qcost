@@ -352,7 +352,7 @@ void BillTreeGUI::addItems(){
                 for( int i=0; i < (rowList.size()-1); ++i){
                     for( int j=i+1; j < rowList.size(); ++j){
                         if( rowList.at(j).row() < rowList.at(i).row() ){
-                            rowList.swap( i, j );
+                            rowList.swapItemsAt( i, j );
                         }
                     }
                 }
@@ -509,19 +509,19 @@ void BillTreeGUI::showEvent(QShowEvent *event) {
 
 void BillTreeGUI::populatePriceListComboBox(){
     m_d->ui->priceListComboBox->clear();
-    m_d->ui->priceListComboBox->addItem( QString("---"), qVariantFromValue((void *) nullptr ));
+    m_d->ui->priceListComboBox->addItem( QString("---"), QVariant::fromValue((void *) nullptr ));
     for( int i=0; i < m_d->project->priceListCount(); ++i){
         QString n;
         if( m_d->project->priceList(i) ){
             n =  m_d->project->priceList(i)->name();
         }
-        m_d->ui->priceListComboBox->addItem( n, qVariantFromValue((void *) m_d->project->priceList(i) ));
+        m_d->ui->priceListComboBox->addItem( n, QVariant::fromValue((void *) m_d->project->priceList(i) ));
     }
 }
 
 void BillTreeGUI::setPriceListComboBox() {
     if( m_d->bill ){
-        int i = m_d->ui->priceListComboBox->findData( qVariantFromValue((void *) m_d->bill->priceList() ));
+        int i = m_d->ui->priceListComboBox->findData( QVariant::fromValue((void *) m_d->bill->priceList() ));
         if( i < 0 ){
             i = 0;
         }

@@ -170,12 +170,12 @@ void AccountingItemTAMGUI::updateTAMBillComboBox() {
 
     m_d->ui->tamBillComboBox->clear();
     int currIndex = 0;
-    QVariant v = qVariantFromValue((void *) nullptr);
+    QVariant v = QVariant::fromValue((void *) nullptr);
     m_d->ui->tamBillComboBox->insertItem( 0, "", v);
     QList<AccountingTAMBillItem *> bills = m_d->tamBill->bills();
     for( int i=0; i < bills.size(); ++i ){
         AccountingTAMBillItem * b = bills.at(i);
-        v = qVariantFromValue((void *) b );
+        v = QVariant::fromValue((void *) b );
         m_d->ui->tamBillComboBox->insertItem( (i+1), b->title(), v );
         if( m_d->item != nullptr ){
             if( m_d->item->tamBillItem() == b ){

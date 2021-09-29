@@ -466,7 +466,7 @@ void AccountingItemPPUGUI::addMeasureLines() {
                     rowList.append( rowListSelected.at(i).row() );
                 }
             }
-            qSort( rowList.begin(), rowList.end() );
+            std::sort( rowList.begin(), rowList.end() );
 
             if( rowList.size() > 0 ){
                 m_d->TAMBillItem->measuresModel()->insertRows( rowList.last()+1, rowList.size());
@@ -483,7 +483,7 @@ void AccountingItemPPUGUI::addMeasureLines() {
                     rowList.append( rowListSelected.at(i).row() );
                 }
             }
-            qSort( rowList.begin(), rowList.end() );
+            std::sort( rowList.begin(), rowList.end() );
 
             if( rowList.size() > 0 ){
                 m_d->billItem->measuresModel()->insertRows( rowList.last()+1, rowList.size());
@@ -519,7 +519,7 @@ void AccountingItemPPUGUI::delMeasureLines() {
                         rowList.append( rowListSelected.at(i).row() );
                     }
                 }
-                qSort( rowList.begin(), rowList.end() );
+                std::sort( rowList.begin(), rowList.end() );
                 m_d->billItem->measuresModel()->removeRows( rowList.first(), rowList.size() );
             }
         }
