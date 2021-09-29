@@ -46,11 +46,11 @@ SettingsDialog::~SettingsDialog() {
 void SettingsDialog::setValuesAndExit(){
     *(m_d->wordProcessorFile) = m_d->ui->wordProcessorFileLineEdit->text();
     QChar decSeparator;
-    if( m_d->ui->decSeparatorLEdit->text().length() > 0 ){
+    if( ! (m_d->ui->decSeparatorLEdit->text().isEmpty()) ){
         decSeparator = m_d->ui->decSeparatorLEdit->text().at(0);
     }
     QChar thSeparator;
-    if( m_d->ui->thSeparatorLEdit->text().length() > 0 ){
+    if( ! (m_d->ui->thSeparatorLEdit->text().isEmpty()) ){
         thSeparator = m_d->ui->thSeparatorLEdit->text().at(0);
     }
     m_d->parser->setSeparators( decSeparator, thSeparator );
