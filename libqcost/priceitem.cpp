@@ -73,7 +73,7 @@ public:
         if( parser == nullptr ){
             return str.toDouble();
         } else {
-            return parser->evaluate( str );
+            return parser->evaluateLocal( str );
         }
     }
 

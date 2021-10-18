@@ -819,7 +819,7 @@ void AccountingTAMBillItem::setDiscount(const QString &newVal) {
     QString v = newVal;
     v.remove("%");
     if( m_d->parser != nullptr ){
-        setDiscount( m_d->parser->evaluate( v ) / 100.0 );
+        setDiscount( m_d->parser->evaluateLocal( v ) / 100.0 );
     } else {
         setDiscount( v.toDouble() / 100.0 );
     }
@@ -1774,7 +1774,7 @@ void AccountingTAMBillItem::setQuantity(double v) {
 
 void AccountingTAMBillItem::setQuantity(const QString &vstr ) {
     if( m_d->parser != nullptr ){
-        setQuantity( m_d->parser->evaluate( vstr ) );
+        setQuantity( m_d->parser->evaluateLocal( vstr ) );
     } else {
         setQuantity( vstr.toDouble() );
     }

@@ -278,7 +278,7 @@ void AttributesGUI::addAttribute(){
                     selectedRows.append( (*i).row() );
                 }
             }
-            qSort( selectedRows );
+            std::sort( selectedRows.begin(), selectedRows.end() );
             row = selectedRows.last() + 1;
             count = selectedRows.size();
         }

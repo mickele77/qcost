@@ -1088,7 +1088,7 @@ double PriceFieldModel::calcFormula( bool * ok, int field, QList<double> fieldVa
                 }
             }
             *ok = true;
-            double val = m_d->parser->evaluate( valStr );
+            double val = m_d->parser->evaluateLocal( valStr );
             val = UnitMeasure::applyPrecision( val, effectivePrecision(field) );
             return val;
         }

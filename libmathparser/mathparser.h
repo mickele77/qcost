@@ -34,6 +34,7 @@ class EXPORT_MATHPARSER_LIB_OPT MathParser : public QObject {
 public:
     MathParser( const QLocale & loc );
 
+    double evaluateLocal(const QString & exprInput , QString *errorMsg = 0 );
     double evaluate(const QString & exprInput , QString *errorMsg = 0 );
     QDate evaluateDate( const QString & date, QLocale::FormatType format = QLocale::NarrowFormat );
 

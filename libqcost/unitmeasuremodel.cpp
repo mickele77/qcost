@@ -170,7 +170,7 @@ bool UnitMeasureModel::setData(const QModelIndex &index, const QVariant &value, 
         case 2: {
             double v = 0.0;
             if( m_d->parser ){
-                v = m_d->parser->evaluate(value.toString());
+                v = m_d->parser->evaluateLocal(value.toString());
             } else {
                 v = value.toDouble();
             }

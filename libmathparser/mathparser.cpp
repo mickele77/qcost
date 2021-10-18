@@ -194,7 +194,7 @@ public:
     }
 
     // Prende come input la formula con separatore decimale definito da utente
-    double evaluateLocalSep(const QString &exprInput, QString * errorMsg){
+    double evaluateLocal(const QString &exprInput, QString * errorMsg){
         QString expr = exprInput;
         expr.remove(" ");
         expr = expr.toUpper();
@@ -332,8 +332,12 @@ MathParser::MathParser( const QLocale & loc ):
     m_d( new MathParserPrivate( loc ) ){
 }
 
+double MathParser::evaluateLocal(const QString &exprInput, QString *errorMsg) {
+    return m_d->evaluateLocal( exprInput, errorMsg);
+}
+
 double MathParser::evaluate(const QString &exprInput, QString *errorMsg) {
-    return m_d->evaluateLocalSep( exprInput, errorMsg);
+    return m_d->evaluate( exprInput, errorMsg);
 }
 
 QDate MathParser::evaluateDate(const QString &date, QLocale::FormatType format) {

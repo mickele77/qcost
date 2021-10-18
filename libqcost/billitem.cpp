@@ -91,7 +91,7 @@ public:
         if( parser == nullptr ){
             return str.toDouble();
         } else {
-            return parser->evaluate( str );
+            return parser->evaluateLocal( str );
         }
     }
 
@@ -652,7 +652,7 @@ void BillItem::setQuantityPrivate(double v) {
 }
 
 void BillItem::setQuantity(const QString &vstr ) {
-    setQuantity( m_d->parser->evaluate( vstr ) );
+    setQuantity( m_d->parser->evaluateLocal( vstr ) );
 }
 
 int BillItem::columnCount() const {

@@ -346,7 +346,7 @@ public:
         if( parser == nullptr ){
             return str.toDouble();
         } else {
-            return parser->evaluate( str );
+            return parser->evaluateLocal( str );
         }
     }
 
@@ -756,7 +756,7 @@ bool PriceItemDataSetModel::setData(const QModelIndex &index, const QVariant &va
             if( (pf < m_d->dataSetContainer.at(index.column())->valueCount()) && (pf >= 0) ){
                 double v = 0.0;
                 if( m_d->parser ){
-                    v = m_d->parser->evaluate( value.toString() );
+                    v = m_d->parser->evaluateLocal( value.toString() );
                 } else {
                     v = value.toDouble();
                 }

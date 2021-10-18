@@ -89,7 +89,12 @@ void AccountingTAMMeasure::setFormula( int i, const QString & nf ){
 void AccountingTAMMeasure::updateQuantity(){
     double v = 0.0;
     for( QVector<QString>::iterator i=m_d->formula.begin(); i != m_d->formula.end(); ++i ){
-        double valTmp = m_d->parser->evaluate( *i );
+        double valTmp = 0.0;
+        if( m_d->parser != nullptr ){
+            valTmp = m_d->parser->evaluateLocal( *i );
+        } else {
+            valTmp = i->toDouble();
+        }
         if( m_d->unitMeasure ) {
             valTmp += m_d->unitMeasure->applyPrecision( valTmp );
         }

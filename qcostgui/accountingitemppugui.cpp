@@ -505,7 +505,7 @@ void AccountingItemPPUGUI::delMeasureLines() {
                         rowList.append( rowListSelected.at(i).row() );
                     }
                 }
-                qSort( rowList.begin(), rowList.end() );
+                std::sort( rowList.begin(), rowList.end() );
                 m_d->TAMBillItem->measuresModel()->removeRows( rowList.first(), rowList.size() );
             }
         }
@@ -536,7 +536,7 @@ void AccountingItemPPUGUI::importAccountingMeasureMeasuresTXT() {
                     rowList.append( rowListSelected.at(i).row() );
                 }
             }
-            qSort( rowList.begin(), rowList.end() );
+            std::sort( rowList.begin(), rowList.end() );
 
             int position = m_d->billItem->measuresModel()->rowCount();
             if( rowList.size() > 0 ){

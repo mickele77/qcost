@@ -93,7 +93,7 @@ void AccountingLSMeasure::setProjFormula( const QString & nf ){
 }
 
 void AccountingLSMeasure::updateProjQuantity(){
-    double v = m_d->parser->evaluate( m_d->projFormula );
+    double v = m_d->parser->evaluateLocal( m_d->projFormula );
     if( m_d->unitMeasure ) {
         v = m_d->unitMeasure->applyPrecision( v );
     }
@@ -138,7 +138,7 @@ void AccountingLSMeasure::setAccFormula( const QString & nf ){
 }
 
 void AccountingLSMeasure::updateAccQuantity(){
-    double v = m_d->parser->evaluate( m_d->accFormula );
+    double v = m_d->parser->evaluateLocal( m_d->accFormula );
     if( m_d->unitMeasure ) {
         v = m_d->unitMeasure->applyPrecision( v );
     }

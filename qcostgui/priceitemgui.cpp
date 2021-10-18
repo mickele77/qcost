@@ -435,7 +435,7 @@ void PriceItemGUI::setPriceValueFromLineEdit(){
                 if( m_d->singlePriceDataFieldLineEdits.at(i) == lEdit ){
                     if( m_d->parser ){
                         QString v = lEdit->text();
-                        m_d->priceItem->setValue( i, m_d->currentPriceDataSet, m_d->parser->evaluate(v));
+                        m_d->priceItem->setValue( i, m_d->currentPriceDataSet, m_d->parser->evaluateLocal(v));
                     } else {
                         m_d->priceItem->setValue( i, m_d->currentPriceDataSet, lEdit->text().toDouble() );
                     }

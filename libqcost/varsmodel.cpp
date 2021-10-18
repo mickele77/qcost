@@ -250,7 +250,7 @@ QString VarsModel::replaceVars( const QString & expr ) {
     for( int i = 0; i < (linesOrdered.size()-1); ++i ){
         for( int j = i+1; j < linesOrdered.size(); ++j ){
             if( linesOrdered.at(i)->name().length() < linesOrdered.at(j)->name().length() ){
-                linesOrdered.swap(i, j);
+                linesOrdered.swapItemsAt(i, j);
             }
         }
     }

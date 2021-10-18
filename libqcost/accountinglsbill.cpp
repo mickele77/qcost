@@ -209,7 +209,7 @@ void AccountingLSBill::setDescription(const QString &value) {
 void AccountingLSBill::setPPUTotalToDiscount(const QString &newValue) {
     double v = 0.0;
     if( m_d->parser != nullptr ){
-        v = m_d->parser->evaluate( newValue );
+        v = m_d->parser->evaluateLocal( newValue );
     } else {
         v = newValue.toDouble();
     }
@@ -222,7 +222,7 @@ void AccountingLSBill::setPPUTotalToDiscount(const QString &newValue) {
 void AccountingLSBill::setPPUNotToDiscount(const QString &newValue) {
     double v = 0.0;
     if( m_d->parser != nullptr ){
-        v = m_d->parser->evaluate( newValue );
+        v = m_d->parser->evaluateLocal( newValue );
     } else {
         v = newValue.toDouble();
     }
