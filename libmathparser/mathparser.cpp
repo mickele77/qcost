@@ -209,7 +209,7 @@ public:
         expr.remove(" ");
         expr = expr.toUpper();
 
-        if( exprInput.size() == 0 ){
+        if( expr.size() == 0 ){
             return 0.0;
         }
 
@@ -218,14 +218,14 @@ public:
             QChar oper = operatorsChar.at(i);
 
             // cerca l'ultima occorrenza dell'operatore i-esimo
-            int pos = lastIndexOfOP( exprInput, oper, exprInput.size() - 1 );
+            int pos = lastIndexOfOP( expr, oper, expr.size() - 1 );
             while( pos > - 1 ){
-                if( isOperator(exprInput, oper, pos) ) {
+                if( isOperator(expr, oper, pos) ) {
                     // Divide l'espressione in due parti
-                    QString leftPart = exprInput.left( pos );
+                    QString leftPart = expr.left( pos );
                     QString rightPart;
-                    if( (pos+1) < exprInput.size() ){
-                        rightPart = exprInput.mid( pos+1 );
+                    if( (pos+1) < expr.size() ){
+                        rightPart = expr.mid( pos+1 );
                     }
                     if( leftPart.isEmpty() ){
                         if( errorMsg ){
@@ -267,24 +267,24 @@ public:
                 }
                 // cerca se c'è un altro operatore prima di oper
                 if( pos>-1 ){
-                    pos = lastIndexOfOP( exprInput, oper, pos-1 );
+                    pos = lastIndexOfOP( expr, oper, pos-1 );
                 }
             }
         }
 
         // controlla se l'espressione è una funzione, tipo "sin(2+3)"
-        int pos = exprInput.indexOf( '(' );
-        if( (pos > -1) && (exprInput.at(exprInput.size()-1)==')') ){
+        int pos = expr.indexOf( '(' );
+        if( (pos > -1) && (expr.at(expr.size()-1)==')') ){
             // estrae il nome della funzione
             QString function;
             if( pos > 0 ){
-                function = exprInput.left(pos);
+                function = expr.left(pos);
             }
 
             // estrae l'espressione tra parentesi e la calcola
             QString argumentStr;
-            if( (pos+1) < exprInput.size() ){
-                argumentStr = exprInput.mid( pos+1, exprInput.size()-(pos+2));
+            if( (pos+1) < expr.size() ){
+                argumentStr = expr.mid( pos+1, expr.size()-(pos+2));
             }
             double argumentValue = evaluate(argumentStr, errorMsg);
 
@@ -303,9 +303,9 @@ public:
         }
 
         // Se siamo arrivati fin qui la stringa è un numero: restituiamo il valore numerico
-        if( isValue(exprInput) ){
+        if( isValue(expr) ){
             bool ok = false;
-            double ret = exprInput.toDouble( &ok );
+            double ret = expr.toDouble( &ok );
             if( !ok ){
                 if( errorMsg ){
                     errorMsg->append( tr("Errore nella conversione del valore %1.").arg(exprInput));
@@ -315,8 +315,8 @@ public:
         }
 
         // controlla se il valore è una costante
-        if( constantsMap.contains(exprInput) ){
-            return constantsMap.value( exprInput );
+        if( constantsMap.contains(expr) ){
+            return constantsMap.value( expr );
         }
 
         // se siamo arrivati fin qui qualcosa è andata storto
