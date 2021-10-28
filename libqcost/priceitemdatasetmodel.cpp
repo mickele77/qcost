@@ -153,9 +153,7 @@ void PriceItemDataSet::setOverheads( double newVal ) {
     if( !m_d->inheritOverheadsFromRoot ){
         if( newVal != m_d->overheads ){
             m_d->overheads = newVal;
-            if( associatedAP ){
-                associatedAP->setOverheads( newVal );
-            }
+            associatedAP->setOverheads( overheads() );
         }
     }
 }
@@ -163,6 +161,7 @@ void PriceItemDataSet::setOverheads( double newVal ) {
 void PriceItemDataSet::setInheritOverheadsFromRoot(bool newVal) {
     if( m_d->inheritOverheadsFromRoot != newVal ){
         m_d->inheritOverheadsFromRoot = newVal;
+        associatedAP->setOverheads( overheads() );
     }
 }
 
@@ -170,9 +169,7 @@ void PriceItemDataSet::setProfits(double newVal) {
     if( !m_d->inheritProfitsFromRoot ){
         if( m_d->profits != newVal ){
             m_d->profits = newVal;
-            if( associatedAP ) {
-                associatedAP->setProfits( newVal );
-            }
+            associatedAP->setProfits( profits() );
         }
     }
 }
@@ -180,6 +177,7 @@ void PriceItemDataSet::setProfits(double newVal) {
 void PriceItemDataSet::setInheritProfitsFromRoot(bool newVal) {
     if( m_d->inheritProfitsFromRoot != newVal ){
         m_d->inheritProfitsFromRoot = newVal;
+        associatedAP->setProfits( profits() );
     }
 }
 

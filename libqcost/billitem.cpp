@@ -54,7 +54,7 @@ public:
         priceItem( nullptr ),
         currentPriceDataSet(0),
         quantity(0.0),
-        recaculateOverheadsProfits(false),
+        recalculateOverheadsProfits(false),
         overheads(0.15),
         profits(0.10),
         colCount(firstPriceFieldCol+2*pfm->fieldCount()){
@@ -203,7 +203,7 @@ public:
     QList<double> amountProfits;
     /*  flag per sapere se spese generali ed utili di impresa vanno ricalcolati in
         base ai valori netti */
-    bool recaculateOverheadsProfits;
+    bool recalculateOverheadsProfits;
     // spese generali
     double overheads;
     // utili di impresa
@@ -274,7 +274,7 @@ BillItem &BillItem::operator=(const BillItem &cp) {
             generateMeasuresModel();
             *(m_d->measuresModel) = *(cp.m_d->measuresModel);
         }
-        setRecalculateOverheadsProfits( cp.m_d->recaculateOverheadsProfits );
+        setRecalculateOverheadsProfits( cp.m_d->recalculateOverheadsProfits );
         setOverheads( cp.m_d->overheads );
         setProfits( cp.m_d->profits );
 
@@ -523,15 +523,15 @@ bool BillItem::recalculateOverheadsProfits() const {
     if( m_d->parentItem != nullptr ) {
         return m_d->parentItem->recalculateOverheadsProfits();
     }
-    return m_d->recaculateOverheadsProfits;
+    return m_d->recalculateOverheadsProfits;
 }
 
 void BillItem::setRecalculateOverheadsProfits(bool newVal) {
     if( m_d->parentItem != nullptr ) {
         m_d->parentItem->setRecalculateOverheadsProfits(newVal);
     } else {
-        if( m_d->recaculateOverheadsProfits != newVal ) {
-            m_d->recaculateOverheadsProfits = newVal;
+        if( m_d->recalculateOverheadsProfits != newVal ) {
+            m_d->recalculateOverheadsProfits = newVal;
             updateAmounts();
         }
     }
@@ -1598,7 +1598,7 @@ void BillItem::insertField(int pf){
         amountNetVal = UnitMeasure::applyPrecision( m_d->quantity * m_d->priceItem->valueNet( pf, m_d->currentPriceDataSet ), m_d->priceFieldModel->effectivePrecision(pf) );
         amountOverheadsVal = UnitMeasure::applyPrecision( overheads() * amountNetVal, m_d->priceFieldModel->effectivePrecision(pf) );
         amountProfitsVal = UnitMeasure::applyPrecision( profits() * (amountNetVal+amountOverheadsVal), m_d->priceFieldModel->effectivePrecision(pf) );
-        if( m_d->recaculateOverheadsProfits ){
+        if( m_d->recalculateOverheadsProfits ){
             amountVal = UnitMeasure::applyPrecision( amountNetVal + amountOverheadsVal + amountProfitsVal, m_d->priceFieldModel->effectivePrecision(pf) );
         } else {
             amountVal = UnitMeasure::applyPrecision( m_d->quantity * m_d->priceItem->value( pf, m_d->currentPriceDataSet ), m_d->priceFieldModel->effectivePrecision(pf) );
