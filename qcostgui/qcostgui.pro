@@ -65,6 +65,7 @@ SOURCES += \
     qcostgui.cpp \
     pricelistdbviewer.cpp \
     billattributeselectmodel.cpp \
+    importbillitemmeasuresclipboard.cpp \
     qcostclipboarddata.cpp \
     pricefieldtabledelegate.cpp \
     billprintergui.cpp \
@@ -133,6 +134,7 @@ HEADERS  += \
     pricelistdbviewer.h \
     billitemattributemodel.h \
     billattributeselectmodel.h \
+    importbillitemmeasuresclipboard.h \
     qcostclipboarddata.h \
     pricefieldtabledelegate.h \
     billprintergui.h \
@@ -218,7 +220,8 @@ FORMS += \
     accountingbillpricedatagui.ui \
     accountingtambillpricedatagui.ui \
     accountinglsbillsdatagui.ui \
-    accountinglsbillpricedatagui.ui
+    accountinglsbillpricedatagui.ui \
+    importbillitemmeasuresclipboard.ui
 
 OTHER_FILES += \
     ../LICENSE \

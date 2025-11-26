@@ -11,7 +11,7 @@ class ImportBillItemMeasuresClipboard : public QDialog {
     Q_OBJECT
 public:
     explicit ImportBillItemMeasuresClipboard( MeasuresModel * mModel, int mPosition,
-                                        MathParser * prs, QWidget *parent = 0);
+                                        MathParser * prs, QWidget *parent = nullptr );
     ~ImportBillItemMeasuresClipboard();
 private slots:
     void importComments();
