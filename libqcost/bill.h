@@ -54,7 +54,7 @@ public:
         ResetBill
     };
 
-    Bill(const QString &n, ProjectItem *parent, PriceFieldModel *pfm, MathParser * parser = NULL );
+    Bill(const QString &n, ProjectItem *parent, PriceFieldModel *pfm, MathParser * parser = Q_NULLPTR );
     Bill( Bill & );
 
     Bill & operator= (const Bill & cp );

@@ -126,16 +126,16 @@ void EditPriceItemAPDialog::setPriceItemAP(){
 }
 
 void EditPriceItemAPDialog::setBillItem(BillItem * newItem ) {
-    if( m_d->currentBillItem != NULL ){
+    if( m_d->currentBillItem != Q_NULLPTR ){
         disconnect( m_d->currentBillItem, static_cast<void(BillItem::*)(bool)>(&BillItem::hasChildrenChanged), this, &EditPriceItemAPDialog::updateBillItemGUI );
         disconnect( m_d->currentBillItem, &BillItem::aboutToBeDeleted, this, &EditPriceItemAPDialog::setBillItemNULL );
-        m_d->billItemGUI->setBillItem( NULL );
+        m_d->billItemGUI->setBillItem( Q_NULLPTR );
         m_d->billItemGUI->hide();
         m_d->billItemTitleGUI->setBillItem( NULL);
         m_d->billItemTitleGUI->hide();
     }
     m_d->currentBillItem = newItem;
-    if( m_d->currentBillItem != NULL ){
+    if( m_d->currentBillItem != Q_NULLPTR ){
         updateBillItemGUI();
         connect( m_d->currentBillItem, static_cast<void(BillItem::*)(bool)>(&BillItem::hasChildrenChanged), this, &EditPriceItemAPDialog::updateBillItemGUI );
         connect( m_d->currentBillItem, &BillItem::aboutToBeDeleted, this, &EditPriceItemAPDialog::setBillItemNULL );
@@ -143,14 +143,14 @@ void EditPriceItemAPDialog::setBillItem(BillItem * newItem ) {
 }
 
 void EditPriceItemAPDialog::setBillItemNULL() {
-    setBillItem( NULL );
+    setBillItem( Q_NULLPTR );
 }
 
 void EditPriceItemAPDialog::updateBillItemGUI() {
-    if( m_d->currentBillItem != NULL ){
+    if( m_d->currentBillItem != Q_NULLPTR ){
         if( m_d->currentBillItem->hasChildren() ){
             m_d->billItemGUI->hide();
-            m_d->billItemGUI->setBillItem( NULL );
+            m_d->billItemGUI->setBillItem( Q_NULLPTR );
 
             m_d->billItemTitleGUI->setBillItem( m_d->currentBillItem );
             m_d->billItemTitleGUI->show();
@@ -159,13 +159,13 @@ void EditPriceItemAPDialog::updateBillItemGUI() {
             m_d->billItemGUI->show();
 
             m_d->billItemTitleGUI->hide();
-            m_d->billItemTitleGUI->setBillItem( NULL );
+            m_d->billItemTitleGUI->setBillItem( Q_NULLPTR );
         }
     } else {
         m_d->billItemGUI->hide();
-        m_d->billItemGUI->setBillItem( NULL );
+        m_d->billItemGUI->setBillItem( Q_NULLPTR );
 
         m_d->billItemTitleGUI->hide();
-        m_d->billItemTitleGUI->setBillItem( NULL );
+        m_d->billItemTitleGUI->setBillItem( Q_NULLPTR );
     }
 }

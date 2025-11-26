@@ -15,7 +15,7 @@ public:
         parserWasCreated(false),
         unitMeasure(ump),
         quantity( 0.0 ){
-        if( p == NULL ){
+        if( p == Q_NULLPTR ){
             parser = new MathParser( QLocale::system() );
             parserWasCreated = true;
         } else {
@@ -40,7 +40,7 @@ BillItemMeasuresModel::BillItemMeasuresModel(MathParser * p, UnitMeasure * ump, 
     m_d(new BillItemMeasuresModelPrivate( p, ump )){
     insertRows(0);
 
-    if( m_d->unitMeasure != NULL ){
+    if( m_d->unitMeasure != Q_NULLPTR ){
         connect( m_d->unitMeasure, &UnitMeasure::precisionChanged, this, &BillItemMeasuresModel::updateAllQuantities );
     }
 }
@@ -240,7 +240,7 @@ void BillItemMeasuresModel::updateAllQuantities() {
 void BillItemMeasuresModel::setUnitMeasure(UnitMeasure *ump) {
     if( m_d->unitMeasure != ump ){
         beginResetModel();
-        if( m_d->unitMeasure != NULL ){
+        if( m_d->unitMeasure != Q_NULLPTR ){
             disconnect( m_d->unitMeasure, &UnitMeasure::precisionChanged, this, &BillItemMeasuresModel::updateAllQuantities );
         }
         m_d->unitMeasure = ump;
@@ -251,7 +251,7 @@ void BillItemMeasuresModel::setUnitMeasure(UnitMeasure *ump) {
             emit dataChanged( createIndex(0, 2), createIndex(m_d->linesContainer.size()-1, 2) );
         }
         updateQuantity();
-        if( m_d->unitMeasure != NULL ){
+        if( m_d->unitMeasure != Q_NULLPTR ){
             connect( m_d->unitMeasure, &UnitMeasure::precisionChanged, this, &BillItemMeasuresModel::updateAllQuantities );
         }
         endResetModel();

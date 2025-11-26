@@ -74,7 +74,7 @@ BillDataGUI::~BillDataGUI(){
 
 void BillDataGUI::setBill(Bill *b) {
     if( m_d->bill != b ){
-        if( m_d->bill != NULL ){
+        if( m_d->bill != Q_NULLPTR ){
             disconnect( m_d->ui->nameLineEdit, &QLineEdit::textEdited, m_d->bill, &Bill::setName );
             disconnect( m_d->ui->descriptionTextEdit, &QPlainTextEdit::textChanged, this, &BillDataGUI::setDescription );
             disconnect( m_d->bill, static_cast<void(Bill::*)(int,const QString &)> (&Bill::amountChanged), this, &BillDataGUI::updateAmountValue );
@@ -87,11 +87,11 @@ void BillDataGUI::setBill(Bill *b) {
                 m_d->amountLEditList.at(i)->clear();
             }
         }
-        m_d->ui->attributesTableView->setModel( NULL );
+        m_d->ui->attributesTableView->setModel( Q_NULLPTR );
 
         m_d->bill = b;
 
-        if( m_d->bill != NULL ){
+        if( m_d->bill != Q_NULLPTR ){
             m_d->ui->nameLineEdit->setText( m_d->bill->name() );
             connect( m_d->ui->nameLineEdit, &QLineEdit::textEdited, m_d->bill, &Bill::setName );
             m_d->ui->descriptionTextEdit->setPlainText( m_d->bill->description() );
@@ -119,7 +119,7 @@ void BillDataGUI::setDescription(){
 }
 
 void BillDataGUI::setBillNULL(){
-    setBill( NULL );
+    setBill( Q_NULLPTR );
 }
 
 void BillDataGUI::updateAmountsNameValue(){
@@ -132,7 +132,7 @@ void BillDataGUI::updateAmountsNameValue(){
         m_d->ui->amountsLayout->removeWidget( *i );
         delete *i;
     }
-    if( m_d->amountSpacer != NULL ){
+    if( m_d->amountSpacer != Q_NULLPTR ){
         m_d->ui->amountsLayout->removeItem( m_d->amountSpacer );
         delete m_d->amountSpacer;
         m_d->amountSpacer = NULL;
@@ -144,7 +144,7 @@ void BillDataGUI::updateAmountsNameValue(){
         QLineEdit * lEdit = new QLineEdit();
         lEdit->setReadOnly( true );
         lEdit->setAlignment( Qt::AlignRight);
-        if( m_d->bill != NULL ){
+        if( m_d->bill != Q_NULLPTR ){
             lEdit->setText( m_d->bill->amountStr(i));
         }
         m_d->ui->amountsLayout->addWidget( label, i, 0 );
@@ -171,7 +171,7 @@ void BillDataGUI::updateAmountName( int priceField, const QString & newName ){
 }
 
 void BillDataGUI::addAttribute(){
-    if( m_d->bill != NULL ){
+    if( m_d->bill != Q_NULLPTR ){
         if( m_d->ui->attributesTableView->selectionModel() ){
             QModelIndexList selectedIndexes = m_d->ui->attributesTableView->selectionModel()->selectedIndexes();
             int count = 1;
@@ -193,7 +193,7 @@ void BillDataGUI::addAttribute(){
 }
 
 void BillDataGUI::removeAttribute(){
-    if( m_d->bill != NULL ){
+    if( m_d->bill != Q_NULLPTR ){
         if( m_d->ui->attributesTableView->selectionModel() ){
             QModelIndexList selectedRows = m_d->ui->attributesTableView->selectionModel()->selectedRows();
             int count = selectedRows.size();
@@ -211,7 +211,7 @@ void BillDataGUI::removeAttribute(){
 }
 
 bool BillDataGUI::printAttributeBillODT(){
-    if( m_d->bill != NULL ){
+    if( m_d->bill != Q_NULLPTR ){
         BillPrinter::PrintBillItemsOption prBillItemOption;
         BillPrinter::AttributePrintOption prOption;
         QList<int> prFields;
@@ -241,7 +241,7 @@ bool BillDataGUI::printAttributeBillODT(){
                 }
                 BillPrinter printer( m_d->bill, m_d->priceFieldModel, m_d->parser );
                 bool ret = printer.printAttributeODT( prBillItemOption, prOption, prFields, prAttrs, fileName, paperWidth, paperHeight, paperOrientation, groupPrAm );
-                if( m_d->wordProcessorFile != NULL ){
+                if( m_d->wordProcessorFile != Q_NULLPTR ){
                     if( !m_d->wordProcessorFile->isEmpty() ){
                         if( QFileInfo(*(m_d->wordProcessorFile)).exists() ){
                             QStringList args;

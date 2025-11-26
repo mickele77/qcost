@@ -87,7 +87,7 @@ bool ProjectPriceListParentItem::insertChildren(int position, int count) {
             }
         }
         PriceList *item = new PriceList( purposedPLName, m_d->priceFieldsModel, this, m_d->parser );
-        while( priceListId(item->id()) != NULL ){
+        while( priceListId(item->id()) != Q_NULLPTR ){
             item->nextId();
         }
         connect( item, &PriceList::removePriceItemSignal, this, &ProjectPriceListParentItem::emitRemovePriceItemSignal );

@@ -18,7 +18,7 @@ public:
         quantity(0.0){
     }
     QString	toString(double i, char f = 'g', int prec = 6) const{
-        if( parser != NULL ){
+        if( parser != Q_NULLPTR ){
             return parser->toString( i, f, prec );
         } else {
             return QString::number( i, f, prec );
@@ -89,7 +89,7 @@ void BillItemMeasure::updateQuantity(){
 
 double BillItemMeasure::quantity(){
     double ret = 0.0;
-    if( m_d->unitMeasure != NULL ){
+    if( m_d->unitMeasure != Q_NULLPTR ){
         ret = m_d->unitMeasure->applyPrecision( m_d->quantity );
     } else {
         ret = m_d->quantity;
@@ -103,7 +103,7 @@ QString BillItemMeasure::quantityStr(){
     if( realFormula.isEmpty() ){
         return QString();
     }
-    if( m_d->unitMeasure != NULL ){
+    if( m_d->unitMeasure != Q_NULLPTR ){
         return m_d->toString( quantity(), 'f', m_d->unitMeasure->precision() ) ;
     } else {
         return m_d->toString( quantity(), 'f', 6 ) ;

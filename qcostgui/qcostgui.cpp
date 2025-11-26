@@ -493,7 +493,7 @@ bool QCostGUI::printODT() {
     }
 
     Bill * b = dynamic_cast< Bill *> (m_d->projectItemsView->currentItem());
-    if( b != NULL ){
+    if( b != Q_NULLPTR ){
         BillPrinter::PrintBillItemsOption prItemsOption = BillPrinter::PrintLongDesc;
         BillPrinter::PrintOption prOptions = BillPrinter::PrintBill;
         QList<int> fieldsToPrint;

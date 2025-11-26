@@ -58,15 +58,15 @@ void PriceListPrinter::setPriceList(PriceList *b) {
 #include "qtextformatuserdefined.h"
 
 bool PriceListPrinter::printODT( PriceListPrinter::PrintPriceItemsOption printOption,
-                                 const QList<int> &fieldsToPrint,
-                                 int priceDataSetToPrintInput,
-                                 bool printPriceList,
-                                 bool printPriceAP,
-                                 bool APgroupPrAm,
-                                 const QString &fileName,
-                                 double pageWidth,
-                                 double pageHeight,
-                                 Qt::Orientation paperOrientation) {
+                                const QList<int> &fieldsToPrint,
+                                int priceDataSetToPrintInput,
+                                bool printPriceList,
+                                bool printPriceAP,
+                                bool APgroupPrAm,
+                                const QString &fileName,
+                                double pageWidth,
+                                double pageHeight,
+                                Qt::Orientation paperOrientation) {
     double borderWidth = 1.0f;
     if( m_d->priceList ){
         int priceDataSetToPrint = 0;
@@ -239,7 +239,9 @@ bool PriceListPrinter::printODT( PriceListPrinter::PrintPriceItemsOption printOp
 
                     cursor.movePosition(QTextCursor::NextCell);
                     table->cellAt( cursor ).setFormat( bottomRightFormat );
-                    cursor.insertText( priceItemList.at(i)->unitMeasure()->tag() );
+                    if( priceItemList.at(i)->unitMeasure() != Q_NULLPTR ) {
+                        cursor.insertText( priceItemList.at(i)->unitMeasure()->tag() );
+                    }
 
                     cursor.movePosition( QTextCursor::End );
 
@@ -252,9 +254,9 @@ bool PriceListPrinter::printODT( PriceListPrinter::PrintPriceItemsOption printOp
                     if( paperOrientation == Qt::Horizontal ){
                         if( fieldsToPrint.size() > 0 ){
                             colWidths << QTextLength( QTextLength::FixedLength, 10.0 )
-                                      << QTextLength( QTextLength::FixedLength, 30.0 )
-                                      << QTextLength( QTextLength::FixedLength, 70.0 )
-                                      << QTextLength( QTextLength::FixedLength, 20.0 );
+                            << QTextLength( QTextLength::FixedLength, 30.0 )
+                            << QTextLength( QTextLength::FixedLength, 70.0 )
+                            << QTextLength( QTextLength::FixedLength, 20.0 );
                             double usedWidth =  10.0 + 30.0 + 70.0 + 20.0;
                             double colEqualWidth = (tableWidth - usedWidth ) / (1 + 2*fieldsToPrint.size() );
                             for( int i=0; i < (1 + 2*fieldsToPrint.size() ); ++i ){
@@ -275,9 +277,9 @@ bool PriceListPrinter::printODT( PriceListPrinter::PrintPriceItemsOption printOp
                             double usedWidth = 0.0;
                             if( fieldsToPrint.size() > 1  ){
                                 colWidths << QTextLength( QTextLength::FixedLength, 10.0 )
-                                          << QTextLength( QTextLength::FixedLength, 20.0 )
-                                          << QTextLength( QTextLength::FixedLength, 45.0 )
-                                          << QTextLength( QTextLength::FixedLength, 15.0 );
+                                << QTextLength( QTextLength::FixedLength, 20.0 )
+                                << QTextLength( QTextLength::FixedLength, 45.0 )
+                                << QTextLength( QTextLength::FixedLength, 15.0 );
                                 usedWidth =  10.0 + 20.0 + 45.0 + 15.0;
                             } else { // fieldsToPrint.size() == 1
                                 colWidths << QTextLength( QTextLength::FixedLength, 10.0 )
@@ -315,7 +317,9 @@ bool PriceListPrinter::printODT( PriceListPrinter::PrintPriceItemsOption printOp
                     } else if( printOption == PriceListPrinter::PrintShortLongDescOpt ){
                         billPrItemsOption = BillPrinter::PrintShortLongDescOpt;
                     }
-                    priceItemList.at(i)->associatedAP(priceDataSetToPrint)->writeODTBillOnTable( &cursor, billPrItemsOption, fieldsToPrint, APgroupPrAm, priceItemList.at(i)->unitMeasure()->tag() );
+                    if( priceItemList.at(i)->unitMeasure() != Q_NULLPTR ) {
+                        priceItemList.at(i)->associatedAP(priceDataSetToPrint)->writeODTBillOnTable( &cursor, billPrItemsOption, fieldsToPrint, APgroupPrAm, priceItemList.at(i)->unitMeasure()->tag() );
+                    }
 
                     cursor.movePosition( QTextCursor::End );
                 }

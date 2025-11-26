@@ -59,7 +59,7 @@ QCostClipboardData::Mode QCostClipboardData::copiedBillsMode() const {
 
 void QCostClipboardData::removeFromList(){
     Bill * b = dynamic_cast<Bill *>(sender() );
-    if( b != NULL ){
+    if( b != Q_NULLPTR ){
         if( m_d->copiedBills.contains( b ) ){
             m_d->copiedBills.removeAll(b);
         }
@@ -70,7 +70,7 @@ void QCostClipboardData::removeFromList(){
     }
 
     BillItem * bi = dynamic_cast<BillItem *>(sender() );
-    if( bi != NULL ){
+    if( bi != Q_NULLPTR ){
         m_d->copiedBillItems.removeAll( bi );
         if( m_d->copiedBillItems.size() < 1 ){
             m_d->copiedBillItemsBill = NULL;
@@ -78,7 +78,7 @@ void QCostClipboardData::removeFromList(){
     }
 
     PriceList * pl = dynamic_cast<PriceList *>(sender() );
-    if( pl != NULL ){
+    if( pl != Q_NULLPTR ){
         if( m_d->copiedPriceLists.contains( pl ) ){
             m_d->copiedPriceLists.removeAll(pl);
         }
@@ -89,7 +89,7 @@ void QCostClipboardData::removeFromList(){
     }
 
     PriceItem * pi = dynamic_cast<PriceItem *>(sender() );
-    if( pi != NULL ){
+    if( pi != Q_NULLPTR ){
         m_d->copiedPriceItems.removeAll( pi );
         if( m_d->copiedPriceItems.size() < 1 ){
             m_d->copiedPriceItemsPriceList = NULL;

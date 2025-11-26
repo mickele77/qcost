@@ -135,7 +135,7 @@ public:
         writer->writeAttribute( "precision", QString::number( precision ) );
         writer->writeAttribute( "applyFormula", fromBoolToQString( applyFormula ) );
         QString formulaToWrite = formula;
-        if( parser != NULL ){
+        if( parser != Q_NULLPTR ){
             formulaToWrite.replace( parser->decimalSeparator(), ".");
         }
         writer->writeAttribute( "formula", formulaToWrite );
@@ -204,7 +204,7 @@ public:
         }
     };
     QString	toString(double i, char f = 'g', int prec = 6) const{
-        if( parser == NULL ){
+        if( parser == Q_NULLPTR ){
             return QString::number( i, f, prec );
         } else {
             return parser->toString( i, f, prec );
@@ -813,7 +813,7 @@ void PriceFieldModel::loadFromXml(int pf, const QXmlStreamAttributes &attrs) {
     }
     if( attrs.hasAttribute( "formula" ) ){
         QString f = attrs.value( "formula" ).toString();
-        if( m_d->parser != NULL ){
+        if( m_d->parser != Q_NULLPTR ){
             f.replace( ".", m_d->parser->decimalSeparator() );
         }
         setFormula( pf, f );

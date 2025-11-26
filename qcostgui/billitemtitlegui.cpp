@@ -51,7 +51,7 @@ BillItemTitleGUI::~BillItemTitleGUI() {
 
 void BillItemTitleGUI::setBillItem(BillItem *b) {
     if( m_d->item != b ){
-        if( m_d->item != NULL ){
+        if( m_d->item != Q_NULLPTR ){
             disconnect( m_d->item, &BillItem::nameChanged, this, &BillItemTitleGUI::updateLineEdit );
             disconnect( m_d->item, &BillItem::aboutToBeDeleted, this, &BillItemTitleGUI::setBillItemNULL );
             disconnect( m_d->ui->titleLineEdit, &QLineEdit::textEdited, this, &BillItemTitleGUI::updateItem );
@@ -61,7 +61,7 @@ void BillItemTitleGUI::setBillItem(BillItem *b) {
         m_d->item = b;
         m_d->itemAttributeModel->setBillItem( b );
 
-        if( m_d->item != NULL ){
+        if( m_d->item != Q_NULLPTR ){
             m_d->ui->titleLineEdit->setText( m_d->item->name() );
             connect( m_d->item, &BillItem::nameChanged, this, &BillItemTitleGUI::updateLineEdit );
             connect( m_d->item, &BillItem::aboutToBeDeleted, this, &BillItemTitleGUI::setBillItemNULL );
@@ -74,7 +74,7 @@ void BillItemTitleGUI::setBillItem(BillItem *b) {
 }
 
 void BillItemTitleGUI::setBillItemNULL() {
-    setBillItem( NULL );
+    setBillItem( Q_NULLPTR );
 }
 
 void BillItemTitleGUI::updateLineEdit() {
@@ -94,7 +94,7 @@ void BillItemTitleGUI::updateItem() {
 }
 
 void BillItemTitleGUI::addAttribute(){
-    if( m_d->itemAttributeModel != NULL ){
+    if( m_d->itemAttributeModel != Q_NULLPTR ){
         if( m_d->ui->attributeTableView->selectionModel() ){
             int count = 1;
             QModelIndexList selectedRows = m_d->ui->attributeTableView->selectionModel()->selectedRows();
@@ -112,7 +112,7 @@ void BillItemTitleGUI::addAttribute(){
 }
 
 void BillItemTitleGUI::removeAttribute(){
-    if( m_d->itemAttributeModel != NULL ){
+    if( m_d->itemAttributeModel != Q_NULLPTR ){
         if( m_d->ui->attributeTableView->selectionModel() ){
             QModelIndexList selectedRows = m_d->ui->attributeTableView->selectionModel()->selectedRows();
             int count = selectedRows.size();
@@ -130,20 +130,20 @@ void BillItemTitleGUI::removeAttribute(){
 }
 
 void BillItemTitleGUI::setBill(Bill *b) {
-    if( m_d->bill != NULL ){
-        m_d->itemAttributeModel->setAttributeModel( NULL );
+    if( m_d->bill != Q_NULLPTR ){
+        m_d->itemAttributeModel->setAttributeModel( Q_NULLPTR );
         disconnect( m_d->bill, &Bill::aboutToBeDeleted, this, &BillItemTitleGUI::setBillNULL );
     }
 
     m_d->bill = b;
 
-    if( m_d->bill != NULL ){
+    if( m_d->bill != Q_NULLPTR ){
         m_d->itemAttributeModel->setAttributeModel( m_d->bill->attributeModel() );
         connect( m_d->bill, &Bill::aboutToBeDeleted, this, &BillItemTitleGUI::setBillNULL );
     }
 
     // quando si cambia computo corrente la scheda della riga si azzera
-    setBillItem( NULL );
+    setBillItem( Q_NULLPTR );
 }
 
 void BillItemTitleGUI::setBillNULL() {
@@ -170,7 +170,7 @@ void BillItemTitleGUI::updateAmountNamesValues(){
         lEdit = new QLineEdit();
         lEdit->setReadOnly( true );
         lEdit->setAlignment( Qt::AlignRight );
-        if( m_d->item != NULL ){
+        if( m_d->item != Q_NULLPTR ){
             lEdit->setText( m_d->item->amountStr(i) );
         }
         m_d->ui->amountsDataLayout->addWidget( label, i, 0 );
@@ -188,7 +188,7 @@ void BillItemTitleGUI::updateAmountValue(int priceField, const QString & newVal)
 
 void BillItemTitleGUI::updateAmountValues(){
     for( int i = 0; i < m_d->amountDataFieldLEdit.size(); ++i){
-        if( (i < m_d->priceFieldModel->fieldCount()) && ( m_d->item != NULL ) ){
+        if( (i < m_d->priceFieldModel->fieldCount()) && ( m_d->item != Q_NULLPTR ) ){
             m_d->amountDataFieldLEdit.at(i)->setText( m_d->item->amountStr(i) );
         } else {
             m_d->amountDataFieldLEdit.at(i)->clear();

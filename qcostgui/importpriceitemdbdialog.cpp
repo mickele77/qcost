@@ -70,7 +70,7 @@ ImportPriceItemDBDialog::~ImportPriceItemDBDialog(){
 void ImportPriceItemDBDialog::importSinglePriceItemDB(){
     QList<QPair<QString,QVariant> > data;
     m_d->dbWidget->importSinglePriceItemDB( &data );
-    if( m_d->importingDataPriceItem != NULL ){
+    if( m_d->importingDataPriceItem != Q_NULLPTR ){
         for(int j=0; j < data.size(); ++j){
             if( data.at(j).first.toUpper() == "CODE" ){
                 m_d->importingDataPriceItem->setCode( data.at(j).second.toString());
@@ -80,7 +80,7 @@ void ImportPriceItemDBDialog::importSinglePriceItemDB(){
                 m_d->importingDataPriceItem->setLongDescription( data.at(j).second.toString());
             } else if( data.at(j).first.toUpper() == "UNITMEASURE" ){
                 if( data.at(j).second.toString() == "---"){
-                    m_d->importingDataPriceItem->setUnitMeasure( NULL );
+                    m_d->importingDataPriceItem->setUnitMeasure( Q_NULLPTR );
                 } else {
                     int umRow = m_d->unitMeasureModel->findTag( data.at(j).second.toString() );
                     if( umRow < 0 ){

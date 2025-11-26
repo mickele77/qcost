@@ -481,7 +481,7 @@
         <location filename="billsetpricelistmodegui.ui" line="58"/>
         <source>Annulla i prezzi</source>
         <oldsource>Annulla</oldsource>
-        <translation>Set prices to null value</translation>
+        <translation>Set prices to q_nullptr value</translation>
     </message>
     <message>
         <location filename="billsetpricelistmodegui.ui" line="44"/>
@@ -507,7 +507,7 @@
         <location filename="billsetpricelistmodegui.cpp" line="39"/>
         <source>Cerca i prezzi nel nuovo elenco prezzi in base al codice; aggiunge all&apos;ellenco prezzi i prezzi mancanti</source>
         <oldsource>Cerca i codici di prezzo nel nuovo EP in base al codice, aggiunge le voci mancanti</oldsource>
-        <translation>Search prices on the basis of the code; set to null if price is missing</translation>
+        <translation>Search prices on the basis of the code; set to q_nullptr if price is missing</translation>
     </message>
     <message>
         <location filename="billsetpricelistmodegui.cpp" line="40"/>

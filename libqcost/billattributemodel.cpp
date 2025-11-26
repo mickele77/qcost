@@ -172,7 +172,7 @@ bool BillAttributeModel::insertRows(int row, int count){
     beginInsertRows(QModelIndex(), row, row+count-1 );
     for(int i=0; i < count; ++i){
         BillAttribute * attr = new BillAttribute( m_d->parser, m_d->priceFieldModel );
-        while( attributeId(attr->id()) != NULL ){
+        while( attributeId(attr->id()) != Q_NULLPTR ){
             attr->nextId();
         }
         m_d->insert( row, attr );

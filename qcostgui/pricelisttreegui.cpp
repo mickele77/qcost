@@ -94,7 +94,7 @@ PriceListTreeGUI::~PriceListTreeGUI() {
 
 void PriceListTreeGUI::setPriceList(PriceList * pl, int priceDataSet) {
     if( pl != m_d->priceList || priceDataSet != m_d->currentPriceDataSet ){
-        if( m_d->priceList != NULL ){
+        if( m_d->priceList != Q_NULLPTR ){
             m_d->ui->currentPriceDataSetSpinBox->setMaximum( 1 );
             disconnect( m_d->priceList, &PriceList::priceDataSetCountChanged, this, &PriceListTreeGUI::setCurrentPriceDataSetSpinBoxMaximum );
             disconnect( m_d->priceList, &PriceList::aboutToBeDeleted, this, &PriceListTreeGUI::setPriceListNULL );
@@ -102,7 +102,7 @@ void PriceListTreeGUI::setPriceList(PriceList * pl, int priceDataSet) {
         }
         m_d->ui->treeView->setModel( pl );
         m_d->priceList = pl;
-        if( m_d->priceList != NULL ){
+        if( m_d->priceList != Q_NULLPTR ){
             m_d->ui->currentPriceDataSetSpinBox->setMaximum( m_d->priceList->priceDataSetCount() );
             m_d->ui->currentPriceDataSetSpinBox->setValue( priceDataSet+1 );
             connect( m_d->priceList, &PriceList::priceDataSetCountChanged, this, &PriceListTreeGUI::setCurrentPriceDataSetSpinBoxMaximum );
@@ -111,7 +111,7 @@ void PriceListTreeGUI::setPriceList(PriceList * pl, int priceDataSet) {
 
             connect( m_d->ui->treeView->selectionModel(), &QItemSelectionModel::currentChanged, this, &PriceListTreeGUI::changeCurrentItem );
         }
-        if( m_d->priceList != NULL ){
+        if( m_d->priceList != Q_NULLPTR ){
             setCurrentPriceDataSet( priceDataSet );
         } else {
             setCurrentPriceDataSet( 0 );
@@ -120,11 +120,11 @@ void PriceListTreeGUI::setPriceList(PriceList * pl, int priceDataSet) {
 }
 
 void PriceListTreeGUI::setPriceListNULL(){
-    setPriceList( NULL );
+    setPriceList( Q_NULLPTR );
 }
 
 void PriceListTreeGUI::setCurrentPriceDataSet( int newCurrPriceDataSet ){
-    if( m_d->priceList != NULL ){
+    if( m_d->priceList != Q_NULLPTR ){
         if( (newCurrPriceDataSet != m_d->currentPriceDataSet) &&
                 newCurrPriceDataSet < m_d->priceList->priceDataSetCount() ){
             m_d->currentPriceDataSet = newCurrPriceDataSet;
@@ -138,7 +138,7 @@ void PriceListTreeGUI::setCurrentPriceDataSet( int newCurrPriceDataSet ){
 }
 
 void PriceListTreeGUI::updateCurrentPriceDataSet(){
-    if( m_d->priceList != NULL ){
+    if( m_d->priceList != Q_NULLPTR ){
         if( m_d->currentPriceDataSet >= m_d->priceList->priceDataSetCount() ){
             m_d->currentPriceDataSet = m_d->priceList->priceDataSetCount() - 1;
         }
@@ -162,7 +162,7 @@ void PriceListTreeGUI::setCurrentPriceDataSetFromSpinBox(int newPriceDataSet ){
 
 PriceItem *PriceListTreeGUI::currentPriceItem() {
     if( m_d->ui->treeView->selectionModel() ){
-        if(  m_d->priceList != NULL ){
+        if(  m_d->priceList != Q_NULLPTR ){
             if( m_d->ui->treeView->selectionModel()->currentIndex().isValid() ){
                 return m_d->priceList->priceItem( m_d->ui->treeView->selectionModel()->currentIndex() );
             }
@@ -172,7 +172,7 @@ PriceItem *PriceListTreeGUI::currentPriceItem() {
 }
 
 void PriceListTreeGUI::addItems(){
-    if( m_d->priceList != NULL ){
+    if( m_d->priceList != Q_NULLPTR ){
         if( m_d->ui->treeView->selectionModel() ){
             QModelIndexList rowListSel = m_d->ui->treeView->selectionModel()->selectedRows();
             if( rowListSel.size() > 0 ){
@@ -200,7 +200,7 @@ void PriceListTreeGUI::addItems(){
 }
 
 void PriceListTreeGUI::addChildItems(){
-    if( m_d->priceList != NULL ){
+    if( m_d->priceList != Q_NULLPTR ){
         if( m_d->ui->treeView->selectionModel() ){
             QModelIndexList rowListSel = m_d->ui->treeView->selectionModel()->selectedRows();
             for( int i=0; i < rowListSel.size(); ++i){
@@ -229,11 +229,11 @@ void PriceListTreeGUI::removeItems(){
 }
 
 void PriceListTreeGUI::copyToClipboard(){
-    if( m_d->priceList != NULL ){
+    if( m_d->priceList != Q_NULLPTR ){
         if( m_d->ui->treeView->selectionModel() ){
             QCostClipboardData *data = new QCostClipboardData();
             const QCostClipboardData *clipData = qobject_cast<const QCostClipboardData *>(QApplication::clipboard()->mimeData());
-            if( clipData != NULL ){
+            if( clipData != Q_NULLPTR ){
                 *data = *clipData;
             }
             QModelIndexList selRows = m_d->ui->treeView->selectionModel()->selectedRows();
@@ -248,11 +248,11 @@ void PriceListTreeGUI::copyToClipboard(){
 }
 
 void PriceListTreeGUI::cutToClipboard(){
-    if( m_d->priceList != NULL ){
+    if( m_d->priceList != Q_NULLPTR ){
         if( m_d->ui->treeView->selectionModel() ){
             QCostClipboardData *data = new QCostClipboardData();
             const QCostClipboardData *clipData = qobject_cast<const QCostClipboardData *>(QApplication::clipboard()->mimeData());
-            if( clipData != NULL ){
+            if( clipData != Q_NULLPTR ){
                 *data = *clipData;
             }
             QModelIndexList selRows = m_d->ui->treeView->selectionModel()->selectedRows();
@@ -267,13 +267,13 @@ void PriceListTreeGUI::cutToClipboard(){
 }
 
 void PriceListTreeGUI::pasteFromClipboard(){
-    if( m_d->priceList != NULL ){
+    if( m_d->priceList != Q_NULLPTR ){
         if( m_d->ui->treeView->selectionModel() ){
             QClipboard * clp = QApplication::clipboard();
             const QMimeData * mimeData = clp->mimeData();
             const QCostClipboardData *data = qobject_cast<const QCostClipboardData *>( mimeData );
 
-            if( data != NULL ){
+            if( data != Q_NULLPTR ){
                 QModelIndex currIndex = m_d->ui->treeView->currentIndex();
                 int currRow = m_d->priceList->rowCount( )-1;
                 QModelIndex currParent = QModelIndex();
@@ -285,7 +285,7 @@ void PriceListTreeGUI::pasteFromClipboard(){
                 PriceList * itemsToCopyPriceList = NULL;
                 QCostClipboardData::Mode mode;
                 data->getCopiedPriceItems( &itemsToCopy, itemsToCopyPriceList, &mode);
-                if( itemsToCopyPriceList != NULL ){
+                if( itemsToCopyPriceList != Q_NULLPTR ){
                     if( mode == QCostClipboardData::Copy ){
                         for( QList<PriceItem *>::iterator i=itemsToCopy.begin(); i != itemsToCopy.end(); ++i ){
                             bool containsParent = false;
@@ -331,7 +331,7 @@ void PriceListTreeGUI::pasteFromClipboard(){
 
 void PriceListTreeGUI::changeCurrentItem( QModelIndex currentIndex  ) {
     if( currentIndex.isValid() ){
-        if( m_d->priceList != NULL ){
+        if( m_d->priceList != Q_NULLPTR ){
             emit currentItemChanged( m_d->priceList->priceItem( currentIndex ), m_d->currentPriceDataSet );
             return;
         }
@@ -391,7 +391,7 @@ void PriceListTreeGUI::importMultiPriceItemDB() {
 
 void PriceListTreeGUI::importMultiPriceItemDB(const QList<QList<QPair<QString, QVariant> > > & itemDataList, const QList<int> & hierarchy ) {
     if( m_d->ui->treeView->selectionModel() ){
-        if( m_d->priceList != NULL ){
+        if( m_d->priceList != Q_NULLPTR ){
             QModelIndexList selRows = m_d->ui->treeView->selectionModel()->selectedRows();
             if( selRows.size() > 0 ){
                 QModelIndex currIndex = selRows.last();
@@ -429,7 +429,7 @@ void PriceListTreeGUI::loadMultiPriceItemDB( const QList<QList<QPair<QString, QV
                     currItem->setLongDescription( data.at(j).second.toString());
                 } else if( data.at(j).first.toUpper() == "UNITMEASURE" ){
                     if( data.at(j).second.toString() == "---"){
-                        currItem->setUnitMeasure( NULL );
+                        currItem->setUnitMeasure( Q_NULLPTR );
                     } else {
                         int umRow = m_d->unitMeasureModel->findTag( data.at(j).second.toString() );
                         if( umRow < 0 ){

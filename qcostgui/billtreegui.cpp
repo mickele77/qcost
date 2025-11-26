@@ -123,11 +123,11 @@ void BillTreeGUI::billTreeViewCustomMenuRequested(QPoint pos){
 }
 
 void BillTreeGUI::copyToClipboard(){
-    if( m_d->bill != NULL ){
+    if( m_d->bill != Q_NULLPTR ){
         if( m_d->ui->treeView->selectionModel() ){
             QCostClipboardData *data = new QCostClipboardData();
             const QCostClipboardData *clipData = qobject_cast<const QCostClipboardData *>(QApplication::clipboard()->mimeData());
-            if( clipData != NULL ){
+            if( clipData != Q_NULLPTR ){
                 *data = *clipData;
             }
             QModelIndexList selRows = m_d->ui->treeView->selectionModel()->selectedRows();
@@ -142,11 +142,11 @@ void BillTreeGUI::copyToClipboard(){
 }
 
 void BillTreeGUI::cutToClipboard(){
-    if( m_d->bill != NULL ){
+    if( m_d->bill != Q_NULLPTR ){
         if( m_d->ui->treeView->selectionModel() ){
             QCostClipboardData *data = new QCostClipboardData();
             const QCostClipboardData *clipData = qobject_cast<const QCostClipboardData *>(QApplication::clipboard()->mimeData());
-            if( clipData != NULL ){
+            if( clipData != Q_NULLPTR ){
                 *data = *clipData;
             }
             QModelIndexList selRows = m_d->ui->treeView->selectionModel()->selectedRows();
@@ -161,13 +161,13 @@ void BillTreeGUI::cutToClipboard(){
 }
 
 void BillTreeGUI::pasteFromClipboard(){
-    if( m_d->bill != NULL ){
+    if( m_d->bill != Q_NULLPTR ){
         if( m_d->ui->treeView->selectionModel() ){
             QClipboard * clp = QApplication::clipboard();
             const QMimeData * mimeData = clp->mimeData();
             const QCostClipboardData *data = qobject_cast<const QCostClipboardData *>( mimeData );
 
-            if( data != NULL ){
+            if( data != Q_NULLPTR ){
                 QModelIndex currIndex = m_d->ui->treeView->currentIndex();
                 int currRow = m_d->bill->rowCount( )-1;
                 QModelIndex currParent = QModelIndex();
@@ -179,15 +179,15 @@ void BillTreeGUI::pasteFromClipboard(){
                 Bill * itemsToCopyBill = NULL;
                 QCostClipboardData::Mode mode;
                 data->getCopiedBillItems( &itemsToCopy, itemsToCopyBill, &mode);
-                if( itemsToCopyBill != NULL ){
+                if( itemsToCopyBill != Q_NULLPTR ){
                     if( mode == QCostClipboardData::Copy ){
                         if( itemsToCopyBill->priceList() != m_d->bill->priceList() ){
                             for( QList<BillItem *>::iterator i=itemsToCopy.begin(); i != itemsToCopy.end(); ++i ){
                                 if( (*i)->hasChildren() ){
-                                    (*i)->setPriceItem( NULL );
+                                    (*i)->setPriceItem( Q_NULLPTR );
                                 } else {
                                     PriceItem * pItem = m_d->bill->priceList()->priceItemCode( (*i)->priceItem()->codeFull() );
-                                    if( pItem == NULL ){
+                                    if( pItem == Q_NULLPTR ){
                                         pItem = m_d->bill->priceList()->appendPriceItem();
                                         *pItem = *((*i)->priceItem());
                                     }
@@ -256,7 +256,7 @@ void BillTreeGUI::editAttributes(){
 void BillTreeGUI::editBillItemPrice( const QModelIndex & index ){
     if( m_d->bill ){
         if( index.column() >= 0 && index.column() < 4 ){
-            if( m_d->bill->priceList() == NULL ){
+            if( m_d->bill->priceList() == Q_NULLPTR ){
                 QMessageBox msgBox;
                 msgBox.setText( trUtf8("Al computo non è associato alcun elenco prezzi") );
                 msgBox.setInformativeText(trUtf8("Prima di associare un prezzo ad una riga è necessario aver impostato l'elenco prezzi del computo.") );
@@ -274,7 +274,7 @@ void BillTreeGUI::editBillItemPrice( const QModelIndex & index ){
 
 BillItem *BillTreeGUI::currentBillItem() {
     if( m_d->ui->treeView->selectionModel() ){
-        if( m_d->bill != NULL ){
+        if( m_d->bill != Q_NULLPTR ){
             if( m_d->ui->treeView->selectionModel()->currentIndex().isValid() ){
                 return m_d->bill->billItem( m_d->ui->treeView->selectionModel()->currentIndex() );
             }
@@ -285,7 +285,7 @@ BillItem *BillTreeGUI::currentBillItem() {
 
 void BillTreeGUI::setBill(Bill *b ) {
     if( m_d->bill != b ){
-        if( m_d->bill != NULL ){
+        if( m_d->bill != Q_NULLPTR ){
             disconnect( m_d->bill, SIGNAL(amountChanged(int,QString)), this, SLOT(updateAmountValue(int,QString) ));
             disconnect( m_d->ui->priceListComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(setPriceList()) );
             disconnect( m_d->bill, &Bill::aboutToBeDeleted, this, &BillTreeGUI::clear );
@@ -329,7 +329,7 @@ void BillTreeGUI::clear(){
 }
 
 void BillTreeGUI::addItems(){
-    if( m_d->bill != NULL ){
+    if( m_d->bill != Q_NULLPTR ){
         if( m_d->ui->treeView->selectionModel() ){
             QModelIndexList rowListSel = m_d->ui->treeView->selectionModel()->selectedRows();
             if( rowListSel.size() > 0 ){
@@ -357,7 +357,7 @@ void BillTreeGUI::addItems(){
 }
 
 void BillTreeGUI::addChildItems(){
-    if( m_d->bill != NULL ){
+    if( m_d->bill != Q_NULLPTR ){
         if( m_d->ui->treeView->selectionModel() ){
             QModelIndexList rowListSel = m_d->ui->treeView->selectionModel()->selectedRows();
             for( int i=0; i < rowListSel.size(); ++i){
@@ -368,7 +368,7 @@ void BillTreeGUI::addChildItems(){
 }
 
 void BillTreeGUI::removeItems(){
-    if( m_d->bill != NULL ){
+    if( m_d->bill != Q_NULLPTR ){
         if( m_d->ui->treeView->selectionModel() ){
             // se la lista non contiene il genitore dell'oggetto lo rimuovo
             // altrimenti è sufficiente rimuovere il genitore
@@ -389,12 +389,12 @@ void BillTreeGUI::removeItems(){
 
 void BillTreeGUI::changeCurrentItem(const QModelIndex &currentIndex  ) {
     if( currentIndex.isValid() ){
-        if( m_d->bill != NULL ){
+        if( m_d->bill != Q_NULLPTR ){
             emit currentItemChanged( m_d->bill->billItem( currentIndex ));
             return;
         }
     }
-    emit currentItemChanged( NULL );
+    emit currentItemChanged( Q_NULLPTR );
 }
 
 void BillTreeGUI::setPriceList() {
@@ -447,7 +447,7 @@ void BillTreeGUI::updateAmountsNameValue(){
         QLineEdit * lEdit = new QLineEdit();
         lEdit->setReadOnly( true );
         lEdit->setAlignment( Qt::AlignRight);
-        if( m_d->bill != NULL ){
+        if( m_d->bill != Q_NULLPTR ){
             lEdit->setText( m_d->bill->amountStr(i));
         }
         m_d->ui->amountsLayout->addWidget( label, i, 0 );
@@ -485,7 +485,7 @@ void BillTreeGUI::showEvent(QShowEvent *event) {
 
 void BillTreeGUI::populatePriceListComboBox(){
     m_d->ui->priceListComboBox->clear();
-    m_d->ui->priceListComboBox->addItem( QString("---"), qVariantFromValue((void *) NULL ));
+    m_d->ui->priceListComboBox->addItem( QString("---"), qVariantFromValue((void *) Q_NULLPTR ));
     for( int i=0; i < m_d->project->priceListCount(); ++i){
         QString n;
         if( m_d->project->priceList(i) ){

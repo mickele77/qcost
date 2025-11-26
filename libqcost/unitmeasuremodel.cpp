@@ -219,7 +219,7 @@ bool UnitMeasureModel::insert(int row, int count){
     beginInsertRows(QModelIndex(), row, row+count-1 );
     for(int i=0; i < count; ++i){
         UnitMeasure * ump = new UnitMeasure();
-        while( unitMeasureId(ump->id()) != NULL ){
+        while( unitMeasureId(ump->id()) != Q_NULLPTR ){
             ump->nextId();
         }
         m_d->insert( row, ump );

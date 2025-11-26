@@ -83,7 +83,7 @@ bool BillPrinter::printAttributeODT( BillPrinter::PrintBillItemsOption prItemsOp
                                      double paperHeight,
                                      Qt::Orientation paperOrientation,
                                      bool groupPrAm) const {
-    if( m_d->bill != NULL ){
+    if( m_d->bill != Q_NULLPTR ){
         if( paperOrientation == Qt::Horizontal ){
             if( paperHeight > paperWidth ){
                 double com = paperHeight;
@@ -208,7 +208,7 @@ bool BillPrinter::printBillODT( PrintBillItemsOption prItemsOption,
                                 double paperWidth, double paperHeight,
                                 Qt::Orientation paperOrientation,
                                 bool groupPrAm ) const {
-    if( m_d->bill != NULL ){
+    if( m_d->bill != Q_NULLPTR ){
         if( paperOrientation == Qt::Horizontal ){
             if( paperHeight > paperWidth ){
                 double com = paperHeight;
@@ -339,7 +339,7 @@ bool BillPrinter::printSummaryODT( PrintBillItemsOption prBillItemsOption,
                                    Qt::Orientation paperOrientation,
                                    bool groupPrAm,
                                    bool writeDetails ) const {
-    if( m_d->bill != NULL ){
+    if( m_d->bill != Q_NULLPTR ){
         if( paperOrientation == Qt::Horizontal ){
             if( paperHeight > paperWidth ){
                 double com = paperHeight;

@@ -29,7 +29,7 @@
 
 class ProjectBillParentItemPrivate{
 public:
-    ProjectBillParentItemPrivate( PriceFieldModel * pfm, MathParser * p = NULL ):
+    ProjectBillParentItemPrivate( PriceFieldModel * pfm, MathParser * p = Q_NULLPTR ):
         priceFieldModel(pfm),
         parser(p),
         nextId(1){

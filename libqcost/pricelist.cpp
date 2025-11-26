@@ -198,10 +198,10 @@ QModelIndex PriceList::index(int row, int column, const QModelIndex &parent) con
 }
 
 QModelIndex PriceList::index(PriceItem * item, int column) const {
-    if (item == NULL )
+    if (item == Q_NULLPTR )
         return QModelIndex();
 
-    if( item->parentItem() == NULL ){
+    if( item->parentItem() == Q_NULLPTR ){
         return QModelIndex();
     } else {
         return createIndex(item->childNumber(), column, item);

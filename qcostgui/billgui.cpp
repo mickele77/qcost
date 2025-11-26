@@ -62,7 +62,7 @@ public:
                     MathParser * prs, Bill * b, Project * prj,
                     QString * wpf, QWidget *parent ):
         bill ( b ),
-        currentBillItem( NULL ),
+        currentBillItem( Q_NULLPTR ),
         project(prj),
         billItemEditingPrice(NULL),
         billDataGUI( new BillDataGUI( prj->priceFieldModel(), prs, NULL, wpf, parent ) ),
@@ -119,16 +119,16 @@ void BillGUI::setBill( Bill * b ){
 }
 
 void BillGUI::setBillItem(BillItem * newItem ) {
-    if( m_d->currentBillItem != NULL ){
+    if( m_d->currentBillItem != Q_NULLPTR ){
         disconnect( m_d->currentBillItem, static_cast<void(BillItem::*)(bool)>(&BillItem::hasChildrenChanged), this, &BillGUI::updateBillItemGUI );
         disconnect( m_d->currentBillItem, &BillItem::aboutToBeDeleted, this, &BillGUI::setBillItemNULL );
-        m_d->billItemGUI->setBillItem( NULL );
+        m_d->billItemGUI->setBillItem( Q_NULLPTR );
         m_d->billItemGUI->hide();
         m_d->billItemTitleGUI->setBillItem( NULL);
         m_d->billItemTitleGUI->hide();
     }
     m_d->currentBillItem = newItem;
-    if( m_d->currentBillItem != NULL ){
+    if( m_d->currentBillItem != Q_NULLPTR ){
         updateBillItemGUI();
         connect( m_d->currentBillItem, static_cast<void(BillItem::*)(bool)>(&BillItem::hasChildrenChanged), this, &BillGUI::updateBillItemGUI );
         connect( m_d->currentBillItem, &BillItem::aboutToBeDeleted, this, &BillGUI::setBillItemNULL );
@@ -136,14 +136,14 @@ void BillGUI::setBillItem(BillItem * newItem ) {
 }
 
 void BillGUI::setBillItemNULL() {
-    setBillItem( NULL );
+    setBillItem( Q_NULLPTR );
 }
 
 void BillGUI::updateBillItemGUI() {
-    if( m_d->currentBillItem != NULL ){
+    if( m_d->currentBillItem != Q_NULLPTR ){
         if( m_d->currentBillItem->hasChildren() ){
             m_d->billItemGUI->hide();
-            m_d->billItemGUI->setBillItem( NULL );
+            m_d->billItemGUI->setBillItem( Q_NULLPTR );
 
             m_d->billItemTitleGUI->setBillItem( m_d->currentBillItem );
             m_d->billItemTitleGUI->show();
@@ -152,13 +152,13 @@ void BillGUI::updateBillItemGUI() {
             m_d->billItemGUI->show();
 
             m_d->billItemTitleGUI->hide();
-            m_d->billItemTitleGUI->setBillItem( NULL );
+            m_d->billItemTitleGUI->setBillItem( Q_NULLPTR );
         }
     } else {
         m_d->billItemGUI->hide();
-        m_d->billItemGUI->setBillItem( NULL );
+        m_d->billItemGUI->setBillItem( Q_NULLPTR );
 
         m_d->billItemTitleGUI->hide();
-        m_d->billItemTitleGUI->setBillItem( NULL );
+        m_d->billItemTitleGUI->setBillItem( Q_NULLPTR );
     }
 }

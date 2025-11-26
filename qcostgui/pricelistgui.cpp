@@ -110,24 +110,24 @@ void PriceListGUI::setPriceList(PriceList *pl) {
 }
 
 void PriceListGUI::setPriceItem(PriceItem * newItem ) {
-    if( m_d->currentPriceItem != NULL ){
+    if( m_d->currentPriceItem != Q_NULLPTR ){
         disconnect( m_d->currentPriceItem, &PriceItem::aboutToBeDeleted, this, &PriceListGUI::setPriceItemNULL );
-        m_d->itemGUI->setPriceItem( NULL );
+        m_d->itemGUI->setPriceItem( Q_NULLPTR );
         m_d->itemGUI->hide();
     }
     m_d->currentPriceItem = newItem;
-    if( m_d->currentPriceItem != NULL ){
+    if( m_d->currentPriceItem != Q_NULLPTR ){
         updatePriceItemGUI();
         connect( m_d->currentPriceItem, &PriceItem::aboutToBeDeleted, this, &PriceListGUI::setPriceItemNULL );
     }
 }
 
 void PriceListGUI::setPriceItemNULL() {
-    setPriceItem( NULL );
+    setPriceItem( Q_NULLPTR );
 }
 
 void PriceListGUI::updatePriceItemGUI() {
-    if( m_d->currentPriceItem != NULL ){
+    if( m_d->currentPriceItem != Q_NULLPTR ){
         m_d->itemGUI->show();
         m_d->itemGUI->setPriceItem( m_d->currentPriceItem );
     } else {

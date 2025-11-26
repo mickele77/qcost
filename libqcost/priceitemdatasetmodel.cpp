@@ -32,7 +32,7 @@ public:
     PriceItemDataSetPrivate( PriceItem * pItem ):
         overheads(0.13),
         profits(0.10) {
-        if( pItem->parentItem() == NULL ){
+        if( pItem->parentItem() == Q_NULLPTR ){
             inheritOverheadsFromRoot = false;
             inheritProfitsFromRoot = false;
         } else {
@@ -279,7 +279,7 @@ public:
     }
 
     QString	toString(double i, char f = 'g', int prec = 6) const{
-        if( parser == NULL ){
+        if( parser == Q_NULLPTR ){
             return QString::number( i, f, prec );
         } else {
             return parser->toString( i, f, prec );
@@ -287,7 +287,7 @@ public:
     }
 
     double	toDouble( const QString & str ) const{
-        if( parser == NULL ){
+        if( parser == Q_NULLPTR ){
             return str.toDouble();
         } else {
             return parser->evaluate( str );
@@ -304,7 +304,7 @@ public:
 PriceItemDataSetModel::PriceItemDataSetModel(MathParser * prs, PriceFieldModel * pfm,  PriceItem * pItem ):
     QAbstractTableModel( pItem ),
     m_d( new PriceItemDataSetModelPrivate( pItem, pfm, prs )){
-    if( pItem->parent() == NULL ){
+    if( pItem->parent() == Q_NULLPTR ){
         insertPriceDataSetPrivate( 0 );
     } else {
         insertPriceDataSetPrivate( 0, pItem->parentItem()->dataModel()->priceDataSetCount() );
@@ -383,7 +383,7 @@ int PriceItemDataSetModel::associatedAPRow() const {
 bool PriceItemDataSetModel::insertPriceDataSet(int column, int count ) {
     if( count > 0 ){
         if(m_d->priceItem){
-            if( m_d->priceItem->parentItem() == NULL ){
+            if( m_d->priceItem->parentItem() == Q_NULLPTR ){
                 insertPriceDataSetPrivate( column, count );
             } else {
                 m_d->priceItem->parentItem()->dataModel()->insertPriceDataSet(column, count );
@@ -417,7 +417,7 @@ bool PriceItemDataSetModel::insertPriceDataSetPrivate(int columnInput, int count
         beginInsertColumns(QModelIndex(), column, column + count - 1);
         for( int i=0; i < count; ++i ){
             PriceItemDataSet * dataSet = new PriceItemDataSet( m_d->priceItem, m_d->priceFieldModel, m_d->parser);
-            if( m_d->priceItem->parentItem() == NULL ){
+            if( m_d->priceItem->parentItem() == Q_NULLPTR ){
                 dataSet->setInheritOverheadsFromRoot( false );
                 dataSet->setInheritProfitsFromRoot( false );
             } else {
@@ -446,7 +446,7 @@ bool PriceItemDataSetModel::insertPriceDataSetPrivate(int columnInput, int count
 bool PriceItemDataSetModel::removePriceDataSet(int column, int count ) {
     if( count > 0 ){
         if(m_d->priceItem){
-            if( m_d->priceItem->parentItem() == NULL ){
+            if( m_d->priceItem->parentItem() == Q_NULLPTR ){
                 m_d->priceItem->dataModel()->removePriceDataSetPrivate( column, count );
             } else {
                 m_d->priceItem->parentItem()->dataModel()->removePriceDataSet(column, count );
@@ -797,7 +797,7 @@ double PriceItemDataSetModel::overheads(int priceDataSet) const {
 }
 
 double PriceItemDataSetModel::overheadsFromRoot(int priceDataSet, PriceItem * pItem ) const {
-    if( pItem->parentItem() == NULL ){
+    if( pItem->parentItem() == Q_NULLPTR ){
         return pItem->dataModel()->m_d->dataSetContainer.at( priceDataSet )->overheads();
     } else {
         return overheadsFromRoot( priceDataSet, pItem->parentItem() );
@@ -820,7 +820,7 @@ void PriceItemDataSetModel::setOverheads(int priceDataSet, double newVal) {
 }
 
 void PriceItemDataSetModel::setOverheadsToRoot(int priceDataSet, double newVal, PriceItem * pItem ) {
-    if( pItem->parentItem() == NULL ){
+    if( pItem->parentItem() == Q_NULLPTR ){
         pItem->dataModel()->m_d->dataSetContainer.at( priceDataSet )->setOverheads(newVal );
         setOverheadsFromRoot( priceDataSet, newVal );
     } else {
@@ -879,7 +879,7 @@ QString PriceItemDataSetModel::profitsStr(int priceDataSet) const {
 }
 
 double PriceItemDataSetModel::profitsFromRoot( int priceDataSet, PriceItem *pItem ) const {
-    if( pItem->parentItem() == NULL ){
+    if( pItem->parentItem() == Q_NULLPTR ){
         return pItem->dataModel()->m_d->dataSetContainer.at( priceDataSet )->profits();
     } else {
         return profitsFromRoot( priceDataSet, pItem->parentItem() );
@@ -904,7 +904,7 @@ void PriceItemDataSetModel::setProfits(int priceDataSet, const QString &newVal) 
 }
 
 void PriceItemDataSetModel::setProfitsToRoot(int priceDataSet, double newVal, PriceItem *pItem) {
-    if( pItem->parentItem() == NULL ){
+    if( pItem->parentItem() == Q_NULLPTR ){
         pItem->dataModel()->m_d->dataSetContainer.at( priceDataSet )->setProfits(newVal );
         setProfitsFromRoot( priceDataSet, newVal );
     } else {
@@ -955,7 +955,7 @@ void PriceItemDataSetModel::setValueFromAP(int priceField, double v){
 
 void PriceItemDataSetModel::writeXml10(QXmlStreamWriter *writer) {
     for( QList<PriceItemDataSet *>::iterator i = m_d->dataSetContainer.begin(); i != m_d->dataSetContainer.end(); ++i){
-        if( m_d->priceItem->parentItem() == NULL ){
+        if( m_d->priceItem->parentItem() == Q_NULLPTR ){
             (*i)->writeXml10( writer, true );
         } else {
             (*i)->writeXml10( writer, false );

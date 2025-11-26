@@ -50,7 +50,7 @@ class EXPORT_QCOST_LIB_OPT BillItem :  public QObject, public TreeItem {
     Q_OBJECT
 public:
     friend class Bill;
-    BillItem( PriceItem * p, BillItem * parentItem, PriceFieldModel * pfm, MathParser * parser = NULL );
+    BillItem( PriceItem * p, BillItem * parentItem, PriceFieldModel * pfm, MathParser * parser = Q_NULLPTR );
     ~BillItem();
 
     BillItem &operator =(const BillItem &cp);

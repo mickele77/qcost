@@ -29,7 +29,7 @@ public:
     GeneralDataGUIPrivate():
         ui(new Ui::GeneralDataGUI),
         fieldTableDelegate( new PriceFieldTableDelegate() ),
-        project( NULL ){
+        project( Q_NULLPTR ){
     };
     ~GeneralDataGUIPrivate(){
         delete ui;
@@ -66,7 +66,7 @@ GeneralDataGUI::~GeneralDataGUI() {
 void GeneralDataGUI::setProject( Project * pr ){
     if( m_d->project != pr ){
         m_d->project = pr;
-        if( m_d->project != NULL ){
+        if( m_d->project != Q_NULLPTR ){
             m_d->ui->unitMeasureView->setModel( m_d->project->unitMeasureModel() );
             m_d->ui->unitMeasureView->horizontalHeader()->resizeSections( QHeaderView::ResizeToContents );
             m_d->ui->priceFieldTableView->setModel( m_d->project->priceFieldModel() );
@@ -76,7 +76,7 @@ void GeneralDataGUI::setProject( Project * pr ){
 }
 
 void GeneralDataGUI::insertUnitMeasure(){
-    if( m_d->project != NULL ){
+    if( m_d->project != Q_NULLPTR ){
         QModelIndexList listIndexs = m_d->ui->unitMeasureView->selectionModel()->selectedIndexes();
         QList<int> listRows;
         for( int i=0; i < listIndexs.size(); ++i){
@@ -103,7 +103,7 @@ void GeneralDataGUI::removeUnitMeasure(){
 }
 
 void GeneralDataGUI::insertPriceField(){
-    if( m_d->project != NULL ){
+    if( m_d->project != Q_NULLPTR ){
         QModelIndexList listIndexs = m_d->ui->priceFieldTableView->selectionModel()->selectedIndexes();
         QList<int> listRows;
         for( int i=0; i < listIndexs.size(); ++i){

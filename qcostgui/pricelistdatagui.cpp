@@ -49,7 +49,7 @@ PriceListDataGUI::~PriceListDataGUI(){
 
 void PriceListDataGUI::setPriceList(PriceList *p) {
     if( m_d->priceList != p ){
-        if( m_d->priceList != NULL ){
+        if( m_d->priceList != Q_NULLPTR ){
             disconnect( m_d->ui->nameLineEdit, &QLineEdit::textEdited, m_d->priceList, &PriceList::setName );
             disconnect( m_d->ui->descriptionTextEdit, &QPlainTextEdit::textChanged, this, &PriceListDataGUI::setDescription );
             disconnect( m_d->priceList, &PriceList::aboutToBeDeleted, this, &PriceListDataGUI::setPriceListNULL );
@@ -57,7 +57,7 @@ void PriceListDataGUI::setPriceList(PriceList *p) {
         m_d->ui->nameLineEdit->clear();
         m_d->ui->descriptionTextEdit->clear();
         m_d->priceList = p;
-        if( m_d->priceList != NULL ){
+        if( m_d->priceList != Q_NULLPTR ){
             m_d->ui->nameLineEdit->setText( m_d->priceList->name() );
             connect( m_d->ui->nameLineEdit, &QLineEdit::textEdited, m_d->priceList, &PriceList::setName );
             m_d->ui->descriptionTextEdit->setPlainText( m_d->priceList->description() );
@@ -68,7 +68,7 @@ void PriceListDataGUI::setPriceList(PriceList *p) {
 }
 
 void PriceListDataGUI::setPriceListNULL(){
-    setPriceList( NULL );
+    setPriceList( Q_NULLPTR );
 }
 
 void PriceListDataGUI::setDescription(){

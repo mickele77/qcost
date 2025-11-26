@@ -105,7 +105,7 @@ void ProjectItemsView::treeViewCustomMenuRequested(QPoint pos){
         QModelIndex index = m_d->ui->treeView->selectionModel()->currentIndex();
         ProjectItem * item = m_d->project->getItem(index);
 
-        if( dynamic_cast<ProjectDataParentItem *>(item) == NULL ){
+        if( dynamic_cast<ProjectDataParentItem *>(item) == Q_NULLPTR ){
             QMenu *menu=new QMenu(this);
 
             QModelIndex index = m_d->ui->treeView->selectionModel()->currentIndex();
