@@ -8,6 +8,7 @@ class QXmlStreamReader;
 class MathParser;
 class BillItem;
 class AccountingBillItem;
+class AccountingTAMBillItem;
 class Measure;
 class UnitMeasure;
 

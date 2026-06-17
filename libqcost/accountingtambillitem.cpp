@@ -35,6 +35,7 @@
 #include "pricefieldmodel.h"
 #include "unitmeasure.h"
 #include "mathparser.h"
+#include "measuresmodel.h"
 
 #include <QXmlStreamAttributes>
 #include <QXmlStreamReader>
@@ -109,6 +110,15 @@ AccountingTAMBillItem::AccountingTAMBillItem(AccountingTAMBillItem *parentItem, 
         connect( m_d->noDiscountAmountPriceFieldModel, &AccountingPriceFieldModel::modelChanged, this, &AccountingTAMBillItem::updatePPUs );
         connect( m_d->totalAmountPriceFieldModel, &AccountingPriceFieldModel::modelChanged, this, &AccountingTAMBillItem::updatePPUs );
     }
+
+    UnitMeasure * ump = nullptr;
+    if( m_d->priceItem != nullptr ){
+        ump = m_d->priceItem->unitMeasure();
+    }
+    m_d->measuresModel = new AccountingTAMMeasuresModel( this, m_d->parser, ump );
+    setQuantity( m_d->measuresModel->quantity() );
+    connect( m_d->measuresModel, &AccountingTAMMeasuresModel::quantityChanged, this, &AccountingTAMBillItem::setQuantityPrivate );
+    connect( m_d->measuresModel, &AccountingTAMMeasuresModel::modelChanged, this, &AccountingTAMBillItem::itemChanged );
 
     updateDaysCount();
 }

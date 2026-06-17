@@ -22,7 +22,7 @@
 #include "accountingtambillpricedatagui.h"
 #include "attributesgui.h"
 #include "accountingtreegui.h"
-#include "accountingitemppugui.h"
+#include "accountingtambillitemgui.h"
 #include "accountingitemcommentgui.h"
 #include "accountingitempaymentgui.h"
 
@@ -39,11 +39,11 @@
 
 class AccountingItemWidget : public QWidget {
 private:
-    AccountingItemPPUGUI * ppuGUI;
+    AccountingTAMBillItemGUI * ppuGUI;
     AccountingItemCommentGUI * commentGUI;
     AccountingItemPaymentGUI * billGUI;
 public:
-    AccountingItemWidget( AccountingItemPPUGUI * _ppuGUI,
+    AccountingItemWidget( AccountingTAMBillItemGUI * _ppuGUI,
                           AccountingItemCommentGUI * _commentGUI,
                           AccountingItemPaymentGUI * _billGUI,
                           QWidget * parent = nullptr ):
@@ -80,11 +80,11 @@ public:
         attributesGUI( new AttributesGUI( prj->priceFieldModel(), nullptr, wpf, parent ) ),
         mainSplitter( new QSplitter(Qt::Horizontal, parent ) ),
         accountingTreeGUI( new AccountingTreeGUI( EPAImpOptions, EPAFileName, b, prs, prj, mainSplitter ) ),
-        accountingTAMBillItemPPUGUI( new AccountingItemPPUGUI( EPAImpOptions, EPAFileName, prs, prj, parent ) ),
+        accountingTAMBillItemGUI( new AccountingTAMBillItemGUI( EPAImpOptions, EPAFileName, prs, prj, parent ) ),
         accountingTAMBillItemCommentGUI( new AccountingItemCommentGUI( parent ) ),
         accountingTAMBillItemBillGUI( new AccountingItemPaymentGUI( prj->priceFieldModel(), parent ) ),
-        accountingItemWidget( new AccountingItemWidget( accountingTAMBillItemPPUGUI, accountingTAMBillItemCommentGUI, accountingTAMBillItemBillGUI, mainSplitter ) ) {
-        accountingTAMBillItemPPUGUI->hide();
+        accountingItemWidget( new AccountingItemWidget( accountingTAMBillItemGUI, accountingTAMBillItemCommentGUI, accountingTAMBillItemBillGUI, mainSplitter ) ) {
+        accountingTAMBillItemGUI->hide();
         accountingTAMBillItemCommentGUI->hide();
         accountingTAMBillItemBillGUI->hide();
     }
@@ -100,7 +100,7 @@ public:
     AttributesGUI * attributesGUI;
     QSplitter * mainSplitter;
     AccountingTreeGUI * accountingTreeGUI;
-    AccountingItemPPUGUI * accountingTAMBillItemPPUGUI;
+    AccountingTAMBillItemGUI * accountingTAMBillItemGUI;
     AccountingItemCommentGUI * accountingTAMBillItemCommentGUI;
     AccountingItemPaymentGUI * accountingTAMBillItemBillGUI;
     AccountingItemWidget * accountingItemWidget;
@@ -135,7 +135,7 @@ void AccountingTAMBillGUI::setBill( AccountingTAMBill * b ){
         m_d->priceDataGUI->setAccountingTAMBill( b );
         m_d->attributesGUI->setBill( b );
         m_d->accountingTreeGUI->setAccountingTAMBill( b );
-        m_d->accountingTAMBillItemPPUGUI->setAccountingTAMBill( b );
+        m_d->accountingTAMBillItemGUI->setAccountingTAMBill( b );
         m_d->accountingTAMBillItemBillGUI->setAccountingTAMBill( b );
     }
 }
@@ -144,8 +144,8 @@ void AccountingTAMBillGUI::setBillItem(AccountingTAMBillItem * newItem ) {
     if( m_d->currentAccountingTAMBillItem != nullptr ){
         disconnect( m_d->currentAccountingTAMBillItem, static_cast<void(AccountingTAMBillItem::*)(bool)>(&AccountingTAMBillItem::hasChildrenChanged), this, &AccountingTAMBillGUI::updateGUI );
         disconnect( m_d->currentAccountingTAMBillItem, &AccountingTAMBillItem::aboutToBeDeleted, this, &AccountingTAMBillGUI::setBillItemnullptr );
-        m_d->accountingTAMBillItemPPUGUI->setItem( (AccountingTAMBillItem *)(nullptr) );
-        m_d->accountingTAMBillItemPPUGUI->hide();
+        m_d->accountingTAMBillItemGUI->setItem( (AccountingTAMBillItem *)(nullptr) );
+        m_d->accountingTAMBillItemGUI->hide();
         m_d->accountingTAMBillItemCommentGUI->setAccountingItemnullptr();
         m_d->accountingTAMBillItemCommentGUI->hide();
         m_d->accountingTAMBillItemBillGUI->setAccountingItemnullptr();
@@ -167,8 +167,8 @@ void AccountingTAMBillGUI::updateGUI() {
     if( m_d->currentAccountingTAMBillItem != nullptr ){
 
         if( m_d->currentAccountingTAMBillItem->itemType() == AccountingTAMBillItem::PPU ){
-            m_d->accountingTAMBillItemPPUGUI->show();
-            m_d->accountingTAMBillItemPPUGUI->setItem( m_d->currentAccountingTAMBillItem );
+            m_d->accountingTAMBillItemGUI->show();
+            m_d->accountingTAMBillItemGUI->setItem( m_d->currentAccountingTAMBillItem );
 
             m_d->accountingTAMBillItemCommentGUI->hide();
             m_d->accountingTAMBillItemCommentGUI->setAccountingItemnullptr();
@@ -180,8 +180,8 @@ void AccountingTAMBillGUI::updateGUI() {
         }
 
         if( m_d->currentAccountingTAMBillItem->itemType() == AccountingTAMBillItem::Comment ){
-            m_d->accountingTAMBillItemPPUGUI->hide();
-            m_d->accountingTAMBillItemPPUGUI->setAccountingItemnullptr();
+            m_d->accountingTAMBillItemGUI->hide();
+            m_d->accountingTAMBillItemGUI->setAccountingItemnullptr();
 
             m_d->accountingTAMBillItemCommentGUI->show();
             m_d->accountingTAMBillItemCommentGUI->setAccountingItem( m_d->currentAccountingTAMBillItem );
@@ -193,8 +193,8 @@ void AccountingTAMBillGUI::updateGUI() {
         }
 
         if( m_d->currentAccountingTAMBillItem->itemType() == AccountingTAMBillItem::Payment ){
-            m_d->accountingTAMBillItemPPUGUI->hide();
-            m_d->accountingTAMBillItemPPUGUI->setAccountingItemnullptr();
+            m_d->accountingTAMBillItemGUI->hide();
+            m_d->accountingTAMBillItemGUI->setAccountingItemnullptr();
 
             m_d->accountingTAMBillItemCommentGUI->hide();
             m_d->accountingTAMBillItemCommentGUI->setAccountingItemnullptr();
@@ -206,8 +206,8 @@ void AccountingTAMBillGUI::updateGUI() {
         }
     }
 
-    m_d->accountingTAMBillItemPPUGUI->hide();
-    m_d->accountingTAMBillItemPPUGUI->setAccountingItemnullptr();
+    m_d->accountingTAMBillItemGUI->hide();
+    m_d->accountingTAMBillItemGUI->setAccountingItemnullptr();
 
     m_d->accountingTAMBillItemCommentGUI->hide();
     m_d->accountingTAMBillItemCommentGUI->setAccountingItemnullptr();

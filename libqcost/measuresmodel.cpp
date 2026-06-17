@@ -200,7 +200,7 @@ bool MeasuresModel::insertRows(int row, int count, const QModelIndex &parent) {
     for(int i=0; i < count; ++i){
         Measure * itemLine = nullptr;
         if(m_d->billItem != nullptr ){
-        itemLine = new Measure( m_d->billItem, m_d->parser, m_d->unitMeasure );
+            itemLine = new Measure( m_d->billItem, m_d->parser, m_d->unitMeasure );
         } else if( m_d->accountingBillItem != nullptr ){
             itemLine = new Measure( m_d->accountingBillItem, m_d->parser, m_d->unitMeasure );
         }

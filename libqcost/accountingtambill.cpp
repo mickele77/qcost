@@ -137,6 +137,17 @@ bool AccountingTAMBill::isEmpty() {
     return !(m_d->rootItem->hasChildren());
 }
 
+int AccountingTAMBill::paymentsCount() const {
+    return m_d->rootItem->childrenCount();
+}
+
+AccountingTAMBillItem *AccountingTAMBill::payment(int pay) {
+    if( pay >= 0 && pay < m_d->rootItem->childrenCount() ){
+        return m_d->rootItem->childItem( pay );
+    }
+    return nullptr;
+}
+
 AccountingTAMBill &AccountingTAMBill::operator=(const AccountingTAMBill &cp) {
     setName( cp.m_d->name );
     setPriceList( cp.m_d->priceList );

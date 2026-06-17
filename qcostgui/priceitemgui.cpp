@@ -36,7 +36,7 @@
 class PriceItemGUIPrivate{
 public:
     PriceItemGUIPrivate( QMap<PriceListDBWidget::ImportOptions, bool> * impOptions, QString * fileName,
-                         MathParser * prs, Project * prj ):
+                        MathParser * prs, Project * prj ):
         project(prj),
         priceFieldModel( prj->priceFieldModel() ),
         parser( prs ),
@@ -46,7 +46,7 @@ public:
         ui(new Ui::PriceItemGUI() ),
         EPAImportOptions(impOptions),
         EPAFileName(fileName){
-    };
+        };
     Project * project;
     PriceFieldModel * priceFieldModel;
     MathParser * parser;
@@ -65,10 +65,10 @@ public:
 };
 
 PriceItemGUI::PriceItemGUI( QMap<PriceListDBWidget::ImportOptions, bool> * EPAImpOptions,
-                            QString *EPAFileName,
-                            PriceItem * pr, int curPriceDataSet,
-                            MathParser * parser, Project *prj,
-                            QWidget *parent ) :
+                           QString *EPAFileName,
+                           PriceItem * pr, int curPriceDataSet,
+                           MathParser * parser, Project *prj,
+                           QWidget *parent ) :
     QWidget(parent),
     m_d( new PriceItemGUIPrivate( EPAImpOptions, EPAFileName, parser, prj ) ) {
     m_d->ui->setupUi(this);
@@ -433,11 +433,21 @@ void PriceItemGUI::setPriceValueFromLineEdit(){
         if( lEdit ){
             for( int i=0; i < m_d->singlePriceDataFieldLineEdits.size(); ++i ){
                 if( m_d->singlePriceDataFieldLineEdits.at(i) == lEdit ){
+                    QString v = lEdit->text();
                     if( m_d->parser ){
-                        QString v = lEdit->text();
-                        m_d->priceItem->setValue( i, m_d->currentPriceDataSet, m_d->parser->evaluateLocal(v));
+                        if( m_d->priceFieldModel->isPercentage(i) ) {
+                            v.remove("%");
+                            m_d->priceItem->setValue( i, m_d->currentPriceDataSet, m_d->parser->evaluateLocal(v) / 100.0 );
+                        } else {
+                            m_d->priceItem->setValue( i, m_d->currentPriceDataSet, m_d->parser->evaluateLocal(v));
+                        }
                     } else {
-                        m_d->priceItem->setValue( i, m_d->currentPriceDataSet, lEdit->text().toDouble() );
+                        if( m_d->priceFieldModel->isPercentage(i) ) {
+                            v.remove("%");
+                            m_d->priceItem->setValue( i, m_d->currentPriceDataSet, v.toDouble() / 100.0 );
+                        } else {
+                            m_d->priceItem->setValue( i, m_d->currentPriceDataSet, v.toDouble() );
+                        }
                     }
                     break;
                 }

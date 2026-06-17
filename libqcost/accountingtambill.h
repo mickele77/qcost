@@ -176,6 +176,9 @@ public:
     QDate endDate() const;
     void setEndDate( const QDate & newEndDate );
 
+    int paymentsCount() const;
+    AccountingTAMBillItem *payment(int pay);
+
 public slots:
     void setName( const QString & n);
     void setPriceDataSet( int );

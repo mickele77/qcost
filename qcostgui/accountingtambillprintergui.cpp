@@ -110,10 +110,8 @@ AccountingTAMBillPrinterGUI::AccountingTAMBillPrinterGUI(AccountingTAMBill *bill
         m_d->ui->printNoAmountsRadioButton->setChecked( true );
     }
 
-    int i = 0;
-    for( QList<AccountingTAMBillItem *>::iterator iter = bill->bills().begin(); iter != bill->bills().end(); ++iter ){
-        m_d->ui->billToPrintComboBox->addItem( (*iter)->title(), QVariant(i) );
-        ++i;
+    for( int i = 0; i < bill->paymentsCount(); ++i ){
+       m_d->ui->billToPrintComboBox->addItem( bill->payment(i)->title(), QVariant(i) );
     }
     m_d->ui->billToPrintComboBox->addItem( tr("Tutti"), QVariant(-1) );
     if( *billToPrint < 0 ){

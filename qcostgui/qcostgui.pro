@@ -42,6 +42,7 @@ TRANSLATIONS = \
     qcostgui_en.ts
 
 SOURCES += \
+    accountingtambillitemgui.cpp \
     main.cpp\
     projectitemsview.cpp \
     pricelisttreegui.cpp \
@@ -111,6 +112,7 @@ SOURCES += \
     accountinglsbillpricedatagui.cpp
 
 HEADERS  += \
+    accountingtambillitemgui.h \
     projectitemsview.h \
     pricelisttreegui.h \
     pricelistdelegate.h \
@@ -179,6 +181,7 @@ HEADERS  += \
     accountinglsbillpricedatagui.h
 
 FORMS += \
+    accountingtambillitemgui.ui \
     generaldatagui.ui \
     projectitemsview.ui \
     pricelisttreegui.ui \
