@@ -33,6 +33,10 @@ class MathParser;
 class EXPORT_QCOST_LIB_OPT PriceFieldModel: public QAbstractTableModel {
     Q_OBJECT
 public:
+    enum AggregateMode{
+        AggregateSum,
+        AggregateFormula
+    };
     enum ApplyFormula{
         ToNone,
         ToPriceItems,
@@ -42,14 +46,19 @@ public:
         PriceNone,
         PriceTotal,
         PriceHuman,
+        PercentHuman,
         PriceHumanNet,
         PriceNoHumanNet,
         PriceEquipment,
-        PriceMaterial
+        PercentEquipment,
+        PriceMaterial,
+        PercentMaterial
     };
 
     static QList<QPair<PriceFieldModel::ApplyFormula, QString> > applyFormulaNames();
     static int applyFormulaCol();
+    static QList<QPair<PriceFieldModel::AggregateMode, QString> > aggregateModeNames();
+    static int aggregateModeCol();
     QList< QPair<int, QString> > multiplyByNames(int currentPF);
     static int multiplyByCol();
     static QList< QPair<FieldType, QString> > standardFieldTypeNames();
@@ -79,6 +88,11 @@ public:
     bool setApplyFormula(int pf, PriceFieldModel::ApplyFormula newVal );
     QString formula( int pf );
     bool setFormula(int pf, const QString & newVal );
+    AggregateMode aggregateMode( int pf );
+    bool setAggregateMode(int pf, const QString & newVal );
+    bool setAggregateMode(int pf, PriceFieldModel::AggregateMode newVal );
+    QString aggregateFormula( int pf );
+    bool setAggregateFormula(int pf, const QString & newVal );
     bool isPercentage( int pf );
     bool setIsPercentage(int pf, bool newVal );
     int multiplyBy( int pf );
@@ -105,6 +119,7 @@ public:
     void readXml(QXmlStreamReader *reader, const QString &vers);
 
     double calcFormula( bool * ok, int field, QList<double> fieldValues, double overheads, double profits );
+    double calcAggregateFormula(bool *ok, int field, QList<double> fieldValues);
 
 signals:
     void modelChanged();
@@ -119,6 +134,8 @@ signals:
     void unitMeasureChanged( int pf, const QString & newUnitMeasure );
     void precisionChanged( int pf, int newPrec );
     void formulaChanged( int pf, const QString & newFormula );
+    void aggregateModeChanged( int pf, const AggregateMode & newMode );
+    void aggregateFormulaChanged( int pf, const QString & newFormula );
     void isPercentageChanged( int pf, bool newVal );
     void applyFormulaChanged( int pf, ApplyFormula newApplyFormula );
     void multiplyByChanged( int pf, int newMultiplyBy );

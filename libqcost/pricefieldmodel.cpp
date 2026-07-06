@@ -33,7 +33,8 @@ public:
                     int p = 2,
                     PriceFieldModel::ApplyFormula af = PriceFieldModel::ToNone,
                     const QString &f = QString(),
-                    PriceFieldModel::FieldType ft = PriceFieldModel::PriceNone ):
+                    PriceFieldModel::FieldType ft = PriceFieldModel::PriceNone,
+                    PriceFieldModel::AggregateMode am = PriceFieldModel::AggregateSum ):
         priceName(np),
         amountName(na),
         unitMeasure(um),
@@ -41,6 +42,7 @@ public:
         applyFormula(af),
         formula( f ),
         isPercentage(false),
+        aggregateMode(am),
         multiplyBy(-1),
         fieldType(ft) {
     }
@@ -52,6 +54,9 @@ public:
             unitMeasure = cp.unitMeasure;
             precision = cp.precision;
             applyFormula = cp.applyFormula;
+            formula = cp.formula;
+            aggregateMode = cp.aggregateMode;
+            aggregateFormula = cp.aggregateFormula;
             formula = cp.formula;
             multiplyBy = cp.multiplyBy;
             fieldType = cp.fieldType;
@@ -100,6 +105,47 @@ public:
         return ret;
     }
 
+    // restituisce il numero dei campi connessi senza ricorsioni
+    QList<int> calcAggreateModeConnectedFields(){
+        QList<int> ret;
+        QString f = aggregateFormula;
+        int i=0;
+        int lastLimit = -1;
+        while( i < f.size() ){
+            if( f.at(i) == fieldLimit ){
+                if( lastLimit < 0 ){
+                    lastLimit = i;
+                } else {
+                    if( (lastLimit+1) < f.size() ){
+                        QString fieldStr = f.mid( lastLimit + 1,  i-lastLimit-1);
+                        bool ok = false;
+                        int fieldNum = fieldStr.toInt( &ok ) -1 ;
+                        if( (!ret.contains( fieldNum )) && (fieldNum > -1) && ok ){
+                            ret << fieldNum;
+                        }
+                        lastLimit = -1;
+                    }
+                }
+            }
+            ++i;
+        }
+        return ret;
+    }
+
+    bool appendAggregateModeConnectedFields( QList<int> * conFields ){
+        bool ret = false;
+        QList<int> myConFields = calcAggreateModeConnectedFields();
+        for( int i=0; i < myConFields.size(); ++i ){
+            if( !conFields->contains(myConFields.at(i)) ){
+                if( !ret ){
+                    ret = true;
+                }
+                conFields->append( myConFields.at(i) );
+            }
+        }
+        return ret;
+    }
+
     static QString fromBoolToQString( bool v ){
         if( v ) {
             return QString("true");
@@ -126,6 +172,15 @@ public:
         return QString("ToNone");
     }
 
+    static QString fromAggregateModeToQString( PriceFieldModel::AggregateMode v ){
+        if( v == PriceFieldModel::AggregateSum ){
+            return QString("AggregateSum");
+        } else if( v == PriceFieldModel::AggregateFormula ){
+            return QString("AggregateFormula");
+        }
+        return QString("AggregateSum");
+    }
+
     static PriceFieldModel::ApplyFormula fromQStringToApplyFormula( const QString & v ){
         QString vUp = v.toUpper();
         if( vUp == "TOPRICEITEMS" ){
@@ -134,6 +189,16 @@ public:
             return PriceFieldModel::ToBillItems;
         }
         return PriceFieldModel::ToNone;
+    }
+
+    static PriceFieldModel::AggregateMode fromQStringToAggregateMode( const QString & v ){
+        QString vUp = v.toUpper();
+        if( vUp == "AGGREGATESUM" ){
+            return PriceFieldModel::AggregateSum;
+        } else if( vUp == "AGGREGATEFORMULA" ){
+            return PriceFieldModel::AggregateFormula;
+        }
+        return PriceFieldModel::AggregateSum;
     }
 
     static QString fromFieldTypeToQString( PriceFieldModel::FieldType v ){
@@ -201,10 +266,16 @@ public:
         writer->writeAttribute( "precision", QString::number( precision ) );
         writer->writeAttribute( "applyFormula", fromApplyFormulaToQString( applyFormula ) );
         QString formulaToWrite = formula;
+        writer->writeAttribute( "formula", formulaToWrite );
         if( parser != nullptr ){
             formulaToWrite.replace( parser->decimalSeparator(), ".");
         }
-        writer->writeAttribute( "formula", formulaToWrite );
+        writer->writeAttribute( "aggregateMode", fromAggregateModeToQString( aggregateMode ) );
+        formulaToWrite = aggregateFormula;
+        if( parser != nullptr ){
+            formulaToWrite.replace( parser->decimalSeparator(), ".");
+        }
+        writer->writeAttribute( "aggregateFormula", formulaToWrite );
         writer->writeAttribute( "isPercentage", fromBoolToQString(isPercentage) );
         writer->writeAttribute( "multiplyBy", QString::number(multiplyBy) );
         writer->writeAttribute( "fieldType", fromFieldTypeToQString( fieldType ) );
@@ -218,12 +289,16 @@ public:
     int precision;
     PriceFieldModel::ApplyFormula applyFormula;
     QString formula;
+    PriceFieldModel::AggregateMode aggregateMode;
+    QString aggregateFormula;
     bool isPercentage;
     int multiplyBy;
     PriceFieldModel::FieldType fieldType;
     static QChar fieldLimit;
     QList<int> effectiveConnectedFields;
     bool isFormulaValid;
+    QList<int> effectiveAggregateModeConnectedFields;
+    bool isAggregateFormulaValid;
 };
 
 QChar PriceFieldData::fieldLimit = QChar('$');
@@ -258,6 +333,23 @@ public:
         return ret;
     }
 
+    // restituisce il numero dei campi effettivamente connessi
+    QList<int> calcAggregateModeEffectiveConnectedFields( int i ){
+        QList<int> ret;
+        if(isIndexValid(i)){
+            ret = fieldsList.at(i)->calcConnectedFields();
+            int j=0;
+            while( j < ret.size() ){
+                int conFieldJ = ret.at(j);
+                if( isIndexValid(conFieldJ) ){
+                    fieldsList.at(conFieldJ)->appendConnectedFields( &ret );
+                }
+                j++;
+            }
+        }
+        return ret;
+    }
+
     // controlla che nella formula non ci siano loop
     void updateIsFormulaValid( int i ){
         if( isIndexValid(i) ){
@@ -271,6 +363,22 @@ public:
         if( isIndexValid(i) ){
             fieldsList.at(i)->effectiveConnectedFields.clear();
             fieldsList.at(i)->effectiveConnectedFields = calcEffectiveConnectedFields( i );
+        }
+    }
+
+    // controlla che nella formula non ci siano loop
+    void updateIsAggregateFormulaValid( int i ){
+        if( isIndexValid(i) ){
+            updateAggregateModeEffectiveConnectedFields(i);
+            fieldsList.at(i)->isAggregateFormulaValid = !fieldsList.at(i)->effectiveConnectedFields.contains(i);
+        }
+    }
+
+    // calcola i campi effetivamente connessi
+    void updateAggregateModeEffectiveConnectedFields( int i ){
+        if( isIndexValid(i) ){
+            fieldsList.at(i)->effectiveAggregateModeConnectedFields.clear();
+            fieldsList.at(i)->effectiveAggregateModeConnectedFields = calcAggregateModeEffectiveConnectedFields( i );
         }
     }
 
@@ -291,6 +399,8 @@ public:
     static int formulaCol;
     static int isPercentageCol;
     static int applyFormulaCol;
+    static int aggregateFormulaCol;
+    static int aggregateModeCol;
     static int multiplyByCol;
     static int fieldTypeCol;
 };
@@ -304,12 +414,22 @@ int PriceFieldModelPrivate::applyFormulaCol = 5;
 int PriceFieldModelPrivate::multiplyByCol = 6;
 int PriceFieldModelPrivate::isPercentageCol = 7;
 int PriceFieldModelPrivate::fieldTypeCol = 8;
+int PriceFieldModelPrivate::aggregateModeCol = 9;
+int PriceFieldModelPrivate::aggregateFormulaCol = 10;
+
 
 QList<QPair<PriceFieldModel::ApplyFormula, QString> > PriceFieldModel::applyFormulaNames() {
     QList< QPair<PriceFieldModel::ApplyFormula, QString> > ret;
     ret.append(qMakePair( ToNone, QString("")));
     ret.append(qMakePair( ToPriceItems, tr("A voci prezzo")));
     ret.append(qMakePair( ToBillItems, tr("A voci computo")));
+    return ret;
+}
+
+QList<QPair<PriceFieldModel::AggregateMode, QString> > PriceFieldModel::aggregateModeNames() {
+    QList< QPair<PriceFieldModel::AggregateMode, QString> > ret;
+    ret.append(qMakePair( AggregateSum, tr("Somma")));
+    ret.append(qMakePair( AggregateFormula, tr("Formula")));
     return ret;
 }
 
@@ -327,6 +447,10 @@ int PriceFieldModel::applyFormulaCol() {
     return PriceFieldModelPrivate::applyFormulaCol;
 }
 
+int PriceFieldModel::aggregateModeCol() {
+    return PriceFieldModelPrivate::aggregateModeCol;
+}
+
 QList< QPair<int, QString> > PriceFieldModel::multiplyByNames( int currentPF ){
     QList< QPair<int, QString> > ret;
     ret << qMakePair( -2, QString("") );
@@ -338,7 +462,6 @@ QList< QPair<int, QString> > PriceFieldModel::multiplyByNames( int currentPF ){
     }
     return ret;
 }
-
 
 int PriceFieldModel::multiplyByCol() {
     return PriceFieldModelPrivate::multiplyByCol;
@@ -469,7 +592,9 @@ bool PriceFieldModel::setApplyFormula(int pf, const QString & newVal) {
     PriceFieldModel::ApplyFormula effNewVal = ToPriceItems;
     if( newVal.toUpper() == "TONONE" ) {
         effNewVal = ToNone;
-    } else if( newVal.toUpper() == "TOPRICEANDBILLITEMS" ) {
+    } else if( newVal.toUpper() == "TOPRICEITEMS" ) {
+        effNewVal = ToPriceItems;
+    } else if( newVal.toUpper() == "TOBILLITEMS" ) {
         effNewVal = ToBillItems;
     }
     return setApplyFormula( pf, effNewVal );
@@ -506,6 +631,59 @@ bool PriceFieldModel::setFormula(int pf, const QString &newVal) {
         QModelIndex index = createIndex( pf, m_d->formulaCol );
         emit dataChanged(index, index);
         emit formulaChanged( pf, newVal );
+        return true;
+    }
+    return false;
+}
+
+PriceFieldModel::AggregateMode PriceFieldModel::aggregateMode(int pf) {
+    if( (pf >= 0) && (pf < m_d->fieldsList.size()) ){
+        return m_d->fieldsList.at(pf)->aggregateMode;
+    }
+    return AggregateSum;
+}
+
+bool PriceFieldModel::setAggregateMode(int pf, const QString &newVal){
+    PriceFieldModel::AggregateMode effNewVal = AggregateSum;
+    if( newVal.toUpper() == "AGGREGATESUM" ) {
+        effNewVal = AggregateSum;
+    } else if( newVal.toUpper() == "AGGREGATEFORMULA" ) {
+        effNewVal = AggregateFormula;
+    }
+    return setAggregateMode( pf, effNewVal );
+}
+
+bool PriceFieldModel::setAggregateMode(int pf, AggregateMode newVal){
+    if( pf < 0 || !(pf < m_d->fieldsList.size() )){
+        return false;
+    }
+    if( m_d->fieldsList.at(pf)->aggregateMode != newVal ){
+        m_d->fieldsList.at(pf)->aggregateMode = newVal;
+        QModelIndex index = createIndex( pf, m_d->aggregateModeCol );
+        emit dataChanged(index, index);
+        emit aggregateModeChanged( pf, newVal );
+        return true;
+    }
+    return false;
+}
+
+QString PriceFieldModel::aggregateFormula(int pf){
+    if( (pf >= 0) && (pf < m_d->fieldsList.size()) ){
+        return m_d->fieldsList.at(pf)->aggregateFormula;
+    }
+    return QString();
+}
+
+bool PriceFieldModel::setAggregateFormula(int pf, const QString &newVal){
+    if( !m_d->isIndexValid(pf) ){
+        return false;
+    }
+    if( m_d->fieldsList.at(pf)->aggregateFormula != newVal ){
+        m_d->fieldsList.at(pf)->aggregateFormula = newVal;
+        // m_d->updateIsFormulaValid(pf);
+        QModelIndex index = createIndex( pf, m_d->aggregateFormulaCol );
+        emit dataChanged(index, index);
+        emit aggregateFormulaChanged( pf, newVal );
         return true;
     }
     return false;
@@ -699,6 +877,10 @@ QVariant PriceFieldModel::data(const QModelIndex &index, int role) const {
             return QVariant( m_d->fieldsList.at(index.row())->multiplyBy );
         } else if( index.column() == m_d->fieldTypeCol ){
             return QVariant( m_d->fieldsList.at(index.row())->fieldType );
+        } else if( index.column() == m_d->aggregateModeCol ){
+            return QVariant( (int)(m_d->fieldsList.at(index.row())->aggregateMode) );
+        } else if( index.column() == m_d->aggregateFormulaCol ){
+            return QVariant( m_d->fieldsList.at(index.row())->aggregateFormula );
         }
     }
 
@@ -738,6 +920,10 @@ QVariant PriceFieldModel::headerData(int section, Qt::Orientation orientation, i
             return tr("Moltiplica per");
         } else if( section == m_d->fieldTypeCol ) {
             return tr("Tipo Standard");
+        } else if( section == m_d->aggregateModeCol ) {
+            return tr("Modo Aggregazione");
+        } else if( section == m_d->aggregateFormulaCol ) {
+            return tr("Formula Aggregazione");
         }
     } else if( orientation == Qt::Vertical ){
         return QVariant( section + 1 );
@@ -750,7 +936,7 @@ int PriceFieldModel::rowCount(const QModelIndex &) const {
 }
 
 int PriceFieldModel::columnCount(const QModelIndex &) const {
-    return 9;
+    return 11;
 }
 
 Qt::ItemFlags PriceFieldModel::flags(const QModelIndex &index) const {
@@ -798,6 +984,14 @@ bool PriceFieldModel::setData(const QModelIndex &index, const QVariant &value, i
             }
             if( index.column() == m_d->formulaCol ){
                 setFormula( index.row(), value.toString() );
+                return true;
+            }
+            if( index.column() == m_d->aggregateModeCol ){
+                setAggregateMode( index.row(), (PriceFieldModel::AggregateMode)(value.toInt()) );
+                return true;
+            }
+            if( index.column() == m_d->aggregateFormulaCol ){
+                setAggregateFormula( index.row(), value.toString() );
                 return true;
             }
             if( index.column() == m_d->multiplyByCol ){
@@ -1063,6 +1257,16 @@ void PriceFieldModel::loadFromXml20(int pf, const QXmlStreamAttributes &attrs) {
         }
         setFormula( pf, f );
     }
+    if( attrs.hasAttribute( "aggregateMode" ) ){
+        setAggregateMode( pf, PriceFieldData::fromQStringToAggregateMode( attrs.value( "aggregateMode" ).toString() ) );
+    }
+    if( attrs.hasAttribute( "aggregateFormula" ) ){
+        QString f = attrs.value( "aggregateFormula" ).toString();
+        if( m_d->parser != nullptr ){
+            f.replace( ".", m_d->parser->decimalSeparator() );
+        }
+        setAggregateFormula( pf, f );
+    }
     if( attrs.hasAttribute( "multiplyBy" ) ){
         bool ok = false;
         int mVal = attrs.value( "multiplyBy" ).toInt( & ok );
@@ -1082,6 +1286,25 @@ double PriceFieldModel::calcFormula( bool * ok, int field, QList<double> fieldVa
             QString valStr = formula( field );
             valStr.replace( QString("$SG$"), m_d->toString( overheads, 'g' ) );
             valStr.replace( QString("$UI$"), m_d->toString( profits, 'g' ) );
+            for(int i=0; i < fieldValues.size(); ++i ){
+                if( i < m_d->fieldsList.size() ){
+                    valStr.replace( QString("$%1$").arg(i+1), m_d->toString(fieldValues.at(i), 'f', effectivePrecision(i) ) );
+                }
+            }
+            *ok = true;
+            double val = m_d->parser->evaluateLocal( valStr );
+            val = UnitMeasure::applyPrecision( val, effectivePrecision(field) );
+            return val;
+        }
+    }
+    *ok = false;
+    return 0.0;
+}
+
+double PriceFieldModel::calcAggregateFormula( bool * ok, int field, QList<double> fieldValues ) {
+    if( m_d->isIndexValid(field)){
+        if( m_d->fieldsList.at(field)->isAggregateFormulaValid ){
+            QString valStr = aggregateFormula( field );
             for(int i=0; i < fieldValues.size(); ++i ){
                 if( i < m_d->fieldsList.size() ){
                     valStr.replace( QString("$%1$").arg(i+1), m_d->toString(fieldValues.at(i), 'f', effectivePrecision(i) ) );

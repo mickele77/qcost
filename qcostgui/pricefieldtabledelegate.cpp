@@ -7,16 +7,20 @@
 #include <QPainter>
 #include <QVariant>
 
+#include <QDebug>
+
 class PriceFieldTableDelegatePrivate{
 public:
     PriceFieldTableDelegatePrivate( PriceFieldModel * m ):
         model(m),
         applyFormulaCol(PriceFieldModel::applyFormulaCol() ),
+        aggregateModeCol( PriceFieldModel::aggregateModeCol() ),
         multiplyByCol(PriceFieldModel::multiplyByCol() ),
         fieldTypeCol(PriceFieldModel::fieldTypeCol() ){
     }
     PriceFieldModel * model;
     int applyFormulaCol;
+    int aggregateModeCol;
     int multiplyByCol;
     int fieldTypeCol;
 };
@@ -38,6 +42,16 @@ void PriceFieldTableDelegate::paint(QPainter *painter,
         QList< QPair<PriceFieldModel::ApplyFormula, QString > > list = PriceFieldModel::applyFormulaNames();
         PriceFieldModel::ApplyFormula val = (PriceFieldModel::ApplyFormula)(index.data().toInt());
         for( QList< QPair<PriceFieldModel::ApplyFormula, QString > >::iterator i=list.begin(); i != list.end(); ++i ){
+            if( (*i).first == val ){
+                painter->drawText(option.rect, Qt::AlignVCenter, (*i).second );
+                return;
+            }
+        }
+    } else if (index.column() == m_d->aggregateModeCol ) {
+        Q_ASSERT(index.isValid());
+        QList< QPair<PriceFieldModel::AggregateMode, QString > > list = PriceFieldModel::aggregateModeNames();
+        PriceFieldModel::AggregateMode val = (PriceFieldModel::AggregateMode)(index.data().toInt());
+        for( QList< QPair<PriceFieldModel::AggregateMode, QString > >::iterator i=list.begin(); i != list.end(); ++i ){
             if( (*i).first == val ){
                 painter->drawText(option.rect, Qt::AlignVCenter, (*i).second );
                 return;
@@ -78,6 +92,13 @@ QWidget * PriceFieldTableDelegate::createEditor(QWidget *parent,
             cBox->addItem( (*i).second, QVariant( (*i).first) );
         }
         return cBox;
+    } else if( index.column() == m_d->aggregateModeCol ) {
+        QComboBox * cBox = new QComboBox( parent );
+        QList< QPair<PriceFieldModel::AggregateMode, QString > > list = PriceFieldModel::aggregateModeNames();
+        for( QList< QPair<PriceFieldModel::AggregateMode, QString > >::iterator i=list.begin(); i != list.end(); ++i ){
+            cBox->addItem( (*i).second, QVariant( (*i).first) );
+        }
+        return cBox;
     } else if( index.column() == m_d->multiplyByCol ) {
         QComboBox * cBox = new QComboBox( parent );
         QList< QPair<int , QString > > list = m_d->model->multiplyByNames(index.row());
@@ -98,7 +119,7 @@ QWidget * PriceFieldTableDelegate::createEditor(QWidget *parent,
 
 void PriceFieldTableDelegate::setEditorData(QWidget *editor,
                                             const QModelIndex &index) const {
-    if( (index.column() == m_d->applyFormulaCol) || (index.column() == m_d->multiplyByCol) || (index.column() == m_d->fieldTypeCol) ){
+    if( (index.column() == m_d->applyFormulaCol) || (index.column() == m_d->aggregateModeCol) || (index.column() == m_d->multiplyByCol) || (index.column() == m_d->fieldTypeCol) ){
         QVariant value = index.model()->data( index, Qt::DisplayRole );
         QComboBox * cBox = static_cast<QComboBox *>( editor );
         cBox->setCurrentIndex( cBox->findData( value ) );

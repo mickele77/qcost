@@ -136,8 +136,8 @@ public:
     }
 
     void writeDescriptionCell( PriceItem * priceItemToPrint, QTextCursor *cursor, QTextTable * table, const QTextTableCellFormat &centralFormat,
-                               const QTextBlockFormat & txtBlockFormat, const QTextCharFormat & txtCharFormat, const QTextCharFormat & txtBoldCharFormat,
-                               BillPrinter::PrintBillItemsOption prItemsOption ){
+                              const QTextBlockFormat & txtBlockFormat, const QTextCharFormat & txtCharFormat, const QTextCharFormat & txtBoldCharFormat,
+                              BillPrinter::PrintBillItemsOption prItemsOption ){
         if( priceItemToPrint != nullptr ){
             if( prItemsOption == BillPrinter::PrintShortDesc ){
                 writeCell( cursor, table, centralFormat, txtBlockFormat, priceItemToPrint->shortDescriptionFull() );
@@ -171,11 +171,11 @@ public:
     }
 
     void writeDescriptionCell( QTextCursor *cursor, QTextTable * table, const QTextTableCellFormat &centralFormat,
-                               const QTextBlockFormat & txtBlockFormat, const QTextCharFormat & txtCharFormat, const QTextCharFormat & txtBoldCharFormat,
-                               BillPrinter::PrintBillItemsOption prItemsOption ){
+                              const QTextBlockFormat & txtBlockFormat, const QTextCharFormat & txtCharFormat, const QTextCharFormat & txtBoldCharFormat,
+                              BillPrinter::PrintBillItemsOption prItemsOption ){
         writeDescriptionCell( priceItem, cursor, table, centralFormat,
-                              txtBlockFormat, txtCharFormat, txtBoldCharFormat,
-                              prItemsOption );
+                             txtBlockFormat, txtCharFormat, txtBoldCharFormat,
+                             prItemsOption );
     }
 
     BillItem * parentItem;
@@ -661,7 +661,7 @@ int BillItem::columnCount() const {
 
 QVariant BillItem::data(int col, int role) const {
     if( (col > m_d->colCount) || (col < 0) ||
-            (role != Qt::DisplayRole && role != Qt::EditRole && role != Qt::TextAlignmentRole ) ){
+        (role != Qt::DisplayRole && role != Qt::EditRole && role != Qt::TextAlignmentRole ) ){
         return QVariant();
     }
 
@@ -911,15 +911,38 @@ void BillItem::updateAmount( int pf ) {
                 v = 0.0;
             }
         } else if( hasChildren() ){ // && m_d->priceFieldModel->applyFormula(pf) != PriceFieldModel::ToPriceAndBillItems
-            // voce di computo titolo (comprende voci semplici)
-            for( QList<BillItem*>::iterator iter = m_d->childrenContainer.begin(); iter != m_d->childrenContainer.end(); ++iter ){
-                vNet += (*iter)->amountNet(pf);
-                vOvh = UnitMeasure::applyPrecision( vNet * overheads(), prec );
-                vPr = UnitMeasure::applyPrecision( (vNet+vOvh) * profits(), prec );
-                if( recalculateOverheadsProfits() ) {
-                    v = UnitMeasure::applyPrecision( vNet + vOvh + vPr, prec );
-                } else {
-                    v += (*iter)->amount(pf);
+            if( m_d->priceFieldModel->aggregateMode(pf) == PriceFieldModel::AggregateFormula ) {
+                // voce di computo titolo (comprende voci semplici)
+                QList<double> pfAmount;
+                for( int i=0; i < m_d->priceFieldModel->fieldCount(); ++i ){
+                    pfAmount.append(0.0);
+                }
+                for( QList<BillItem*>::iterator iter = m_d->childrenContainer.begin(); iter != m_d->childrenContainer.end(); ++iter ){
+                    (*iter)->updateAmounts();
+                    for( int i=0; i < m_d->priceFieldModel->fieldCount(); ++i ){
+                        if( recalculateOverheadsProfits() ) {
+                            vNet += (*iter)->amountNet(i);
+                            vOvh = UnitMeasure::applyPrecision( vNet * overheads(), prec );
+                            vPr = UnitMeasure::applyPrecision( (vNet+vOvh) * profits(), prec );
+                            pfAmount[i] = UnitMeasure::applyPrecision( vNet + vOvh + vPr, prec );
+                        } else {
+                            pfAmount[i] += (*iter)->amount(i);
+                        }
+                    }
+                }
+                bool ok = false;
+                v = m_d->priceFieldModel->calcAggregateFormula( &ok, pf, pfAmount );
+            } else {
+                // voce di computo titolo (comprende voci semplici)
+                for( QList<BillItem*>::iterator iter = m_d->childrenContainer.begin(); iter != m_d->childrenContainer.end(); ++iter ){
+                    vNet += (*iter)->amountNet(pf);
+                    vOvh = UnitMeasure::applyPrecision( vNet * overheads(), prec );
+                    vPr = UnitMeasure::applyPrecision( (vNet+vOvh) * profits(), prec );
+                    if( recalculateOverheadsProfits() ) {
+                        v = UnitMeasure::applyPrecision( vNet + vOvh + vPr, prec );
+                    } else {
+                        v += (*iter)->amount(pf);
+                    }
                 }
             }
         } else if( m_d->priceItem != nullptr ){ // !hasChildren() && m_d->priceFieldModel->applyFormula(pf) != PriceFieldModel::ToPriceAndBillItems
@@ -1804,25 +1827,25 @@ void BillItem::writeODTBillOnTable(QTextCursor *cursor,
                     amountsToPrint << amountNetStr( i );
                 }
                 writeODTBillTotalLine( fieldsToPrint, groupPrAm, cursor, table,
-                                       tagBlockFormat, txtBlockFormat, numBlockFormat,
-                                       leftSubTitleFormat, centralSubTitleFormat, rightSubTitleFormat,
-                                       tr("Totale"), umTag, amountsToPrint );
+                                      tagBlockFormat, txtBlockFormat, numBlockFormat,
+                                      leftSubTitleFormat, centralSubTitleFormat, rightSubTitleFormat,
+                                      tr("Totale"), umTag, amountsToPrint );
                 amountsToPrint.clear();
                 for( int i=0; i < fieldsToPrint.size(); i++ ){
                     amountsToPrint << amountOverheadsStr( i );
                 }
                 writeODTBillTotalLine( fieldsToPrint, groupPrAm, cursor, table,
-                                       tagBlockFormat, txtBlockFormat, numBlockFormat,
-                                       leftSubTitleFormat, centralSubTitleFormat, rightSubTitleFormat,
-                                       tr("Spese generali"), umTag, amountsToPrint );
+                                      tagBlockFormat, txtBlockFormat, numBlockFormat,
+                                      leftSubTitleFormat, centralSubTitleFormat, rightSubTitleFormat,
+                                      tr("Spese generali"), umTag, amountsToPrint );
                 amountsToPrint.clear();
                 for( int i=0; i < fieldsToPrint.size(); i++ ){
                     amountsToPrint << amountProfitsStr( i );
                 }
                 writeODTBillTotalLine( fieldsToPrint, groupPrAm, cursor, table,
-                                       tagBlockFormat, txtBlockFormat, numBlockFormat,
-                                       leftSubTitleFormat, centralSubTitleFormat, rightSubTitleFormat,
-                                       tr("Utili di impresa"), umTag, amountsToPrint );
+                                      tagBlockFormat, txtBlockFormat, numBlockFormat,
+                                      leftSubTitleFormat, centralSubTitleFormat, rightSubTitleFormat,
+                                      tr("Utili di impresa"), umTag, amountsToPrint );
                 // riga vuota
                 BillItemPrivate::insertEmptyRow( colCount, cursor, leftFormat, centralFormat, rightFormat );
 
@@ -1831,9 +1854,9 @@ void BillItem::writeODTBillOnTable(QTextCursor *cursor,
                     amountsToPrint << amountStr( i );
                 }
                 writeODTBillTotalLine( fieldsToPrint, groupPrAm, cursor, table,
-                                       tagBlockFormat, txtBlockFormat, numBlockFormat,
-                                       leftTitleFormat, centralTitleFormat, rightTitleFormat,
-                                       tr("Totale complessivo"), umTag, amountsToPrint );
+                                      tagBlockFormat, txtBlockFormat, numBlockFormat,
+                                      leftTitleFormat, centralTitleFormat, rightTitleFormat,
+                                      tr("Totale complessivo"), umTag, amountsToPrint );
 
             }
         } else {
@@ -1847,9 +1870,9 @@ void BillItem::writeODTBillOnTable(QTextCursor *cursor,
                     amountsToPrint << amountStr( i );
                 }
                 writeODTBillTotalLine( fieldsToPrint, groupPrAm, cursor, table,
-                                       tagBlockFormat, txtBlockFormat, numBlockFormat,
-                                       leftTitleFormat, centralTitleFormat, rightTitleFormat,
-                                       tr("Totale complessivo"), umTag, amountsToPrint );
+                                      tagBlockFormat, txtBlockFormat, numBlockFormat,
+                                      leftTitleFormat, centralTitleFormat, rightTitleFormat,
+                                      tr("Totale complessivo"), umTag, amountsToPrint );
             }
         }
 
@@ -1963,21 +1986,21 @@ void BillItem::writeODTBillOnTable(QTextCursor *cursor,
             }
         } else { // !hasChildren()
             writeODTBillLine( prItemsOption,
-                              true, fieldsToPrint, groupPrAm, recalculateOverheadsProfits(),
-                              cursor, table,
-                              tagBlockFormat, txtBlockFormat, numBlockFormat,
-                              leftFormat, centralFormat, rightFormat,
-                              centralQuantityTotalFormat, rightQuantityTotalFormat,
-                              txtCharFormat, txtBoldCharFormat );
+                             true, fieldsToPrint, groupPrAm, recalculateOverheadsProfits(),
+                             cursor, table,
+                             tagBlockFormat, txtBlockFormat, numBlockFormat,
+                             leftFormat, centralFormat, rightFormat,
+                             centralQuantityTotalFormat, rightQuantityTotalFormat,
+                             txtCharFormat, txtBoldCharFormat );
         }
     }
 }
 
 void BillItem::writeODTSummaryOnTable( QTextCursor *cursor,
-                                       BillPrinter::PrintBillItemsOption prItemsOption,
-                                       const QList<int> fieldsToPrint,
-                                       bool groupPrAm,
-                                       bool writeDetails ) {
+                                      BillPrinter::PrintBillItemsOption prItemsOption,
+                                      const QList<int> fieldsToPrint,
+                                      bool groupPrAm,
+                                      bool writeDetails ) {
     // spessore del bordo della tabella
     double borderWidth = 1.0f;
 
@@ -2169,9 +2192,9 @@ void BillItem::writeODTSummaryOnTable( QTextCursor *cursor,
         double itemTotalQuantity = 0.0;
         for( QList<BillItem *>::iterator j = m_d->childrenContainer.begin(); j != m_d->childrenContainer.end(); ++j ){
             (*j)->writeODTSummaryLine( *i, cursor, fieldsToPrint, &itemTotalQuantity, &fieldsAmount, writeDetails,
-                                       table,
-                                       tagBlockFormat, txtBlockFormat, numBlockFormat,
-                                       leftFormat, centralFormat, rightFormat );
+                                      table,
+                                      tagBlockFormat, txtBlockFormat, numBlockFormat,
+                                      leftFormat, centralFormat, rightFormat );
         }
 
         if( writeDetails ){
@@ -2321,9 +2344,9 @@ void BillItem::writeODTSummaryLine(PriceItem * priceItem,
     } else {
         for( QList<BillItem *>::iterator i = m_d->childrenContainer.begin(); i != m_d->childrenContainer.end(); ++i ){
             (*i)->writeODTSummaryLine( priceItem, cursor, fieldsToPrint, itemTotalQuantity, fieldsValue, writeDetails,
-                                       table,
-                                       tagBlockFormat, txtBlockFormat, numBlockFormat,
-                                       leftFormat, centralFormat, rightFormat );
+                                      table,
+                                      tagBlockFormat, txtBlockFormat, numBlockFormat,
+                                      leftFormat, centralFormat, rightFormat );
         }
     }
 }
@@ -2510,10 +2533,10 @@ void BillItem::writeODTAttributeBillOnTable(QTextCursor *cursor,
             BillItemPrivate::insertEmptyRow( cellCount, cursor, leftFormat, centralFormat, rightFormat );
 
             writeODTAttributeBillLineSimple( prItemsOption,
-                                             &fieldsAmounts, fieldsToPrint, *i, groupPrAm,
-                                             cursor, table, tagBlockFormat, txtBlockFormat, numBlockFormat,
-                                             leftFormat, centralFormat, rightFormat, centralQuantityTotalFormat, rightQuantityTotalFormat,
-                                             txtCharFormat, txtBoldCharFormat );
+                                            &fieldsAmounts, fieldsToPrint, *i, groupPrAm,
+                                            cursor, table, tagBlockFormat, txtBlockFormat, numBlockFormat,
+                                            leftFormat, centralFormat, rightFormat, centralQuantityTotalFormat, rightQuantityTotalFormat,
+                                            txtCharFormat, txtBoldCharFormat );
 
             BillItemPrivate::insertEmptyRow( cellCount, cursor, leftFormat, centralFormat, rightFormat );
             table->appendRows(1);
@@ -2570,10 +2593,10 @@ void BillItem::writeODTAttributeBillOnTable(QTextCursor *cursor,
         }
 
         writeODTAttributeBillLineUnion( prItemsOption,
-                                        &fieldsAmounts, fieldsToPrint, attrsToPrint, groupPrAm,
-                                        cursor, table, tagBlockFormat, txtBlockFormat, numBlockFormat,
-                                        leftFormat, centralFormat, rightFormat, centralQuantityTotalFormat, rightQuantityTotalFormat,
-                                        txtCharFormat, txtBoldCharFormat );
+                                       &fieldsAmounts, fieldsToPrint, attrsToPrint, groupPrAm,
+                                       cursor, table, tagBlockFormat, txtBlockFormat, numBlockFormat,
+                                       leftFormat, centralFormat, rightFormat, centralQuantityTotalFormat, rightQuantityTotalFormat,
+                                       txtCharFormat, txtBoldCharFormat );
 
         // *** riga vuota ***
         BillItemPrivate::insertEmptyRow( cellCount, cursor, leftFormat, centralFormat, rightFormat );
@@ -2621,10 +2644,10 @@ void BillItem::writeODTAttributeBillOnTable(QTextCursor *cursor,
         }
 
         writeODTAttributeBillLineIntersection( prItemsOption,
-                                               &fieldsAmounts, fieldsToPrint, attrsToPrint, groupPrAm,
-                                               cursor, table, tagBlockFormat, txtBlockFormat, numBlockFormat,
-                                               leftFormat, centralFormat, rightFormat, centralQuantityTotalFormat, rightQuantityTotalFormat,
-                                               txtCharFormat, txtBoldCharFormat );
+                                              &fieldsAmounts, fieldsToPrint, attrsToPrint, groupPrAm,
+                                              cursor, table, tagBlockFormat, txtBlockFormat, numBlockFormat,
+                                              leftFormat, centralFormat, rightFormat, centralQuantityTotalFormat, rightQuantityTotalFormat,
+                                              txtCharFormat, txtBoldCharFormat );
 
         // *** riga vuota ***
         BillItemPrivate::insertEmptyRow( cellCount, cursor, leftFormat, centralFormat, rightFormat );
@@ -2653,56 +2676,9 @@ void BillItem::writeODTAttributeBillOnTable(QTextCursor *cursor,
 }
 
 void BillItem::writeODTAttributeBillLineSimple( BillPrinter::PrintBillItemsOption prItemsOption,
-                                                QList<double> * fieldsAmounts,
-                                                const QList<int> &fieldsToPrint,
-                                                Attribute *attrsToPrint,
-                                                bool groupPrAm,
-                                                QTextCursor *cursor,
-                                                QTextTable *table,
-                                                QTextBlockFormat &tagBlockFormat,
-                                                QTextBlockFormat &txtBlockFormat,
-                                                QTextBlockFormat &numBlockFormat,
-                                                QTextTableCellFormat &leftFormat,
-                                                QTextTableCellFormat &centralFormat,
-                                                QTextTableCellFormat &rightFormat,
-                                                QTextTableCellFormat &centralQuantityTotalFormat,
-                                                QTextTableCellFormat &rightQuantityTotalFormat,
-                                                QTextCharFormat & txtCharFormat,
-                                                QTextCharFormat & txtBoldCharFormat ) {
-
-    if( !hasChildren() ){
-        if( containsAttribute( attrsToPrint ) ){
-            for( int i = 0; i < fieldsToPrint.size(); ++i ){
-                if( i >= fieldsAmounts->size() ){
-                    fieldsAmounts->append(0.0);
-                }
-                (*fieldsAmounts)[i] += amount(fieldsToPrint.at(i) );
-            }
-            writeODTBillLine( prItemsOption,
-                              false, fieldsToPrint, groupPrAm, false,
-                              cursor, table,
-                              tagBlockFormat, txtBlockFormat, numBlockFormat,
-                              leftFormat, centralFormat, rightFormat,
-                              centralQuantityTotalFormat, rightQuantityTotalFormat,
-                              txtCharFormat, txtBoldCharFormat );
-        }
-    } else {
-        for( QList<BillItem *>::iterator i = m_d->childrenContainer.begin(); i != m_d->childrenContainer.end(); ++i ){
-            (*i)->writeODTAttributeBillLineSimple( prItemsOption,
-                                                   fieldsAmounts, fieldsToPrint, attrsToPrint, groupPrAm,
-                                                   cursor, table,
-                                                   tagBlockFormat, txtBlockFormat, numBlockFormat,
-                                                   leftFormat, centralFormat, rightFormat,
-                                                   centralQuantityTotalFormat, rightQuantityTotalFormat,
-                                                   txtCharFormat, txtBoldCharFormat );
-        }
-    }
-}
-
-void BillItem::writeODTAttributeBillLineUnion( BillPrinter::PrintBillItemsOption prItemsOption,
                                                QList<double> * fieldsAmounts,
                                                const QList<int> &fieldsToPrint,
-                                               const QList<Attribute *> &attrsToPrint,
+                                               Attribute *attrsToPrint,
                                                bool groupPrAm,
                                                QTextCursor *cursor,
                                                QTextTable *table,
@@ -2714,8 +2690,55 @@ void BillItem::writeODTAttributeBillLineUnion( BillPrinter::PrintBillItemsOption
                                                QTextTableCellFormat &rightFormat,
                                                QTextTableCellFormat &centralQuantityTotalFormat,
                                                QTextTableCellFormat &rightQuantityTotalFormat,
-                                               QTextCharFormat &txtCharFormat,
-                                               QTextCharFormat &txtBoldCharFormat) {
+                                               QTextCharFormat & txtCharFormat,
+                                               QTextCharFormat & txtBoldCharFormat ) {
+
+    if( !hasChildren() ){
+        if( containsAttribute( attrsToPrint ) ){
+            for( int i = 0; i < fieldsToPrint.size(); ++i ){
+                if( i >= fieldsAmounts->size() ){
+                    fieldsAmounts->append(0.0);
+                }
+                (*fieldsAmounts)[i] += amount(fieldsToPrint.at(i) );
+            }
+            writeODTBillLine( prItemsOption,
+                             false, fieldsToPrint, groupPrAm, false,
+                             cursor, table,
+                             tagBlockFormat, txtBlockFormat, numBlockFormat,
+                             leftFormat, centralFormat, rightFormat,
+                             centralQuantityTotalFormat, rightQuantityTotalFormat,
+                             txtCharFormat, txtBoldCharFormat );
+        }
+    } else {
+        for( QList<BillItem *>::iterator i = m_d->childrenContainer.begin(); i != m_d->childrenContainer.end(); ++i ){
+            (*i)->writeODTAttributeBillLineSimple( prItemsOption,
+                                                  fieldsAmounts, fieldsToPrint, attrsToPrint, groupPrAm,
+                                                  cursor, table,
+                                                  tagBlockFormat, txtBlockFormat, numBlockFormat,
+                                                  leftFormat, centralFormat, rightFormat,
+                                                  centralQuantityTotalFormat, rightQuantityTotalFormat,
+                                                  txtCharFormat, txtBoldCharFormat );
+        }
+    }
+}
+
+void BillItem::writeODTAttributeBillLineUnion( BillPrinter::PrintBillItemsOption prItemsOption,
+                                              QList<double> * fieldsAmounts,
+                                              const QList<int> &fieldsToPrint,
+                                              const QList<Attribute *> &attrsToPrint,
+                                              bool groupPrAm,
+                                              QTextCursor *cursor,
+                                              QTextTable *table,
+                                              QTextBlockFormat &tagBlockFormat,
+                                              QTextBlockFormat &txtBlockFormat,
+                                              QTextBlockFormat &numBlockFormat,
+                                              QTextTableCellFormat &leftFormat,
+                                              QTextTableCellFormat &centralFormat,
+                                              QTextTableCellFormat &rightFormat,
+                                              QTextTableCellFormat &centralQuantityTotalFormat,
+                                              QTextTableCellFormat &rightQuantityTotalFormat,
+                                              QTextCharFormat &txtCharFormat,
+                                              QTextCharFormat &txtBoldCharFormat) {
     if( !hasChildren() ){
         bool unionOk = false;
         QList<Attribute *>::const_iterator i = attrsToPrint.begin();
@@ -2733,43 +2756,43 @@ void BillItem::writeODTAttributeBillLineUnion( BillPrinter::PrintBillItemsOption
                 (*fieldsAmounts)[i] += amount(fieldsToPrint.at(i) );
             }
             writeODTBillLine( prItemsOption,
-                              false, fieldsToPrint, groupPrAm, false,
-                              cursor, table,
-                              tagBlockFormat, txtBlockFormat, numBlockFormat,
-                              leftFormat, centralFormat, rightFormat,
-                              centralQuantityTotalFormat, rightQuantityTotalFormat,
-                              txtCharFormat, txtBoldCharFormat );
+                             false, fieldsToPrint, groupPrAm, false,
+                             cursor, table,
+                             tagBlockFormat, txtBlockFormat, numBlockFormat,
+                             leftFormat, centralFormat, rightFormat,
+                             centralQuantityTotalFormat, rightQuantityTotalFormat,
+                             txtCharFormat, txtBoldCharFormat );
         }
     } else {
         for( QList<BillItem *>::iterator i = m_d->childrenContainer.begin(); i != m_d->childrenContainer.end(); ++i ){
             (*i)->writeODTAttributeBillLineUnion( prItemsOption,
-                                                  fieldsAmounts, fieldsToPrint, attrsToPrint, groupPrAm,
-                                                  cursor, table,
-                                                  tagBlockFormat, txtBlockFormat, numBlockFormat,
-                                                  leftFormat, centralFormat, rightFormat,
-                                                  centralQuantityTotalFormat, rightQuantityTotalFormat,
-                                                  txtCharFormat, txtBoldCharFormat );
+                                                 fieldsAmounts, fieldsToPrint, attrsToPrint, groupPrAm,
+                                                 cursor, table,
+                                                 tagBlockFormat, txtBlockFormat, numBlockFormat,
+                                                 leftFormat, centralFormat, rightFormat,
+                                                 centralQuantityTotalFormat, rightQuantityTotalFormat,
+                                                 txtCharFormat, txtBoldCharFormat );
         }
     }
 }
 
 void BillItem::writeODTAttributeBillLineIntersection( BillPrinter::PrintBillItemsOption prItemsOption,
-                                                      QList<double> * fieldsAmounts,
-                                                      const QList<int> &fieldsToPrint,
-                                                      const QList<Attribute *> &attrsToPrint,
-                                                      bool groupPrAm,
-                                                      QTextCursor *cursor,
-                                                      QTextTable *table,
-                                                      QTextBlockFormat &tagBlockFormat,
-                                                      QTextBlockFormat & txtBlockFormat,
-                                                      QTextBlockFormat & numBlockFormat,
-                                                      QTextTableCellFormat & leftFormat,
-                                                      QTextTableCellFormat & centralFormat,
-                                                      QTextTableCellFormat & rightFormat,
-                                                      QTextTableCellFormat & centralQuantityTotalFormat,
-                                                      QTextTableCellFormat & rightQuantityTotalFormat,
-                                                      QTextCharFormat &txtCharFormat,
-                                                      QTextCharFormat &txtBoldCharFormat ){
+                                                     QList<double> * fieldsAmounts,
+                                                     const QList<int> &fieldsToPrint,
+                                                     const QList<Attribute *> &attrsToPrint,
+                                                     bool groupPrAm,
+                                                     QTextCursor *cursor,
+                                                     QTextTable *table,
+                                                     QTextBlockFormat &tagBlockFormat,
+                                                     QTextBlockFormat & txtBlockFormat,
+                                                     QTextBlockFormat & numBlockFormat,
+                                                     QTextTableCellFormat & leftFormat,
+                                                     QTextTableCellFormat & centralFormat,
+                                                     QTextTableCellFormat & rightFormat,
+                                                     QTextTableCellFormat & centralQuantityTotalFormat,
+                                                     QTextTableCellFormat & rightQuantityTotalFormat,
+                                                     QTextCharFormat &txtCharFormat,
+                                                     QTextCharFormat &txtBoldCharFormat ){
     if( !hasChildren() ){
         bool intersectionOk = true;
         QList<Attribute *>::const_iterator i = attrsToPrint.begin();
@@ -2787,39 +2810,39 @@ void BillItem::writeODTAttributeBillLineIntersection( BillPrinter::PrintBillItem
                 (*fieldsAmounts)[i] += amount(fieldsToPrint.at(i) );
             }
             writeODTBillLine( prItemsOption,
-                              false, fieldsToPrint, groupPrAm, false,
-                              cursor, table,
-                              tagBlockFormat, txtBlockFormat, numBlockFormat,
-                              leftFormat, centralFormat, rightFormat,
-                              centralQuantityTotalFormat, rightQuantityTotalFormat,
-                              txtCharFormat, txtBoldCharFormat );
+                             false, fieldsToPrint, groupPrAm, false,
+                             cursor, table,
+                             tagBlockFormat, txtBlockFormat, numBlockFormat,
+                             leftFormat, centralFormat, rightFormat,
+                             centralQuantityTotalFormat, rightQuantityTotalFormat,
+                             txtCharFormat, txtBoldCharFormat );
         }
     } else {
         for( QList<BillItem *>::iterator i = m_d->childrenContainer.begin(); i != m_d->childrenContainer.end(); ++i ){
             (*i)->writeODTAttributeBillLineIntersection( prItemsOption,
-                                                         fieldsAmounts, fieldsToPrint, attrsToPrint, groupPrAm,
-                                                         cursor, table,
-                                                         tagBlockFormat, txtBlockFormat, numBlockFormat,
-                                                         leftFormat, centralFormat, rightFormat,
-                                                         centralQuantityTotalFormat, rightQuantityTotalFormat,
-                                                         txtCharFormat, txtBoldCharFormat );
+                                                        fieldsAmounts, fieldsToPrint, attrsToPrint, groupPrAm,
+                                                        cursor, table,
+                                                        tagBlockFormat, txtBlockFormat, numBlockFormat,
+                                                        leftFormat, centralFormat, rightFormat,
+                                                        centralQuantityTotalFormat, rightQuantityTotalFormat,
+                                                        txtCharFormat, txtBoldCharFormat );
         }
     }
 }
 
 void BillItem::writeODTBillTotalLine ( const QList<int> &fieldsToPrint,
-                                       bool groupPrAm,
-                                       QTextCursor *cursor,
-                                       QTextTable *table,
-                                       QTextBlockFormat &tagBlockFormat,
-                                       QTextBlockFormat & txtBlockFormat,
-                                       QTextBlockFormat & numBlockFormat,
-                                       QTextTableCellFormat & leftTitleFormat,
-                                       QTextTableCellFormat & centralTitleFormat,
-                                       QTextTableCellFormat & rightTitleFormat,
-                                       const QString& totalName,
-                                       const QString& umTag,
-                                       const QList<QString>& totals) {
+                                     bool groupPrAm,
+                                     QTextCursor *cursor,
+                                     QTextTable *table,
+                                     QTextBlockFormat &tagBlockFormat,
+                                     QTextBlockFormat & txtBlockFormat,
+                                     QTextBlockFormat & numBlockFormat,
+                                     QTextTableCellFormat & leftTitleFormat,
+                                     QTextTableCellFormat & centralTitleFormat,
+                                     QTextTableCellFormat & rightTitleFormat,
+                                     const QString& totalName,
+                                     const QString& umTag,
+                                     const QList<QString>& totals) {
     table->appendRows(1);
     cursor->movePosition(QTextCursor::PreviousRow );
 
