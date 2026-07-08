@@ -1,5 +1,3 @@
-cmake_minimum_required(VERSION 2.8.11)
-
 # Find the required modules
 find_package(Qt5 COMPONENTS Widgets Sql REQUIRED)
 
@@ -31,6 +29,7 @@ set( SRC
     qcostgui.cpp
     pricelistdbviewer.cpp
     billattributeselectmodel.cpp
+    importbillitemmeasuresclipboard.cpp
     qcostclipboarddata.cpp
     pricefieldtabledelegate.cpp
     billprintergui.cpp
@@ -39,7 +38,6 @@ set( SRC
     priceitemdatasetviewmodel.cpp
     settingsdialog.cpp
     importbillitemmeasurestxt.cpp
-    importbillitemmeasuresclipboard.cpp
     accountingtreegui.cpp
     accountingsetpricelistmodegui.cpp
     accountingitemattributemodel.cpp
@@ -75,121 +73,124 @@ set( SRC
     accountinglsbillsgui.cpp
     accountinglsbillsdatagui.cpp
     accountinglsbillpricedatagui.cpp
+    accountingtambillitemgui.cpp
 )
 
 set( HDR
     projectitemsview.h
-    pricelisttreegui.h
-    pricelistdelegate.h
-    generaldatagui.h
-    pricelistgui.h
-    priceitemgui.h
-    billgui.h
-    pricelistdatagui.h
-    billdatagui.h
-    billtreegui.h
-    billitemgui.h
-    billsetpricelistmodegui.h
-    editpriceitemapdialog.h
-    editpriceitemdialog.h
-    pricedatatabledelegate.h
-    billitemtitlegui.h
-    pricelistdbmodel.h
-    pricelistdbwidget.h
-    importpriceitemdbdialog.h
-    qcostgui.h
-    pricelistdbviewer.h
-    billattributeselectmodel.h
-    qcostclipboarddata.h
-    pricefieldtabledelegate.h
-    billprintergui.h
-    pricelistprintergui.h
-    billattributeprintergui.h
-    priceitemdatasetviewmodel.h
-    settingsdialog.h
-    importbillitemmeasurestxt.h
-    importbillitemmeasuresclipboard.h
-    accountingtreegui.h
-    accountingsetpricelistmodegui.h
-    accountingitemattributemodel.h
-    accountingattributeprintergui.h
-    qcalendardialog.h
-    accountinggui.h
-    attributechangedialog.h
-    billitemattributemodel.h
-    attributeselectmodel.h
-    accountingtambillgui.h
-    accountingtambilldatagui.h
-    accountingitemcommentgui.h
-    accountingitemppugui.h
-    accountingbillsetpricelistmodegui.h
-    accountingbillgui.h
-    accountingbilldatagui.h
-    accountingitemlsgui.h
-    accountingitemtamgui.h
-    accountinglsbilldatagui.h
-    accountinglsbillgui.h
-    accountinglsbillitemgui.h
-    accountinglstreegui.h
-    accountinglsbillitemtitlegui.h
-    importlsitemmeasurestxt.h
-    accountingitempaymentgui.h
-    accountingbillprintergui.h
-    accountingtambillprintergui.h
-    accountinglsbillprintergui.h
-    attributesgui.h
-    varsgui.h
-    accountingbillpricedatagui.h
-    accountingtambillpricedatagui.h
-    accountinglsbillsgui.h
-    accountinglsbillsdatagui.h
-    accountinglsbillpricedatagui.h
+        pricelisttreegui.h
+        pricelistdelegate.h
+        generaldatagui.h
+        pricelistgui.h
+        priceitemgui.h
+        billgui.h
+        pricelistdatagui.h
+        billdatagui.h
+        billtreegui.h
+        billitemgui.h
+        billsetpricelistmodegui.h
+        editpriceitemapdialog.h
+        editpriceitemdialog.h
+        pricedatatabledelegate.h
+        billitemtitlegui.h
+        pricelistdbmodel.h
+        pricelistdbwidget.h
+        importpriceitemdbdialog.h
+        qcostgui.h
+        pricelistdbviewer.h
+        billitemattributemodel.h
+        billattributeselectmodel.h
+        importbillitemmeasuresclipboard.h
+        qcostclipboarddata.h
+        pricefieldtabledelegate.h
+        billprintergui.h
+        pricelistprintergui.h
+        billattributeprintergui.h
+        priceitemdatasetviewmodel.h
+        settingsdialog.h
+        importbillitemmeasurestxt.h
+        accountingtreegui.h
+        accountingsetpricelistmodegui.h
+        accountingitemattributemodel.h
+        accountingattributeprintergui.h
+        qcalendardialog.h
+        accountinggui.h
+        attributechangedialog.h
+        attributeselectmodel.h
+        accountingtambillgui.h
+        accountingtambilldatagui.h
+        accountingitemcommentgui.h
+        accountingitemppugui.h
+        accountingbillsetpricelistmodegui.h
+        accountingbillgui.h
+        accountingbilldatagui.h
+        accountingitemlsgui.h
+        accountingitemtamgui.h
+        accountinglsbilldatagui.h
+        accountinglsbillgui.h
+        accountinglsbillitemgui.h
+        accountinglstreegui.h
+        accountinglsbillitemtitlegui.h
+        importlsitemmeasurestxt.h
+        accountingitempaymentgui.h
+        accountingbillprintergui.h
+        accountingtambillprintergui.h
+        accountinglsbillprintergui.h
+        attributesgui.h
+        varsgui.h
+        accountingbillpricedatagui.h
+        accountingtambillpricedatagui.h
+        accountinglsbillsgui.h
+        accountinglsbillsdatagui.h
+        accountinglsbillpricedatagui.h
+        accountingtambillitemgui.h
 )
 
 set ( FRM
-    generaldatagui.ui
-    projectitemsview.ui
-    pricelisttreegui.ui
-    priceitemgui.ui
-    billdatagui.ui
-    pricelistdatagui.ui
-    billtreegui.ui
-    billitemgui.ui
-    billitemtitlegui.ui
-    pricelistdbwidget.ui
-    billprintergui.ui
-    pricelistprintergui.ui
-    billattributeprintergui.ui
-    settingsdialog.ui
-    importbillitemmeasurestxt.ui
-    accountingtreegui.ui
-    accountingattributeprintergui.ui
-    setpricelistmodegui.ui
-    attributechangedialog.ui
-    qcalendardialog.ui
-    accountinggui.ui
-    accountingtambilldatagui.ui
-    accountingitemcommentgui.ui
-    accountingitemppugui.ui
-    accountingbilldatagui.ui
-    accountingitemlsgui.ui
-    accountingitemtamgui.ui
-    accountinglsbilldatagui.ui
-    accountinglsbillitemgui.ui
-    accountinglstreegui.ui
-    accountinglsbillitemtitlegui.ui
-    importlsitemmeasurestxt.ui
-    importbillitemmeasuresclipboard.ui
-    accountingitempaymentgui.ui
-    accountingbillprintergui.ui
-    accountingtambillprintergui.ui
-    accountinglsbillprintergui.ui
-    attributesgui.ui
-    varsgui.ui
-    accountingbillpricedatagui.ui
-    accountingtambillpricedatagui.ui
-    accountinglsbillsdatagui.ui
-    accountinglsbillpricedatagui.ui
+        generaldatagui.ui
+        projectitemsview.ui
+        pricelisttreegui.ui
+        priceitemgui.ui
+        billdatagui.ui
+        pricelistdatagui.ui
+        billtreegui.ui
+        billitemgui.ui
+        billitemtitlegui.ui
+        pricelistdbwidget.ui
+        billprintergui.ui
+        pricelistprintergui.ui
+        billattributeprintergui.ui
+        settingsdialog.ui
+        importbillitemmeasurestxt.ui
+        accountingtreegui.ui
+        accountingattributeprintergui.ui
+        setpricelistmodegui.ui
+        attributechangedialog.ui
+        qcalendardialog.ui
+        accountinggui.ui
+        accountingtambilldatagui.ui
+        accountingitemcommentgui.ui
+        accountingitemppugui.ui
+        accountingbilldatagui.ui
+        accountingitemlsgui.ui
+        accountingitemtamgui.ui
+        accountinglsbilldatagui.ui
+        accountinglsbillitemgui.ui
+        accountinglstreegui.ui
+        accountinglsbillitemtitlegui.ui
+        importlsitemmeasurestxt.ui
+        accountingitempaymentgui.ui
+        accountingbillprintergui.ui
+        accountingtambillprintergui.ui
+        accountinglsbillprintergui.ui
+        attributesgui.ui
+        varsgui.ui
+        accountingbillpricedatagui.ui
+        accountingtambillpricedatagui.ui
+        accountinglsbillsdatagui.ui
+        accountinglsbillpricedatagui.ui
+        importbillitemmeasuresclipboard.ui
+        accountingtambillitemgui.ui
 )
 
 include_directories(

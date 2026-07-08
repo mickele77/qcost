@@ -42,7 +42,6 @@ TRANSLATIONS = \
     qcostgui_en.ts
 
 SOURCES += \
-    accountingtambillitemgui.cpp \
     main.cpp\
     projectitemsview.cpp \
     pricelisttreegui.cpp \
@@ -109,10 +108,10 @@ SOURCES += \
     accountingtambillpricedatagui.cpp \
     accountinglsbillsgui.cpp \
     accountinglsbillsdatagui.cpp \
-    accountinglsbillpricedatagui.cpp
+    accountinglsbillpricedatagui.cpp \
+    accountingtambillitemgui.cpp
 
 HEADERS  += \
-    accountingtambillitemgui.h \
     projectitemsview.h \
     pricelisttreegui.h \
     pricelistdelegate.h \
@@ -178,10 +177,10 @@ HEADERS  += \
     accountingtambillpricedatagui.h \
     accountinglsbillsgui.h \
     accountinglsbillsdatagui.h \
-    accountinglsbillpricedatagui.h
+    accountinglsbillpricedatagui.h \
+    accountingtambillitemgui.h
 
 FORMS += \
-    accountingtambillitemgui.ui \
     generaldatagui.ui \
     projectitemsview.ui \
     pricelisttreegui.ui \
@@ -224,7 +223,8 @@ FORMS += \
     accountingtambillpricedatagui.ui \
     accountinglsbillsdatagui.ui \
     accountinglsbillpricedatagui.ui \
-    importbillitemmeasuresclipboard.ui
+    importbillitemmeasuresclipboard.ui \
+    accountingtambillitemgui.ui
 
 OTHER_FILES += \
     ../LICENSE \
