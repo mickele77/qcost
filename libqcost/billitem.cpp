@@ -42,6 +42,8 @@
 
 #include <cmath>
 
+#include <QDebug>
+
 class BillItemPrivate{
 public:
     BillItemPrivate( BillItem * parent, PriceFieldModel * pfm, MathParser * p = nullptr, VarsModel *vModel = nullptr ):
@@ -848,6 +850,7 @@ void BillItem::setUnitMeasure(UnitMeasure *ump) {
 
 void BillItem::updateAmount( int pf ) {
     if( (pf < m_d->amount.size()) && (pf > -1) ){
+
         int prec = m_d->priceFieldModel->effectivePrecision(pf);
 
         double vNet = 0.0; // totale netto (no SGUI)
@@ -857,84 +860,43 @@ void BillItem::updateAmount( int pf ) {
 
         if( hasChildren() ){
             // voce di computo titolo (comprende voci semplici)
-            for( QList<BillItem*>::iterator iter = m_d->childrenContainer.begin(); iter != m_d->childrenContainer.end(); ++iter ){
-                (*iter)->updateAmount(pf);
-            }
-        }
-
-        if( m_d->priceFieldModel->applyFormula(pf) == PriceFieldModel::ToBillItems ) {
-            bool ok = false;
-            QList<double> fieldValues;
-            for( int i=0; i < m_d->priceFieldModel->fieldCount(); ++i ){
-                fieldValues << amountNet( i );
-            }
-            vNet = m_d->priceFieldModel->calcFormula( &ok, pf, fieldValues, 0.0, 0.0 );
-            if( ok ) {
-                vNet = UnitMeasure::applyPrecision( vNet, prec );
-            } else {
-                vNet = 0.0;
-            }
-
-            ok = false;
-            fieldValues.clear();
-            for( int i=0; i < m_d->priceFieldModel->fieldCount(); ++i ){
-                fieldValues << amountOverheads( i );
-            }
-            vOvh = m_d->priceFieldModel->calcFormula( &ok, pf, fieldValues, 0.0, 0.0 );
-            if( ok ) {
-                vOvh = UnitMeasure::applyPrecision( vOvh, prec );
-            } else {
-                vOvh = 0.0;
-            }
-
-            ok = false;
-            fieldValues.clear();
-            for( int i=0; i < m_d->priceFieldModel->fieldCount(); ++i ){
-                fieldValues << amountProfits( i );
-            }
-            vPr = m_d->priceFieldModel->calcFormula( &ok, pf, fieldValues, 0.0, 0.0 );
-            if( ok ) {
-                vPr = UnitMeasure::applyPrecision( vPr, prec );
-            } else {
-                vPr = 0.0;
-            }
-
-            ok = false;
-            fieldValues.clear();
-            for( int i=0; i < m_d->priceFieldModel->fieldCount(); ++i ){
-                fieldValues << amount( i );
-            }
-            v = m_d->priceFieldModel->calcFormula( &ok, pf, fieldValues, 0.0, 0.0 );
-            if( ok ) {
-                v = UnitMeasure::applyPrecision( v, prec );
-            } else {
-                v = 0.0;
-            }
-        } else if( hasChildren() ){ // && m_d->priceFieldModel->applyFormula(pf) != PriceFieldModel::ToPriceAndBillItems
             if( m_d->priceFieldModel->aggregateMode(pf) == PriceFieldModel::AggregateFormula ) {
-                // voce di computo titolo (comprende voci semplici)
+
+                // creiamo vettore con valori nulli
                 QList<double> pfAmount;
-                for( int i=0; i < m_d->priceFieldModel->fieldCount(); ++i ){
-                    pfAmount.append(0.0);
+                for( int i = 0; i < m_d->priceFieldModel->fieldCount(); ++i ) {
+                    pfAmount.append( 0.0 );
                 }
-                for( QList<BillItem*>::iterator iter = m_d->childrenContainer.begin(); iter != m_d->childrenContainer.end(); ++iter ){
+
+                for( QList<BillItem*>::iterator iter = m_d->childrenContainer.begin(); iter != m_d->childrenContainer.end(); ++iter ) {
                     (*iter)->updateAmounts();
-                    for( int i=0; i < m_d->priceFieldModel->fieldCount(); ++i ){
+                    for( int i = 0; i < m_d->priceFieldModel->fieldCount(); ++i ) {
                         if( recalculateOverheadsProfits() ) {
-                            vNet += (*iter)->amountNet(i);
-                            vOvh = UnitMeasure::applyPrecision( vNet * overheads(), prec );
-                            vPr = UnitMeasure::applyPrecision( (vNet+vOvh) * profits(), prec );
-                            pfAmount[i] = UnitMeasure::applyPrecision( vNet + vOvh + vPr, prec );
+                            // Ogni campo deve essere calcolato indipendentemente.
+                            // vNet non deve essere cumulativo tra campi diversi.
+                            double childNet = (*iter)->amountNet(i);
+                            double childOverheads = UnitMeasure::applyPrecision( childNet * overheads(), prec );
+                            double childProfits = UnitMeasure::applyPrecision( (childNet + childOverheads) * profits(), prec );
+                            pfAmount[i] += UnitMeasure::applyPrecision( childNet + childOverheads + childProfits, prec );
                         } else {
                             pfAmount[i] += (*iter)->amount(i);
                         }
                     }
                 }
+
                 bool ok = false;
                 v = m_d->priceFieldModel->calcAggregateFormula( &ok, pf, pfAmount );
-            } else {
+
+                if( ok ) {
+                    v = UnitMeasure::applyPrecision( v, prec );
+                } else {
+                    v = 0.0;
+                }
+            } else { // m_d->priceFieldModel->aggregateMode(pf) == PriceFieldModel::AggregateSum
                 // voce di computo titolo (comprende voci semplici)
+                vNet = 0.0;
                 for( QList<BillItem*>::iterator iter = m_d->childrenContainer.begin(); iter != m_d->childrenContainer.end(); ++iter ){
+                    (*iter)->updateAmount(pf);
                     vNet += (*iter)->amountNet(pf);
                     vOvh = UnitMeasure::applyPrecision( vNet * overheads(), prec );
                     vPr = UnitMeasure::applyPrecision( (vNet+vOvh) * profits(), prec );
@@ -945,20 +907,70 @@ void BillItem::updateAmount( int pf ) {
                     }
                 }
             }
-        } else if( m_d->priceItem != nullptr ){ // !hasChildren() && m_d->priceFieldModel->applyFormula(pf) != PriceFieldModel::ToPriceAndBillItems
-            double effQuantity = m_d->quantity;
-            if( m_d->priceFieldModel->multiplyBy(pf) > -1 ) {
-                effQuantity = amount(pf);
-            }
+        } else { // ! hasChildren()
+            if( m_d->priceFieldModel->applyFormula(pf) == PriceFieldModel::ToBillItems ) {
+                bool ok = false;
+                QList<double> fieldValues;
+                for( int i=0; i < m_d->priceFieldModel->fieldCount(); ++i ){
+                    fieldValues << amountNet( i );
+                }
+                vNet = m_d->priceFieldModel->calcFormula( &ok, pf, fieldValues, 0.0, 0.0 );
+                if( ok ) {
+                    vNet = UnitMeasure::applyPrecision( vNet, prec );
+                } else {
+                    vNet = 0.0;
+                }
 
-            // voce di computo semplice
-            vNet = UnitMeasure::applyPrecision( effQuantity * m_d->priceItem->valueNet( pf, m_d->currentPriceDataSet ), prec );
-            vOvh = UnitMeasure::applyPrecision( vNet * overheads(), prec );
-            vPr = UnitMeasure::applyPrecision( (vNet+vOvh) * profits(), prec );
-            if( recalculateOverheadsProfits() ) {
-                v = UnitMeasure::applyPrecision( vNet + vOvh + vPr, prec );
-            } else {
-                v = UnitMeasure::applyPrecision( m_d->quantity * m_d->priceItem->value( pf, m_d->currentPriceDataSet ), prec );
+                ok = false;
+                fieldValues.clear();
+                for( int i=0; i < m_d->priceFieldModel->fieldCount(); ++i ){
+                    fieldValues << amountOverheads( i );
+                }
+                vOvh = m_d->priceFieldModel->calcFormula( &ok, pf, fieldValues, 0.0, 0.0 );
+                if( ok ) {
+                    vOvh = UnitMeasure::applyPrecision( vOvh, prec );
+                } else {
+                    vOvh = 0.0;
+                }
+
+                ok = false;
+                fieldValues.clear();
+                for( int i=0; i < m_d->priceFieldModel->fieldCount(); ++i ){
+                    fieldValues << amountProfits( i );
+                }
+                vPr = m_d->priceFieldModel->calcFormula( &ok, pf, fieldValues, 0.0, 0.0 );
+                if( ok ) {
+                    vPr = UnitMeasure::applyPrecision( vPr, prec );
+                } else {
+                    vPr = 0.0;
+                }
+
+                ok = false;
+                fieldValues.clear();
+                for( int i=0; i < m_d->priceFieldModel->fieldCount(); ++i ){
+                    fieldValues << amount( i );
+                }
+                v = m_d->priceFieldModel->calcFormula( &ok, pf, fieldValues, 0.0, 0.0 );
+                if( ok ) {
+                    v = UnitMeasure::applyPrecision( v, prec );
+                } else {
+                    v = 0.0;
+                }
+            } else if( m_d->priceItem != nullptr ){ // !hasChildren() && m_d->priceFieldModel->applyFormula(pf) != PriceFieldModel::ToPriceAndBillItems
+                double effQuantity = m_d->quantity;
+                if( m_d->priceFieldModel->multiplyBy(pf) > -1 ) {
+                    effQuantity = amount(pf);
+                }
+
+                // voce di computo semplice
+                vNet = UnitMeasure::applyPrecision( effQuantity * m_d->priceItem->valueNet( pf, m_d->currentPriceDataSet ), prec );
+                vOvh = UnitMeasure::applyPrecision( vNet * overheads(), prec );
+                vPr = UnitMeasure::applyPrecision( (vNet+vOvh) * profits(), prec );
+                if( recalculateOverheadsProfits() ) {
+                    v = UnitMeasure::applyPrecision( vNet + vOvh + vPr, prec );
+                } else {
+                    v = UnitMeasure::applyPrecision( m_d->quantity * m_d->priceItem->value( pf, m_d->currentPriceDataSet ), prec );
+                }
             }
         }
 

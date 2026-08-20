@@ -879,7 +879,7 @@ void PriceItemDataSetModel::setAssociateAP(int priceDataSet, bool newVal ) {
                 }
                 connect( m_d->dataSetContainer.at(priceDataSet)->associatedAP, static_cast<void(Bill::*)(int,double)> (&Bill::amountChanged), this, &PriceItemDataSetModel::setValueFromAP );
                 m_d->dataSetContainer.at(priceDataSet)->associatedAP->setProfits( profits(priceDataSet));
-                m_d->dataSetContainer.at(priceDataSet)->associatedAP->setProfits( overheads(priceDataSet) );
+                m_d->dataSetContainer.at(priceDataSet)->associatedAP->setOverheads( overheads(priceDataSet) );
             } else {
                 disconnect( m_d->dataSetContainer.at(priceDataSet)->associatedAP, static_cast<void(Bill::*)(int,double)> (&Bill::amountChanged), this, &PriceItemDataSetModel::setValueFromAP );
             }

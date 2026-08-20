@@ -25,24 +25,28 @@
 #include <QColor>
 #include <QList>
 
+#include <QDebug>
+
 class PriceFieldData{
 public:
     PriceFieldData( const QString &np = QObject::tr( "Prezzo"),
-                    const QString &na = QObject::tr( "Importo"),
-                    const QString &um = QObject::tr( "€"),
-                    int p = 2,
-                    PriceFieldModel::ApplyFormula af = PriceFieldModel::ToNone,
-                    const QString &f = QString(),
-                    PriceFieldModel::FieldType ft = PriceFieldModel::PriceNone,
-                    PriceFieldModel::AggregateMode am = PriceFieldModel::AggregateSum ):
+                   const QString &na = QObject::tr( "Importo"),
+                   const QString &um = QObject::tr( "€"),
+                   int p = 2,
+                   PriceFieldModel::ApplyFormula af = PriceFieldModel::ToNone,
+                   const QString &f = QString(),
+                   PriceFieldModel::AggregateMode aggM = PriceFieldModel::AggregateSum,
+                   const QString &aggF = QString(),
+                   PriceFieldModel::FieldType ft = PriceFieldModel::PriceNone ):
         priceName(np),
         amountName(na),
         unitMeasure(um),
         precision(p),
         applyFormula(af),
         formula( f ),
+        aggregateMode( aggM ),
+        aggregateFormula(aggF),
         isPercentage(false),
-        aggregateMode(am),
         multiplyBy(-1),
         fieldType(ft) {
     }
@@ -55,9 +59,11 @@ public:
             precision = cp.precision;
             applyFormula = cp.applyFormula;
             formula = cp.formula;
+            isFormulaValid = cp.isFormulaValid;
             aggregateMode = cp.aggregateMode;
             aggregateFormula = cp.aggregateFormula;
-            formula = cp.formula;
+            isAggregateFormulaValid = cp.isAggregateFormulaValid;
+            isPercentage = cp.isPercentage;
             multiplyBy = cp.multiplyBy;
             fieldType = cp.fieldType;
         }
@@ -243,7 +249,7 @@ public:
         writer->writeAttribute( "unitMeasure", unitMeasure );
         writer->writeAttribute( "precision", QString::number( precision ) );
         if( (applyFormula == PriceFieldModel::ToPriceItems)
-                || (applyFormula == PriceFieldModel::ToBillItems) ) {
+            || (applyFormula == PriceFieldModel::ToBillItems) ) {
             writer->writeAttribute( "applyFormula", "true" );
         } else {
             writer->writeAttribute( "applyFormula", "false" );
@@ -285,7 +291,6 @@ public:
     QString priceName;
     QString amountName;
     QString unitMeasure;
-    int unitMeasureCol;
     int precision;
     PriceFieldModel::ApplyFormula applyFormula;
     QString formula;
@@ -680,7 +685,7 @@ bool PriceFieldModel::setAggregateFormula(int pf, const QString &newVal){
     }
     if( m_d->fieldsList.at(pf)->aggregateFormula != newVal ){
         m_d->fieldsList.at(pf)->aggregateFormula = newVal;
-        // m_d->updateIsFormulaValid(pf);
+        m_d->updateIsAggregateFormulaValid(pf);
         QModelIndex index = createIndex( pf, m_d->aggregateFormulaCol );
         emit dataChanged(index, index);
         emit aggregateFormulaChanged( pf, newVal );
@@ -807,9 +812,12 @@ PriceFieldModel &PriceFieldModel::operator =(const PriceFieldModel &cp) {
                 setApplyFormula( i, cp.m_d->fieldsList.at(i)->applyFormula);
                 setFormula( i, cp.m_d->fieldsList.at(i)->formula);
                 setFieldType( i, cp.m_d->fieldsList.at(i)->fieldType);
+                setAggregateFormula( i, cp.m_d->fieldsList.at(i)->aggregateFormula );
+                setAggregateMode( i, cp.m_d->fieldsList.at(i)->aggregateMode );
             }
             for( int i=0; i < m_d->fieldsList.size(); ++i ){
                 m_d->updateIsFormulaValid(i);
+                m_d->updateIsAggregateFormulaValid(i);
             }
         }
     }
@@ -1036,6 +1044,7 @@ bool PriceFieldModel::insertRows(int row, int count, const QModelIndex &) {
     for( int i=0; i < m_d->fieldsList.size(); ++i){
         bool oldVal = m_d->fieldsList.at(i)->isFormulaValid;
         m_d->updateIsFormulaValid(i);
+        m_d->updateIsAggregateFormulaValid(i);
         bool newVal = m_d->fieldsList.at(i)->isFormulaValid;
         if( oldVal != newVal ){
             QModelIndex index = createIndex( i, m_d->formulaCol );
@@ -1075,6 +1084,7 @@ bool PriceFieldModel::removeRows(int row, int count, const QModelIndex &) {
     for( int i=0; i < m_d->fieldsList.size(); ++i){
         bool oldVal = m_d->fieldsList.at(i)->isFormulaValid;
         m_d->updateIsFormulaValid(i);
+        m_d->updateIsAggregateFormulaValid(i);
         bool newVal = m_d->fieldsList.at(i)->isFormulaValid;
         if( oldVal != newVal ){
             QModelIndex index = createIndex( i, m_d->formulaCol );
@@ -1121,6 +1131,7 @@ bool PriceFieldModel::moveRows(const QModelIndex &sourceParent, int sourceRow, i
     for( int i=0; i < m_d->fieldsList.size(); ++i){
         bool oldVal = m_d->fieldsList.at(i)->isFormulaValid;
         m_d->updateIsFormulaValid(i);
+        m_d->updateIsAggregateFormulaValid(i);
         bool newVal = m_d->fieldsList.at(i)->isFormulaValid;
         if( oldVal != newVal ){
             QModelIndex index = createIndex( i, m_d->formulaCol );
@@ -1170,7 +1181,7 @@ void PriceFieldModel::readXml10(QXmlStreamReader *reader ) {
            !(reader->isEndElement() && reader->name().toString().toUpper() == "PRICEFIELDMODEL") ){
         reader->readNext();
         if( (reader->name().toString().toUpper() == "PRICEFIELDDATA") &&
-                reader->isStartElement() ) {
+            reader->isStartElement() ) {
             if( firstField ) {
                 loadFromXml10( m_d->fieldsList.size() - 1, reader->attributes() );
                 firstField = false;
@@ -1188,7 +1199,7 @@ void PriceFieldModel::readXml20(QXmlStreamReader *reader ) {
            !(reader->isEndElement() && reader->name().toString().toUpper() == "PRICEFIELDMODEL") ){
         reader->readNext();
         if( (reader->name().toString().toUpper() == "PRICEFIELDDATA") &&
-                reader->isStartElement() ) {
+            reader->isStartElement() ) {
             if( firstField ) {
                 loadFromXml20( m_d->fieldsList.size() - 1, reader->attributes() );
                 firstField = false;
@@ -1306,9 +1317,7 @@ double PriceFieldModel::calcAggregateFormula( bool * ok, int field, QList<double
         if( m_d->fieldsList.at(field)->isAggregateFormulaValid ){
             QString valStr = aggregateFormula( field );
             for(int i=0; i < fieldValues.size(); ++i ){
-                if( i < m_d->fieldsList.size() ){
-                    valStr.replace( QString("$%1$").arg(i+1), m_d->toString(fieldValues.at(i), 'f', effectivePrecision(i) ) );
-                }
+                valStr.replace( QString("$%1$").arg(i+1), m_d->toString(fieldValues.at(i), 'f', effectivePrecision(i) ) );
             }
             *ok = true;
             double val = m_d->parser->evaluateLocal( valStr );
