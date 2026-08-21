@@ -958,8 +958,8 @@ void BillItem::updateAmount( int pf ) {
                 }
             } else if( m_d->priceItem != nullptr ){ // !hasChildren() && m_d->priceFieldModel->applyFormula(pf) != PriceFieldModel::ToPriceAndBillItems
                 double effQuantity = m_d->quantity;
-                if( m_d->priceFieldModel->multiplyBy(pf) > -1 ) {
-                    effQuantity = amount(pf);
+                if( m_d->priceFieldModel->multiplyBy(pf) > -1 && m_d->priceFieldModel->multiplyBy(pf) != pf ) {
+                    effQuantity = amount( m_d->priceFieldModel->multiplyBy(pf) );
                 }
 
                 // voce di computo semplice
@@ -1863,7 +1863,7 @@ void BillItem::writeODTBillOnTable(QTextCursor *cursor,
 
                 amountsToPrint.clear();
                 for( int i=0; i < fieldsToPrint.size(); i++ ){
-                    amountsToPrint << amountStr( i );
+                    amountsToPrint << amountStr( fieldsToPrint.at(i) );
                 }
                 writeODTBillTotalLine( fieldsToPrint, groupPrAm, cursor, table,
                                       tagBlockFormat, txtBlockFormat, numBlockFormat,
@@ -1879,7 +1879,7 @@ void BillItem::writeODTBillOnTable(QTextCursor *cursor,
 
                 QList<QString> amountsToPrint;
                 for( int i=0; i < fieldsToPrint.size(); i++ ){
-                    amountsToPrint << amountStr( i );
+                    amountsToPrint << amountStr( fieldsToPrint.at(i) );
                 }
                 writeODTBillTotalLine( fieldsToPrint, groupPrAm, cursor, table,
                                       tagBlockFormat, txtBlockFormat, numBlockFormat,
@@ -3158,7 +3158,7 @@ void BillItem::writeODTBillLine(BillPrinter::PrintBillItemsOption prItemsOption,
                     BillItemPrivate::writeCell( cursor, table, centralFormat, numBlockFormat, amountValueStr );
                 }
             }
-        } else {
+        } else { // !groupPrAm
             for( int i=0; i < fieldsToPrint.size(); ++i ){
                 QString priceValueStr, amountValueStr;
                 if( printValNet ) {

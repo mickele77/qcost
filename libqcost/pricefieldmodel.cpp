@@ -173,7 +173,7 @@ public:
         if( v == PriceFieldModel::ToPriceItems ){
             return QString("ToPriceItems");
         } else if( v == PriceFieldModel::ToBillItems ){
-            return QString("ToPriceAndBillItems");
+            return QString("ToBillItems");
         }
         return QString("ToNone");
     }
@@ -191,7 +191,7 @@ public:
         QString vUp = v.toUpper();
         if( vUp == "TOPRICEITEMS" ){
             return PriceFieldModel::ToPriceItems;
-        } else if( vUp == "TOPRICEANDBILLITEMS" ){
+        } else if( vUp == "TOBILLITEMS" ){
             return PriceFieldModel::ToBillItems;
         }
         return PriceFieldModel::ToNone;
